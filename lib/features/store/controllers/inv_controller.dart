@@ -283,67 +283,10 @@ class CInventoryController extends GetxController {
       isLoading.value = true;
 
       // add inventory item into sqflite db
-      inventoryItem.productId =
-          inventoryItem.productId == null || inventoryItem.productId! <= 100
-          ? CHelperFunctions.generateInvId()
-          : inventoryItem.productId;
+      inventoryItem.productId = CHelperFunctions.generateInvId();
 
-      // -- separate phone number and dial code --
-      final (dialCode, customerContacts) =
-          CValidator.isValidPhoneNumber(
-            txtSupplierContacts.text.trim().removeAllWhitespace,
-          )
-          ? CFormatter.seperatePhoneAndDialCode(
-              txtSupplierContacts.text.trim().removeAllWhitespace,
-            )
-          : ('', txtSupplierContacts.text.trim().removeAllWhitespace);
-
-      // -- check internet connectivity
-
-      if (await CNetworkManager.instance.isConnected() ||
-          CNetworkManager.instance.hasConnection.value) {
-        // -- save data to gsheets --
-        var cloudInvData = CInventoryModel.withID(
-          inventoryItem.productId,
-          userController.user.value.id,
-          userController.user.value.email,
-          userController.user.value.fullName,
-          txtCode.text.trim(),
-          txtNameController.text.trim(),
-          0,
-          itemMetrics.value.trim(),
-          double.parse(txtQty.text.trim()),
-          0.0,
-          0.0,
-          double.parse(txtBP.text.trim()),
-          unitBP.value,
-          double.parse(txtUnitSP.text.trim()),
-          txtStockNotifierLimit.text != ''
-              ? double.parse(txtStockNotifierLimit.text.trim())
-              : (double.parse(txtQty.text.trim()) / 5),
-          txtSupplierName.text.trim(),
-
-          customerContacts, // data from txtSupplierContacts,
-          DateFormat('yyyy-MM-dd @ kk:mm').format(clock.now()),
-          DateFormat('yyyy-MM-dd @ kk:mm').format(clock.now()),
-          txtExpiryDatePicker.text.trim(),
-          1,
-          'none',
-        );
-        await StoreSheetsApi.saveInvItemsToGSheets([cloudInvData.toMap()]);
-
-        /// -- update sync status
-        inventoryItem.isSynced = 1;
-        inventoryItem.syncAction = 'none';
-      } else {
-        inventoryItem.isSynced = 0;
-        inventoryItem.syncAction = 'append';
-        CPopupSnackBar.customToast(
-          message:
-              'while this works offline, consider using an internet connection to back up your data online!',
-          forInternetConnectivityStatus: true,
-        );
-      }
+      inventoryItem.isSynced = 1;
+      inventoryItem.syncAction = 'none';
 
       await dbHelper.addInventoryItem(inventoryItem);
 
@@ -625,8 +568,11 @@ class CInventoryController extends GetxController {
         inventoryItem,
       );
 
-      // -- refresh inventory list
-      fetchUserInventoryItems();
+      await storeRepo.updateInvCloudData(inventoryItem).then(
+        (_) async {
+          await fetchUserInventoryItems();
+        },
+      );
 
       // -- stop loader
       isLoading.value = false;
@@ -833,37 +779,10 @@ class CInventoryController extends GetxController {
         ).format(clock.now());
         inventoryItem.expiryDate = txtExpiryDatePicker.text.trim();
 
-        inventoryItem.syncAction = txtSyncAction.text.trim();
+        inventoryItem.syncAction = 'none';
 
         if (itemExists.value) {
-          // -- check internet connectivity
-          final isConnectedToInternet = await CNetworkManager.instance
-              .isConnected();
-
-          if (isConnectedToInternet) {
-            inventoryItem.isSynced = 1;
-            inventoryItem.syncAction = 'none';
-            updateInvSheetItem(int.parse(txtId.text.trim()), inventoryItem);
-          } else {
-            inventoryItem.syncAction = inventoryItem.isSynced == 1
-                ? 'update'
-                : 'append';
-
-            final deleteItem = CInvDelsModel(
-              inventoryItem.productId!,
-              inventoryItem.name,
-              'inventory',
-              inventoryItem.isSynced,
-              inventoryItem.syncAction,
-            );
-            await dbHelper.saveInvDelsForSync(deleteItem);
-            CPopupSnackBar.customToast(
-              message:
-                  'While this works offline, consider using an internet connection to back up your data online!',
-              forInternetConnectivityStatus: true,
-            );
-          }
-          updateInventoryItem(inventoryItem).then(
+          await updateInventoryItem(inventoryItem).then(
             (_) {
               resetInvFields();
             },
@@ -872,7 +791,7 @@ class CInventoryController extends GetxController {
           inventoryItem.dateAdded = DateFormat(
             'yyyy-MM-dd @ kk:mm',
           ).format(clock.now());
-          addInventoryItem(inventoryItem).then(
+          await addInventoryItem(inventoryItem).then(
             (_) {
               resetInvFields();
             },

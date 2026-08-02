@@ -242,6 +242,20 @@ class DbHelper extends GetxController {
   }
 
   /// --- ### CRUD OPERATIONS ON INVENTORY TABLE ### ---
+  // -- batch insert inventory item --
+  Future<void> batchInsertInvItems(List<CInventoryModel> inventoryItems) async {
+    final db = _db;
+    final batch = db!.batch();
+
+    for (var invItem in inventoryItems) {
+      batch.insert(invTable, invItem.toMap());
+    }
+
+    await batch.commit(
+      noResult: true,
+    );
+  }
+
   Future<void> addInventoryItem(CInventoryModel inventoryItem) async {
     // Get a reference to the database.
 
@@ -249,7 +263,8 @@ class DbHelper extends GetxController {
     // `conflictAlgorithm` to use in case the same inventoryItem is inserted twice.
     //
     // In this case, replace any previous data.
-    await _db?.insert(
+    final db = _db;
+    await db?.insert(
       invTable,
       inventoryItem.toMap(),
       conflictAlgorithm: ConflictAlgorithm.replace,
@@ -353,8 +368,9 @@ class DbHelper extends GetxController {
   /// -- defines a function to update an inventory item --
   Future<int> updateInventoryItem(CInventoryModel invItem) async {
     try {
+      var db = _db;
       // Update the given inventory item.
-      var updateResult = await _db!.update(
+      var updateResult = await db!.update(
         invTable,
         invItem.toMap(),
 

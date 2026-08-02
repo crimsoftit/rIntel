@@ -72,4 +72,66 @@ class CStoreRepo extends GetxController {
       rethrow;
     }
   }
+
+  /// -- update inventory data on the cloud --
+  Future<void> updateInvCloudData(CInventoryModel invItem) async {
+    try {
+      await firestoreDb
+          .collection("inventory")
+          .doc(invItem.productId.toString())
+          .update(invItem.toMap());
+    } on FirebaseException catch (e) {
+      if (kDebugMode) {
+        CPopupSnackBar.errorSnackBar(
+          title: 'firebase cloud error!',
+          message: 'unable to update cloud inventory details: ${e.code}',
+        );
+      } else {
+        CPopupSnackBar.errorSnackBar(
+          title: 'Oh Snap!',
+          message:
+              'an unknown error occurred while updating cloud inventory details! please try again later',
+        );
+      }
+      rethrow;
+    } on FormatException catch (e) {
+      if (kDebugMode) {
+        CPopupSnackBar.errorSnackBar(
+          title: 'inventory datails format error!',
+          message: e.message,
+        );
+      } else {
+        CPopupSnackBar.errorSnackBar(
+          title: 'Oh Snap!',
+          message:
+              'an unknown error occurred while updating cloud inventory details! please try again later',
+        );
+      }
+      rethrow;
+    } on PlatformException catch (e) {
+      CPopupSnackBar.errorSnackBar(
+        message: CPlatformExceptions(e.code).message,
+        title: "inventory cloud data platform exception error",
+      );
+
+      rethrow;
+    } catch (e) {
+      if (kDebugMode) {
+        CPopupSnackBar.errorSnackBar(
+          message: e.toString(),
+          title: "error uploading inventory details",
+        );
+      } else {
+        CPopupSnackBar.errorSnackBar(
+          message:
+              'an unknown error occurred while uploading inventory details to cloud! please try again later...',
+          title: "error uploading inventory details",
+        );
+      }
+
+      //throw 'something went wrong! please try again!';
+
+      rethrow;
+    }
+  }
 }

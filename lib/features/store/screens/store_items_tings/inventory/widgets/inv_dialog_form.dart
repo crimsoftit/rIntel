@@ -744,7 +744,9 @@ class AddUpdateInventoryForm extends StatelessWidget {
                     ),
                   ],
                 ),
-                const SizedBox(height: CSizes.spaceBtnInputFields),
+                const SizedBox(
+                  height: CSizes.spaceBtnInputFields,
+                ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
