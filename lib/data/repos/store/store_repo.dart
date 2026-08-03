@@ -73,6 +73,74 @@ class CStoreRepo extends GetxController {
     }
   }
 
+  Future<List<CInventoryModel>> fetchInventoryFromFirestore(
+    String userEmail,
+  ) async {
+    try {
+      final snapshot = await firestoreDb
+          .collection('inventory')
+          .where('userEmail', isEqualTo: userEmail)
+          .get();
+
+      return snapshot.docs.map(
+        (element) {
+          return CInventoryModel.fromSnapshot(element);
+        },
+      ).toList();
+    } on FirebaseException catch (e) {
+      if (kDebugMode) {
+        CPopupSnackBar.errorSnackBar(
+          title: 'firebase cloud error!',
+          message:
+              'unable to fetch cloud inventory data from firestore: ${e.code}',
+        );
+      } else {
+        CPopupSnackBar.errorSnackBar(
+          title: 'Oh Snap! Error fetching inventory cloud data!',
+          message:
+              'an unknown error occurred while fetching inventory data from cloud firestore!! please try again later',
+        );
+      }
+      rethrow;
+    } on FormatException catch (e) {
+      if (kDebugMode) {
+        CPopupSnackBar.errorSnackBar(
+          title: 'inventory cloud data fetch format error!',
+          message: e.message,
+        );
+      } else {
+        CPopupSnackBar.errorSnackBar(
+          title: 'Oh Snap!',
+          message:
+              'an unknown error occurred while fetching inventory data from cloud firestore!! please try again later',
+        );
+      }
+      rethrow;
+    } on PlatformException catch (e) {
+      CPopupSnackBar.errorSnackBar(
+        message: CPlatformExceptions(e.code).message,
+        title: "inventory cloud data fetch platform exception error",
+      );
+
+      rethrow;
+    } catch (e) {
+      if (kDebugMode) {
+        CPopupSnackBar.errorSnackBar(
+          message: e.toString(),
+          title: "error uploading inventory details",
+        );
+      } else {
+        CPopupSnackBar.errorSnackBar(
+          message:
+              'an unknown error occurred while fetching inventory data from cloud firestore! please try again later...',
+          title: "error fetching inventory data from cloud firestore!",
+        );
+      }
+
+      rethrow;
+    }
+  }
+
   /// -- update inventory data on the cloud --
   Future<void> updateInvCloudData(CInventoryModel invItem) async {
     try {

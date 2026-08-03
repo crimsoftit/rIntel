@@ -130,8 +130,8 @@ class CInventoryController extends GetxController {
       await initInvSync();
     }
 
-    fetchInvDels();
-    fetchInvUpdates();
+    // fetchInvDels();
+    // fetchInvUpdates();
 
     //await scheduleExpiryAlerts();
 
@@ -139,19 +139,27 @@ class CInventoryController extends GetxController {
   }
 
   /// -- initialize cloud sync --
+  // Future<void> initInvSync() async {
+  //   if (localStorage.read('SyncInvDataWithCloud') == true) {
+  //     await importInvDataFromCloud();
+  //     if (await importInvDataFromCloud()) {
+  //       localStorage.write('SyncInvDataWithCloud', false);
+  //     } else {
+  //       localStorage.write('SyncInvDataWithCloud', true);
+  //     }
+
+  //     await fetchUserInventoryItems();
+  //   }
+
+  // }
   Future<void> initInvSync() async {
     if (localStorage.read('SyncInvDataWithCloud') == true) {
-      await importInvDataFromCloud();
-      if (await importInvDataFromCloud()) {
+      if (await importInventoryDataFromFirestore()) {
         localStorage.write('SyncInvDataWithCloud', false);
       } else {
         localStorage.write('SyncInvDataWithCloud', true);
       }
-
-      await fetchUserInventoryItems();
     }
-
-    /// TODO:-- schedule notifications for items nearing expiry date (NOT HERE - CAUSES SYSTEM CRASH) --
   }
 
   /// -- fetch list of inventory items from sqflite db --
@@ -284,6 +292,8 @@ class CInventoryController extends GetxController {
 
       // add inventory item into sqflite db
       inventoryItem.productId = CHelperFunctions.generateInvId();
+      inventoryItem.userId = userController.user.value.id;
+      inventoryItem.userEmail = userController.user.value.email;
 
       inventoryItem.isSynced = 1;
       inventoryItem.syncAction = 'none';
@@ -310,10 +320,9 @@ class CInventoryController extends GetxController {
         );
       }
       rethrow;
+    } finally {
+      isLoading.value = false;
     }
-    // finally {
-    //   isLoading.value = false;
-    // }
   }
 
   /// -- upload unsynced data to the cloud --
@@ -987,6 +996,46 @@ class CInventoryController extends GetxController {
       }
 
       rethrow;
+    }
+  }
+
+  /// -- import inventory data from cloud firestore --
+  Future<bool> importInventoryDataFromFirestore() async {
+    try {
+      // -- start loader --
+      isLoading.value = true;
+      final inventoryCloudData = storeRepo.fetchInventoryFromFirestore(
+        userController.user.value.email,
+      );
+
+      // -- batch insert inventory items to sqflite db --
+      await dbHelper.batchInsertInvItems(await inventoryCloudData).then(
+        (_) async {
+          await fetchUserInventoryItems();
+        },
+      );
+
+      // -- stop loader --
+      isLoading.value = false;
+      return true;
+    } catch (e) {
+      isLoading.value = false;
+      isImportingInvCloudData.value = false;
+      if (kDebugMode) {
+        CPopupSnackBar.errorSnackBar(
+          title: 'ERROR fetching inventory data from cloud firestore!',
+          message: e.toString(),
+        );
+      } else {
+        CPopupSnackBar.errorSnackBar(
+          message:
+              'an unknown error occurred while fetching inventory data from cloud firestore',
+          title: 'ERROR IMPORTING inventory DATA FROM CLOUD!',
+        );
+      }
+      rethrow;
+    } finally {
+      isLoading.value = false;
     }
   }
 

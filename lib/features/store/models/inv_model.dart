@@ -2,6 +2,7 @@
 
 import 'dart:convert';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:rintel/features/store/models/gsheet_models/inv_sheet_fields.dart';
 import 'package:equatable/equatable.dart';
 
@@ -81,7 +82,7 @@ class CInventoryModel extends Equatable {
     this._syncAction,
   );
 
-  CInventoryModel empty() {
+  static CInventoryModel empty() {
     return CInventoryModel(
       '',
       '',
@@ -261,6 +262,40 @@ class CInventoryModel extends Equatable {
     map['syncAction'] = _syncAction;
 
     return map;
+  }
+
+  /// -- factory method to create an InventoryModel from a Firebase document snapshot --
+  factory CInventoryModel.fromSnapshot(
+    DocumentSnapshot<Map<String, dynamic>> document,
+  ) {
+    // -- null check --
+    if (document.data() == null) return CInventoryModel.empty();
+
+    final invData = document.data()!;
+    return CInventoryModel.withID(
+      int.parse(document.id),
+      invData['userId'],
+      invData['userEmail'],
+      invData['userName'],
+      invData['pCode'],
+      invData['name'],
+      invData['markedAsFavorite'],
+      invData['calibration'],
+      invData['quantity'],
+      invData['qtySold'],
+      invData['qtyRefunded'],
+      invData['buyingPrice'],
+      invData['unitBp'],
+      invData['unitSellingPrice'],
+      invData['lowStockNotifierLimit'],
+      invData['supplierName'],
+      invData['supplierContacts'],
+      invData['dateAdded'],
+      invData['lastModified'],
+      invData['expiryDate'],
+      invData['isSynced'],
+      invData['syncAction'],
+    );
   }
 
   // extract a InventoryModel object from a Map object
