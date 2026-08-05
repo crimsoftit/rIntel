@@ -153,8 +153,8 @@ class AuthRepo extends GetxController {
             Future.delayed(Duration.zero, () {
               WidgetsBinding.instance.addPostFrameCallback((_) {
                 Get.offAll(() => const NavMenu());
-              });
-            });
+              },);
+            },);
             //Get.offAll(() => const NavMenu());
           } else {
             // stop loader

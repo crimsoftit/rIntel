@@ -2,6 +2,7 @@
 
 import 'dart:convert';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:rintel/features/store/models/gsheet_models/txns_sheet_fields.dart';
 import 'package:rintel/utils/popups/snackbars.dart';
 import 'package:flutter/foundation.dart';
@@ -433,6 +434,43 @@ class CTxnsModel {
       jsonDecode(json[TxnsSheetFields.isSynced]),
       json[TxnsSheetFields.syncAction],
       json[TxnsSheetFields.txnStatus],
+    );
+  }
+
+  /// -- factory method to create an CTxnsModel from a Firebase document snapshot --
+  factory CTxnsModel.fromSnapshot(
+    DocumentSnapshot<Map<String, dynamic>> txnsDocument,
+  ) {
+    if (txnsDocument.data() == null) return CTxnsModel.empty();
+    final salesData = txnsDocument.data()!;
+    return CTxnsModel.withId(
+      int.parse(txnsDocument.id),
+      salesData['txnId'],
+      salesData['userId'],
+      salesData['userEmail'],
+      salesData['userName'],
+      salesData['productId'],
+      salesData['productCode'],
+      salesData['productName'],
+      salesData['itemMetrics'],
+      salesData['quantity'],
+      salesData['qtyRefunded'],
+      salesData['refundReason'],
+      salesData['totalAmount'],
+      salesData['amountIssued'],
+      salesData['customerBalance'],
+      salesData['unitBP'],
+      salesData['unitSellingPrice'],
+      salesData['discount'],
+      salesData['paymentMethod'],
+      salesData['customerName'],
+      salesData['customerContacts'],
+      salesData['txnAddress'],
+      salesData['txnAddressCoordinates'],
+      salesData['lastModified'],
+      salesData['isSynced'],
+      salesData['syncAction'],
+      salesData['txnStatus'],
     );
   }
 }

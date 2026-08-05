@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:rintel/api/sheets/store_sheets_api.dart';
 import 'package:rintel/common/widgets/custom_shapes/containers/rounded_container.dart';
 import 'package:rintel/common/widgets/txt_fields/custom_txtfield.dart';
+import 'package:rintel/data/repos/store/store_repo.dart';
 import 'package:rintel/features/personalization/controllers/notification_tings/flutter_local_notifications/local_notifications_controller.dart';
 import 'package:rintel/features/personalization/controllers/user_controller.dart';
 import 'package:rintel/features/store/controllers/dashboard_controller.dart';
@@ -141,6 +142,8 @@ class CTxnsController extends GetxController {
   final RxDouble roi = 0.0.obs;
   final RxDouble totalAmtSold = 0.0.obs;
 
+  final storeRepo = Get.put(CStoreRepo());
+
   @override
   void onInit() async {
     dateRangeFieldController.clear();
@@ -174,9 +177,8 @@ class CTxnsController extends GetxController {
 
   /// -- initialize cloud sync --
   Future initTxnsSync() async {
-    await fetchSoldItems();
     if (localStorage.read('SyncTxnsDataWithCloud') == true && sales.isEmpty) {
-      if (await importTxnsFromCloud()) {
+      if (await importSalesFromCloudFirestore()) {
         localStorage.write(
           'SyncTxnsDataWithCloud',
           false,
@@ -1006,7 +1008,7 @@ class CTxnsController extends GetxController {
             element.txnStatus,
           );
 
-          dbHelper.addSoldItem(dbTxnImports).then(
+          dbHelper.addSoldItemAndRetrieveSoldItemId(dbTxnImports).then(
             (_) async {
               await fetchSoldItems();
             },
@@ -2024,6 +2026,43 @@ class CTxnsController extends GetxController {
         );
 
     return txnTotals;
+  }
+
+  /// -- import txns data from cloud firestre --
+  Future<bool> importSalesFromCloudFirestore() async {
+    try {
+      // -- start loader --
+      isLoading.value = true;
+      final txnsCloudData = storeRepo.fetchUserSalesFromFirestore(
+        userController.user.value.email,
+      );
+      await dbHelper.batchInsertTxns(await txnsCloudData).then(
+        (_) async {
+          await fetchSoldItems();
+        },
+      );
+
+      // -- stop loader --
+      isLoading.value = false;
+      return true;
+    } catch (e) {
+      isLoading.value = false;
+      if (kDebugMode) {
+        CPopupSnackBar.errorSnackBar(
+          title: 'ERROR fetching inventory data from cloud firestore!',
+          message: e.toString(),
+        );
+      } else {
+        CPopupSnackBar.errorSnackBar(
+          message:
+              'an unknown error occurred while fetching inventory data from cloud firestore',
+          title: 'ERROR IMPORTING inventory DATA FROM CLOUD!',
+        );
+      }
+      rethrow;
+    } finally {
+      isLoading.value = false;
+    }
   }
 
   @override

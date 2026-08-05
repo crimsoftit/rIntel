@@ -21,12 +21,6 @@ class DbHelper extends GetxController {
   DbHelper._privateConstructor();
   static final DbHelper instance = DbHelper._privateConstructor();
 
-  @override
-  void onInit() async {
-    saleItemAddedToDb.value = false;
-    super.onInit();
-  }
-
   final int version = 1;
 
   /// -- variables --
@@ -41,8 +35,6 @@ class DbHelper extends GetxController {
   final notificationsTable = 'notifications';
   final salesDelsForSyncTable = 'salesDelsForSyncTable';
   final txnsTable = 'txns';
-
-  final RxBool saleItemAddedToDb = false.obs;
 
   static final DbHelper _dbHelper = DbHelper._internal();
   DbHelper._internal();
@@ -192,7 +184,6 @@ class DbHelper extends GetxController {
       version: version,
     );
 
-    saleItemAddedToDb.value = false;
     return _db!;
   }
 
@@ -274,12 +265,13 @@ class DbHelper extends GetxController {
   /// -- fetch operation: get all inventory items from the database --
   Future<List<CInventoryModel>> fetchInventoryItems(String email) async {
     try {
+      final db = _db;
       // Query the table for inventory list
       // final result = await db!.rawQuery(
       //   'SELECT * FROM $invTable WHERE userEmail = ? ORDER BY expiryDate ASC, qtySold DESC',
       //   [email],
       // );
-      final result = await _db!.rawQuery(
+      final result = await db!.rawQuery(
         'SELECT * FROM $invTable WHERE userEmail = ? ORDER BY qtySold DESC',
         [email],
       );
@@ -332,7 +324,8 @@ class DbHelper extends GetxController {
     String code,
     String email,
   ) async {
-    final List<Map<String, dynamic>> maps = await _db!.query(
+    final db = _db;
+    final List<Map<String, dynamic>> maps = await db!.query(
       invTable,
       where: 'pCode = ? and userEmail = ?',
       whereArgs: [code, email],
@@ -396,7 +389,8 @@ class DbHelper extends GetxController {
   /// -- delete inventory item --
   Future<int> deleteInventoryItem(CInventoryModel inventory) async {
     try {
-      int result = await _db!.delete(
+      final db = _db;
+      int result = await db!.delete(
         'inventory',
         where: 'productId = ?',
         whereArgs: [inventory.productId],
@@ -427,7 +421,8 @@ class DbHelper extends GetxController {
     int pId,
   ) async {
     try {
-      int updateResult = await _db!.rawUpdate(
+      final db = _db;
+      int updateResult = await db!.rawUpdate(
         '''
           UPDATE $invTable
           SET quantity = ?, qtySold = ?
@@ -459,7 +454,8 @@ class DbHelper extends GetxController {
     int pId,
   ) async {
     try {
-      int updateResult = await _db!.rawUpdate(
+      final db = _db;
+      int updateResult = await db!.rawUpdate(
         '''
           UPDATE $invTable
           SET syncAction = ?
@@ -485,8 +481,9 @@ class DbHelper extends GetxController {
 
   /// -- fetch all deletionForSyncItems --
   Future<List<CInvDelsModel>> fetchAllInvDels() async {
+    final db = _db;
     // raw query
-    final dels = await _db!.rawQuery(
+    final dels = await db!.rawQuery(
       'SELECT * FROM $invDelsForSyncTable where syncAction = ? and itemCategory = ?',
       ['delete', 'inventory'],
     );
@@ -505,7 +502,8 @@ class DbHelper extends GetxController {
 
   Future<void> saveInvDelsForSync(CInvDelsModel delItem) async {
     try {
-      await _db!.insert(
+      final db = _db;
+      await db!.insert(
         invDelsForSyncTable,
         delItem.toMap(),
         conflictAlgorithm: ConflictAlgorithm.replace,
@@ -522,8 +520,9 @@ class DbHelper extends GetxController {
   /// -- fetch all updatesForSyncItems --
   Future<List<CInvDelsModel>> fetchAllInvUpdates() async {
     try {
+      final db = _db;
       // raw query
-      final forUpdates = await _db!.rawQuery(
+      final forUpdates = await db!.rawQuery(
         'SELECT * FROM $invDelsForSyncTable where syncAction = ? and itemCategory = ?',
         ['update', 'inventory'],
       );
@@ -572,7 +571,8 @@ class DbHelper extends GetxController {
   }
 
   Future<int> updateInvDeletion(CInvDelsModel delItem) async {
-    int delRes = await _db!.update(
+    final db = _db;
+    int delRes = await db!.update(
       invDelsForSyncTable,
       delItem.toMap(),
       where: 'itemId = ?',
@@ -585,7 +585,8 @@ class DbHelper extends GetxController {
   /// -- fetch top sellers from inventory table --
   Future<List<CInventoryModel>> fetchTopSellers(String email) async {
     try {
-      final topSellers = await _db!.rawQuery(
+      final db = _db;
+      final topSellers = await db!.rawQuery(
         'SELECT * FROM $invTable WHERE userEmail = ? AND qtySold >= 0.1 ORDER BY qtySold DESC LIMIT 10',
         [email],
       );
@@ -626,7 +627,8 @@ class DbHelper extends GetxController {
     String email,
   ) async {
     try {
-      final topSellers = await _db!.rawQuery(
+      final db = _db;
+      final topSellers = await db!.rawQuery(
         'SELECT productId, productName, itemMetrics, SUM(quantity) as totalSales, unitSellingPrice, quantity FROM $txnsTable WHERE userEmail = ? GROUP BY productId ORDER BY totalSales DESC',
         [email],
       );
@@ -666,25 +668,48 @@ class DbHelper extends GetxController {
 
   /// ==== ### CRUD OPERATIONS ON SALES TABLE ### ====
   // -- save sale details to the database --
-  Future addSoldItem(CTxnsModel soldItem) async {
+  Future<int> addSoldItemAndRetrieveSoldItemId(CTxnsModel soldItem) async {
     try {
       // Insert the txn into the correct table. You might also specify the
       // `conflictAlgorithm` to use in case the same Inventory item is inserted twice.
       //
       // In this case, replace any previous data.
-      await _db?.insert(
+      var db = _db;
+      int soldItemId = await db!.insert(
         txnsTable,
         soldItem.toMap(),
         conflictAlgorithm: ConflictAlgorithm.replace,
       );
-      saleItemAddedToDb.value = true;
+      return soldItemId;
     } catch (e) {
-      CPopupSnackBar.errorSnackBar(
-        title: 'error performing transaction',
-        message: e.toString(),
-      );
-      saleItemAddedToDb.value = false;
+      if (kDebugMode) {
+        CPopupSnackBar.errorSnackBar(
+          title: 'error performing transaction',
+          message: e.toString(),
+        );
+      } else {
+        CPopupSnackBar.errorSnackBar(
+          title: 'error performing transaction',
+          message: 'error saving txn details! please try again later',
+        );
+      }
+
+      rethrow;
     }
+  }
+
+  /// -- batch insert txns --
+  Future<void> batchInsertTxns(List<CTxnsModel> sales) async {
+    final db = _db;
+    final salesBatch = db!.batch();
+
+    for (var soldItem in sales) {
+      salesBatch.insert(txnsTable, soldItem.toMap());
+    }
+
+    await salesBatch.commit(
+      noResult: true,
+    );
   }
 
   /// -- fetch sold items --

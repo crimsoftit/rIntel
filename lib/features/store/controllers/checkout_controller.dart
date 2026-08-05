@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:rintel/api/sheets/store_sheets_api.dart';
 import 'package:rintel/common/widgets/success_screen/txn_success.dart';
 import 'package:rintel/common/widgets/txt_widgets/c_section_headings.dart';
+import 'package:rintel/data/repos/store/store_repo.dart';
 import 'package:rintel/features/personalization/controllers/app_settings_controller.dart';
 import 'package:rintel/features/personalization/controllers/contacts_controller.dart';
 import 'package:rintel/features/personalization/controllers/location_controller.dart';
@@ -124,6 +125,8 @@ class CCheckoutController extends GetxController {
 
   final Rx<FocusNode> customerNameFocusNode = FocusNode().obs;
 
+  final storeRepo = Get.put(CStoreRepo());
+
   /// -- process txn --
   void processTxn(String txnStatus) async {
     try {
@@ -157,10 +160,10 @@ class CCheckoutController extends GetxController {
 
         if (CNetworkManager.instance.hasConnection.value &&
             await CNetworkManager.instance.isConnected()) {
+          userCoordinates = userController.user.value.locationCoordinates;
+        } else {
           userCoordinates =
               'lat: ${locationController.userLocation.value!.latitude} long: ${locationController.userLocation.value!.longitude}';
-        } else {
-          userCoordinates = userController.user.value.locationCoordinates;
         }
 
         // -- separate phone number and dial code --
@@ -213,104 +216,122 @@ class CCheckoutController extends GetxController {
                 : userController.user.value.userAddress,
             userCoordinates,
             DateFormat('yyyy-MM-dd @ kk:mm').format(clock.now()),
-            0,
-            'append',
+            1,
+            'none',
             txnStatus,
           );
 
           // save txn data into the db
-          await dbHelper.addSoldItem(newTxnData).then((result) async {
-            if (dbHelper.saleItemAddedToDb.value) {
-              result = 'item added';
+          await dbHelper.addSoldItemAndRetrieveSoldItemId(newTxnData).then(
+            (result) async {
+              if (result >= 1) {
+                // -- save txn details to cloud firestore --
+                storeRepo.saveTxnToCloudFirestore(newTxnData, result);
 
-              // -- update stock count & total sales for this inventory item --
-              final invController = Get.put(CInventoryController());
-              //invController.fetchUserInventoryItems();
-              var invItem = invController.inventoryItems.firstWhere(
-                (item) => item.productId == cartItem.productId,
-              );
+                // -- update stock count & total sales for this inventory item --
+                final invController = Get.put(CInventoryController());
+                //invController.fetchUserInventoryItems();
+                var invItem = invController.inventoryItems.firstWhere(
+                  (item) => item.productId == cartItem.productId,
+                );
 
-              invItem.qtySold += cartItem.quantity;
+                invItem.qtySold += cartItem.quantity;
 
-              if (invItem.quantity == cartItem.quantity) {
-                invItem.quantity = 0;
-              } else {
-                invItem.quantity -= cartItem.quantity;
-              }
-
-              await dbHelper.updateInventoryItem(invItem);
-
-              // -- update sync status/action for this inventory item --
-              var sAction = invItem.isSynced == 1 ? 'update' : 'append';
-              dbHelper.updateInvOfflineSyncAfterStockUpdate(
-                sAction,
-                cartItem.productId,
-              );
-
-              invController.fetchUserInventoryItems();
-              // -- check and implement low stock count alert --
-              if (invItem.quantity <= invItem.lowStockNotifierLimit) {
-                var alertBody = '';
-                switch (invItem.quantity) {
-                  case 0.0:
-                    alertBody =
-                        '${invItem.name.toUpperCase()} is out of stock!!';
-                    break;
-
-                  case >= 0.001:
-                    if (invItem.quantity == 1) {
-                      alertBody =
-                          'only ${CFormatter.formatItemQtyDisplays(invItem.quantity, invItem.calibration)} ${CFormatter.formatItemMetrics(invItem.calibration, invItem.quantity)} of ${invItem.name.toUpperCase()} is left!!';
-                    } else {
-                      alertBody =
-                          'only ${CFormatter.formatItemQtyDisplays(invItem.quantity, invItem.calibration)} ${CFormatter.formatItemMetrics(invItem.calibration, invItem.quantity)} of ${invItem.name.toUpperCase()} are left!!';
-                    }
-
-                    break;
-                  default:
-                    alertBody = '';
+                if (invItem.quantity == cartItem.quantity) {
+                  invItem.quantity = 0;
+                } else {
+                  invItem.quantity -= cartItem.quantity;
                 }
 
-                await notificationsController.fetchUserNotifications().then((
-                  _,
-                ) async {
-                  var thisAlertId = await notificationsController
-                      .generateNotificationId();
+                await dbHelper.updateInventoryItem(invItem).then(
+                  (result) {
+                    if (result == 1) {
+                      // -- update inventory data on cloud firestore --
+                      storeRepo.updateInvCloudData(invItem);
+                    } else {
+                      if (kDebugMode) {
+                        CPopupSnackBar.warningSnackBar(
+                          message:
+                              'an unknown error occurred while updating inventory item locally!',
+                          title: 'error updating inventory item locally!',
+                        );
+                      }
+                    }
+                  },
+                );
 
-                  var payloadData = {
-                    'date': DateFormat(
-                      'yyyy-MM-dd @ kk:mm',
-                    ).format(clock.now()),
-                    'notification_body': alertBody,
-                    'notification_id': thisAlertId.toString(),
-                    'notification_title': 'Restocking is due!',
-                    'product_id': invItem.productId.toString(),
-                  };
+                // -- update sync status/action for this inventory item --
+                var sAction = invItem.isSynced == 1 ? 'update' : 'append';
+                dbHelper.updateInvOfflineSyncAfterStockUpdate(
+                  sAction,
+                  cartItem.productId,
+                );
 
-                  await CLocalNotificationsController.displaySimpleAlert(
-                    title: 'Restocking is due!',
-                    body: alertBody,
-                    payload: jsonEncode(payloadData),
-                  );
+                invController.fetchUserInventoryItems();
+                // -- check and implement low stock count alert --
+                if (invItem.quantity <= invItem.lowStockNotifierLimit) {
+                  var alertBody = '';
+                  switch (invItem.quantity) {
+                    case 0.0:
+                      alertBody =
+                          '${invItem.name.toUpperCase()} is out of stock!!';
+                      break;
 
-                  var notificationItem = CNotificationsModel(
-                    1,
-                    'Restocking is due!',
-                    alertBody,
-                    0,
-                    invItem.productId,
-                    userController.user.value.email,
-                    DateFormat('yyyy-MM-dd @ kk:mm').format(clock.now()),
-                  );
+                    case >= 0.001:
+                      if (invItem.quantity == 1) {
+                        alertBody =
+                            'only ${CFormatter.formatItemQtyDisplays(invItem.quantity, invItem.calibration)} ${CFormatter.formatItemMetrics(invItem.calibration, invItem.quantity)} of ${invItem.name.toUpperCase()} is left!!';
+                      } else {
+                        alertBody =
+                            'only ${CFormatter.formatItemQtyDisplays(invItem.quantity, invItem.calibration)} ${CFormatter.formatItemMetrics(invItem.calibration, invItem.quantity)} of ${invItem.name.toUpperCase()} are left!!';
+                      }
 
-                  // -- insert notification item into sqflite db --
-                  await DbHelper.instance.addNotificationItem(notificationItem);
-                });
+                      break;
+                    default:
+                      alertBody = '';
+                  }
+
+                  await notificationsController.fetchUserNotifications().then((
+                    _,
+                  ) async {
+                    var thisAlertId = await notificationsController
+                        .generateNotificationId();
+
+                    var payloadData = {
+                      'date': DateFormat(
+                        'yyyy-MM-dd @ kk:mm',
+                      ).format(clock.now()),
+                      'notification_body': alertBody,
+                      'notification_id': thisAlertId.toString(),
+                      'notification_title': 'Restocking is due!',
+                      'product_id': invItem.productId.toString(),
+                    };
+
+                    await CLocalNotificationsController.displaySimpleAlert(
+                      title: 'Restocking is due!',
+                      body: alertBody,
+                      payload: jsonEncode(payloadData),
+                    );
+
+                    var notificationItem = CNotificationsModel(
+                      1,
+                      'Restocking is due!',
+                      alertBody,
+                      0,
+                      invItem.productId,
+                      userController.user.value.email,
+                      DateFormat('yyyy-MM-dd @ kk:mm').format(clock.now()),
+                    );
+
+                    // -- insert notification item into sqflite db --
+                    await DbHelper.instance.addNotificationItem(
+                      notificationItem,
+                    );
+                  });
+                }
               }
-            } else {
-              result = 'ERROR ADDING SALE ITEM';
-            }
-          });
+            },
+          );
         }
         Get.offAll(() {
           final syncController = Get.put(CSyncController());
@@ -795,7 +816,7 @@ class CCheckoutController extends GetxController {
               customerContactsFieldController.text.trim(),
             ) &&
             !CValidator.isValidEmail(
-              customerContactsFieldController.text.trim(),
+              customerContactsFieldController.text.removeAllWhitespace.trim(),
             )) {
           CPopupSnackBar.warningSnackBar(
             title: 'Invalid value for customer contacts!',
