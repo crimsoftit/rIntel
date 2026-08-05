@@ -1740,7 +1740,7 @@ class CTxnsController extends GetxController {
                     ],
                   ),
 
-                  const SizedBox(height: CSizes.spaceBtnSections),
+                  const SizedBox(height: CSizes.spaceBtnSections,),
 
                   Form(
                     key: invoicePaymentFormKey,
@@ -1755,7 +1755,7 @@ class CTxnsController extends GetxController {
                                 maxLines: 2,
                                 overflow: TextOverflow.ellipsis,
                                 style: Theme.of(context).textTheme.labelLarge!
-                                    .apply(color: CColors.rBrown),
+                                    .apply(color: CColors.rBrown,),
                               ),
                               Text(
                                 invoiceAmountOwed.value < 0
@@ -1841,9 +1841,7 @@ class CTxnsController extends GetxController {
                                   txnItem.customerBalance = 0.0;
                                 }
 
-                                txnItem.syncAction = txnItem.isSynced == 0
-                                    ? 'append'
-                                    : 'update';
+                                txnItem.syncAction = 'none';
 
                                 txnItem.txnStatus = invoiceAmountOwed.value <= 0
                                     ? 'complete'

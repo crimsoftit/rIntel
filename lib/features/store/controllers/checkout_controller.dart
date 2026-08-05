@@ -935,7 +935,6 @@ class CCheckoutController extends GetxController {
   }
 
   void confirmInvoicePaymentDialog(int txnId) {
-    // TODO: confirm if seller is sure to sell on credit
     Get.defaultDialog(
       contentPadding: const EdgeInsets.all(CSizes.md),
       title: 'complete transaction?',
