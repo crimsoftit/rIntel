@@ -206,7 +206,21 @@ class CUserController extends GetxController {
       }
     } catch (e) {
       CFullScreenLoader.stopLoading();
-      CPopupSnackBar.errorSnackBar(title: "Oh Snap!", message: e.toString());
+
+      if (kDebugMode) {
+        CPopupSnackBar.errorSnackBar(
+          message: e.toString(),
+          title: "Oh Snap! Error deleting user account",
+        );
+      } else {
+        CPopupSnackBar.errorSnackBar(
+          message:
+              'An unknown error occurred while closing your account! Please try again later...',
+          title: "Oh Snap!",
+        );
+      }
+
+      rethrow;
     }
   }
 

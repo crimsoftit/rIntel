@@ -153,7 +153,8 @@ class CInventoryController extends GetxController {
 
   // }
   Future<void> initInvSync() async {
-    if (localStorage.read('SyncInvDataWithCloud') == true && inventoryItems.isEmpty) {
+    if (localStorage.read('SyncInvDataWithCloud') == true &&
+        inventoryItems.isEmpty) {
       if (await importInventoryDataFromFirestore()) {
         localStorage.write('SyncInvDataWithCloud', false);
       } else {
@@ -626,7 +627,15 @@ class CInventoryController extends GetxController {
       }
 
       // -- delete entry
-      await dbHelper.deleteInventoryItem(inventoryItem);
+      await dbHelper.deleteInventoryItem(inventoryItem).then(
+        (result) {
+          if (result >= 1) {
+            storeRepo.deleteInventoryCloudData(
+              inventoryItem.productId.toString(),
+            );
+          }
+        },
+      );
 
       // -- refresh inventory list
       fetchUserInventoryItems();
@@ -863,23 +872,6 @@ class CInventoryController extends GetxController {
           'Are you certain you want to permanently delete this item? THIS ACTION CAN\'T BE UNDONE!',
       confirm: ElevatedButton(
         onPressed: () async {
-          // -- check internet connectivity
-          final isConnected = CNetworkManager.instance.hasConnection.value;
-
-          if (isConnected) {
-            if (inventoryItem.isSynced == 1) {
-              deleteInvSheetItemNotForUpdates(inventoryItem.productId!);
-            }
-          } else {
-            final delItem = CInvDelsModel(
-              inventoryItem.productId!,
-              inventoryItem.name,
-              'inventory',
-              inventoryItem.isSynced,
-              'delete',
-            );
-            await dbHelper.saveInvDelsForSync(delItem);
-          }
           await deleteInventoryItem(inventoryItem);
 
           Navigator.of(Get.overlayContext!).pop();

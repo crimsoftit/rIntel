@@ -180,7 +180,7 @@ class CStoreRepo extends GetxController {
     } on PlatformException catch (e) {
       CPopupSnackBar.errorSnackBar(
         message: CPlatformExceptions(e.code).message,
-        title: "inventory cloud data platform exception error",
+        title: "inventory cloud data update threw a platform exception error",
       );
 
       rethrow;
@@ -188,17 +188,51 @@ class CStoreRepo extends GetxController {
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
           message: e.toString(),
-          title: "error uploading inventory details",
+          title: "error updating inventory details",
         );
       } else {
         CPopupSnackBar.errorSnackBar(
           message:
-              'an unknown error occurred while uploading inventory details to cloud! please try again later...',
-          title: "error uploading inventory details",
+              'an unknown error occurred while updating inventory details to cloud! please try again later...',
+          title: "error updating inventory details",
         );
       }
 
       //throw 'something went wrong! please try again!';
+
+      rethrow;
+    }
+  }
+
+  /// -- delete inventory item from cloud firestore --
+  Future<void> deleteInventoryCloudData(String productId) async {
+    try {
+      firestoreDb.collection('inventory').doc(productId).delete();
+    } on FormatException catch (e) {
+      CPopupSnackBar.errorSnackBar(
+        title: "platform exception error",
+        message: e.message,
+      );
+      rethrow;
+    } on PlatformException catch (e) {
+      CPopupSnackBar.errorSnackBar(
+        message: CPlatformExceptions(e.code).message,
+        title: "platform exception error while deleting inventory cloud data!",
+      );
+      rethrow;
+    } catch (e) {
+      if (kDebugMode) {
+        CPopupSnackBar.errorSnackBar(
+          title: "inventory item delete error!",
+          message: e.toString(),
+        );
+      } else {
+        CPopupSnackBar.errorSnackBar(
+          title: "inventory item delete error!",
+          message:
+              'An unknown error occurred while deleting cloud inventory data! Please try again later...',
+        );
+      }
 
       rethrow;
     }
@@ -319,7 +353,7 @@ class CStoreRepo extends GetxController {
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
           message: e.toString(),
-          title: "error uploading txns details to cloud!",
+          title: "error fetching txns details from cloud firestore!",
         );
       } else {
         CPopupSnackBar.errorSnackBar(
@@ -328,6 +362,68 @@ class CStoreRepo extends GetxController {
           title: "error fetching txns data from cloud firestore!",
         );
       }
+
+      rethrow;
+    }
+  }
+
+  /// -- update specific txn --
+  Future<void> cloudUpdateTxnItem(CTxnsModel txnItem) async {
+    try {
+      firestoreDb
+          .collection('txns')
+          .doc(txnItem.soldItemId.toString())
+          .update(txnItem.toMap());
+    } on FirebaseException catch (e) {
+      if (kDebugMode) {
+        CPopupSnackBar.errorSnackBar(
+          title: 'firebase cloud error!',
+          message: 'unable to update cloud inventory details: ${e.code}',
+        );
+      } else {
+        CPopupSnackBar.errorSnackBar(
+          title: 'Oh Snap!',
+          message:
+              'an unknown error occurred while updating cloud inventory details! please try again later',
+        );
+      }
+      rethrow;
+    } on FormatException catch (e) {
+      if (kDebugMode) {
+        CPopupSnackBar.errorSnackBar(
+          title: 'inventory datails format error!',
+          message: e.message,
+        );
+      } else {
+        CPopupSnackBar.errorSnackBar(
+          title: 'Oh Snap!',
+          message:
+              'an unknown error occurred while updating cloud inventory details! please try again later',
+        );
+      }
+      rethrow;
+    } on PlatformException catch (e) {
+      CPopupSnackBar.errorSnackBar(
+        message: CPlatformExceptions(e.code).message,
+        title: "inventory cloud data update platform exception error",
+      );
+
+      rethrow;
+    } catch (e) {
+      if (kDebugMode) {
+        CPopupSnackBar.errorSnackBar(
+          message: e.toString(),
+          title: "error updating inventory details",
+        );
+      } else {
+        CPopupSnackBar.errorSnackBar(
+          message:
+              'an unknown error occurred while updating inventory details on the cloud! please try again later...',
+          title: "error updating inventory details",
+        );
+      }
+
+      //throw 'something went wrong! please try again!';
 
       rethrow;
     }

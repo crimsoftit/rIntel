@@ -1740,7 +1740,9 @@ class CTxnsController extends GetxController {
                     ],
                   ),
 
-                  const SizedBox(height: CSizes.spaceBtnSections,),
+                  const SizedBox(
+                    height: CSizes.spaceBtnSections,
+                  ),
 
                   Form(
                     key: invoicePaymentFormKey,
@@ -1755,7 +1757,9 @@ class CTxnsController extends GetxController {
                                 maxLines: 2,
                                 overflow: TextOverflow.ellipsis,
                                 style: Theme.of(context).textTheme.labelLarge!
-                                    .apply(color: CColors.rBrown,),
+                                    .apply(
+                                      color: CColors.rBrown,
+                                    ),
                               ),
                               Text(
                                 invoiceAmountOwed.value < 0
@@ -1826,20 +1830,16 @@ class CTxnsController extends GetxController {
                                   return;
                                 }
 
-                                if (double.parse(txtAmountIssued.text.trim()) >=
-                                    txnItem.totalAmount) {
-                                  txnItem.amountIssued = txnItem.totalAmount;
-                                  txnItem.customerBalance =
+                                txnItem.amountIssued = double.parse(
+                                    txtAmountIssued.text.trim(),
+                                  );
+                                txnItem.customerBalance = 
                                       double.parse(
                                         txtAmountIssued.text.trim(),
                                       ) -
                                       txnItem.totalAmount;
-                                } else {
-                                  txnItem.amountIssued += double.parse(
-                                    txtAmountIssued.text.trim(),
-                                  );
-                                  txnItem.customerBalance = 0.0;
-                                }
+
+                                
 
                                 txnItem.syncAction = 'none';
 
@@ -1853,6 +1853,9 @@ class CTxnsController extends GetxController {
                                       txnItem,
                                     )
                                     .then((result) async {
+                                      // -- update txn item details on cloud firestore --
+                                      storeRepo.cloudUpdateTxnItem(txnItem);
+
                                       await fetchSoldItems().then((_) async {
                                         await initializeSalesSummaryValues();
                                         Navigator.of(

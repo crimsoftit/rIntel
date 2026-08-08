@@ -33,9 +33,9 @@ class CUserRepo extends GetxController {
   final FirebaseFirestore _db = FirebaseFirestore.instance;
 
   /* ===== save user data to firestore ===== */
-  Future<void> saveUserDetails(CUserModel users) async {
+  Future<void> saveUserDetails(CUserModel user) async {
     try {
-      await _db.collection("users").doc(users.id).set(users.toJson());
+      await _db.collection("users").doc(user.id).set(user.toJson());
     } on FirebaseAuthException catch (e) {
       CPopupSnackBar.errorSnackBar(
         title: "firebaseAuth exception error",

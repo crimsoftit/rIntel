@@ -830,7 +830,7 @@ class _CTxnItemsListViewState extends State<CTxnItemsListView> {
                                       style: ElevatedButton.styleFrom(
                                         backgroundColor: isDarkTheme
                                             ? CColors.white
-                                            : CColors.rBrown,
+                                            : CColors.black,
                                         foregroundColor: isDarkTheme
                                             ? CColors.white
                                             : CColors

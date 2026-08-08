@@ -5,6 +5,7 @@ import 'package:rintel/features/authentication/screens/login/login.dart';
 import 'package:rintel/features/authentication/screens/onboarding/onboarding_screen.dart';
 import 'package:rintel/features/authentication/screens/signup/verify_email.dart';
 import 'package:rintel/features/personalization/controllers/contacts_controller.dart';
+import 'package:rintel/features/personalization/controllers/location_controller.dart';
 import 'package:rintel/features/personalization/controllers/user_controller.dart';
 import 'package:rintel/features/personalization/screens/profile/widgets/update_business_name.dart';
 import 'package:rintel/features/personalization/screens/settings/app_settings_screen.dart';
@@ -108,8 +109,11 @@ class AuthRepo extends GetxController {
 
           if (await userController.fetchUserDetails()) {
             final contactsController = Get.put(CContactsController());
-            final invController = Get.put(CInventoryController());
-            final txnsController = Get.put(CTxnsController());
+            final invController      = Get.put(CInventoryController());
+            final locationController = Get.put(CLocationController());
+            final txnsController     = Get.put(CTxnsController());
+
+            locationController.updateUserLocationAndCurrencyDetails();
             // check data sync status
             deviceStorage.writeIfNull(
               'SyncInvDataWithCloud',
@@ -150,11 +154,16 @@ class AuthRepo extends GetxController {
                     txnsController.sales.isEmpty
                 ? 0
                 : 1;
-            Future.delayed(Duration.zero, () {
-              WidgetsBinding.instance.addPostFrameCallback((_) {
-                Get.offAll(() => const NavMenu());
-              },);
-            },);
+            Future.delayed(
+              Duration.zero,
+              () {
+                WidgetsBinding.instance.addPostFrameCallback(
+                  (_) {
+                    Get.offAll(() => const NavMenu());
+                  },
+                );
+              },
+            );
             //Get.offAll(() => const NavMenu());
           } else {
             // stop loader
