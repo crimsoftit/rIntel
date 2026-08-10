@@ -4,6 +4,7 @@ import 'package:rintel/api/sheets/store_sheets_api.dart';
 import 'package:rintel/common/widgets/success_screen/txn_success.dart';
 import 'package:rintel/common/widgets/txt_widgets/c_section_headings.dart';
 import 'package:rintel/data/repos/store/store_repo.dart';
+import 'package:rintel/data/repos/user/user_repo.dart';
 import 'package:rintel/features/personalization/controllers/app_settings_controller.dart';
 import 'package:rintel/features/personalization/controllers/contacts_controller.dart';
 import 'package:rintel/features/personalization/controllers/location_controller.dart';
@@ -49,23 +50,6 @@ import 'package:simple_barcode_scanner/simple_barcode_scanner.dart';
 
 class CCheckoutController extends GetxController {
   static CCheckoutController get instance => Get.find();
-
-  @override
-  void onInit() async {
-    amtIssuedFieldController.text = '';
-    customerContactsFieldController.text = '';
-    customerNameFieldController.text = '';
-    customerBalField.text = '';
-    includeAmtIssuedFieldonModal.value = false;
-    selectedPaymentMethod.value.platformName = 'cash';
-    setFocusOnAmtIssuedField.value = false;
-
-    CLocationServices.instance.getUserLocation(
-      locationController: locationController,
-    );
-
-    super.onInit();
-  }
 
   /// -- variables --
   AddUpdateItemDialog dialog = AddUpdateItemDialog();
@@ -126,6 +110,30 @@ class CCheckoutController extends GetxController {
   final Rx<FocusNode> customerNameFocusNode = FocusNode().obs;
 
   final storeRepo = Get.put(CStoreRepo());
+  final userRepo = Get.put(CUserRepo());
+
+  @override
+  void onInit() async {
+    amtIssuedFieldController.text = '';
+    customerContactsFieldController.text = '';
+    customerNameFieldController.text = '';
+    customerBalField.text = '';
+    includeAmtIssuedFieldonModal.value = false;
+    selectedPaymentMethod.value.platformName = 'cash';
+    setFocusOnAmtIssuedField.value = false;
+
+    CLocationServices.instance
+        .getUserLocation(
+          locationController: locationController,
+        )
+        .then(
+          (_) {
+            updateDeviceLocation();
+          },
+        );
+
+    super.onInit();
+  }
 
   /// -- process txn --
   void processTxn(String txnStatus) async {
@@ -1008,6 +1016,41 @@ class CCheckoutController extends GetxController {
       }
 
       rethrow;
+    }
+  }
+
+  /// -- update device location details --
+  Future<void> updateDeviceLocation() async {
+    try {
+      if (locationController.uAddress.value != '') {
+        userRepo.updateUserLocation(
+          locationController.uAddress.value,
+          'Latitude: ${locationController.userLocation.value!.latitude} \n Longitude: ${locationController.userLocation.value!.longitude}',
+        );
+      } else {
+        if (kDebugMode) {
+          CPopupSnackBar.errorSnackBar(
+            message:
+                'null value for device\'s location address! it\'s probably because device is offline',
+            title: 'error updating device location!',
+          );
+        }
+        if (kDebugMode) {
+          print("\n\n\n *** DEVICE'S CURRENT ADDRESS IS NULL!!! *** \n\n\n");
+        }
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        CPopupSnackBar.errorSnackBar(
+          message: e,
+          title: 'error updating device location!',
+        );
+      } else {
+        CPopupSnackBar.customToast(
+          forInternetConnectivityStatus: false,
+          message: 'unable to update device location',
+        );
+      }
     }
   }
 

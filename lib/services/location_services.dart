@@ -3,7 +3,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/services.dart';
 import 'package:rintel/data/repos/auth/auth_repo.dart';
 import 'package:rintel/features/personalization/controllers/location_controller.dart';
-import 'package:rintel/features/personalization/models/user_model.dart';
 import 'package:rintel/utils/exceptions/firebase_auth_exceptions.dart';
 import 'package:rintel/utils/exceptions/format_exceptions.dart';
 import 'package:rintel/utils/exceptions/platform_exceptions.dart';

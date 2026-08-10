@@ -49,17 +49,15 @@ class CAppSettingsController extends GetxController {
     }
   }
 
-  // Future<void> onContinueButtonPressed() async {
-  //   if (!locationController.updateLoading.value) {
-  //     locationController.updateUserLocationAndCurrencyDetails();
-  //     if (await locationController.updateUserLocationAndCurrencyDetails()) {
-  //       AuthRepo.instance.screenRedirect();
-  //     }
-  //   }
-  // }
   Future<void> onContinueButtonPressed() async {
     if (!locationController.updateLoading.value) {
-      AuthRepo.instance.screenRedirect();
+      locationController.updateUserLocationAndCurrencyDetails().then(
+        (result) {
+          if (result) {
+            AuthRepo.instance.screenRedirect();
+          }
+        },
+      );
     }
   }
 }

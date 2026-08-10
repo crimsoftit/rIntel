@@ -72,7 +72,7 @@ class CLocationController extends GetxController {
   Future<bool> updateUserLocationAndCurrencyDetails() async {
     try {
       updateLoading.value = true;
-      await userController.fetchUserDetails();
+      userController.fetchUserDetails();
       var updatedUser = CUserModel(
         id: userController.user.value.id,
         fullName: userController.user.value.fullName,

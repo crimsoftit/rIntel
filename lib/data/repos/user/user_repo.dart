@@ -35,7 +35,7 @@ class CUserRepo extends GetxController {
   /* ===== save user data to firestore ===== */
   Future<void> saveUserDetails(CUserModel user) async {
     try {
-      await _db.collection("users").doc(user.id).set(user.toJson());
+      _db.collection("users").doc(user.id).set(user.toJson());
     } on FirebaseAuthException catch (e) {
       CPopupSnackBar.errorSnackBar(
         title: "firebaseAuth exception error",
@@ -102,27 +102,27 @@ class CUserRepo extends GetxController {
     } on FirebaseAuthException catch (e) {
       CPopupSnackBar.errorSnackBar(
         title: "firebaseAuth exception error",
-        message: e.code.toString(),
+        message: CFirebaseAuthExceptions(e.code).message,
       );
-      throw CFirebaseAuthExceptions(e.code).message;
+      rethrow;
     } on FirebaseException catch (e) {
       CPopupSnackBar.errorSnackBar(
         title: "firebase exception error",
-        message: e.code.toString(),
+        message: CFirebaseAuthExceptions(e.code).message,
       );
-      throw CFirebaseAuthExceptions(e.code).message;
+      rethrow;
     } on FormatException catch (e) {
       CPopupSnackBar.errorSnackBar(
         title: "platform exception error",
-        message: e.message,
+        message: CFormatExceptions(e.message),
       );
-      throw CFormatExceptions(e.message);
+      rethrow;
     } on PlatformException catch (e) {
       CPopupSnackBar.errorSnackBar(
         title: "platform exception error",
-        message: e.code.toString(),
+        message: CPlatformExceptions(e.code).message,
       );
-      throw CPlatformExceptions(e.code).message;
+      rethrow;
     } catch (e) {
       CPopupSnackBar.errorSnackBar(
         title: "An error occurred",
@@ -130,7 +130,7 @@ class CUserRepo extends GetxController {
       );
       //throw 'something went wrong! please try again!';
 
-      throw e.toString();
+      rethrow;
     }
   }
 
@@ -166,7 +166,7 @@ class CUserRepo extends GetxController {
   Future<void> updateUserDetails(CUserModel updatedUser) async {
     try {
       if (AuthRepo.instance.authUser!.uid.isNotEmpty) {
-        await _db
+        _db
             .collection("users")
             .doc(AuthRepo.instance.authUser!.uid)
             .update(updatedUser.toJson());
@@ -320,10 +320,61 @@ class CUserRepo extends GetxController {
     }
   }
 
+  /// -- update user location details --
+  Future<void> updateUserLocation(String address, String coordinates) async {
+    try {
+      _db.collection('users').doc(AuthRepo.instance.authUser!.uid).update(
+        {
+          'LocationCoordinates': coordinates,
+          'UpdatedAt': DateTime.now(),
+          'UserAddress': address,
+        },
+      );
+    } on FirebaseAuthException catch (e) {
+      CPopupSnackBar.errorSnackBar(
+        title: "firebaseAuth exception error",
+        message: e.code.toString(),
+      );
+      throw CFirebaseAuthExceptions(e.code).message;
+    } on FirebaseException catch (e) {
+      CPopupSnackBar.errorSnackBar(
+        title: "device location update -> firebase exception error",
+        message: CFirebaseAuthExceptions(e.code).message,
+      );
+      rethrow;
+    } on FormatException catch (e) {
+      CPopupSnackBar.errorSnackBar(
+        message: CFormatExceptions(e.message),
+        title: "device location update -> format exception",
+      );
+      rethrow;
+    } on PlatformException catch (e) {
+      CPopupSnackBar.errorSnackBar(
+        message: CPlatformExceptions(e.code).message,
+        title: "device location update platform exception",
+      );
+      rethrow;
+    } catch (e) {
+      if (kDebugMode) {
+        CPopupSnackBar.errorSnackBar(
+          title: "error updating device's current location",
+          message: e.toString(),
+        );
+      } else {
+        CPopupSnackBar.errorSnackBar(
+          message: 'An unknown error occurred while updating device location!',
+          title: "error updating device's current location",
+        );
+      }
+
+      rethrow;
+    }
+  }
+
   /* == remove user data from firestore == */
   Future<void> deleteUserRecord(String userID) async {
     try {
-      await _db.collection("users").doc(userID).delete();
+      _db.collection("users").doc(userID).delete();
     } on FirebaseAuthException catch (e) {
       CPopupSnackBar.errorSnackBar(
         title: "firebaseAuth exception error",
