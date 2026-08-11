@@ -25,9 +25,7 @@ class CContactDetailsScreen extends StatelessWidget {
     final isDarkTheme = CHelperFunctions.isDarkMode(context);
 
     final userController = Get.put(CUserController());
-    final userCurrency = CHelperFunctions.formatCurrency(
-      userController.user.value.currencyCode,
-    );
+    final userCurrency = userController.user.value.currencyCode;
 
     var contactItem = contactsController.myContacts.firstWhere(
       (element) => element.contactId == Get.arguments,

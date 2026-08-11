@@ -46,9 +46,7 @@ class _CTxnItemsListViewState extends State<CTxnItemsListView> {
   ) {
     final isDarkTheme = CHelperFunctions.isDarkMode(context);
     final userController = Get.put(CUserController());
-    final userCurrency = CHelperFunctions.formatCurrency(
-      userController.user.value.currencyCode,
-    );
+    final userCurrency = userController.user.value.currencyCode;
     return ListView.separated(
       itemBuilder: (context, productIndex) {
         return ClipRRect(
@@ -216,9 +214,7 @@ class _CTxnItemsListViewState extends State<CTxnItemsListView> {
     final syncController = Get.put(CSyncController());
     final txnsController = Get.put(CTxnsController());
     final userController = Get.put(CUserController());
-    final userCurrency = CHelperFunctions.formatCurrency(
-      userController.user.value.currencyCode,
-    );
+    final userCurrency = userController.user.value.currencyCode;
 
     return Obx(
       () {

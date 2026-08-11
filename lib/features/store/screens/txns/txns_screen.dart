@@ -2,7 +2,6 @@ import 'package:rintel/features/personalization/controllers/user_controller.dart
 import 'package:rintel/features/store/controllers/txns_controller.dart';
 import 'package:rintel/utils/constants/colors.dart';
 import 'package:rintel/utils/constants/sizes.dart';
-import 'package:rintel/utils/helpers/helper_functions.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -13,9 +12,7 @@ class CTxnsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final txnsController = Get.put(CTxnsController());
     final userController = Get.put(CUserController());
-    final userCurrency = CHelperFunctions.formatCurrency(
-      userController.user.value.currencyCode,
-    );
+    final userCurrency = userController.user.value.currencyCode;
 
     return Scaffold(
       appBar: AppBar(title: const Text('txns')),

@@ -419,9 +419,7 @@ class CCartController extends GetxController {
       builder: (context) {
         final checkoutController = Get.put(CCheckoutController());
         final isDarkTheme = CHelperFunctions.isDarkMode(context);
-        final userCurrency = CHelperFunctions.formatCurrency(
-          userController.user.value.currencyCode,
-        );
+        final userCurrency = userController.user.value.currencyCode;
 
         discountFieldController.text = totalDiscount.value == 0
             ? ''

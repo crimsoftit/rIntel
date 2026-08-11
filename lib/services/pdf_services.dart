@@ -160,9 +160,7 @@ class CPdfServices extends GetxController {
   }
 
   pdf_widget.Widget receiptItems() {
-    final currencySymbol = CHelperFunctions.formatCurrency(
-      userController.user.value.currencyCode,
-    );
+    final currencySymbol = userController.user.value.currencyCode;
 
     final headers = ['description', 'price', 'qty', 'vat', 'total'];
 

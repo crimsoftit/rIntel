@@ -35,9 +35,7 @@ class CInvDetails extends StatelessWidget {
     return Container(
       color: isDarkTheme ? CColors.transparent : CColors.white,
       child: Obx(() {
-        final currency = CHelperFunctions.formatCurrency(
-          userController.user.value.currencyCode,
-        );
+        final currency = userController.user.value.currencyCode;
         var itemId = Get.arguments;
 
         var invItem = invController.inventoryItems.firstWhere(

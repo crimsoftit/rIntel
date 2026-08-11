@@ -23,9 +23,7 @@ class CStoreSummary extends StatelessWidget {
     final invController = Get.put(CInventoryController());
     final txnsController = Get.put(CTxnsController());
     final userController = Get.put(CUserController());
-    final userCurrency = CHelperFunctions.formatCurrency(
-      userController.user.value.currencyCode,
-    );
+    final userCurrency = userController.user.value.currencyCode;
     return CRoundedContainer(
       bgColor: CColors.transparent,
       height: 78.01,

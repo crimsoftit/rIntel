@@ -44,9 +44,7 @@ class AddUpdateInventoryForm extends StatelessWidget {
     final invController = Get.put(CInventoryController());
     final navController = Get.put(CNavMenuController());
     final userController = Get.put(CUserController());
-    final currency = CHelperFunctions.formatCurrency(
-      userController.user.value.currencyCode,
-    );
+    final currency = userController.user.value.currencyCode;
 
     final DbHelper dbHelper = DbHelper.instance;
 

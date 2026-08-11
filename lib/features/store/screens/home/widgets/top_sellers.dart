@@ -21,9 +21,7 @@ class CTopSellers extends StatelessWidget {
     final invController = Get.put(CInventoryController());
     final txnsController = Get.put(CTxnsController());
     final userController = Get.put(CUserController());
-    final userCurrency = CHelperFunctions.formatCurrency(
-      userController.user.value.currencyCode,
-    );
+    final userCurrency = userController.user.value.currencyCode;
 
     return Obx(() {
       if (txnsController.isLoading.value &&

@@ -26,9 +26,7 @@ class CProductPriceTxt extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final userController = Get.put(CUserController());
-    final currency = CHelperFunctions.formatCurrency(
-      userController.user.value.currencyCode,
-    );
+    final currency = userController.user.value.currencyCode;
     return Text.rich(
       TextSpan(
         text: priceCategory,

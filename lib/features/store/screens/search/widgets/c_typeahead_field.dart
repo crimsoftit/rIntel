@@ -25,9 +25,7 @@ class CTypeAheadSearchField extends StatelessWidget {
 
     final screenWidth = CHelperFunctions.screenWidth();
     final userController = Get.put(CUserController());
-    final currencySymbol = CHelperFunctions.formatCurrency(
-      userController.user.value.currencyCode,
-    );
+    final currencySymbol = userController.user.value.currencyCode;
 
     return Container(
       //color: Colors.yellow,

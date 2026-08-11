@@ -20,9 +20,7 @@ class CSoldItemDetails extends StatelessWidget {
     final isDarkTheme = CHelperFunctions.isDarkMode(context);
     final txnsController = Get.put(CTxnsController());
     final userController = Get.put(CUserController());
-    final userCurrency = CHelperFunctions.formatCurrency(
-      userController.user.value.currencyCode,
-    );
+    final userCurrency = userController.user.value.currencyCode;
 
     var itemId = Get.arguments;
 

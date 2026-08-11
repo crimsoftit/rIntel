@@ -1686,15 +1686,13 @@ class CTxnsController extends GetxController {
     return yrSales.isNotEmpty;
   }
 
-  /// -- take partial payment on invoices --
+  /// -- take partial/full payment on invoices --
   Future<dynamic> takeInvoicePayment(
     BuildContext context,
     CTxnsModel txnItem,
   ) async {
     final isDarkTheme = CHelperFunctions.isDarkMode(context);
-    final userCurrency = CHelperFunctions.formatCurrency(
-      userController.user.value.currencyCode,
-    );
+    final userCurrency = userController.user.value.currencyCode;
 
     try {
       return await showModalBottomSheet(
@@ -1779,7 +1777,9 @@ class CTxnsController extends GetxController {
                             ],
                           );
                         }),
-                        const SizedBox(height: CSizes.spaceBtnItems),
+                        const SizedBox(
+                          height: CSizes.spaceBtnItems,
+                        ),
                         CCustomTxtField(
                           fieldHeight: 70.0,
                           fieldValidator: (value) {
@@ -1831,39 +1831,46 @@ class CTxnsController extends GetxController {
                                 }
 
                                 txnItem.amountIssued = double.parse(
-                                    txtAmountIssued.text.trim(),
-                                  );
-                                txnItem.customerBalance = 
-                                      double.parse(
-                                        txtAmountIssued.text.trim(),
-                                      ) -
-                                      txnItem.totalAmount;
-
-                                
+                                  txtAmountIssued.text.trim(),
+                                );
+                                txnItem.customerBalance =
+                                    double.parse(
+                                      txtAmountIssued.text.trim(),
+                                    ) -
+                                    txnItem.totalAmount;
 
                                 txnItem.syncAction = 'none';
 
-                                txnItem.txnStatus = invoiceAmountOwed.value <= 0
+                                txnItem.txnStatus =
+                                    (double.parse(
+                                              txtAmountIssued.text.trim(),
+                                            ) -
+                                            txnItem.totalAmount) <=
+                                        0
                                     ? 'complete'
-                                    : txnItem.txnStatus;
+                                    : 'invoiced';
 
                                 // -- update txn on local db --
-                                dbHelper
+                                await dbHelper
                                     .updateReceiptItem(
                                       txnItem,
                                     )
-                                    .then((result) async {
-                                      // -- update txn item details on cloud firestore --
-                                      storeRepo.cloudUpdateTxnItem(txnItem);
+                                    .then(
+                                      (result) async {
+                                        // -- update txn item details on cloud firestore --
+                                        storeRepo.cloudUpdateTxnItem(txnItem);
 
-                                      await fetchSoldItems().then((_) async {
-                                        await initializeSalesSummaryValues();
-                                        Navigator.of(
-                                          Get.overlayContext!,
-                                        ).pop(true);
-                                        resetSalesFields();
-                                      });
-                                    });
+                                        await fetchSoldItems().then(
+                                          (_) {
+                                            initializeSalesSummaryValues();
+                                            Navigator.of(
+                                              Get.overlayContext!,
+                                            ).pop(true);
+                                            resetSalesFields();
+                                          },
+                                        );
+                                      },
+                                    );
                               },
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: CColors.rBrown,

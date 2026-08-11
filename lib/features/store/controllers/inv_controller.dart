@@ -1390,9 +1390,7 @@ class CInventoryController extends GetxController {
       // ),
       context: context,
       builder: (context) {
-        final currency = CHelperFunctions.formatCurrency(
-          userController.user.value.currencyCode,
-        );
+        final currency = userController.user.value.currencyCode;
         final isDarkTheme = CHelperFunctions.isDarkMode(context);
 
         return CRoundedContainer(

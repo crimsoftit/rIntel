@@ -378,34 +378,34 @@ class CStoreRepo extends GetxController {
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
           title: 'firebase cloud error!',
-          message: 'unable to update cloud inventory details: ${e.code}',
+          message: 'unable to update cloud txn details: ${e.code}',
         );
       } else {
         CPopupSnackBar.errorSnackBar(
           title: 'Oh Snap!',
           message:
-              'an unknown error occurred while updating cloud inventory details! please try again later',
+              'an unknown error occurred while updating cloud txn details! please try again later',
         );
       }
       rethrow;
     } on FormatException catch (e) {
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
-          title: 'inventory datails format error!',
+          title: 'cloud txn datails threw a format error!',
           message: e.message,
         );
       } else {
         CPopupSnackBar.errorSnackBar(
           title: 'Oh Snap!',
           message:
-              'an unknown error occurred while updating cloud inventory details! please try again later',
+              'an unknown error occurred while updating cloud txn details! please try again later',
         );
       }
       rethrow;
     } on PlatformException catch (e) {
       CPopupSnackBar.errorSnackBar(
         message: CPlatformExceptions(e.code).message,
-        title: "inventory cloud data update platform exception error",
+        title: "txn cloud data update threw a platform exception error",
       );
 
       rethrow;
@@ -413,18 +413,15 @@ class CStoreRepo extends GetxController {
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
           message: e.toString(),
-          title: "error updating inventory details",
+          title: "error updating txn details",
         );
       } else {
         CPopupSnackBar.errorSnackBar(
           message:
-              'an unknown error occurred while updating inventory details on the cloud! please try again later...',
-          title: "error updating inventory details",
+              'an unknown error occurred while updating txn details on the cloud! please try again later...',
+          title: "error updating txn details",
         );
       }
-
-      //throw 'something went wrong! please try again!';
-
       rethrow;
     }
   }

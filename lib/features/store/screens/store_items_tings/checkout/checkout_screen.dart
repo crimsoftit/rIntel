@@ -45,9 +45,7 @@ class CCheckoutScreen extends StatelessWidget {
     final txnsController = Get.put(CTxnsController());
     final userController = Get.put(CUserController());
 
-    final currencySymbol = CHelperFunctions.formatCurrency(
-      userController.user.value.currencyCode,
-    );
+    final currencySymbol = userController.user.value.currencyCode;
 
     return Container(
       color: isDarkTheme ? CColors.transparent : CColors.white,
