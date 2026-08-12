@@ -1,5 +1,4 @@
 import 'package:rintel/features/personalization/controllers/user_controller.dart';
-import 'package:rintel/utils/helpers/helper_functions.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 

@@ -252,12 +252,12 @@ class CStoreRepo extends GetxController {
     } on FirebaseException catch (e) {
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
-          title: 'firebase cloud error!',
+          title: 'txn cloud append threw firebase exception error!',
           message: 'unable to save txn details to cloud firestore: ${e.code}',
         );
       } else {
         CPopupSnackBar.errorSnackBar(
-          title: 'Oh Snap!',
+          title: 'Oh Snap! error saving txn details to cloud!',
           message:
               'an unknown error occurred while saving txn details to cloud! please try again later',
         );

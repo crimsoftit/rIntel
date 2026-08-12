@@ -49,12 +49,23 @@ class CUserController extends GetxController {
       profileLoading.value = false;
       return true;
     } catch (e) {
-      user(CUserModel.empty());
-      return false;
+      if (kDebugMode) {
+        CPopupSnackBar.errorSnackBar(
+          message: '$e',
+          title: 'unable to fetch user details!',
+        );
+      } else {
+        CPopupSnackBar.errorSnackBar(
+          message:
+              'an unknown error occurred while fetching your details! please try again later',
+          title: 'unable to fetch user details!',
+        );
+      }
+
+      rethrow;
+    } finally {
+      profileLoading.value = false;
     }
-    // finally {
-    //   profileLoading.value = false;
-    // }
   }
 
   /// -- save user details from any reg/authentication  provider --

@@ -1687,7 +1687,7 @@ class CTxnsController extends GetxController {
   }
 
   /// -- take partial/full payment on invoices --
-  Future<dynamic> takeInvoicePayment(
+  void takeInvoicePayment(
     BuildContext context,
     CTxnsModel txnItem,
   ) async {
@@ -1708,9 +1708,6 @@ class CTxnsController extends GetxController {
         useRootNavigator: true,
         builder: (context) {
           invoiceAmountOwed.value = txnItem.totalAmount - txnItem.amountIssued;
-
-          // -- reset fields --
-          txtAmountIssued.clear();
 
           return Padding(
             padding: MediaQuery.of(context).viewInsets,
@@ -1746,37 +1743,39 @@ class CTxnsController extends GetxController {
                     key: invoicePaymentFormKey,
                     child: Column(
                       children: [
-                        Obx(() {
-                          return Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                'paid: $userCurrency.${txnItem.amountIssued}',
-                                maxLines: 2,
-                                overflow: TextOverflow.ellipsis,
-                                style: Theme.of(context).textTheme.labelLarge!
-                                    .apply(
-                                      color: CColors.rBrown,
-                                    ),
-                              ),
-                              Text(
-                                invoiceAmountOwed.value < 0
-                                    ? 'debit: $userCurrency.${invoiceAmountOwed.value.abs()}'
-                                    : 'credit: $userCurrency.${invoiceAmountOwed.value}',
-                                maxLines: 2,
-                                overflow: TextOverflow.ellipsis,
-                                style: Theme.of(context).textTheme.labelLarge!
-                                    .apply(
-                                      color: invoiceAmountOwed.value > 0
-                                          ? CColors.error
-                                          : isDarkTheme
-                                          ? CColors.white
-                                          : CColors.rBrown,
-                                    ),
-                              ),
-                            ],
-                          );
-                        }),
+                        Obx(
+                          () {
+                            return Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  'total paid: $userCurrency.${txnItem.amountIssued}',
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: Theme.of(context).textTheme.labelLarge!
+                                      .apply(
+                                        color: CColors.rBrown,
+                                      ),
+                                ),
+                                Text(
+                                  invoiceAmountOwed.value < 0
+                                      ? 'debit: $userCurrency.${invoiceAmountOwed.value.abs()}'
+                                      : 'credit: $userCurrency.${invoiceAmountOwed.value}',
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: Theme.of(context).textTheme.labelLarge!
+                                      .apply(
+                                        color: invoiceAmountOwed.value > 0
+                                            ? CColors.error
+                                            : isDarkTheme
+                                            ? CColors.white
+                                            : CColors.rBrown,
+                                      ),
+                                ),
+                              ],
+                            );
+                          },
+                        ),
                         const SizedBox(
                           height: CSizes.spaceBtnItems,
                         ),
@@ -1815,13 +1814,26 @@ class CTxnsController extends GetxController {
                                 color: CColors.white,
                               ),
                               label: Text('Update'),
-                              onPressed: () async {
+                              onPressed: () {
                                 if (!invoicePaymentFormKey.currentState!
                                     .validate()) {
                                   return;
                                 }
 
-                                if (double.parse(txtAmountIssued.text.trim()) <=
+                                if (txtAmountIssued.text
+                                        .trim()
+                                        .removeAllWhitespace ==
+                                    '') {
+                                  CPopupSnackBar.errorSnackBar(
+                                    message:
+                                        'Please enter the amount issued and try again...',
+                                    title: 'invalid amount',
+                                  );
+                                  return;
+                                }
+                                if (double.parse(
+                                      txtAmountIssued.text.trim(),
+                                    ) <=
                                     0) {
                                   CPopupSnackBar.errorSnackBar(
                                     message: 'Invalid amount',
@@ -1830,45 +1842,48 @@ class CTxnsController extends GetxController {
                                   return;
                                 }
 
-                                txnItem.amountIssued = double.parse(
+                                txnItem.amountIssued += double.parse(
                                   txtAmountIssued.text.trim(),
                                 );
                                 txnItem.customerBalance =
-                                    double.parse(
-                                      txtAmountIssued.text.trim(),
-                                    ) -
-                                    txnItem.totalAmount;
+                                    0 - invoiceAmountOwed.value;
 
                                 txnItem.syncAction = 'none';
 
                                 txnItem.txnStatus =
-                                    (double.parse(
-                                              txtAmountIssued.text.trim(),
-                                            ) -
-                                            txnItem.totalAmount) <=
+                                    txnItem.amountIssued -
+                                            txnItem.totalAmount >=
                                         0
                                     ? 'complete'
                                     : 'invoiced';
 
                                 // -- update txn on local db --
-                                await dbHelper
+                                dbHelper
                                     .updateReceiptItem(
                                       txnItem,
                                     )
                                     .then(
-                                      (result) async {
+                                      (result) {
                                         // -- update txn item details on cloud firestore --
                                         storeRepo.cloudUpdateTxnItem(txnItem);
+                                        initializeSalesSummaryValues();
 
-                                        await fetchSoldItems().then(
-                                          (_) {
-                                            initializeSalesSummaryValues();
-                                            Navigator.of(
-                                              Get.overlayContext!,
-                                            ).pop(true);
-                                            resetSalesFields();
-                                          },
-                                        );
+                                        resetSalesFields();
+
+                                        fetchSoldItems();
+                                        // Guard against unmounted context
+                                        if (!context.mounted) {
+                                          CPopupSnackBar.warningSnackBar(
+                                            message: 'context is not mounted',
+                                            title:
+                                                'BuildContext is not mounted',
+                                          );
+                                          return;
+                                        }
+
+                                        Navigator.of(
+                                          context,
+                                        ).pop(true);
                                       },
                                     );
                               },

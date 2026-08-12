@@ -110,138 +110,153 @@ class HomeScreen extends StatelessWidget {
                   right: 18.0,
                   top: 0,
                 ),
-                child: Obx(() {
-                  if ((invController.inventoryItems.isEmpty &&
-                          !invController.isLoading.value) ||
-                      (txnsController.sales.isEmpty &&
-                          !txnsController.isLoading.value)) {
-                    invController.fetchUserInventoryItems();
-                  }
-                  if (invController.isLoading.value &&
-                          invController.inventoryItems.isNotEmpty ||
-                      (txnsController.sales.isNotEmpty &&
-                          txnsController.isLoading.value)) {
-                    return CHorizontalProductShimmer();
-                  }
+                child: Obx(
+                  () {
+                    if ((invController.inventoryItems.isEmpty &&
+                            !invController.isLoading.value) ||
+                        (txnsController.sales.isEmpty &&
+                            !txnsController.isLoading.value)) {
+                      invController.fetchUserInventoryItems();
+                    }
+                    if (invController.isLoading.value &&
+                            invController.inventoryItems.isNotEmpty ||
+                        (txnsController.sales.isNotEmpty &&
+                            txnsController.isLoading.value)) {
+                      return CHorizontalProductShimmer();
+                    }
 
-                  return Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      /// -- store summary --
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const SizedBox(height: CSizes.defaultSpace / 6),
-                          Visibility(
-                            visible: dashboardController
-                                .showSummaryFilterField
-                                .value,
-                            child: Align(
-                              alignment: Alignment.topRight,
-                              child: CAnimatedSearchBar(
-                                controller:
-                                    txnsController.dateRangeFieldController,
-                                customTxtField: CDateRangePickerWidget(),
-                                forStoreSearch: false,
-                                useCustomTxtField: true,
-                                hintTxt: '',
-                              ),
-                            ),
-                          ),
-                          const SizedBox(height: CSizes.defaultSpace / 6),
-
-                          /// -- sales summary cards --
-                          CStoreSummary(),
-
-                          /// -- top sellers --
-                          CSectionHeading(
-                            showActionBtn: true,
-                            title: 'Top sellers...',
-                            txtColor:
-                                CNetworkManager.instance.hasConnection.value
-                                ? CColors.rBrown
-                                : CColors.darkGrey,
-
-                            btnTitle: 'View all',
-                            btnTxtColor: CColors.rBrown,
-                            editFontSize: true,
-                            fWeight: FontWeight.w400,
-                            onPressed: () {
-                              navController.selectedIndex.value = 1;
-                              Get.to(() => const NavMenu());
-                            },
-                          ),
-                          CTopSellers(),
-                          const SizedBox(height: CSizes.defaultSpace / 4),
-                        ],
-                      ),
-
-                      const SizedBox(height: CSizes.defaultSpace * .5),
-
-                      /// -- peak sales hours line chart --
-                      peakSalesHoursLineChart(),
-                      const SizedBox(height: CSizes.defaultSpace * .5),
-
-                      /// -- sales summary bar graph --
-                      // CCustomBarChart(
-                      //   selectedFilterPeriod: dashboardController
-                      //       .setDefaultSalesFilterPeriod(),
-                      // ),
-                      CSectionHeading(
-                        actionWidget: Align(
-                          alignment: Alignment.topLeft,
-                          child: Padding(
-                            padding: const EdgeInsets.only(right: 8.0),
-                            child: CRoundedContainer(
-                              borderRadius: 10.0,
-                              height: 40.0,
-                              padding: const EdgeInsets.all(5.0),
-                              showBorder: true,
-                              child: CCustomDropdownBtn(
-                                defaultItemColor: CColors.black,
-                                defaultItemFontSizeFactor: 1.1,
-                                dropdownItems: dashboardController.salesFilters,
-                                dropdownBoxColor: CColors.rBrown.withValues(
-                                  alpha: .4,
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        /// -- store summary --
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const SizedBox(height: CSizes.defaultSpace / 6),
+                            Visibility(
+                              visible: dashboardController
+                                  .showSummaryFilterField
+                                  .value,
+                              child: Align(
+                                alignment: Alignment.topRight,
+                                child: CAnimatedSearchBar(
+                                  controller:
+                                      txnsController.dateRangeFieldController,
+                                  customTxtField: CDateRangePickerWidget(),
+                                  forStoreSearch: false,
+                                  useCustomTxtField: true,
+                                  hintTxt: '',
                                 ),
-                                selectedValue: dashboardController
-                                    .setDefaultSalesFilterPeriod(),
-                                onValueChanged: (value) {
-                                  dashboardController
-                                      .onSalesFilterPeriodValueChanged(value);
-                                },
-                                underlineColor: CColors.rBrown,
-                                underlineHeight: 0,
+                              ),
+                            ),
+                            const SizedBox(height: CSizes.defaultSpace / 6),
+
+                            /// -- sales summary cards --
+                            CStoreSummary(),
+
+                            /// -- top sellers --
+                            CSectionHeading(
+                              showActionBtn: true,
+                              title: 'Top sellers...',
+                              txtColor:
+                                  CNetworkManager.instance.hasConnection.value
+                                  ? CColors.rBrown
+                                  : CColors.darkGrey,
+
+                              btnTitle: 'View all',
+                              btnTxtColor: CColors.rBrown,
+                              editFontSize: true,
+                              fWeight: FontWeight.w400,
+                              onPressed: () {
+                                navController.selectedIndex.value = 1;
+                                Get.to(() => const NavMenu());
+                              },
+                            ),
+                            CTopSellers(),
+                            const SizedBox(
+                              height: CSizes.defaultSpace / 4,
+                            ),
+                          ],
+                        ),
+
+                        const SizedBox(
+                          height: CSizes.defaultSpace * .5,
+                        ),
+
+                        /// -- peak sales hours line chart --
+                        peakSalesHoursLineChart(),
+                        const SizedBox(
+                          height: CSizes.defaultSpace * .5,
+                        ),
+
+                        /// -- sales summary bar graph --
+                        // CCustomBarChart(
+                        //   selectedFilterPeriod: dashboardController
+                        //       .setDefaultSalesFilterPeriod(),
+                        // ),
+                        CSectionHeading(
+                          actionWidget: Align(
+                            alignment: Alignment.topLeft,
+                            child: Padding(
+                              padding: const EdgeInsets.only(right: 8.0),
+                              child: CRoundedContainer(
+                                borderRadius: 10.0,
+                                height: 40.0,
+                                padding: const EdgeInsets.all(
+                                  5.0,
+                                ),
+                                showBorder: true,
+                                child: CCustomDropdownBtn(
+                                  defaultItemColor: CColors.black,
+                                  defaultItemFontSizeFactor: 1.1,
+                                  dropdownItems:
+                                      dashboardController.salesFilters,
+                                  dropdownBoxColor: CColors.rBrown.withValues(
+                                    alpha: .4,
+                                  ),
+                                  selectedValue: dashboardController
+                                      .setDefaultSalesFilterPeriod(),
+                                  onValueChanged: (value) {
+                                    dashboardController
+                                        .onSalesFilterPeriodValueChanged(value);
+                                  },
+                                  underlineColor: CColors.rBrown,
+                                  underlineHeight: 0,
+                                ),
                               ),
                             ),
                           ),
+                          showActionBtn: true,
+                          title: 'Sales summary...',
+                          txtColor: CNetworkManager.instance.hasConnection.value
+                              ? CColors.rBrown
+                              : CColors.darkGrey,
+
+                          btnTitle: '',
+                          btnTxtColor: CColors.rBrown,
+                          editFontSize: true,
+                          fWeight: FontWeight.w400,
+                          onPressed: () {},
                         ),
-                        showActionBtn: true,
-                        title: 'Sales summary...',
-                        txtColor: CNetworkManager.instance.hasConnection.value
-                            ? CColors.rBrown
-                            : CColors.darkGrey,
+                        const SizedBox(
+                          height: CSizes.defaultSpace / 2,
+                        ),
+                        dashboardController.setDefaultSalesFilterPeriod() ==
+                                'this week'
+                            ? WeeklySalesBarGraphWidget()
+                            : CCustomMonthlySalesBarGraph(),
 
-                        btnTitle: '',
-                        btnTxtColor: CColors.rBrown,
-                        editFontSize: true,
-                        fWeight: FontWeight.w400,
-                        onPressed: () {},
-                      ),
-                      const SizedBox(height: CSizes.defaultSpace / 2),
-                      dashboardController.setDefaultSalesFilterPeriod() ==
-                              'this week'
-                          ? WeeklySalesBarGraphWidget()
-                          : CCustomMonthlySalesBarGraph(),
-
-                      // const SizedBox(
-                      //   height: CSizes.defaultSpace * .5,
-                      // ),
-                      // WeeklySalesBarGraphWidget(),
-                      const SizedBox(height: CSizes.defaultSpace * .5),
-                    ],
-                  );
-                }),
+                        // const SizedBox(
+                        //   height: CSizes.defaultSpace * .5,
+                        // ),
+                        // WeeklySalesBarGraphWidget(),
+                        const SizedBox(
+                          height: CSizes.defaultSpace * .5,
+                        ),
+                      ],
+                    );
+                  },
+                ),
               ),
             ],
           ),
@@ -269,21 +284,50 @@ class HomeScreen extends StatelessWidget {
           fWeight: FontWeight.w400,
           onPressed: () {},
         ),
-        const SizedBox(height: CSizes.defaultSpace / 2),
+        const SizedBox(
+          height: CSizes.defaultSpace / 2,
+        ),
         Obx(() {
           return CCutomLineChart(
             chartHeight: 180.0,
             chartWidth: CHelperFunctions.screenWidth(),
             lineChartData: [
-              FlSpot(0, dashboardController.salesPastMidnightTo3.value),
-              FlSpot(3, (dashboardController.salesBtn3to6.value)),
-              FlSpot(6, dashboardController.salesBtn6to9.value),
-              FlSpot(9, dashboardController.salesBtn9to12.value),
-              FlSpot(12, dashboardController.salesBtn12to15.value),
-              FlSpot(15, dashboardController.salesBtn15to18.value),
-              FlSpot(18, dashboardController.salesBtn18to21.value),
-              FlSpot(21, dashboardController.salesBtn21toMidnight.value),
-              FlSpot(24, dashboardController.salesBtnMidnightTo3.value),
+              FlSpot(
+                0,
+                dashboardController.salesPastMidnightTo3.value,
+              ),
+              FlSpot(
+                3,
+                dashboardController.salesBtn3to6.value,
+              ),
+              FlSpot(
+                6,
+                dashboardController.salesBtn6to9.value,
+              ),
+              FlSpot(
+                9,
+                dashboardController.salesBtn9to12.value,
+              ),
+              FlSpot(
+                12,
+                dashboardController.salesBtn12to15.value,
+              ),
+              FlSpot(
+                15,
+                dashboardController.salesBtn15to18.value,
+              ),
+              FlSpot(
+                18,
+                dashboardController.salesBtn18to21.value,
+              ),
+              FlSpot(
+                21,
+                dashboardController.salesBtn21toMidnight.value,
+              ),
+              FlSpot(
+                24,
+                dashboardController.salesBtnMidnightTo3.value,
+              ),
             ],
           );
         }),

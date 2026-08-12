@@ -34,7 +34,6 @@ import 'package:rintel/utils/constants/sizes.dart';
 import 'package:rintel/utils/db/sqflite/db_helper.dart';
 import 'package:rintel/utils/helpers/formatter.dart';
 import 'package:rintel/utils/helpers/helper_functions.dart';
-import 'package:rintel/utils/helpers/network_manager.dart';
 import 'package:rintel/utils/popups/full_screen_loader.dart';
 import 'package:rintel/utils/popups/snackbars.dart';
 import 'package:clock/clock.dart';
@@ -122,15 +121,18 @@ class CCheckoutController extends GetxController {
     selectedPaymentMethod.value.platformName = 'cash';
     setFocusOnAmtIssuedField.value = false;
 
-    CLocationServices.instance
-        .getUserLocation(
-          locationController: locationController,
-        )
-        .then(
-          (_) {
-            updateDeviceLocation();
-          },
-        );
+    // CLocationServices.instance
+    //     .getUserLocation(
+    //       locationController: locationController,
+    //     )
+    //     .then(
+    //       (_) {
+    //         updateDeviceLocation();
+    //       },
+    //     );
+    CLocationServices.instance.getUserLocation(
+      locationController: locationController,
+    );
 
     super.onInit();
   }
@@ -163,16 +165,6 @@ class CCheckoutController extends GetxController {
 
       if (itemsInCart.isNotEmpty) {
         txnId.value = CHelperFunctions.generateTxnId();
-
-        var userCoordinates = '';
-
-        if (CNetworkManager.instance.hasConnection.value &&
-            await CNetworkManager.instance.isConnected()) {
-          userCoordinates = userController.user.value.locationCoordinates;
-        } else {
-          userCoordinates =
-              'lat: ${locationController.userLocation.value!.latitude} long: ${locationController.userLocation.value!.longitude}';
-        }
 
         // -- separate phone number and dial code --
         final (dialCode, customerContacts) =
@@ -219,10 +211,8 @@ class CCheckoutController extends GetxController {
             selectedPaymentMethod.value.platformName,
             customerNameFieldController.text.trim(),
             customerContacts, // data from customerContactsFieldController
-            locationController.uAddress.value != ''
-                ? locationController.uAddress.value
-                : userController.user.value.userAddress,
-            userCoordinates,
+            userController.user.value.userAddress,
+            userController.user.value.locationCoordinates,
             DateFormat('yyyy-MM-dd @ kk:mm').format(clock.now()),
             1,
             'none',
@@ -299,92 +289,98 @@ class CCheckoutController extends GetxController {
                       alertBody = '';
                   }
 
-                  await notificationsController.fetchUserNotifications().then((
-                    _,
-                  ) async {
-                    var thisAlertId = await notificationsController
-                        .generateNotificationId();
+                  await notificationsController.fetchUserNotifications().then(
+                    (
+                      _,
+                    ) async {
+                      var thisAlertId = await notificationsController
+                          .generateNotificationId();
 
-                    var payloadData = {
-                      'date': DateFormat(
-                        'yyyy-MM-dd @ kk:mm',
-                      ).format(clock.now()),
-                      'notification_body': alertBody,
-                      'notification_id': thisAlertId.toString(),
-                      'notification_title': 'Restocking is due!',
-                      'product_id': invItem.productId.toString(),
-                    };
+                      var payloadData = {
+                        'date': DateFormat(
+                          'yyyy-MM-dd @ kk:mm',
+                        ).format(clock.now()),
+                        'notification_body': alertBody,
+                        'notification_id': thisAlertId.toString(),
+                        'notification_title': 'Restocking is due!',
+                        'product_id': invItem.productId.toString(),
+                      };
 
-                    await CLocalNotificationsController.displaySimpleAlert(
-                      title: 'Restocking is due!',
-                      body: alertBody,
-                      payload: jsonEncode(payloadData),
-                    );
+                      await CLocalNotificationsController.displaySimpleAlert(
+                        title: 'Restocking is due!',
+                        body: alertBody,
+                        payload: jsonEncode(payloadData),
+                      );
 
-                    var notificationItem = CNotificationsModel(
-                      1,
-                      'Restocking is due!',
-                      alertBody,
-                      0,
-                      invItem.productId,
-                      userController.user.value.email,
-                      DateFormat('yyyy-MM-dd @ kk:mm').format(clock.now()),
-                    );
+                      var notificationItem = CNotificationsModel(
+                        1,
+                        'Restocking is due!',
+                        alertBody,
+                        0,
+                        invItem.productId,
+                        userController.user.value.email,
+                        DateFormat('yyyy-MM-dd @ kk:mm').format(clock.now()),
+                      );
 
-                    // -- insert notification item into sqflite db --
-                    await DbHelper.instance.addNotificationItem(
-                      notificationItem,
-                    );
-                  });
+                      // -- insert notification item into sqflite db --
+                      await DbHelper.instance.addNotificationItem(
+                        notificationItem,
+                      );
+                    },
+                  );
                 }
               }
             },
           );
         }
-        Get.offAll(() {
-          final syncController = Get.put(CSyncController());
-          return CTxnSuccessScreen(
-            lottieImage: syncController.processingSync.value
-                ? CImages.loadingAnime
-                : CImages.paymentSuccessfulAnimation,
-            title: 'Txn success',
-            subTitle: syncController.processingSync.value
-                ? 'Processing cloud sync...'
-                : 'Transaction successful',
-            onContinueBtnPressed: () async {
-              txnsController.fetchSoldItems();
+        Get.offAll(
+          () {
+            final syncController = Get.put(CSyncController());
+            return CTxnSuccessScreen(
+              lottieImage: syncController.processingSync.value
+                  ? CImages.loadingAnime
+                  : CImages.paymentSuccessfulAnimation,
+              title: 'Txn success',
+              subTitle: syncController.processingSync.value
+                  ? 'Processing cloud sync...'
+                  : 'Transaction successful',
+              onContinueBtnPressed: () async {
+                txnsController.fetchSoldItems();
 
-              final internetIsConnected = await CNetworkManager.instance
-                  .isConnected();
+                // final internetIsConnected = await CNetworkManager.instance
+                //     .isConnected();
 
-              if (internetIsConnected &&
-                  appSettingsController.dataSyncIsOn.value) {
-                if (await syncController.processSync()) {
-                  await txnsController.fetchSoldItems();
-                  await invController.fetchUserInventoryItems();
-                  // if (invController.unSyncedAppends.isNotEmpty ||
-                  //     invController.unSyncedUpdates.isNotEmpty ||
-                  //     txnsController.unsyncedTxnAppends.isNotEmpty ||
-                  //     txnsController.unsyncedTxnUpdates.isNotEmpty) {
-                  //   await syncController.processSync();
-                  // }
-                }
-              } else {
-                if (!internetIsConnected &&
-                    appSettingsController.dataSyncIsOn.value) {
-                  CPopupSnackBar.customToast(
-                    message:
-                        'internet connection required for cloud sync during checkout!',
-                    forInternetConnectivityStatus: true,
-                  );
-                }
-              }
-              processCustomerDetails().then((_) {
-                refreshData();
-              });
-            },
-          );
-        });
+                // if (internetIsConnected &&
+                //     appSettingsController.dataSyncIsOn.value) {
+                //   if (await syncController.processSync()) {
+                //     await txnsController.fetchSoldItems();
+                //     await invController.fetchUserInventoryItems();
+                //     // if (invController.unSyncedAppends.isNotEmpty ||
+                //     //     invController.unSyncedUpdates.isNotEmpty ||
+                //     //     txnsController.unsyncedTxnAppends.isNotEmpty ||
+                //     //     txnsController.unsyncedTxnUpdates.isNotEmpty) {
+                //     //   await syncController.processSync();
+                //     // }
+                //   }
+                // } else {
+                //   if (!internetIsConnected &&
+                //       appSettingsController.dataSyncIsOn.value) {
+                //     CPopupSnackBar.customToast(
+                //       message:
+                //           'internet connection required for cloud sync during checkout!',
+                //       forInternetConnectivityStatus: true,
+                //     );
+                //   }
+                // }
+                processCustomerDetails().then(
+                  (_) {
+                    refreshData();
+                  },
+                );
+              },
+            );
+          },
+        );
       } else {
         CPopupSnackBar.errorSnackBar(
           title: 'empty cart...',
@@ -920,9 +916,11 @@ class CCheckoutController extends GetxController {
                 0,
                 false,
               )
-              .then((_) {
-                contactsController.fetchMyContacts();
-              });
+              .then(
+                (_) async {
+                  await contactsController.fetchMyContacts();
+                },
+              );
         }
       }
     } catch (e) {

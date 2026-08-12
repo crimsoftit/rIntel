@@ -4,7 +4,6 @@ import 'package:rintel/features/store/controllers/cart_controller.dart';
 import 'package:rintel/features/store/controllers/checkout_controller.dart';
 import 'package:rintel/features/store/models/cart_item_model.dart';
 import 'package:rintel/utils/constants/sizes.dart';
-import 'package:rintel/utils/helpers/helper_functions.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:open_file/open_file.dart';

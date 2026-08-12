@@ -884,12 +884,11 @@ class _CTxnItemsListViewState extends State<CTxnItemsListView> {
                                                 color: CColors.white,
                                               ),
                                         ),
-                                        onPressed: () async {
-                                          await txnsController
-                                              .takeInvoicePayment(
-                                                context,
-                                                demItems[groupedIndex],
-                                              );
+                                        onPressed: () {
+                                          txnsController.takeInvoicePayment(
+                                            context,
+                                            demItems[groupedIndex],
+                                          );
                                         },
 
                                         style: ElevatedButton.styleFrom(

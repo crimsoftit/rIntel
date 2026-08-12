@@ -642,14 +642,13 @@ class CInventoryController extends GetxController {
 
       searchController.txtSearchField.text = '';
 
+      // -- success message
+      // CPopupSnackBar.successSnackBar(
+      //   title: 'delete success',
+      //   message: '${inventoryItem.name} deleted successfully...',
+      // );
       // -- stop loader
       isLoading.value = false;
-
-      // -- success message
-      CPopupSnackBar.successSnackBar(
-        title: 'delete success',
-        message: '${inventoryItem.name} deleted successfully...',
-      );
     } catch (e) {
       // -- stop loader
       isLoading.value = false;

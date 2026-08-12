@@ -5,7 +5,6 @@ import 'package:rintel/features/authentication/screens/login/login.dart';
 import 'package:rintel/features/authentication/screens/onboarding/onboarding_screen.dart';
 import 'package:rintel/features/authentication/screens/signup/verify_email.dart';
 import 'package:rintel/features/personalization/controllers/contacts_controller.dart';
-import 'package:rintel/features/personalization/controllers/location_controller.dart';
 import 'package:rintel/features/personalization/controllers/user_controller.dart';
 import 'package:rintel/features/personalization/screens/profile/widgets/update_business_name.dart';
 import 'package:rintel/features/personalization/screens/settings/app_settings_screen.dart';
@@ -61,7 +60,7 @@ class AuthRepo extends GetxController {
     screenRedirect();
   }
 
-  // -- function to load the relevant screen
+  /// -- function to load the relevant screen--
   void screenRedirect() async {
     final user = _auth.currentUser;
 
@@ -74,7 +73,7 @@ class AuthRepo extends GetxController {
 
         var userRepo = Get.put(CUserRepo());
         userController.fetchUserDetails();
-        var userDets = await userRepo.fetchUserDetails();
+        final userDets = await userRepo.fetchUserDetails();
 
         if (userDets.currencyCode == '' ||
             userDets.locationCoordinates == '' ||
@@ -82,9 +81,7 @@ class AuthRepo extends GetxController {
           Get.offAll(() => const CAppSettingsScreen());
         } else if (userDets.businessName == '') {
           Get.offAll(
-            () => const CUpdateBusinessNameScreen(
-              autoImplyLeading: false,
-            ),
+            () => const CUpdateBusinessNameScreen(autoImplyLeading: false),
           );
         } else {
           // start the loader
@@ -92,12 +89,8 @@ class AuthRepo extends GetxController {
             'Redirecting...',
             CImages.docerAnimation,
             CNetworkManager.instance.hasConnection.value
-                ? CColors.rBrown.withValues(
-                    alpha: .5,
-                  )
-                : CColors.dark.withValues(
-                    alpha: .5,
-                  ),
+                ? CColors.rBrown.withValues(alpha: .8)
+                : CColors.dark.withValues(alpha: .8),
             CColors.white,
           );
 
@@ -109,11 +102,8 @@ class AuthRepo extends GetxController {
 
           if (await userController.fetchUserDetails()) {
             final contactsController = Get.put(CContactsController());
-            final invController      = Get.put(CInventoryController());
-            final locationController = Get.put(CLocationController());
-            final txnsController     = Get.put(CTxnsController());
-
-            locationController.updateUserLocationAndCurrencyDetails();
+            final invController = Get.put(CInventoryController());
+            final txnsController = Get.put(CTxnsController());
             // check data sync status
             deviceStorage.writeIfNull(
               'SyncInvDataWithCloud',
@@ -132,12 +122,10 @@ class AuthRepo extends GetxController {
             await invController.fetchUserInventoryItems();
 
             await txnsController.fetchSoldItems();
-            if (CNetworkManager.instance.hasConnection.value &&
-                CNetworkManager.instance.connectionIsStable.value) {
-              await invController.initInvSync();
-              await contactsController.initContactsSync();
-              await txnsController.initTxnsSync();
-            }
+
+            await invController.initInvSync();
+            await contactsController.initContactsSync();
+            await txnsController.initTxnsSync();
             // else {
             //   CPopupSnackBar.customToast(
             //     forInternetConnectivityStatus: true,

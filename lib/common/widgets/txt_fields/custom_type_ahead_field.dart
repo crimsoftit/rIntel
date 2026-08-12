@@ -1,4 +1,3 @@
-import 'package:rintel/common/widgets/custom_shapes/containers/rounded_container.dart';
 import 'package:rintel/features/personalization/controllers/contacts_controller.dart';
 import 'package:rintel/features/personalization/models/contacts_model.dart';
 import 'package:rintel/utils/constants/colors.dart';
@@ -107,9 +106,14 @@ class CCustomTypeaheadField extends StatelessWidget {
           validator: fieldValidator,
         );
       },
-      constraints: BoxConstraints(maxWidth: screenWidth),
+      constraints: BoxConstraints(
+        maxWidth: screenWidth,
+      ),
       hideOnEmpty: true,
-      offset: Offset(0, 1.0),
+      offset: Offset(
+        0,
+        1.0,
+      ),
 
       listBuilder: (context, children) {
         return Obx(() {
@@ -134,14 +138,16 @@ class CCustomTypeaheadField extends StatelessWidget {
         if (contactsController.foundMatches.isEmpty) {
           return SizedBox.shrink();
         } else {
-          return CRoundedContainer(
-            bgColor: CColors.white,
-            borderRadius: 6.0,
-            padding: const EdgeInsets.only(
-              bottom: 4.0,
-              left: 4.0,
-              right: 4.0,
+          return Material(
+            color: CColors.white,
+            borderRadius: BorderRadius.circular(
+              CSizes.cardRadiusXs,
             ),
+            // padding: const EdgeInsets.only(
+            //   bottom: 4.0,
+            //   left: 4.0,
+            //   right: 4.0,
+            // ),
             child: ListTile(
               contentPadding:
                   contentPadding ??

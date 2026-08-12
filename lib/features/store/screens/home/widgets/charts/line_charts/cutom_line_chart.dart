@@ -96,7 +96,10 @@ class CCutomLineChart extends StatelessWidget {
       //   color: CColors.rBrown,
       //   width: 1.0,
       // ),
-      border: Border(top: BorderSide.none, right: BorderSide.none),
+      border: Border(
+        right: BorderSide.none,
+        top: BorderSide.none,
+      ),
       show: true,
     );
   }
@@ -137,7 +140,9 @@ class CCutomLineChart extends StatelessWidget {
           getTitlesWidget: (value, meta) {
             return Text(
               CFormatter.kSuffixFormatter(value),
-              style: TextStyle(color: CColors.rBrown),
+              style: TextStyle(
+                color: CColors.rBrown,
+              ),
             );
           },
           interval: dashboardController.peakSalesAmount.value / 1.5,
@@ -147,9 +152,17 @@ class CCutomLineChart extends StatelessWidget {
           showTitles: true,
         ),
       ),
-      rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+      rightTitles: AxisTitles(
+        sideTitles: SideTitles(
+          showTitles: false,
+        ),
+      ),
       show: true,
-      topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+      topTitles: AxisTitles(
+        sideTitles: SideTitles(
+          showTitles: false,
+        ),
+      ),
     );
   }
 }
