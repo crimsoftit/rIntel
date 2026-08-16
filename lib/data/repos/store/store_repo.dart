@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:rintel/features/store/models/inv_model.dart';
+import 'package:rintel/features/store/models/txns/txn.dart';
 import 'package:rintel/features/store/models/txns_model.dart';
 import 'package:rintel/utils/exceptions/platform_exceptions.dart';
 import 'package:rintel/utils/popups/snackbars.dart';
@@ -239,16 +240,9 @@ class CStoreRepo extends GetxController {
   }
 
   /// -- save txn details to cloud firestore --
-  Future<void> saveTxnToCloudFirestore(
-    CTxnsModel soldItem,
-    int localDbItemId,
-  ) async {
+  Future<void> saveTxnToCloudFirestore(CTxn txn) async {
     try {
-      soldItem.soldItemId = localDbItemId;
-      firestoreDb
-          .collection("txns")
-          .doc(soldItem.soldItemId.toString())
-          .set(soldItem.toMap());
+      firestoreDb.collection("txns").doc(txn.txnId.toString()).set(txn.toMap());
     } on FirebaseException catch (e) {
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(

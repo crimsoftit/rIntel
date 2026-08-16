@@ -20,6 +20,7 @@ import 'package:rintel/features/store/controllers/txns_controller.dart';
 import 'package:rintel/features/store/models/cart_item_model.dart';
 import 'package:rintel/features/store/models/inv_model.dart';
 import 'package:rintel/features/store/models/payment_method_model.dart';
+import 'package:rintel/features/store/models/txns/txn.dart';
 import 'package:rintel/features/store/models/txns_model.dart';
 import 'package:rintel/features/store/screens/store_items_tings/checkout/checkout_screen.dart';
 import 'package:rintel/features/store/screens/store_items_tings/checkout/widgets/payment_methods/payment_methods_tile.dart';
@@ -179,56 +180,40 @@ class CCheckoutController extends GetxController {
                 customerContactsFieldController.text.trim().removeAllWhitespace,
               );
 
-        for (var cartItem in itemsInCart) {
-          var saleItemUnitBP = invController.inventoryItems
-              .firstWhere((item) => item.productId == cartItem.productId)
-              .unitBp;
+        var txnItems = cartController.cartItems
+            .map((item) => cartController.convertCartItemToCreditItem(item))
+            .toList();
 
-          var newTxnData = CTxnsModel(
-            txnId.value,
-            userController.user.value.id,
-            userController.user.value.email,
-            userController.user.value.fullName,
-            cartItem.productId,
-            cartItem.pCode,
-            cartItem.pName,
-            cartItem.itemMetrics,
-            cartItem.quantity,
-            0,
-            '',
-            cartController.totalCartPrice.value -
-                cartController.totalDiscount.value,
-            selectedPaymentMethod.value.platformName == 'cash'
-                ? double.parse(amtIssuedFieldController.text.trim())
-                : 0.00,
-            selectedPaymentMethod.value.platformName == 'cash' ||
-                    selectedPaymentMethod.value.platformName == 'credit'
-                ? customerBal.value + cartController.totalDiscount.value
-                : 0.00,
-            saleItemUnitBP,
-            cartItem.price,
-            cartController.totalDiscount.value,
-            selectedPaymentMethod.value.platformName,
-            customerNameFieldController.text.trim(),
-            customerContacts, // data from customerContactsFieldController
-            userController.user.value.userAddress,
-            userController.user.value.locationCoordinates,
-            DateFormat('yyyy-MM-dd @ kk:mm').format(clock.now()),
-            1,
-            'none',
-            txnStatus,
-          );
+        var newTxnData = CTxn(
+          txnId.value,
+          userController.user.value.id,
+          userController.user.value.email,
+          userController.user.value.fullName,
+          selectedPaymentMethod.value.platformName == 'cash'
+              ? double.parse(amtIssuedFieldController.text.trim())
+              : 0.0,
+          cartController.totalCartPrice.value -
+              cartController.totalDiscount.value,
+          cartController.totalDiscount.value,
+          selectedPaymentMethod.value.platformName,
+          customerNameFieldController.text.trim().removeAllWhitespace,
+          customerContacts,
+          DateFormat('yyyy-MM-dd @ kk:mm').format(clock.now()),
+          DateFormat('yyyy-MM-dd @ kk:mm').format(clock.now()),
+          txnStatus,
+          userController.user.value.userAddress,
+          userController.user.value.locationCoordinates,
+          txnItems,
+        );
 
-          // save txn data into the db
-          await dbHelper.addSoldItemAndRetrieveSoldItemId(newTxnData).then(
-            (result) async {
-              if (result >= 1) {
-                // -- save txn details to cloud firestore --
-                storeRepo.saveTxnToCloudFirestore(newTxnData, result);
+        await dbHelper.addTxn(newTxnData).then(
+          (result) async {
+            if (result >= 1) {
+              /// -- save data to cloud firestore --
+              storeRepo.saveTxnToCloudFirestore(newTxnData);
 
-                // -- update stock count & total sales for this inventory item --
-                final invController = Get.put(CInventoryController());
-                //invController.fetchUserInventoryItems();
+              for (var cartItem in itemsInCart) {
+                /// -- update inventory data --
                 var invItem = invController.inventoryItems.firstWhere(
                   (item) => item.productId == cartItem.productId,
                 );
@@ -258,15 +243,6 @@ class CCheckoutController extends GetxController {
                   },
                 );
 
-                // -- update sync status/action for this inventory item --
-                var sAction = invItem.isSynced == 1 ? 'update' : 'append';
-                dbHelper.updateInvOfflineSyncAfterStockUpdate(
-                  sAction,
-                  cartItem.productId,
-                );
-
-                invController.fetchUserInventoryItems();
-                // -- check and implement low stock count alert --
                 if (invItem.quantity <= invItem.lowStockNotifierLimit) {
                   var alertBody = '';
                   switch (invItem.quantity) {
@@ -290,9 +266,7 @@ class CCheckoutController extends GetxController {
                   }
 
                   await notificationsController.fetchUserNotifications().then(
-                    (
-                      _,
-                    ) async {
+                    (_) async {
                       var thisAlertId = await notificationsController
                           .generateNotificationId();
 
@@ -330,55 +304,35 @@ class CCheckoutController extends GetxController {
                   );
                 }
               }
-            },
-          );
-        }
-        Get.offAll(
-          () {
-            final syncController = Get.put(CSyncController());
-            return CTxnSuccessScreen(
-              lottieImage: syncController.processingSync.value
-                  ? CImages.loadingAnime
-                  : CImages.paymentSuccessfulAnimation,
-              title: 'Txn success',
-              subTitle: syncController.processingSync.value
-                  ? 'Processing cloud sync...'
-                  : 'Transaction successful',
-              onContinueBtnPressed: () async {
-                txnsController.fetchSoldItems();
 
-                // final internetIsConnected = await CNetworkManager.instance
-                //     .isConnected();
+              Get.offAll(
+                () {
+                  final syncController = Get.put(CSyncController());
+                  return CTxnSuccessScreen(
+                    lottieImage: syncController.processingSync.value
+                        ? CImages.loadingAnime
+                        : CImages.paymentSuccessfulAnimation,
+                    title: 'Txn success',
+                    subTitle: syncController.processingSync.value
+                        ? 'Processing cloud sync...'
+                        : 'Transaction successful',
+                    onContinueBtnPressed: () async {
+                      txnsController.fetchSoldItems();
 
-                // if (internetIsConnected &&
-                //     appSettingsController.dataSyncIsOn.value) {
-                //   if (await syncController.processSync()) {
-                //     await txnsController.fetchSoldItems();
-                //     await invController.fetchUserInventoryItems();
-                //     // if (invController.unSyncedAppends.isNotEmpty ||
-                //     //     invController.unSyncedUpdates.isNotEmpty ||
-                //     //     txnsController.unsyncedTxnAppends.isNotEmpty ||
-                //     //     txnsController.unsyncedTxnUpdates.isNotEmpty) {
-                //     //   await syncController.processSync();
-                //     // }
-                //   }
-                // } else {
-                //   if (!internetIsConnected &&
-                //       appSettingsController.dataSyncIsOn.value) {
-                //     CPopupSnackBar.customToast(
-                //       message:
-                //           'internet connection required for cloud sync during checkout!',
-                //       forInternetConnectivityStatus: true,
-                //     );
-                //   }
-                // }
-                processCustomerDetails().then(
-                  (_) {
-                    refreshData();
-                  },
-                );
-              },
-            );
+                      processCustomerDetails().then(
+                        (_) {
+                          refreshData();
+                        },
+                      );
+                    },
+                  );
+                },
+              );
+            } else {
+              CPopupSnackBar.errorSnackBar(
+                title: 'BADO NEW TXN MODEL HAIWEZI... BUT TUNAKAM MAZE',
+              );
+            }
           },
         );
       } else {

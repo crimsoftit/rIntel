@@ -5,6 +5,7 @@ import 'package:rintel/features/personalization/models/notification_model.dart';
 import 'package:rintel/features/store/models/best_sellers_model.dart';
 import 'package:rintel/features/store/models/inv_dels_model.dart';
 import 'package:rintel/features/store/models/inv_model.dart';
+import 'package:rintel/features/store/models/txns/txn.dart';
 import 'package:rintel/features/store/models/txns_model.dart';
 import 'package:rintel/utils/helpers/helper_functions.dart';
 import 'package:rintel/utils/popups/snackbars.dart';
@@ -31,6 +32,7 @@ class DbHelper extends GetxController {
   final contactsTable = 'contactsTable';
   final contactDelsForSyncTable = 'contactDelsForSyncTable';
   final invDelsForSyncTable = 'invDelsForSyncTable';
+  final salesTable = 'sales';
   final invTable = 'inventory';
   final notificationsTable = 'notifications';
   final salesDelsForSyncTable = 'salesDelsForSyncTable';
@@ -43,12 +45,17 @@ class DbHelper extends GetxController {
     return _dbHelper;
   }
 
+  // static Future _onConfigure(Database db) async {
+  //   await db.execute('PRAGMA foreign_keys = ON');
+  // }
+
   Future<Database> openDb() async {
     if (_db != null) {
       return _db!;
     }
     _db = await openDatabase(
       join(await getDatabasesPath(), 'stock.db'),
+      //onConfigure: _onConfigure,
       onCreate: (database, version) {
         database.execute('''
           CREATE TABLE IF NOT EXISTS $invTable (
@@ -107,6 +114,27 @@ class DbHelper extends GetxController {
             syncAction TEXT NOT NULL,
             txnStatus TEXT NOT NULL,
             FOREIGN KEY(productId) REFERENCES inventory(productId)
+            )          
+          ''');
+
+        database.execute('''
+          CREATE TABLE IF NOT EXISTS $salesTable(
+            txnId INTEGER PRIMARY KEY NOT NULL,
+            userId TEXT NOT NULL,
+            userEmail TEXT NOT NULL,
+            userName TEXT NOT NULL,
+            amountPaid REAL NOT NULL,
+            totalAmount  REAL NOT NULL,
+            discount REAL NOT NULL,
+            paymentMethod TEXT NOT NULL,
+            customerName TEXT,
+            customerContacts TEXT,
+            dateAdded TEXT NOT NULL,
+            lastModified TEXT NOT NULL,
+            txnStatus TEXT NOT NULL,
+            txnAddress LONGTEXT,
+            txnAddressCoordinates LONGTEXT,
+            items TEXT NOT NULL -- stores JSON string --
             )          
           ''');
 
@@ -1313,6 +1341,37 @@ class DbHelper extends GetxController {
               'An unknown error occurred while updating notification item\'s read status',
         );
       }
+      rethrow;
+    }
+  }
+
+  // -- save an invoice to the database --
+  Future<int> addTxn(CTxn txn) async {
+    try {
+      // Insert the txn into the correct table. You might also specify the
+      // `conflictAlgorithm` to use in case the same Inventory item is inserted twice.
+      //
+      // In this case, replace any previous data.
+      var db = _db;
+      int txnId = await db!.insert(
+        salesTable,
+        txn.toMap(),
+        conflictAlgorithm: ConflictAlgorithm.replace,
+      );
+      return txnId;
+    } catch (e) {
+      if (kDebugMode) {
+        CPopupSnackBar.errorSnackBar(
+          title: 'error performing transaction',
+          message: e.toString(),
+        );
+      } else {
+        CPopupSnackBar.errorSnackBar(
+          title: 'error performing transaction',
+          message: 'error saving txn details! please try again later',
+        );
+      }
+
       rethrow;
     }
   }
