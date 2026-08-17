@@ -1,4 +1,6 @@
-class CTxnItem {
+class CSoldItemModel {
+  int? _soldItemId;
+  int _txnId = 0;
   int _productId = 0;
   String _productCode = "";
   String _productName = "";
@@ -10,7 +12,8 @@ class CTxnItem {
   double _unitBP = 0.0;
   double _unitSellingPrice = 0.0;
 
-  CTxnItem(
+  CSoldItemModel(
+    this._txnId,
     this._productId,
     this._productCode,
     this._productName,
@@ -22,8 +25,23 @@ class CTxnItem {
     this._unitSellingPrice,
   );
 
-  static CTxnItem empty() {
-    return CTxnItem(
+  CSoldItemModel.withId(
+    this._soldItemId,
+    this._txnId,
+    this._productId,
+    this._productCode,
+    this._productName,
+    this._itemMetrics,
+    this._quantity,
+    this._qtyRefunded,
+    this._refundReason,
+    this._unitBP,
+    this._unitSellingPrice,
+  );
+
+  static CSoldItemModel empty() {
+    return CSoldItemModel(
+      0,
       0,
       '',
       '',
@@ -36,6 +54,8 @@ class CTxnItem {
     );
   }
 
+  int? get soldItemId => _soldItemId;
+  int get txnId => _txnId;
   int get productId => _productId;
   String get productCode => _productCode;
   String get productName => _productName;
@@ -48,6 +68,14 @@ class CTxnItem {
 
   double get unitBP => _unitBP;
   double get unitSellingPrice => _unitSellingPrice;
+
+  set soldItemId(int newSoldItemId) {
+    soldItemId = newSoldItemId;
+  }
+
+  set txnId(int newTxnId) {
+    txnId = newTxnId;
+  }
 
   set productId(int newPId) {
     productId = newPId;
@@ -104,7 +132,10 @@ class CTxnItem {
   /// -- convert a CCreditItem Object into a Map object --
   Map<String, dynamic> toMap() {
     var map = <String, dynamic>{};
-
+    if (soldItemId != null) {
+      map['soldItemId'] = _soldItemId;
+    }
+    map['txnId'] = _txnId;
     map['productId'] = _productId;
     map['productCode'] = _productCode;
     map['productName'] = _productName;
@@ -118,8 +149,10 @@ class CTxnItem {
     return map;
   }
 
-  /// -- extract a CCreditItem Object from a Map object --
-  CTxnItem.fromMapObject(Map<String, dynamic> map) {
+  /// -- extract a CSoldItemModel Object from a Map object --
+  CSoldItemModel.fromMapObject(Map<String, dynamic> map) {
+    _soldItemId = map['soldItemId'];
+    _txnId = map['txnId'];
     _productId = map['productId'];
     _productCode = map['productCode'];
     _productName = map['productName'];

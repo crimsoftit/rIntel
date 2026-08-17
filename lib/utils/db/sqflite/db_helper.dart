@@ -5,7 +5,8 @@ import 'package:rintel/features/personalization/models/notification_model.dart';
 import 'package:rintel/features/store/models/best_sellers_model.dart';
 import 'package:rintel/features/store/models/inv_dels_model.dart';
 import 'package:rintel/features/store/models/inv_model.dart';
-import 'package:rintel/features/store/models/txns/txn.dart';
+import 'package:rintel/features/store/models/txns/sold_item_model.dart';
+import 'package:rintel/features/store/models/txns/txn_model.dart';
 import 'package:rintel/features/store/models/txns_model.dart';
 import 'package:rintel/utils/helpers/helper_functions.dart';
 import 'package:rintel/utils/popups/snackbars.dart';
@@ -45,9 +46,10 @@ class DbHelper extends GetxController {
     return _dbHelper;
   }
 
-  // static Future _onConfigure(Database db) async {
-  //   await db.execute('PRAGMA foreign_keys = ON');
-  // }
+  // 1. Enable Foreign Keys
+  Future _onConfigure(Database db) async {
+    await db.execute('PRAGMA foreign_keys = ON');
+  }
 
   Future<Database> openDb() async {
     if (_db != null) {
@@ -55,7 +57,7 @@ class DbHelper extends GetxController {
     }
     _db = await openDatabase(
       join(await getDatabasesPath(), 'stock.db'),
-      //onConfigure: _onConfigure,
+      onConfigure: _onConfigure,
       onCreate: (database, version) {
         database.execute('''
           CREATE TABLE IF NOT EXISTS $invTable (
@@ -82,6 +84,44 @@ class DbHelper extends GetxController {
             isSynced INTEGER NOT NULL,
             syncAction TEXT NOT NULL
             )
+          ''');
+
+        database.execute('''
+          CREATE TABLE IF NOT EXISTS sales(
+            txnId INTEGER PRIMARY KEY NOT NULL,
+            userId TEXT NOT NULL,
+            userEmail TEXT NOT NULL,
+            userName TEXT NOT NULL,
+            amountPaid REAL NOT NULL,
+            totalAmount  REAL NOT NULL,
+            discount REAL NOT NULL,
+            paymentMethod TEXT NOT NULL,
+            customerName TEXT,
+            customerContacts TEXT,
+            dateAdded TEXT NOT NULL,
+            lastModified TEXT NOT NULL,
+            txnStatus TEXT NOT NULL,
+            txnAddress LONGTEXT,
+            txnAddressCoordinates LONGTEXT
+            )          
+          ''');
+
+        database.execute('''
+          CREATE TABLE IF NOT EXISTS txnItemsTable(
+            soldItemId INTEGER PRIMARY KEY AUTOINCREMENT,
+            txnId INTEGER NOT NULL,
+            productId INTEGER NOT NULL,
+            productCode LONGTEXT NOT NULL,
+            productName TEXT NOT NULL,
+            itemMetrics TEXT NOT NULL,
+            quantity REAL NOT NULL,
+            qtyRefunded REAL NOT NULL,
+            refundReason TEXT NOT NULL,
+            unitBP REAL NOT NULL,
+            unitSellingPrice REAL NOT NULL,
+            FOREIGN KEY(productId) REFERENCES inventory(productId),
+            FOREIGN KEY(txnId) REFERENCES sales(txnId)
+            )          
           ''');
 
         database.execute('''
@@ -116,60 +156,6 @@ class DbHelper extends GetxController {
             FOREIGN KEY(productId) REFERENCES inventory(productId)
             )          
           ''');
-
-        database.execute('''
-          CREATE TABLE IF NOT EXISTS $salesTable(
-            txnId INTEGER PRIMARY KEY NOT NULL,
-            userId TEXT NOT NULL,
-            userEmail TEXT NOT NULL,
-            userName TEXT NOT NULL,
-            amountPaid REAL NOT NULL,
-            totalAmount  REAL NOT NULL,
-            discount REAL NOT NULL,
-            paymentMethod TEXT NOT NULL,
-            customerName TEXT,
-            customerContacts TEXT,
-            dateAdded TEXT NOT NULL,
-            lastModified TEXT NOT NULL,
-            txnStatus TEXT NOT NULL,
-            txnAddress LONGTEXT,
-            txnAddressCoordinates LONGTEXT,
-            items TEXT NOT NULL -- stores JSON string --
-            )          
-          ''');
-
-        database.execute('''
-          CREATE TABLE IF NOT EXISTS $invDelsForSyncTable (
-            itemId INTEGER NOT NULL,
-            itemName TEXT NOT NULL,
-            itemCategory TEXT NOT NULL,
-            isSynced INTEGER NOT NULL,
-            syncAction TEXT NOT NULL
-          )
-        ''');
-
-        database.execute('''
-          CREATE TABLE IF NOT EXISTS $salesDelsForSyncTable (
-            itemId INTEGER NOT NULL,
-            itemName TEXT NOT NULL,
-            isSynced INTEGER NOT NULL,
-            syncAction TEXT NOT NULL
-          )
-        ''');
-
-        database.execute('''
-          CREATE TABLE IF NOT EXISTS $notificationsTable (
-            notificationId INTEGER PRIMARY KEY AUTOINCREMENT,
-            alertCreated INTEGER NOT NULL,
-            notificationTitle TEXT NOT NULL,
-            notificationBody LONGTEXT NOT NULL,
-            notificationIsRead INTEGER NOT NULL,
-            productId INTEGER,
-            userEmail TEXT NOT NULL,
-            date TEXT NOT NULL,
-            FOREIGN KEY(productId) REFERENCES inventory(productId)
-          )
-        ''');
 
         // -- create contacts table --
         database.execute('''
@@ -206,6 +192,20 @@ class DbHelper extends GetxController {
             syncAction TEXT NOT NULL,
 
             FOREIGN KEY(contactId) REFERENCES contactsTable(contactId)
+          )
+        ''');
+
+        database.execute('''
+          CREATE TABLE IF NOT EXISTS $notificationsTable (
+            notificationId INTEGER PRIMARY KEY AUTOINCREMENT,
+            alertCreated INTEGER NOT NULL,
+            notificationTitle TEXT NOT NULL,
+            notificationBody LONGTEXT NOT NULL,
+            notificationIsRead INTEGER NOT NULL,
+            productId INTEGER,
+            userEmail TEXT NOT NULL,
+            date TEXT NOT NULL,
+            FOREIGN KEY(productId) REFERENCES inventory(productId)
           )
         ''');
       },
@@ -695,6 +695,38 @@ class DbHelper extends GetxController {
   }
 
   /// ==== ### CRUD OPERATIONS ON SALES TABLE ### ====
+
+  // -- save txn to the database --
+  Future<int> addTxn(CTxn txn) async {
+    try {
+      // Insert the txn into the correct table. You might also specify the
+      // `conflictAlgorithm` to use in case the same Inventory item is inserted twice.
+      //
+      // In this case, replace any previous data.
+      var db = _db;
+      int txnId = await db!.insert(
+        'sales',
+        txn.toMap(),
+        conflictAlgorithm: ConflictAlgorithm.replace,
+      );
+      return txnId;
+    } catch (e) {
+      if (kDebugMode) {
+        CPopupSnackBar.errorSnackBar(
+          title: 'error performing transaction',
+          message: e.toString(),
+        );
+      } else {
+        CPopupSnackBar.errorSnackBar(
+          title: 'error performing transaction',
+          message: 'error saving txn details! please try again later',
+        );
+      }
+
+      rethrow;
+    }
+  }
+
   // -- save sale details to the database --
   Future<int> addSoldItemAndRetrieveSoldItemId(CTxnsModel soldItem) async {
     try {
@@ -738,6 +770,62 @@ class DbHelper extends GetxController {
     await salesBatch.commit(
       noResult: true,
     );
+  }
+
+  /// -- batch insert txn items --
+  Future<void> batchInsertSoldItems(List<CSoldItemModel> soldItems) async {
+    final db = _db;
+    final salesBatch = db!.batch();
+
+    for (var soldItem in soldItems) {
+      salesBatch.insert('txnItemsTable', soldItem.toMap());
+    }
+
+    await salesBatch.commit(
+      noResult: true,
+    );
+  }
+
+  /// -- fetch txns --
+  Future<List<Map<String, dynamic>>> fetchUserTxnsWithDetails(
+    String userEmail,
+  ) async {
+    try {
+      final db = _db;
+      final txns = await db!.rawQuery(
+        'SELECT s.*, t.* from sales s '
+        'INNER JOIN txnItemsTable t ON s.txnId = t.txnId',
+      );
+      // final List<Map<String, dynamic>> results = await db.rawQuery('''
+      //     SELECT
+      //       s.*,
+      //       t.*
+      //     FROM $salesTable s
+      //     INNER JOIN $txnItemsTable t
+      //       ON s.txnId = t.txnId
+      //   ''');
+
+      if (txns.isEmpty) {
+        return []; // Return a default instance if no transactions are found
+      }
+
+      // Convert the List<Map<String, dynamic> into a List<CTxnsModel>
+      return txns;
+    } catch (e) {
+      if (kDebugMode) {
+        CPopupSnackBar.errorSnackBar(
+          title: 'error fetching user\'s sold items',
+          message: e.toString(),
+        );
+      } else {
+        CPopupSnackBar.errorSnackBar(
+          title: 'error fetching user\'s sold items',
+          message:
+              'An unknown error occurred while fetching user\'s sold items!',
+        );
+      }
+      rethrow;
+    }
   }
 
   /// -- fetch sold items --
@@ -1341,37 +1429,6 @@ class DbHelper extends GetxController {
               'An unknown error occurred while updating notification item\'s read status',
         );
       }
-      rethrow;
-    }
-  }
-
-  // -- save an invoice to the database --
-  Future<int> addTxn(CTxn txn) async {
-    try {
-      // Insert the txn into the correct table. You might also specify the
-      // `conflictAlgorithm` to use in case the same Inventory item is inserted twice.
-      //
-      // In this case, replace any previous data.
-      var db = _db;
-      int txnId = await db!.insert(
-        salesTable,
-        txn.toMap(),
-        conflictAlgorithm: ConflictAlgorithm.replace,
-      );
-      return txnId;
-    } catch (e) {
-      if (kDebugMode) {
-        CPopupSnackBar.errorSnackBar(
-          title: 'error performing transaction',
-          message: e.toString(),
-        );
-      } else {
-        CPopupSnackBar.errorSnackBar(
-          title: 'error performing transaction',
-          message: 'error saving txn details! please try again later',
-        );
-      }
-
       rethrow;
     }
   }

@@ -134,8 +134,6 @@ class CContactsController extends GetxController {
       await fetchMyContacts().then((results) {
         switch (results.isNotEmpty) {
           case true:
-
-            /// -- TODO: check if this match algorithm makes sense --
             contactMatches = myContacts.where(
               (match) {
                 return match.contactName.toLowerCase().contains(

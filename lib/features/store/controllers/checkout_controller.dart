@@ -20,7 +20,7 @@ import 'package:rintel/features/store/controllers/txns_controller.dart';
 import 'package:rintel/features/store/models/cart_item_model.dart';
 import 'package:rintel/features/store/models/inv_model.dart';
 import 'package:rintel/features/store/models/payment_method_model.dart';
-import 'package:rintel/features/store/models/txns/txn.dart';
+import 'package:rintel/features/store/models/txns/txn_model.dart';
 import 'package:rintel/features/store/models/txns_model.dart';
 import 'package:rintel/features/store/screens/store_items_tings/checkout/checkout_screen.dart';
 import 'package:rintel/features/store/screens/store_items_tings/checkout/widgets/payment_methods/payment_methods_tile.dart';
@@ -181,7 +181,12 @@ class CCheckoutController extends GetxController {
               );
 
         var txnItems = cartController.cartItems
-            .map((item) => cartController.convertCartItemToCreditItem(item))
+            .map(
+              (soldItem) => cartController.convertCartItemToCreditItem(
+                soldItem,
+                txnId.value,
+              ),
+            )
             .toList();
 
         var newTxnData = CTxn(
@@ -203,12 +208,13 @@ class CCheckoutController extends GetxController {
           txnStatus,
           userController.user.value.userAddress,
           userController.user.value.locationCoordinates,
-          txnItems,
         );
 
         await dbHelper.addTxn(newTxnData).then(
           (result) async {
             if (result >= 1) {
+              await dbHelper.batchInsertSoldItems(txnItems);
+
               /// -- save data to cloud firestore --
               storeRepo.saveTxnToCloudFirestore(newTxnData);
 

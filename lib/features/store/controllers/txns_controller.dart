@@ -12,6 +12,7 @@ import 'package:rintel/features/store/controllers/search_bar_controller.dart';
 import 'package:rintel/features/store/controllers/sync_controller.dart';
 import 'package:rintel/features/store/models/best_sellers_model.dart';
 import 'package:rintel/features/store/models/inv_model.dart';
+import 'package:rintel/features/store/models/txns/txn_model.dart';
 import 'package:rintel/features/store/models/txns_model.dart';
 import 'package:rintel/utils/constants/colors.dart';
 import 'package:rintel/utils/constants/sizes.dart';
@@ -46,6 +47,7 @@ class CTxnsController extends GetxController {
   final RxList<CTxnsModel> invoices = <CTxnsModel>[].obs;
 
   final RxList<CTxnsModel> sales = <CTxnsModel>[].obs;
+
   final RxList<CTxnsModel> foundSales = <CTxnsModel>[].obs;
   final RxList<CTxnsModel> txns = <CTxnsModel>[].obs;
   final RxList<CTxnsModel> foundTxns = <CTxnsModel>[].obs;
@@ -143,18 +145,19 @@ class CTxnsController extends GetxController {
   final RxDouble totalAmtSold = 0.0.obs;
 
   final storeRepo = Get.put(CStoreRepo());
+  final RxList<CTxn> userTxns = <CTxn>[].obs;
 
   @override
   void onInit() async {
     dateRangeFieldController.clear();
 
-    if (await CNetworkManager.instance.isConnected() &&
-        CNetworkManager.instance.connectionIsStable.value) {
-      //StoreSheetsApi.initSpreadSheets();
-      await initTxnsSync();
-    }
+    // if (await CNetworkManager.instance.isConnected() &&
+    //     CNetworkManager.instance.connectionIsStable.value) {
+    //   //StoreSheetsApi.initSpreadSheets();
+    //   await initTxnsSync();
+    // }
 
-    await fetchSoldItems();
+    await fetchUserTxns();
 
     await fetchTopSellersFromSales();
 
@@ -298,6 +301,35 @@ class CTxnsController extends GetxController {
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
           title: 'error fetching sold items!',
+          message: e.toString(),
+        );
+      }
+      //throw e.toString();
+      rethrow;
+    }
+  }
+
+  /// -- fetch user txns from sqflite db --
+  Future<List<Map<String, dynamic>>> fetchUserTxns() async {
+    try {
+      isLoading.value = true;
+      foundSales.clear();
+      foundRefunds.clear();
+
+      final txns = await dbHelper.fetchUserTxnsWithDetails(
+        userController.user.value.email,
+      );
+      // assign sold items to sales list
+      userTxns.assignAll(txns);
+
+      isLoading.value = false;
+      return userTxns;
+    } catch (e) {
+      isLoading.value = false;
+
+      if (kDebugMode) {
+        CPopupSnackBar.errorSnackBar(
+          title: 'error fetching txns!',
           message: e.toString(),
         );
       }

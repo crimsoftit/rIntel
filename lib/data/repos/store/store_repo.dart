@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:rintel/features/store/models/inv_model.dart';
-import 'package:rintel/features/store/models/txns/txn.dart';
+import 'package:rintel/features/store/models/txns/txn_model.dart';
 import 'package:rintel/features/store/models/txns_model.dart';
 import 'package:rintel/utils/exceptions/platform_exceptions.dart';
 import 'package:rintel/utils/popups/snackbars.dart';

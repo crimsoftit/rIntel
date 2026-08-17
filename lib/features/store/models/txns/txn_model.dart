@@ -3,7 +3,7 @@
 import 'dart:convert';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:rintel/features/store/models/txns/txn_item.dart';
+import 'package:rintel/features/store/models/txns/sold_item_model.dart';
 
 class CTxn {
   int _txnId = 0;
@@ -21,7 +21,6 @@ class CTxn {
   String _txnStatus = "";
   String _txnAddress = "";
   String _txnAddressCoordinates = "";
-  List<CTxnItem> _items = <CTxnItem>[];
 
   CTxn(
     //this._invoiceId,
@@ -40,28 +39,7 @@ class CTxn {
     this._txnStatus,
     this._txnAddress,
     this._txnAddressCoordinates,
-    this._items,
   );
-
-  // CInvoicesModel.withId(
-  //   this._invoiceId,
-  //   this._txnId,
-  //   this._userId,
-  //   this._userEmail,
-  //   this._userName,
-  //   this._amountPaid,
-  //   this._totalAmount,
-  //   this._discount,
-  //   this._paymentMethod,
-  //   this._customerName,
-  //   this._customerContacts,
-  //   this._dateAdded,
-  //   this._lastModified,
-  //   this._txnStatus,
-  //   this._txnAddress,
-  //   this._txnAddressCoordinates,
-  //   this._items,
-  // );
 
   static CTxn empty() {
     return CTxn(
@@ -80,7 +58,6 @@ class CTxn {
       '',
       '',
       '',
-      [],
     );
   }
 
@@ -106,7 +83,6 @@ class CTxn {
   String get txnStatus => _txnStatus;
   String get txnAddress => _txnAddress;
   String get txnAddressCoordinates => _txnAddressCoordinates;
-  List<CTxnItem> get items => _items;
 
   set txnId(int newTxnId) {
     _txnId = newTxnId;
@@ -168,10 +144,6 @@ class CTxn {
     _txnStatus = newTxnStatus;
   }
 
-  set items(List<CTxnItem> newItemsList) {
-    _items = newItemsList;
-  }
-
   // convert a CInvoicesModel Object into a Map object
   Map<String, dynamic> toMap() {
     return {
@@ -190,9 +162,6 @@ class CTxn {
       'dateAdded': _dateAdded,
       'lastModified': _lastModified,
       'txnStatus': _txnStatus,
-      'items': jsonEncode(
-        _items.map((e) => e.toMap()).toList(),
-      ),
     };
   }
 
@@ -219,7 +188,6 @@ class CTxn {
       salesData['txnStatus'],
       salesData['txnAddress'],
       salesData['txnAddressCoordinates'],
-      salesData['items'],
     );
   }
 
@@ -241,30 +209,7 @@ class CTxn {
       map['txnStatus'],
       map['txnAddress'],
       map['txnAddressCoordinates'],
-      (map['items'] as List)
-          .map(
-            (i) => CTxnItem.fromMapObject(i),
-          ) // Convert each map to SubItem
-          .toList(),
     );
   }
-  // CInvoicesModel.fromMapObject(Map<String, dynamic> map) {
-  //   _invoiceId = map['invoiceId'];
-  //   _txnId = map['txnId'];
-  //   _userId = map['userId'];
-  //   _userEmail = map['userEmail'];
-  //   _userName = map['userName'];
-  //   _amountPaid = map['amountPaid'];
-  //   _totalAmount = map['totalAmount'];
-
-  //   _discount = map['discount'];
-  //   _paymentMethod = map['paymentMethod'];
-  //   _customerName = map['customerName'];
-  //   _customerContacts = map['customerContacts'];
-  //   _txnAddress = map['txnAddress'];
-  //   _txnAddressCoordinates = map['txnAddressCoordinates'];
-  //   _dateAdded = map['dateAdded'];
-  //   _lastModified = map['lastModified'];
-  //   _txnStatus = map['txnStatus'];
-  // }
+ 
 }

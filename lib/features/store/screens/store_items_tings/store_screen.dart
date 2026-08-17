@@ -9,6 +9,7 @@ import 'package:rintel/features/store/controllers/txns_controller.dart';
 import 'package:rintel/features/store/screens/store_items_tings/widgets/inv_gridview_screen.dart';
 import 'package:rintel/features/store/screens/store_items_tings/widgets/store_screen_header.dart';
 import 'package:rintel/features/store/screens/store_items_tings/widgets/txn_items.dart';
+import 'package:rintel/features/store/screens/store_items_tings/widgets/txns.dart';
 import 'package:rintel/utils/constants/colors.dart';
 import 'package:rintel/utils/constants/sizes.dart';
 import 'package:rintel/utils/helpers/helper_functions.dart';
@@ -40,289 +41,292 @@ class CStoreScreen extends StatelessWidget {
         milliseconds: 100,
       ),
       length: 5,
-      child: Obx(() {
-        // Define boundaries for the draggable area
-        final boundaries = Rect.fromLTWH(
-          0,
-          0,
-          MediaQuery.of(context).size.width,
-          MediaQuery.of(context).size.height * 0.9,
-        );
-        return Scaffold(
-          backgroundColor: CColors.rBrown.withValues(
-            alpha: 0.2,
-          ),
-          appBar: CAppBar(
-            horizontalPadding: 0,
-            leadingWidget: searchController.showSearchField.value
-                ? null
-                : Padding(
-                    padding: const EdgeInsets.only(
-                      top: 5.0,
-                      left: 10.0,
-                      right: 10.0,
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Icon(
-                          Iconsax.menu,
-                          size: 25.0,
-                          color: CColors.rBrown,
-                        ),
-                        Expanded(
-                          child: searchController.showSearchField.value
-                              ? CAnimatedSearchBar(
-                                  hintTxt: 'inventory, transactions',
-                                  boxColor:
-                                      searchController.showSearchField.value
-                                      ? CColors.white
-                                      : Colors.transparent,
-                                  controller: searchController.txtSearchField,
-                                )
-                              : SizedBox.shrink(),
-                        ),
-                      ],
-                    ),
-                  ),
-            showBackArrow: false,
-            backIconColor: isDarkTheme ? CColors.white : CColors.rBrown,
-            title: CAnimatedSearchBar(
-              hintTxt: 'inventory, transactions',
-              boxColor: searchController.showSearchField.value
-                  ? CColors.white
-                  : Colors.transparent,
-              controller: searchController.txtSearchField,
+      child: Obx(
+        () {
+          // Define boundaries for the draggable area
+          final boundaries = Rect.fromLTWH(
+            0,
+            0,
+            MediaQuery.of(context).size.width,
+            MediaQuery.of(context).size.height * 0.9,
+          );
+          return Scaffold(
+            backgroundColor: CColors.rBrown.withValues(
+              alpha: 0.2,
             ),
-            backIconAction: () {
-              // Navigator.pop(context, true);
-            },
-          ),
-          body: NestedScrollView(
-            headerSliverBuilder: (context, innerBoxIsScrollable) {
-              return [
-                SliverAppBar(
-                  automaticallyImplyLeading: false,
-                  pinned: true,
-                  floating: false,
-                  backgroundColor: CColors.transparent,
-                  expandedHeight: 50.0,
-                  flexibleSpace: Padding(
-                    padding: const EdgeInsets.only(
-                      left: 10.0,
-                      right: 10.0,
+            appBar: CAppBar(
+              horizontalPadding: 0,
+              leadingWidget: searchController.showSearchField.value
+                  ? null
+                  : Padding(
+                      padding: const EdgeInsets.only(
+                        top: 5.0,
+                        left: 10.0,
+                        right: 10.0,
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Icon(
+                            Iconsax.menu,
+                            size: 25.0,
+                            color: CColors.rBrown,
+                          ),
+                          Expanded(
+                            child: searchController.showSearchField.value
+                                ? CAnimatedSearchBar(
+                                    hintTxt: 'inventory, transactions',
+                                    boxColor:
+                                        searchController.showSearchField.value
+                                        ? CColors.white
+                                        : Colors.transparent,
+                                    controller: searchController.txtSearchField,
+                                  )
+                                : SizedBox.shrink(),
+                          ),
+                        ],
+                      ),
                     ),
-                    child: ListView(
-                      physics: const NeverScrollableScrollPhysics(),
-                      shrinkWrap: true,
-                      children: [
-                        CStoreScreenHeader(
-                          forStoreScreen: true,
-                          title: 'Store',
+              showBackArrow: false,
+              backIconColor: isDarkTheme ? CColors.white : CColors.rBrown,
+              title: CAnimatedSearchBar(
+                hintTxt: 'inventory, transactions',
+                boxColor: searchController.showSearchField.value
+                    ? CColors.white
+                    : Colors.transparent,
+                controller: searchController.txtSearchField,
+              ),
+              backIconAction: () {
+                // Navigator.pop(context, true);
+              },
+            ),
+            body: NestedScrollView(
+              headerSliverBuilder: (context, innerBoxIsScrollable) {
+                return [
+                  SliverAppBar(
+                    automaticallyImplyLeading: false,
+                    pinned: true,
+                    floating: false,
+                    backgroundColor: CColors.transparent,
+                    expandedHeight: 50.0,
+                    flexibleSpace: Padding(
+                      padding: const EdgeInsets.only(
+                        left: 10.0,
+                        right: 10.0,
+                      ),
+                      child: ListView(
+                        physics: const NeverScrollableScrollPhysics(),
+                        shrinkWrap: true,
+                        children: [
+                          CStoreScreenHeader(
+                            forStoreScreen: true,
+                            title: 'Store',
+                          ),
+                          SizedBox(
+                            height: 1.0,
+                          ),
+                        ],
+                      ),
+                    ),
+
+                    /// -- tabs --
+                    bottom: CTabBar(
+                      tabs: [
+                        Tab(
+                          child: Text(
+                            'Inventory',
+                          ),
                         ),
-                        SizedBox(
-                          height: 1.0,
+
+                        Tab(
+                          child: Text(
+                            'Receipts',
+                          ),
+                        ),
+                        Tab(
+                          child: Text(
+                            'Invoices',
+                          ),
+                        ),
+                        Tab(
+                          child: Text(
+                            'Refunds',
+                          ),
+                        ),
+                        Tab(
+                          child: Obx(
+                            () {
+                              return Text(
+                                'Sales (all) - ${txnsController.sales.length}',
+                              );
+                            },
+                          ),
                         ),
                       ],
                     ),
                   ),
+                ];
+              },
+              body: const TabBarView(
+                physics: BouncingScrollPhysics(),
+                children: [
+                  /// -- inventory list items --
+                  CInvGridviewScreen(
+                    mainAxisExtent: 185.20,
+                    screen: 'store',
+                  ),
 
-                  /// -- tabs --
-                  bottom: CTabBar(
-                    tabs: [
-                      Tab(
-                        child: Text(
-                          'Inventory',
-                        ),
-                      ),
+                  // -- almost obsolete --
+                  // CItemsListView(
+                  //   space: 'sales',
+                  // ),
 
-                      Tab(
-                        child: Text(
-                          'Receipts',
-                        ),
-                      ),
-                      Tab(
-                        child: Text(
-                          'Invoices',
-                        ),
-                      ),
-                      Tab(
-                        child: Text(
-                          'Refunds',
-                        ),
-                      ),
-                      Tab(
-                        child: Obx(
-                          () {
-                            return Text(
-                              'Sales (all) - ${txnsController.sales.length}',
-                            );
-                          },
-                        ),
+                  /// -- transactions list view --
+                  CTxnsView(),
+
+                  // CTxnItemsListView(
+                  //   forContactScreen: false,
+                  //   space: 'receipts',
+                  // ),
+                  CTxnItemsListView(
+                    forContactScreen: false,
+                    space: 'invoices',
+                  ),
+
+                  CTxnItemsListView(
+                    forContactScreen: false,
+                    space: 'refunds',
+                  ),
+
+                  CTxnItemsListView(
+                    forContactScreen: false,
+                    space: 'sales',
+                  ),
+                ],
+              ),
+            ),
+
+            /// -- floating action button to scan item for sale --
+            floatingActionButton: invController.inventoryItems.isNotEmpty
+                ? Stack(
+                    children: [
+                      FlutterFloaty(
+                        // backgroundColor:
+                        //     CNetworkManager.instance.hasConnection.value
+                        //     ? CColors.rBrown
+                        //     : CColors.darkerGrey,
+                        backgroundColor: CColors.transparent,
+                        borderRadius: 15.0,
+
+                        builder: (context) {
+                          return Column(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              /// -- button to add inventory item --
+                              FloatingActionButton(
+                                elevation: 1, // -- removes shadow
+                                onPressed: () {
+                                  invController.addInvItemDialogAction(false);
+                                },
+                                backgroundColor:
+                                    CNetworkManager.instance.hasConnection.value
+                                    ? CColors.rBrown
+                                    : CColors.black,
+
+                                foregroundColor: CColors.white,
+                                heroTag: 'add',
+                                child: Icon(
+                                  // Iconsax.scan_barcode,
+                                  Iconsax.add,
+                                ),
+                              ),
+                              SizedBox(
+                                height: 10.0,
+                              ),
+                              invController.inventoryItems.isEmpty
+                                  ? SizedBox.shrink()
+                                  : Stack(
+                                      alignment: Alignment.center,
+                                      children: [
+                                        FloatingActionButton.extended(
+                                          elevation: 0,
+                                          focusElevation: 0,
+                                          label: Text(
+                                            'CHECKOUT',
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .labelMedium!
+                                                .apply(
+                                                  color: CColors.white,
+                                                  fontSizeDelta: 1.2,
+                                                  //fontWeightDelta: 2,
+                                                ),
+                                          ),
+                                          onPressed: () {
+                                            checkoutController
+                                                .handleNavToCheckout();
+                                          },
+                                          backgroundColor:
+                                              CNetworkManager
+                                                  .instance
+                                                  .hasConnection
+                                                  .value
+                                              ? CColors.rBrown
+                                              : CColors.black,
+                                          foregroundColor: Colors.white,
+                                          heroTag: 'checkout',
+                                          icon: const Icon(
+                                            Iconsax.wallet_check,
+                                            size: CSizes.iconSm,
+                                          ),
+                                        ),
+                                        CPositionedCartCounterWidget(
+                                          containerHeight: 14.0,
+                                          containerWidth: 14.0,
+                                          counterBgColor: CColors.white,
+                                          counterTxtColor: CColors.rBrown,
+                                          rightPosition: 62.0,
+                                          topPosition: 10.0,
+                                        ),
+                                      ],
+                                    ),
+                            ],
+                          );
+                        },
+                        growingFactor: 1.1,
+                        height: 125.0,
+                        initialX: CHelperFunctions.screenWidth() * .69,
+                        initialY: CHelperFunctions.screenHeight() * .72,
+                        intrinsicBoundaries: boundaries,
+
+                        onDragBackgroundColor:
+                            CNetworkManager.instance.hasConnection.value
+                            ? CColors.rBrown.withValues(
+                                alpha: .4,
+                              )
+                            : CColors.darkerGrey.withValues(
+                                alpha: .4,
+                              ),
+                        // shadow: BoxShadow(
+                        //   blurRadius: 3.0,
+                        //   color: CColors.grey.withValues(
+                        //     alpha: .1,
+                        //   ),
+                        //   offset: const Offset(
+                        //     0.0,
+                        //     1.0,
+                        //   ),
+                        //   spreadRadius: 1.0,
+                        // ),
+                        shape: BoxShape.rectangle,
+                        width: 100.0,
                       ),
                     ],
-                  ),
-                ),
-              ];
-            },
-            body: const TabBarView(
-              physics: BouncingScrollPhysics(),
-              children: [
-                /// -- inventory list items --
-                CInvGridviewScreen(
-                  mainAxisExtent: 185.20,
-                  screen: 'store',
-                ),
-
-                // -- almost obsolete --
-                // CItemsListView(
-                //   space: 'sales',
-                // ),
-
-                /// -- transactions list view --
-                CTxnItemsListView(
-                  forContactScreen: false,
-                  space: 'receipts',
-                ),
-
-                CTxnItemsListView(
-                  forContactScreen: false,
-                  space: 'invoices',
-                ),
-
-                CTxnItemsListView(
-                  forContactScreen: false,
-                  space: 'refunds',
-                ),
-
-                CTxnItemsListView(
-                  forContactScreen: false,
-                  space: 'sales',
-                ),
-              ],
-            ),
-          ),
-
-          /// -- floating action button to scan item for sale --
-          floatingActionButton: invController.inventoryItems.isNotEmpty
-              ? Stack(
-                  children: [
-                    FlutterFloaty(
-                      // backgroundColor:
-                      //     CNetworkManager.instance.hasConnection.value
-                      //     ? CColors.rBrown
-                      //     : CColors.darkerGrey,
-                      backgroundColor: CColors.transparent,
-                      borderRadius: 15.0,
-
-                      builder: (context) {
-                        return Column(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            /// -- button to add inventory item --
-                            FloatingActionButton(
-                              elevation: 1, // -- removes shadow
-                              onPressed: () {
-                                invController.addInvItemDialogAction(false);
-                              },
-                              backgroundColor:
-                                  CNetworkManager.instance.hasConnection.value
-                                  ? CColors.rBrown
-                                  : CColors.black,
-
-                              foregroundColor: CColors.white,
-                              heroTag: 'add',
-                              child: Icon(
-                                // Iconsax.scan_barcode,
-                                Iconsax.add,
-                              ),
-                            ),
-                            SizedBox(
-                              height: 10.0,
-                            ),
-                            invController.inventoryItems.isEmpty
-                                ? SizedBox.shrink()
-                                : Stack(
-                                    alignment: Alignment.center,
-                                    children: [
-                                      FloatingActionButton.extended(
-                                        elevation: 0,
-                                        focusElevation: 0,
-                                        label: Text(
-                                          'CHECKOUT',
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .labelMedium!
-                                              .apply(
-                                                color: CColors.white,
-                                                fontSizeDelta: 1.2,
-                                                //fontWeightDelta: 2,
-                                              ),
-                                        ),
-                                        onPressed: () {
-                                          checkoutController
-                                              .handleNavToCheckout();
-                                        },
-                                        backgroundColor:
-                                            CNetworkManager
-                                                .instance
-                                                .hasConnection
-                                                .value
-                                            ? CColors.rBrown
-                                            : CColors.black,
-                                        foregroundColor: Colors.white,
-                                        heroTag: 'checkout',
-                                        icon: const Icon(
-                                          Iconsax.wallet_check,
-                                          size: CSizes.iconSm,
-                                        ),
-                                      ),
-                                      CPositionedCartCounterWidget(
-                                        containerHeight: 14.0,
-                                        containerWidth: 14.0,
-                                        counterBgColor: CColors.white,
-                                        counterTxtColor: CColors.rBrown,
-                                        rightPosition: 62.0,
-                                        topPosition: 10.0,
-                                      ),
-                                    ],
-                                  ),
-                          ],
-                        );
-                      },
-                      growingFactor: 1.1,
-                      height: 125.0,
-                      initialX: CHelperFunctions.screenWidth() * .69,
-                      initialY: CHelperFunctions.screenHeight() * .72,
-                      intrinsicBoundaries: boundaries,
-
-                      onDragBackgroundColor:
-                          CNetworkManager.instance.hasConnection.value
-                          ? CColors.rBrown.withValues(
-                              alpha: .4,
-                            )
-                          : CColors.darkerGrey.withValues(
-                              alpha: .4,
-                            ),
-                      // shadow: BoxShadow(
-                      //   blurRadius: 3.0,
-                      //   color: CColors.grey.withValues(
-                      //     alpha: .1,
-                      //   ),
-                      //   offset: const Offset(
-                      //     0.0,
-                      //     1.0,
-                      //   ),
-                      //   spreadRadius: 1.0,
-                      // ),
-                      shape: BoxShape.rectangle,
-                      width: 100.0,
-                    ),
-                  ],
-                )
-              : SizedBox.shrink(),
-        );
-      }),
+                  )
+                : SizedBox.shrink(),
+          );
+        },
+      ),
     );
   }
 }

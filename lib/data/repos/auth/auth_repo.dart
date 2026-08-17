@@ -101,9 +101,10 @@ class AuthRepo extends GetxController {
           }
 
           if (await userController.fetchUserDetails()) {
-            final contactsController = Get.put(CContactsController());
             final invController = Get.put(CInventoryController());
             final txnsController = Get.put(CTxnsController());
+            final contactsController = Get.put(CContactsController());
+
             // check data sync status
             deviceStorage.writeIfNull(
               'SyncInvDataWithCloud',
@@ -117,15 +118,14 @@ class AuthRepo extends GetxController {
               'SyncContactsWithCloud',
               true,
             );
-            await contactsController.fetchMyContacts();
+            await invController.initInvSync();
 
             await invController.fetchUserInventoryItems();
 
-            await txnsController.fetchSoldItems();
+            //await txnsController.fetchSoldItems();
+            //await txnsController.fetchUserTxns();
 
-            await invController.initInvSync();
-            await contactsController.initContactsSync();
-            await txnsController.initTxnsSync();
+            //await txnsController.initTxnsSync();
             // else {
             //   CPopupSnackBar.customToast(
             //     forInternetConnectivityStatus: true,

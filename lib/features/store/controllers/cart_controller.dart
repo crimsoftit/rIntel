@@ -5,7 +5,7 @@ import 'package:rintel/features/store/controllers/checkout_controller.dart';
 import 'package:rintel/features/store/controllers/inv_controller.dart';
 import 'package:rintel/features/store/models/cart_item_model.dart';
 import 'package:rintel/features/store/models/inv_model.dart';
-import 'package:rintel/features/store/models/txns/txn_item.dart';
+import 'package:rintel/features/store/models/txns/sold_item_model.dart';
 import 'package:rintel/features/store/screens/store_items_tings/checkout/checkout_screen.dart';
 import 'package:rintel/features/store/screens/store_items_tings/checkout/widgets/amt_issued_field.dart';
 import 'package:rintel/utils/computations/date_time_computations.dart';
@@ -361,8 +361,9 @@ class CCartController extends GetxController {
   }
 
   /// -- convert a CCartItemModel to a CCreditItemModel --
-  CTxnItem convertCartItemToCreditItem(CCartItemModel item) {
-    return CTxnItem(
+  CSoldItemModel convertCartItemToCreditItem(CCartItemModel item, int txnId) {
+    return CSoldItemModel(
+      txnId,
       item.productId,
       item.pCode,
       item.pName,
