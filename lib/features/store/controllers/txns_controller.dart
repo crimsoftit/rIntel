@@ -12,6 +12,7 @@ import 'package:rintel/features/store/controllers/search_bar_controller.dart';
 import 'package:rintel/features/store/controllers/sync_controller.dart';
 import 'package:rintel/features/store/models/best_sellers_model.dart';
 import 'package:rintel/features/store/models/inv_model.dart';
+import 'package:rintel/features/store/models/txns/sold_item_model.dart';
 import 'package:rintel/features/store/models/txns/txn_model.dart';
 import 'package:rintel/features/store/models/txns_model.dart';
 import 'package:rintel/utils/constants/colors.dart';
@@ -146,6 +147,7 @@ class CTxnsController extends GetxController {
 
   final storeRepo = Get.put(CStoreRepo());
   final RxList<CTxn> userTxns = <CTxn>[].obs;
+  final RxList<CSoldItemModel> userTxnItems = <CSoldItemModel>[].obs;
 
   @override
   void onInit() async {
@@ -1075,7 +1077,8 @@ class CTxnsController extends GetxController {
 
   Future<dynamic> refundItemActionModal(
     BuildContext context,
-    CTxnsModel soldItem,
+    CTxn parentTxn,
+    CSoldItemModel soldItem,
   ) async {
     final isDarkTheme = CHelperFunctions.isDarkMode(context);
     return await showModalBottomSheet(
@@ -1290,7 +1293,7 @@ class CTxnsController extends GetxController {
                       child: ElevatedButton.icon(
                         onPressed: () async {
                           // refund item actions - inventory & txn item updates;
-                          soldItem.lastModified = DateFormat(
+                          parentTxn.lastModified = DateFormat(
                             'yyyy-MM-dd @ kk:mm',
                           ).format(clock.now());
                           soldItem.refundReason = txtRefundReason.text.trim();
@@ -1300,14 +1303,15 @@ class CTxnsController extends GetxController {
                           soldItem.quantity -= double.parse(
                             txtRefundQty.text.trim(),
                           );
-                          soldItem.syncAction = soldItem.isSynced == 0
-                              ? 'append'
-                              : 'update';
-                          soldItem.totalAmount -=
+
+                          parentTxn.totalAmount -=
                               double.parse(txtRefundQty.text.trim()) *
                               soldItem.unitSellingPrice;
 
-                          if (await dbHelper.updateReceiptItem(soldItem) >= 1) {
+                          if (await dbHelper.updateParentTxnDetails(
+                                parentTxn,
+                              ) >=
+                              1) {
                             var invItemIndex = invController.inventoryItems
                                 .indexWhere(
                                   (item) =>
@@ -1816,7 +1820,9 @@ class CTxnsController extends GetxController {
                                 size: CSizes.iconSm,
                                 color: CColors.white,
                               ),
-                              label: Text('Update'),
+                              label: Text(
+                                'Update',
+                              ),
                               onPressed: () {
                                 if (!invoicePaymentFormKey.currentState!
                                     .validate()) {
@@ -1862,7 +1868,7 @@ class CTxnsController extends GetxController {
 
                                 // -- update txn on local db --
                                 dbHelper
-                                    .updateReceiptItem(
+                                    .updateParentTxnDetails(
                                       txnItem,
                                     )
                                     .then(
@@ -2104,8 +2110,39 @@ class CTxnsController extends GetxController {
       // assign sold items to sales list
       userTxns.assignAll(txns);
 
+      fetchUserTxnItems();
+
       isLoading.value = false;
       return userTxns;
+    } catch (e) {
+      isLoading.value = false;
+
+      if (kDebugMode) {
+        CPopupSnackBar.errorSnackBar(
+          title: 'error fetching txns!',
+          message: e.toString(),
+        );
+      }
+      //throw e.toString();
+      rethrow;
+    }
+  }
+
+  /// -- fetch txn items from sqflite db --
+  Future<List<CSoldItemModel>> fetchUserTxnItems() async {
+    try {
+      isLoading.value = true;
+      foundSales.clear();
+      foundRefunds.clear();
+
+      final txnItems = await dbHelper.fetchUserTxnItems(
+        userController.user.value.email,
+      );
+      // assign sold items to sales list
+      userTxnItems.assignAll(txnItems);
+
+      isLoading.value = false;
+      return userTxnItems;
     } catch (e) {
       isLoading.value = false;
 

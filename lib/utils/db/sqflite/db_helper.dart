@@ -1004,18 +1004,18 @@ class DbHelper extends GetxController {
   }
 
   /// -- defines a function to update a receipt/sold item --
-  Future<int> updateReceiptItem(CTxnsModel txnItem) async {
+  Future<int> updateParentTxnDetails(CTxn txn) async {
     try {
       // Update the given sold item.
       var updateResult = await _db!.update(
-        txnsTable,
-        txnItem.toMap(),
+        'sales',
+        txn.toMap(),
 
         // ensure that the sold item has a matching product id.
-        where: 'soldItemId = ?',
+        where: 'txnId = ?',
 
         // pass the item's id as a whereArg to prevent SQL injection
-        whereArgs: [txnItem.soldItemId],
+        whereArgs: [txn.txnId],
       );
       return updateResult;
     } catch (e) {
