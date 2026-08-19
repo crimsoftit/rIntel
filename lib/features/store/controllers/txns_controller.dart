@@ -309,35 +309,6 @@ class CTxnsController extends GetxController {
     }
   }
 
-  /// -- fetch user txns from sqflite db --
-  Future<List<Map<String, dynamic>>> fetchUserTxns() async {
-    try {
-      isLoading.value = true;
-      foundSales.clear();
-      foundRefunds.clear();
-
-      final txns = await dbHelper.fetchUserTxnsWithDetails(
-        userController.user.value.email,
-      );
-      // assign sold items to sales list
-      userTxns.assignAll(txns);
-
-      isLoading.value = false;
-      return userTxns;
-    } catch (e) {
-      isLoading.value = false;
-
-      if (kDebugMode) {
-        CPopupSnackBar.errorSnackBar(
-          title: 'error fetching txns!',
-          message: e.toString(),
-        );
-      }
-      //throw e.toString();
-      rethrow;
-    }
-  }
-
   /// -- update receipt item name when inventory name is updated --
   Future updateRelatedSoldItemsName(
     CInventoryModel invItem,
@@ -2117,6 +2088,35 @@ class CTxnsController extends GetxController {
       rethrow;
     } finally {
       isLoading.value = false;
+    }
+  }
+
+  /// -- fetch user txns from sqflite db --
+  Future<List<CTxn>> fetchUserTxns() async {
+    try {
+      isLoading.value = true;
+      foundSales.clear();
+      foundRefunds.clear();
+
+      final txns = await dbHelper.fetchUserTxns(
+        userController.user.value.email,
+      );
+      // assign sold items to sales list
+      userTxns.assignAll(txns);
+
+      isLoading.value = false;
+      return userTxns;
+    } catch (e) {
+      isLoading.value = false;
+
+      if (kDebugMode) {
+        CPopupSnackBar.errorSnackBar(
+          title: 'error fetching txns!',
+          message: e.toString(),
+        );
+      }
+      //throw e.toString();
+      rethrow;
     }
   }
 

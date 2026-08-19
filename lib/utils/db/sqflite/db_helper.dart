@@ -119,8 +119,9 @@ class DbHelper extends GetxController {
             refundReason TEXT NOT NULL,
             unitBP REAL NOT NULL,
             unitSellingPrice REAL NOT NULL,
+            userEmail TEXT NOT NULL,
             FOREIGN KEY(productId) REFERENCES inventory(productId),
-            FOREIGN KEY(txnId) REFERENCES sales(txnId)
+            FOREIGN KEY(txnId) REFERENCES sales(txnId) ON DELETE CASCADE
             )          
           ''');
 
@@ -787,14 +788,14 @@ class DbHelper extends GetxController {
   }
 
   /// -- fetch txns --
-  Future<List<Map<String, dynamic>>> fetchUserTxnsWithDetails(
+  Future<List<CTxn>> fetchUserTxns(
     String userEmail,
   ) async {
     try {
       final db = _db;
       final txns = await db!.rawQuery(
-        'SELECT s.*, t.* from sales s '
-        'INNER JOIN txnItemsTable t ON s.txnId = t.txnId',
+        'SELECT * from sales where userEmail = ? ORDER BY txnId DESC',
+        [userEmail],
       );
       // final List<Map<String, dynamic>> results = await db.rawQuery('''
       //     SELECT
@@ -810,7 +811,57 @@ class DbHelper extends GetxController {
       }
 
       // Convert the List<Map<String, dynamic> into a List<CTxnsModel>
-      return txns;
+      return txns.map(
+        (json) {
+          return CTxn.fromMap(json);
+        },
+      ).toList();
+    } catch (e) {
+      if (kDebugMode) {
+        CPopupSnackBar.errorSnackBar(
+          title: 'error fetching user\'s sold items',
+          message: e.toString(),
+        );
+      } else {
+        CPopupSnackBar.errorSnackBar(
+          title: 'error fetching user\'s sold items',
+          message:
+              'An unknown error occurred while fetching user\'s sold items!',
+        );
+      }
+      rethrow;
+    }
+  }
+
+  /// -- fetch txns --
+  Future<List<CSoldItemModel>> fetchUserTxnItems(
+    String userEmail,
+  ) async {
+    try {
+      final db = _db;
+      final soldItems = await db!.rawQuery(
+        'SELECT * from txnItemsTable where userEmail = ? ORDER BY soldItemId DESC',
+        [userEmail],
+      );
+      // final List<Map<String, dynamic>> results = await db.rawQuery('''
+      //     SELECT
+      //       s.*,
+      //       t.*
+      //     FROM $salesTable s
+      //     INNER JOIN $txnItemsTable t
+      //       ON s.txnId = t.txnId
+      //   ''');
+
+      if (soldItems.isEmpty) {
+        return []; // Return a default instance if no transactions are found
+      }
+
+      // Convert the List<Map<String, dynamic> into a List<CTxnsModel>
+      return soldItems.map(
+        (json) {
+          return CSoldItemModel.fromMapObject(json);
+        },
+      ).toList();
     } catch (e) {
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(

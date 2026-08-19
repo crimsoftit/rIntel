@@ -123,7 +123,7 @@ class AuthRepo extends GetxController {
             await invController.fetchUserInventoryItems();
 
             //await txnsController.fetchSoldItems();
-            //await txnsController.fetchUserTxns();
+            await txnsController.fetchUserTxns();
 
             //await txnsController.initTxnsSync();
             // else {

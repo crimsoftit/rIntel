@@ -11,6 +11,7 @@ class CSoldItemModel {
   String _refundReason = "";
   double _unitBP = 0.0;
   double _unitSellingPrice = 0.0;
+  String _userEmail = '';
 
   CSoldItemModel(
     this._txnId,
@@ -23,6 +24,7 @@ class CSoldItemModel {
     this._refundReason,
     this._unitBP,
     this._unitSellingPrice,
+    this._userEmail,
   );
 
   CSoldItemModel.withId(
@@ -37,6 +39,7 @@ class CSoldItemModel {
     this._refundReason,
     this._unitBP,
     this._unitSellingPrice,
+    this._userEmail,
   );
 
   static CSoldItemModel empty() {
@@ -51,6 +54,7 @@ class CSoldItemModel {
       '',
       0.0,
       0.0,
+      '',
     );
   }
 
@@ -68,6 +72,8 @@ class CSoldItemModel {
 
   double get unitBP => _unitBP;
   double get unitSellingPrice => _unitSellingPrice;
+
+  String get userEmail => _userEmail;
 
   set soldItemId(int newSoldItemId) {
     soldItemId = newSoldItemId;
@@ -129,6 +135,12 @@ class CSoldItemModel {
     }
   }
 
+  set userEmail(String newUserEmail) {
+    if (newUserEmail != '') {
+      _refundReason = newUserEmail;
+    }
+  }
+
   /// -- convert a CCreditItem Object into a Map object --
   Map<String, dynamic> toMap() {
     var map = <String, dynamic>{};
@@ -145,7 +157,7 @@ class CSoldItemModel {
     map['refundReason'] = _refundReason;
     map['unitBP'] = _unitBP;
     map['unitSellingPrice'] = _unitSellingPrice;
-
+    map['userEmail'] = _userEmail;
     return map;
   }
 
@@ -162,5 +174,6 @@ class CSoldItemModel {
     _refundReason = map['refundReason'];
     _unitBP = map['unitBP'];
     _unitSellingPrice = map['unitSellingPrice'];
+    _userEmail = map['userEmail'];
   }
 }

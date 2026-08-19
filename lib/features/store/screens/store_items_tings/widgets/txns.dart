@@ -25,14 +25,14 @@ class CTxnsView extends StatefulWidget {
 }
 
 class _CTxnsViewState extends State<CTxnsView> {
-  late Future<List<Map<String, dynamic>>> _itemsFuture;
+  late Future<List<CTxn>> _itemsFuture;
   final userController = Get.put(CUserController());
 
   @override
   void initState() {
     super.initState();
     // Trigger data fetch
-    _itemsFuture = DbHelper.instance.fetchUserTxnsWithDetails(
+    _itemsFuture = DbHelper.instance.fetchUserTxns(
       userController.user.value.email,
     );
   }
@@ -47,7 +47,7 @@ class _CTxnsViewState extends State<CTxnsView> {
 
     final userCurrency = userController.user.value.currencyCode;
 
-    return FutureBuilder<List<Map<String, dynamic>>>(
+    return FutureBuilder<List<CTxn>>(
       future: _itemsFuture,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
@@ -66,13 +66,16 @@ class _CTxnsViewState extends State<CTxnsView> {
             return Card(
               margin: EdgeInsets.all(8.0),
               child: ListTile(
-                title: Text(item['txnId'].toString()),
+                title: Text(item.txnId.toString()),
                 subtitle: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('Date: ${item['lastModified']}'),
-                    Text('Item: ${item['productCode'] ?? 'N/A'}'),
-                    Text('Quantity: ${item['quantity'] ?? 0}'),
+                    Text(
+                      'Date: ${item.lastModified}',
+                      style: TextStyle(
+                        color: isDarkTheme ? Colors.white70 : Colors.black54,
+                      ),
+                    ),
                   ],
                 ),
               ),
