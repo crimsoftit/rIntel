@@ -59,13 +59,18 @@ class CTxnSuccessScreen extends StatelessWidget {
                 Obx(
                   () => Text(
                     userController.user.value.email,
-                    style: Theme.of(
-                      context,
-                    ).textTheme.labelMedium!.apply(color: CColors.grey),
+                    style:
+                        Theme.of(
+                          context,
+                        ).textTheme.labelMedium!.apply(
+                          color: CColors.grey,
+                        ),
                     textAlign: TextAlign.center,
                   ),
                 ),
-                const SizedBox(height: CSizes.spaceBtnItems),
+                const SizedBox(
+                  height: CSizes.spaceBtnItems,
+                ),
                 Text(
                   subTitle,
                   style: Theme.of(
@@ -73,7 +78,9 @@ class CTxnSuccessScreen extends StatelessWidget {
                   ).textTheme.labelMedium!.apply(color: CColors.darkGrey),
                   textAlign: TextAlign.center,
                 ),
-                const SizedBox(height: CSizes.spaceBtnSections),
+                const SizedBox(
+                  height: CSizes.spaceBtnSections,
+                ),
 
                 // -- continue button --
                 Container(
@@ -123,25 +130,6 @@ class CTxnSuccessScreen extends StatelessWidget {
                   //         ),
                   //       ),
                 ),
-                syncController.processingSync.value
-                    ? const SizedBox.shrink()
-                    : Align(
-                        alignment: Alignment.bottomRight,
-                        child: Obx(
-                          () {
-                            return CCustomSwitch(
-                              label: 'auto-sync data',
-                              onValueChanged: (syncValue) {
-                                appSettingsController.toggleSyncSettings(
-                                  syncValue,
-                                );
-                              },
-                              switchValue:
-                                  appSettingsController.dataSyncIsOn.value,
-                            );
-                          },
-                        ),
-                      ),
               ],
             ),
           ),
@@ -154,8 +142,15 @@ class CTxnSuccessScreen extends StatelessWidget {
     return Container(
       width: 60.0,
       height: 60.0,
-      decoration: BoxDecoration(color: CColors.rBrown, shape: BoxShape.circle),
-      child: Center(child: CircularProgressIndicator(color: CColors.white)),
+      decoration: BoxDecoration(
+        color: CColors.rBrown,
+        shape: BoxShape.circle,
+      ),
+      child: Center(
+        child: CircularProgressIndicator(
+          color: CColors.white,
+        ),
+      ),
     );
   }
 }

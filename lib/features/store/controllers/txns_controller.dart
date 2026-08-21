@@ -335,7 +335,7 @@ class CTxnsController extends GetxController {
               ? 'update'
               : relatedItem.syncAction;
 
-          dbHelper.updateReceiptItem(relatedItem);
+          //dbHelper.updateReceiptItem(relatedItem);
         }
         await fetchTxns();
       }
@@ -803,126 +803,126 @@ class CTxnsController extends GetxController {
   }
 
   /// -- add unsynced txns to the cloud --
-  Future<bool> addUpdateSalesDataToCloud() async {
-    try {
-      isLoading.value = true;
-      txnsSyncIsLoading.value = true;
-      fetchSoldItems().then((result) {
-        if (result.isNotEmpty) {
-          final unsyncedTxnsForAppends = sales.where(
-            (unsyncedTxn) =>
-                unsyncedTxn.syncAction.toLowerCase() ==
-                    'append'.toLowerCase() &&
-                unsyncedTxn.isSynced == 0,
-          );
+  // Future<bool> addUpdateSalesDataToCloud() async {
+  //   try {
+  //     isLoading.value = true;
+  //     txnsSyncIsLoading.value = true;
+  //     fetchSoldItems().then((result) {
+  //       if (result.isNotEmpty) {
+  //         final unsyncedTxnsForAppends = sales.where(
+  //           (unsyncedTxn) =>
+  //               unsyncedTxn.syncAction.toLowerCase() ==
+  //                   'append'.toLowerCase() &&
+  //               unsyncedTxn.isSynced == 0,
+  //         );
 
-          // -- update refunds data
-          if (unsyncedTxnUpdates.isNotEmpty) {
-            for (var updateItem in unsyncedTxnUpdates) {
-              updateItem.syncAction = 'none';
-              updateItem.txnStatus = updateItem.txnStatus == 'invoiced'
-                  ? 'invoiced'
-                  : 'complete';
+  //         // -- update refunds data
+  //         if (unsyncedTxnUpdates.isNotEmpty) {
+  //           for (var updateItem in unsyncedTxnUpdates) {
+  //             updateItem.syncAction = 'none';
+  //             updateItem.txnStatus = updateItem.txnStatus == 'invoiced'
+  //                 ? 'invoiced'
+  //                 : 'complete';
 
-              // -- update sales data on the cloud
-              updateReceiptItemCloudData(updateItem.soldItemId!, updateItem);
+  //             // -- update sales data on the cloud
+  //             updateReceiptItemCloudData(updateItem.soldItemId!, updateItem);
 
-              // -- update sales data locally
-              dbHelper.updateReceiptItem(updateItem);
-            }
-          }
+  //             // -- update sales data locally
+  //             dbHelper.updateParentTxnDetails(updateItem);
+  //           }
+  //         }
 
-          if (unsyncedTxnsForAppends.isNotEmpty) {
-            var gSheetTxnAppends = unsyncedTxnsForAppends
-                .map(
-                  (sale) => {
-                    'soldItemId': sale.soldItemId,
-                    'txnId': sale.txnId,
-                    'userId': sale.userId,
-                    'userEmail': sale.userEmail,
-                    'userName': sale.userName,
-                    'productId': sale.productId,
-                    'productCode': sale.productCode,
-                    'productName': sale.productName,
-                    'itemMetrics': sale.itemMetrics,
-                    'quantity': sale.quantity,
-                    'qtyRefunded': sale.qtyRefunded,
-                    'refundReason': sale.refundReason,
-                    'totalAmount': sale.totalAmount,
-                    'amountIssued': sale.amountIssued,
-                    'customerBalance': sale.customerBalance,
-                    'unitBP': sale.unitBP,
-                    'unitSellingPrice': sale.unitSellingPrice,
-                    'discount': sale.discount,
-                    'paymentMethod': sale.paymentMethod,
-                    'customerName': sale.customerName,
-                    'customerContacts': sale.customerContacts,
-                    'txnAddress': sale.txnAddress,
-                    'txnAddressCoordinates': sale.txnAddressCoordinates,
-                    'lastModified': sale.lastModified,
-                    'isSynced': 1,
-                    'syncAction': 'none',
-                    'txnStatus': sale.txnStatus,
-                  },
-                )
-                .toList();
+  //         if (unsyncedTxnsForAppends.isNotEmpty) {
+  //           var gSheetTxnAppends = unsyncedTxnsForAppends
+  //               .map(
+  //                 (sale) => {
+  //                   'soldItemId': sale.soldItemId,
+  //                   'txnId': sale.txnId,
+  //                   'userId': sale.userId,
+  //                   'userEmail': sale.userEmail,
+  //                   'userName': sale.userName,
+  //                   'productId': sale.productId,
+  //                   'productCode': sale.productCode,
+  //                   'productName': sale.productName,
+  //                   'itemMetrics': sale.itemMetrics,
+  //                   'quantity': sale.quantity,
+  //                   'qtyRefunded': sale.qtyRefunded,
+  //                   'refundReason': sale.refundReason,
+  //                   'totalAmount': sale.totalAmount,
+  //                   'amountIssued': sale.amountIssued,
+  //                   'customerBalance': sale.customerBalance,
+  //                   'unitBP': sale.unitBP,
+  //                   'unitSellingPrice': sale.unitSellingPrice,
+  //                   'discount': sale.discount,
+  //                   'paymentMethod': sale.paymentMethod,
+  //                   'customerName': sale.customerName,
+  //                   'customerContacts': sale.customerContacts,
+  //                   'txnAddress': sale.txnAddress,
+  //                   'txnAddressCoordinates': sale.txnAddressCoordinates,
+  //                   'lastModified': sale.lastModified,
+  //                   'isSynced': 1,
+  //                   'syncAction': 'none',
+  //                   'txnStatus': sale.txnStatus,
+  //                 },
+  //               )
+  //               .toList();
 
-            // -- save sales data to cloud --
-            //StoreSheetsApi.initSpreadSheets();
-            StoreSheetsApi.saveTxnsToGSheets(gSheetTxnAppends).then((
-              result,
-            ) async {
-              if (result) {
-                // -- update txns status locally --
-                fetchSoldItems();
-                for (var forSyncItem in unsyncedTxnsForAppends) {
-                  await dbHelper.updateTxnItemsSyncStatus(
-                    1,
-                    'none',
-                    forSyncItem.soldItemId!,
-                  );
-                }
-                isLoading.value = false;
-                txnsSyncIsLoading.value = false;
-              } else {
-                isLoading.value = false;
-                txnsSyncIsLoading.value = false;
-                // CPopupSnackBar.errorSnackBar(
-                //   title: 'ERROR SYNCING TXNS TO CLOUD...',
-                //   message: 'an error occurred while uploading txns to cloud',
-                // );
-              }
-            });
-          } else {
-            if (kDebugMode) {
-              CPopupSnackBar.customToast(
-                forInternetConnectivityStatus: false,
-                message: '***** ALL TXNS RADA SAFI *****',
-              );
-            }
-            txnsSyncIsLoading.value = false;
-            isLoading.value = false;
-          }
-        } else {
-          txnsSyncIsLoading.value = false;
-          isLoading.value = false;
-        }
-      });
-      fetchSoldItems();
-      return true;
-    } catch (e) {
-      txnsSyncIsLoading.value = false;
-      isLoading.value = false;
-      if (kDebugMode) {
-        CPopupSnackBar.errorSnackBar(
-          title: 'ERROR SYNCING TXNS TO CLOUD...',
-          message: 'an error occurred while uploading txns to cloud: $e',
-        );
-      }
+  //           // -- save sales data to cloud --
+  //           //StoreSheetsApi.initSpreadSheets();
+  //           StoreSheetsApi.saveTxnsToGSheets(gSheetTxnAppends).then((
+  //             result,
+  //           ) async {
+  //             if (result) {
+  //               // -- update txns status locally --
+  //               fetchSoldItems();
+  //               for (var forSyncItem in unsyncedTxnsForAppends) {
+  //                 await dbHelper.updateTxnItemsSyncStatus(
+  //                   1,
+  //                   'none',
+  //                   forSyncItem.soldItemId!,
+  //                 );
+  //               }
+  //               isLoading.value = false;
+  //               txnsSyncIsLoading.value = false;
+  //             } else {
+  //               isLoading.value = false;
+  //               txnsSyncIsLoading.value = false;
+  //               // CPopupSnackBar.errorSnackBar(
+  //               //   title: 'ERROR SYNCING TXNS TO CLOUD...',
+  //               //   message: 'an error occurred while uploading txns to cloud',
+  //               // );
+  //             }
+  //           });
+  //         } else {
+  //           if (kDebugMode) {
+  //             CPopupSnackBar.customToast(
+  //               forInternetConnectivityStatus: false,
+  //               message: '***** ALL TXNS RADA SAFI *****',
+  //             );
+  //           }
+  //           txnsSyncIsLoading.value = false;
+  //           isLoading.value = false;
+  //         }
+  //       } else {
+  //         txnsSyncIsLoading.value = false;
+  //         isLoading.value = false;
+  //       }
+  //     });
+  //     fetchSoldItems();
+  //     return true;
+  //   } catch (e) {
+  //     txnsSyncIsLoading.value = false;
+  //     isLoading.value = false;
+  //     if (kDebugMode) {
+  //       CPopupSnackBar.errorSnackBar(
+  //         title: 'ERROR SYNCING TXNS TO CLOUD...',
+  //         message: 'an error occurred while uploading txns to cloud: $e',
+  //       );
+  //     }
 
-      rethrow;
-    }
-  }
+  //     rethrow;
+  //   }
+  // }
 
   /// -- fetch txns from google sheets by userEmail --
   Future fetchUserTxnsSheetData() async {
@@ -1070,7 +1070,9 @@ class CTxnsController extends GetxController {
         onPressed: () {
           Navigator.of(Get.overlayContext!).pop();
         },
-        child: const Text('cancel'),
+        child: const Text(
+          'cancel',
+        ),
       ),
     );
   }
@@ -1303,59 +1305,68 @@ class CTxnsController extends GetxController {
                           soldItem.quantity -= double.parse(
                             txtRefundQty.text.trim(),
                           );
+                          if (txtRefundReason.text.trim().isNotEmpty) {
+                            soldItem.refundReason = txtRefundReason.text.trim();
+                          }
 
                           parentTxn.totalAmount -=
                               double.parse(txtRefundQty.text.trim()) *
                               soldItem.unitSellingPrice;
 
-                          if (await dbHelper.updateParentTxnDetails(
+                          dbHelper
+                              .updateParentTxnDetails(
                                 parentTxn,
-                              ) >=
-                              1) {
-                            var invItemIndex = invController.inventoryItems
-                                .indexWhere(
-                                  (item) =>
-                                      item.productId == soldItem.productId,
-                                );
-                            if (invItemIndex != -1) {
-                              var thisInventoryItem =
-                                  invController.inventoryItems[invItemIndex];
-                              thisInventoryItem.quantity += double.parse(
-                                txtRefundQty.text.trim(),
+                              )
+                              .then(
+                                (_) {
+                                  dbHelper.updateSoldItemDetails(soldItem).then(
+                                    (_) async {
+                                      // -- update inventory details --
+                                      var invItemIndex = invController
+                                          .inventoryItems
+                                          .indexWhere(
+                                            (item) =>
+                                                item.productId ==
+                                                soldItem.productId,
+                                          );
+                                      if (invItemIndex != -1) {
+                                        var thisInventoryItem = invController
+                                            .inventoryItems[invItemIndex];
+                                        thisInventoryItem.quantity +=
+                                            double.parse(
+                                              txtRefundQty.text.trim(),
+                                            );
+                                        thisInventoryItem.qtyRefunded +=
+                                            double.parse(
+                                              txtRefundQty.text.trim(),
+                                            );
+                                        thisInventoryItem.qtySold -=
+                                            double.parse(
+                                              txtRefundQty.text.trim(),
+                                            );
+                                        thisInventoryItem.lastModified =
+                                            DateFormat(
+                                              'yyyy-MM-dd @ kk:mm',
+                                            ).format(clock.now());
+                                        thisInventoryItem.syncAction = 'none';
+                                        dbHelper.updateInventoryItem(
+                                          thisInventoryItem,
+                                        );
+                                      }
+                                    },
+                                  );
+                                },
                               );
-                              thisInventoryItem.qtyRefunded += double.parse(
-                                txtRefundQty.text.trim(),
-                              );
-                              thisInventoryItem.qtySold -= double.parse(
-                                txtRefundQty.text.trim(),
-                              );
-                              thisInventoryItem.lastModified = DateFormat(
-                                'yyyy-MM-dd @ kk:mm',
-                              ).format(clock.now());
-                              thisInventoryItem.syncAction =
-                                  thisInventoryItem.isSynced == 0
-                                  ? 'append'
-                                  : 'update';
-                              if (await dbHelper.updateInventoryItem(
-                                    thisInventoryItem,
-                                  ) >=
-                                  1) {
-                                CPopupSnackBar.successSnackBar(
-                                  title: 'REFUND SUCCESSFUL!',
-                                  message:
-                                      '${CFormatter.formatItemQtyDisplays(double.parse(txtRefundQty.text.trim()), soldItem.itemMetrics)} ${CFormatter.formatItemMetrics(soldItem.itemMetrics, double.parse(txtRefundQty.text.trim()))} refunded for ${soldItem.productName}',
-                                );
 
-                                await fetchSoldItems();
-                              }
-                            }
-                          } else {
-                            CPopupSnackBar.errorSnackBar(
-                              title: 'REFUND UPDATE FAILED!',
-                            );
-                          }
+                          fetchUserTxns();
+                          fetchUserTxnItems().then(
+                            (_) {
+                              // -- guard against unmounted widget --
+                              if (!context.mounted) return;
 
-                          Navigator.of(Get.overlayContext!).pop(true);
+                              Navigator.of(context).pop(true);
+                            },
+                          );
                         },
                         label: Text(
                           'REFUND',
@@ -1498,6 +1509,8 @@ class CTxnsController extends GetxController {
         );
       }
       rethrow;
+    } finally {
+      isLoading.value = false;
     }
   }
 
@@ -1571,6 +1584,8 @@ class CTxnsController extends GetxController {
         );
       }
       rethrow;
+    } finally {
+      isLoading.value = false;
     }
   }
 
@@ -1696,7 +1711,7 @@ class CTxnsController extends GetxController {
   /// -- take partial/full payment on invoices --
   void takeInvoicePayment(
     BuildContext context,
-    CTxnsModel txnItem,
+    CTxn txn,
   ) async {
     final isDarkTheme = CHelperFunctions.isDarkMode(context);
     final userCurrency = userController.user.value.currencyCode;
@@ -1714,7 +1729,7 @@ class CTxnsController extends GetxController {
         useSafeArea: true,
         useRootNavigator: true,
         builder: (context) {
-          invoiceAmountOwed.value = txnItem.totalAmount - txnItem.amountIssued;
+          invoiceAmountOwed.value = txn.totalAmount - txn.amountPaid;
 
           return Padding(
             padding: MediaQuery.of(context).viewInsets,
@@ -1737,7 +1752,7 @@ class CTxnsController extends GetxController {
                       ),
 
                       Text(
-                        'of $userCurrency.${txnItem.totalAmount - txnItem.amountIssued}',
+                        'of $userCurrency.${txn.totalAmount - txn.amountPaid}',
                       ),
                     ],
                   ),
@@ -1756,7 +1771,7 @@ class CTxnsController extends GetxController {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Text(
-                                  'total paid: $userCurrency.${txnItem.amountIssued}',
+                                  'total paid: $userCurrency.${txn.amountPaid}',
                                   maxLines: 2,
                                   overflow: TextOverflow.ellipsis,
                                   style: Theme.of(context).textTheme.labelLarge!
@@ -1802,8 +1817,8 @@ class CTxnsController extends GetxController {
                           onFieldValueChanged: (value) {
                             if (value != '') {
                               computeWhatIsOwed(
-                                txnItem.totalAmount,
-                                txnItem.amountIssued,
+                                txn.totalAmount,
+                                txn.amountPaid,
                                 double.parse(value),
                               );
                             }
@@ -1851,30 +1866,24 @@ class CTxnsController extends GetxController {
                                   return;
                                 }
 
-                                txnItem.amountIssued += double.parse(
+                                txn.amountPaid += double.parse(
                                   txtAmountIssued.text.trim(),
                                 );
-                                txnItem.customerBalance =
-                                    0 - invoiceAmountOwed.value;
 
-                                txnItem.syncAction = 'none';
-
-                                txnItem.txnStatus =
-                                    txnItem.amountIssued -
-                                            txnItem.totalAmount >=
-                                        0
+                                txn.txnStatus =
+                                    txn.amountPaid - txn.totalAmount >= 0
                                     ? 'complete'
                                     : 'invoiced';
 
                                 // -- update txn on local db --
                                 dbHelper
                                     .updateParentTxnDetails(
-                                      txnItem,
+                                      txn,
                                     )
                                     .then(
                                       (result) {
                                         // -- update txn item details on cloud firestore --
-                                        storeRepo.cloudUpdateTxnItem(txnItem);
+                                        storeRepo.cloudUpdateTxnItem(txn);
                                         initializeSalesSummaryValues();
 
                                         resetSalesFields();
@@ -1987,13 +1996,19 @@ class CTxnsController extends GetxController {
               'On the house'.toLowerCase(),
     );
 
-    costOfGoodsSold.value = soldItems.fold(0.0, (sum, sale) {
-      return sum + (sale.quantity * sale.unitBP);
-    });
+    costOfGoodsSold.value = soldItems.fold(
+      0.0,
+      (sum, sale) {
+        return sum + (sale.quantity * sale.unitBP);
+      },
+    );
 
-    numberOfUnitsSold.value = soldItems.fold(0.0, (sum, sale) {
-      return sum + sale.quantity;
-    });
+    numberOfUnitsSold.value = soldItems.fold(
+      0.0,
+      (sum, sale) {
+        return sum + sale.quantity;
+      },
+    );
 
     averageInvCost.value = costOfGoodsSold.value / numberOfUnitsSold.value;
 
@@ -2110,7 +2125,7 @@ class CTxnsController extends GetxController {
       // assign sold items to sales list
       userTxns.assignAll(txns);
 
-      fetchUserTxnItems();
+      await fetchUserTxnItems();
 
       isLoading.value = false;
       return userTxns;
@@ -2125,6 +2140,8 @@ class CTxnsController extends GetxController {
       }
       //throw e.toString();
       rethrow;
+    } finally {
+      isLoading.value = false;
     }
   }
 
@@ -2154,6 +2171,8 @@ class CTxnsController extends GetxController {
       }
       //throw e.toString();
       rethrow;
+    } finally {
+      isLoading.value = false;
     }
   }
 

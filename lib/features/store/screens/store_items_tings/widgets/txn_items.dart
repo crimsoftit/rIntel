@@ -726,11 +726,11 @@ class _CTxnItemsListViewState extends State<CTxnItemsListView> {
                                                   items: [
                                                     PopupMenuItem(
                                                       onTap: () async {
-                                                        await txnsController
-                                                            .refundItemActionModal(
-                                                              context,
-                                                              txnItems[itemIndex],
-                                                            );
+                                                        // await txnsController
+                                                        //     .refundItemActionModal(
+                                                        //       context,
+                                                        //       txnItems[itemIndex],
+                                                        //     );
                                                       },
                                                       value: 1,
                                                       child: Text(
@@ -885,10 +885,10 @@ class _CTxnItemsListViewState extends State<CTxnItemsListView> {
                                               ),
                                         ),
                                         onPressed: () {
-                                          txnsController.takeInvoicePayment(
-                                            context,
-                                            demItems[groupedIndex],
-                                          );
+                                          // txnsController.takeInvoicePayment(
+                                          //   context,
+                                          //   demItems[groupedIndex],
+                                          // );
                                         },
 
                                         style: ElevatedButton.styleFrom(

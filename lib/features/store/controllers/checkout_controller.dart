@@ -323,7 +323,7 @@ class CCheckoutController extends GetxController {
                         ? 'Processing cloud sync...'
                         : 'Transaction successful',
                     onContinueBtnPressed: () async {
-                      txnsController.fetchSoldItems();
+                      txnsController.fetchUserTxns();
 
                       processCustomerDetails().then(
                         (_) {

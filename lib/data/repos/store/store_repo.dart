@@ -362,12 +362,12 @@ class CStoreRepo extends GetxController {
   }
 
   /// -- update specific txn --
-  Future<void> cloudUpdateTxnItem(CTxnsModel txnItem) async {
+  Future<void> cloudUpdateTxnItem(CTxn txn) async {
     try {
       firestoreDb
           .collection('txns')
-          .doc(txnItem.soldItemId.toString())
-          .update(txnItem.toMap());
+          .doc(txn.txnId.toString())
+          .update(txn.toMap());
     } on FirebaseException catch (e) {
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(

@@ -43,8 +43,8 @@ class _CTxnsViewState extends State<CTxnsView> {
       Duration.zero,
       () {
         WidgetsBinding.instance.addPostFrameCallback(
-          (_) async {
-            await txnsController.fetchUserTxns();
+          (_) {
+            txnsController.fetchUserTxns();
           },
         );
       },
@@ -223,6 +223,9 @@ class _CTxnsViewState extends State<CTxnsView> {
                                                     txn,
                                                     childItem,
                                                   );
+                                              await txnsController
+                                                  .fetchUserTxnItems();
+                                              setState(() {});
                                             },
                                             value: 1,
                                             child: Text(

@@ -879,6 +879,35 @@ class DbHelper extends GetxController {
     }
   }
 
+  /// -- update a single txn item --
+  Future<int> updateSoldItemDetails(CSoldItemModel soldItem) async {
+    try {
+      var saleId = await _db!.update(
+        'txnItemsTable',
+        soldItem.toMap(),
+        where: 'soldItemId = ?',
+        whereArgs: [soldItem.soldItemId],
+      );
+
+      return saleId;
+    } catch (e) {
+      if (kDebugMode) {
+        CPopupSnackBar.errorSnackBar(
+          title: 'Oh Snap! error updating sold item details!',
+          message: e.toString(),
+        );
+      } else {
+        CPopupSnackBar.errorSnackBar(
+          title: 'Oh Snap! error updating sold item details!',
+          message:
+              'An unknown error occurred while updating sold item details! please try again later',
+        );
+      }
+
+      rethrow;
+    }
+  }
+
   /// -- fetch sold items --
   Future<List<CTxnsModel>> fetchUserSoldItems(String email) async {
     try {
