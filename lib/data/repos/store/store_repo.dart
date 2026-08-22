@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:rintel/features/store/models/inv_model.dart';
+import 'package:rintel/features/store/models/txns/sold_item_model.dart';
 import 'package:rintel/features/store/models/txns/txn_model.dart';
 import 'package:rintel/features/store/models/txns_model.dart';
 import 'package:rintel/utils/exceptions/platform_exceptions.dart';
@@ -260,7 +261,7 @@ class CStoreRepo extends GetxController {
     } on FormatException catch (e) {
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
-          title: 'transaction datails format error!',
+          title: 'transaction details format error!',
           message: e.message,
         );
       } else {
@@ -295,8 +296,70 @@ class CStoreRepo extends GetxController {
     }
   }
 
-  /// -- fetch sales from cloud firestore --
-  Future<List<CTxnsModel>> fetchUserSalesFromFirestore(String userEmail) async {
+  /// -- save txn items (sales) to cloud firestore --
+  Future<void> saveSalesFirestore(
+    CSoldItemModel soldItem,
+    int soldItemId,
+  ) async {
+    try {
+      firestoreDb
+          .collection("sales")
+          .doc(soldItemId.toString())
+          .set(soldItem.toMap());
+    } on FirebaseException catch (e) {
+      if (kDebugMode) {
+        CPopupSnackBar.errorSnackBar(
+          title: 'sale cloud append threw firebase exception error!',
+          message: 'unable to save sales details to cloud firestore: ${e.code}',
+        );
+      } else {
+        CPopupSnackBar.errorSnackBar(
+          title: 'Oh Snap! error saving sales to cloud!',
+          message:
+              'an unknown error occurred while saving sales to cloud! please try again later',
+        );
+      }
+      rethrow;
+    } on FormatException catch (e) {
+      if (kDebugMode) {
+        CPopupSnackBar.errorSnackBar(
+          title: 'transaction details format error!',
+          message: e.message,
+        );
+      } else {
+        CPopupSnackBar.errorSnackBar(
+          title: 'Oh Snap!',
+          message:
+              'A format error occurred while saving txn details to cloud! please try again later',
+        );
+      }
+      rethrow;
+    } on PlatformException catch (e) {
+      CPopupSnackBar.errorSnackBar(
+        message: CPlatformExceptions(e.code).message,
+        title: "Transaction data cloud data platform exception error",
+      );
+
+      rethrow;
+    } catch (e) {
+      if (kDebugMode) {
+        CPopupSnackBar.errorSnackBar(
+          message: e.toString(),
+          title: "error saving txn details to cloud",
+        );
+      } else {
+        CPopupSnackBar.errorSnackBar(
+          message:
+              'an unknown error occurred while saving txn details to cloud! please try again later...',
+          title: "error saving txn details to cloud",
+        );
+      }
+      rethrow;
+    }
+  }
+
+  /// -- fetch txns from cloud firestore --
+  Future<List<CTxn>> fetchUserTxnsFromFirestore(String userEmail) async {
     try {
       final snapshot = await firestoreDb
           .collection('txns')
@@ -305,7 +368,7 @@ class CStoreRepo extends GetxController {
 
       return snapshot.docs.map(
         (toElement) {
-          return CTxnsModel.fromSnapshot(toElement);
+          return CTxn.fromSnapshot(toElement);
         },
       ).toList();
     } on FirebaseException catch (e) {
@@ -353,6 +416,74 @@ class CStoreRepo extends GetxController {
         CPopupSnackBar.errorSnackBar(
           message:
               'an unknown error occurred while fetching txns data from cloud firestore! please try again later...',
+          title: "error fetching txns data from cloud firestore!",
+        );
+      }
+
+      rethrow;
+    }
+  }
+
+  /// -- fetch txn items from cloud firestore --
+  Future<List<CSoldItemModel>> fetchUserTxnItemsFromFirestore(
+    String userEmail,
+  ) async {
+    try {
+      final snapshot = await firestoreDb
+          .collection('sales')
+          .where('userEmail', isEqualTo: userEmail)
+          .get();
+
+      return snapshot.docs.map(
+        (toElement) {
+          return CSoldItemModel.fromSnapshot(toElement);
+        },
+      ).toList();
+    } on FirebaseException catch (e) {
+      if (kDebugMode) {
+        CPopupSnackBar.errorSnackBar(
+          title: 'firebase cloud error!',
+          message: 'unable to fetch cloud sales data from firestore: ${e.code}',
+        );
+      } else {
+        CPopupSnackBar.errorSnackBar(
+          title: 'Oh Snap! Error fetching sales cloud data!',
+          message:
+              'an unknown error occurred while fetching sales data from cloud firestore!! please try again later',
+        );
+      }
+      rethrow;
+    } on FormatException catch (e) {
+      if (kDebugMode) {
+        CPopupSnackBar.errorSnackBar(
+          title: 'sales cloud data fetch format error!',
+          message: e.message,
+        );
+      } else {
+        CPopupSnackBar.errorSnackBar(
+          title: 'Oh Snap!',
+          message:
+              'an unknown error occurred while fetching sales data from cloud firestore!! please try again later',
+        );
+      }
+      rethrow;
+    } on PlatformException catch (e) {
+      CPopupSnackBar.errorSnackBar(
+        message: CPlatformExceptions(e.code).message,
+        title: "sales cloud data fetch platform exception error",
+      );
+
+      rethrow;
+    } catch (e) {
+      if (kDebugMode) {
+        CPopupSnackBar.errorSnackBar(
+          message: e.toString(),
+          title: "error fetching sales details from cloud firestore!",
+        );
+      } else {
+        CPopupSnackBar.errorSnackBar(
+          message:
+              'an unknown error occurred while fetching sales data from cloud firestore! please try again later...',
           title: "error fetching txns data from cloud firestore!",
         );
       }

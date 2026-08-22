@@ -122,17 +122,8 @@ class AuthRepo extends GetxController {
 
             await invController.fetchUserInventoryItems();
 
-            //await txnsController.fetchSoldItems();
+            await txnsController.initTxnsSync();
             await txnsController.fetchUserTxns();
-
-            //await txnsController.initTxnsSync();
-            // else {
-            //   CPopupSnackBar.customToast(
-            //     forInternetConnectivityStatus: true,
-            //     message:
-            //         'Stable internet connection is required to import your data from the cloud',
-            //   );
-            // }
 
             Get.put(CCheckoutController());
 

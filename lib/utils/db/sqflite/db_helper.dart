@@ -729,7 +729,7 @@ class DbHelper extends GetxController {
   }
 
   // -- save sale details to the database --
-  Future<int> addSoldItemAndRetrieveSoldItemId(CTxnsModel soldItem) async {
+  Future<int> addSoldItemAndRetrieveSoldItemId(CSoldItemModel soldItem) async {
     try {
       // Insert the txn into the correct table. You might also specify the
       // `conflictAlgorithm` to use in case the same Inventory item is inserted twice.
@@ -737,7 +737,7 @@ class DbHelper extends GetxController {
       // In this case, replace any previous data.
       var db = _db;
       int soldItemId = await db!.insert(
-        txnsTable,
+        'txnItemsTable',
         soldItem.toMap(),
         conflictAlgorithm: ConflictAlgorithm.replace,
       );
@@ -760,15 +760,15 @@ class DbHelper extends GetxController {
   }
 
   /// -- batch insert txns --
-  Future<void> batchInsertTxns(List<CTxnsModel> sales) async {
+  Future<void> batchInsertTxns(List<CTxn> txns) async {
     final db = _db;
-    final salesBatch = db!.batch();
+    final txnsBatch = db!.batch();
 
-    for (var soldItem in sales) {
-      salesBatch.insert(txnsTable, soldItem.toMap());
+    for (var txn in txns) {
+      txnsBatch.insert('sales', txn.toMap());
     }
 
-    await salesBatch.commit(
+    await txnsBatch.commit(
       noResult: true,
     );
   }

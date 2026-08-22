@@ -153,11 +153,11 @@ class CTxnsController extends GetxController {
   void onInit() async {
     dateRangeFieldController.clear();
 
-    // if (await CNetworkManager.instance.isConnected() &&
-    //     CNetworkManager.instance.connectionIsStable.value) {
-    //   //StoreSheetsApi.initSpreadSheets();
-    //   await initTxnsSync();
-    // }
+    if (await CNetworkManager.instance.isConnected() &&
+        CNetworkManager.instance.connectionIsStable.value) {
+      //StoreSheetsApi.initSpreadSheets();
+      await initTxnsSync();
+    }
 
     await fetchUserTxns();
 
@@ -183,10 +183,21 @@ class CTxnsController extends GetxController {
   /// -- initialize cloud sync --
   Future initTxnsSync() async {
     if (localStorage.read('SyncTxnsDataWithCloud') == true && sales.isEmpty) {
-      if (await importSalesFromCloudFirestore()) {
-        localStorage.write(
-          'SyncTxnsDataWithCloud',
-          false,
+      if (await importTxnsFromCloudFirestore()) {
+        await importTxnItemsFromCloudFirestore().then(
+          (result) {
+            if (result) {
+              localStorage.write(
+                'SyncTxnsDataWithCloud',
+                false,
+              );
+            } else {
+              localStorage.write(
+                'SyncTxnsDataWithCloud',
+                true,
+              );
+            }
+          },
         );
       } else {
         localStorage.write(
@@ -973,22 +984,17 @@ class CTxnsController extends GetxController {
   }
 
   /// -- import transactions from cloud --
-  Future<bool> importTxnsFromCloud() async {
+  Future<bool> importSalesFromCloud() async {
     try {
-      isImportingTxnsFromCloud.value = true;
+      isLoading.value = true;
 
-      await fetchSoldItems();
+      await fetchUserTxnItems();
 
-      await fetchUserTxnsSheetData();
-
-      if (userGsheetTxnsData.isNotEmpty && sales.isEmpty) {
+      if (sales.isEmpty) {
         for (var element in userGsheetTxnsData) {
-          var dbTxnImports = CTxnsModel.withId(
+          var dbTxnImports = CSoldItemModel.withId(
             element.soldItemId,
             element.txnId,
-            element.userId,
-            element.userEmail,
-            element.userName,
             element.productId,
             element.productCode,
             element.productName,
@@ -996,47 +1002,33 @@ class CTxnsController extends GetxController {
             element.quantity,
             element.qtyRefunded,
             element.refundReason,
-            element.totalAmount,
-            element.amountIssued,
-            element.customerBalance,
             element.unitBP,
             element.unitSellingPrice,
-            element.discount,
-            element.paymentMethod,
-            element.customerName,
-            element.customerContacts,
-            element.txnAddress,
-            element.txnAddressCoordinates,
-            element.lastModified,
-            element.isSynced,
-            element.syncAction,
-            element.txnStatus,
+            element.userEmail,
           );
 
           dbHelper.addSoldItemAndRetrieveSoldItemId(dbTxnImports).then(
             (_) async {
-              await fetchSoldItems();
+              await fetchUserTxns();
+              await fetchUserTxnItems();
             },
           );
-
-          isImportingTxnsFromCloud.value = false;
-          isLoading.value = false;
         }
       }
-      isImportingTxnsFromCloud.value = false;
+      isLoading.value = false;
       return true;
     } catch (e) {
       isLoading.value = false;
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
-          title: 'ERROR IMPORTING USER DATA FROM CLOUD!',
+          title: 'ERROR IMPORTING sales  DATA FROM CLOUD!',
           message: e.toString(),
         );
       } else {
         CPopupSnackBar.errorSnackBar(
-          title: 'ERROR IMPORTING USER DATA FROM CLOUD!',
+          title: 'ERROR IMPORTING sales DATA FROM CLOUD!',
           message:
-              'An unknown error occurred while fetching user cloud data...',
+              'An unknown error occurred while fetching user cloud sales data...',
         );
       }
       rethrow;
@@ -2076,16 +2068,53 @@ class CTxnsController extends GetxController {
   }
 
   /// -- import txns data from cloud firestre --
-  Future<bool> importSalesFromCloudFirestore() async {
+  Future<bool> importTxnsFromCloudFirestore() async {
     try {
       // -- start loader --
       isLoading.value = true;
-      final txnsCloudData = storeRepo.fetchUserSalesFromFirestore(
+      final txnsCloudData = storeRepo.fetchUserTxnsFromFirestore(
         userController.user.value.email,
       );
       await dbHelper.batchInsertTxns(await txnsCloudData).then(
         (_) async {
-          await fetchSoldItems();
+          await fetchUserTxns();
+        },
+      );
+
+      // -- stop loader --
+      isLoading.value = false;
+      return true;
+    } catch (e) {
+      isLoading.value = false;
+      if (kDebugMode) {
+        CPopupSnackBar.errorSnackBar(
+          title: 'ERROR fetching inventory data from cloud firestore!',
+          message: e.toString(),
+        );
+      } else {
+        CPopupSnackBar.errorSnackBar(
+          message:
+              'an unknown error occurred while fetching inventory data from cloud firestore',
+          title: 'ERROR IMPORTING inventory DATA FROM CLOUD!',
+        );
+      }
+      rethrow;
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  /// -- import txns data from cloud firestre --
+  Future<bool> importTxnItemsFromCloudFirestore() async {
+    try {
+      // -- start loader --
+      isLoading.value = true;
+      final txnItems = storeRepo.fetchUserTxnItemsFromFirestore(
+        userController.user.value.email,
+      );
+      await dbHelper.batchInsertSoldItems(await txnItems).then(
+        (_) async {
+          await fetchUserTxnItems();
         },
       );
 

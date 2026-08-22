@@ -213,10 +213,20 @@ class CCheckoutController extends GetxController {
         await dbHelper.addTxn(newTxnData).then(
           (result) async {
             if (result >= 1) {
-              await dbHelper.batchInsertSoldItems(txnItems);
+              //await dbHelper.batchInsertSoldItems(txnItems);
 
               /// -- save data to cloud firestore --
-              storeRepo.saveTxnToCloudFirestore(newTxnData);
+              storeRepo.saveTxnToCloudFirestore(newTxnData).then(
+                (_) async {
+                  for (var item in txnItems) {
+                    await dbHelper.addSoldItemAndRetrieveSoldItemId(item).then(
+                      (itemId) {
+                        storeRepo.saveSalesFirestore(item, itemId);
+                      },
+                    );
+                  }
+                },
+              );
 
               for (var cartItem in itemsInCart) {
                 /// -- update inventory data --

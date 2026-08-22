@@ -182,7 +182,10 @@ class CStoreScreen extends StatelessWidget {
                   // ),
 
                   /// -- transactions list view --
-                  CTxnsView(),
+                  CTxnsView(
+                    forContactScreen: false,
+                    space: 'receipts',
+                  ),
 
                   // CTxnItemsListView(
                   //   forContactScreen: false,

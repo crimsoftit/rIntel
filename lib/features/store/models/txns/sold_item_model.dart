@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class CSoldItemModel {
   int? _soldItemId;
   int _txnId = 0;
@@ -175,5 +177,29 @@ class CSoldItemModel {
     _unitBP = map['unitBP'];
     _unitSellingPrice = map['unitSellingPrice'];
     _userEmail = map['userEmail'];
+  }
+
+  /// -- factory method to create an CTxnsModel from a Firebase document snapshot --
+  factory CSoldItemModel.fromSnapshot(
+    DocumentSnapshot<Map<String, dynamic>> salesDocument,
+  ) {
+    if (salesDocument.data() == null) return CSoldItemModel.empty();
+
+    final soldItemData = salesDocument.data()!;
+
+    return CSoldItemModel.withId(
+      int.parse(salesDocument.id),
+      soldItemData['txnId'],
+      soldItemData['productId'],
+      soldItemData['productCode'],
+      soldItemData['productName'],
+      soldItemData['itemMetrics'],
+      soldItemData['quantity'],
+      soldItemData['qtyRefunded'],
+      soldItemData['refundReason'],
+      soldItemData['unitBP'],
+      soldItemData['unitSellingPrice'],
+      soldItemData['userEmail'],
+    );
   }
 }

@@ -3,10 +3,12 @@ import 'package:get/get.dart';
 import 'package:rintel/common/widgets/custom_shapes/containers/rounded_container.dart';
 import 'package:rintel/features/personalization/controllers/contacts_controller.dart';
 import 'package:rintel/features/personalization/controllers/user_controller.dart';
+import 'package:rintel/features/personalization/screens/no_data/no_data_screen.dart';
 import 'package:rintel/features/store/controllers/search_bar_controller.dart';
 import 'package:rintel/features/store/controllers/txns_controller.dart';
 import 'package:rintel/features/store/models/txns/txn_model.dart';
 import 'package:rintel/utils/constants/colors.dart';
+import 'package:rintel/utils/constants/img_strings.dart';
 import 'package:rintel/utils/constants/sizes.dart';
 import 'package:rintel/utils/db/sqflite/db_helper.dart';
 import 'package:rintel/utils/helpers/formatter.dart';
@@ -15,12 +17,12 @@ import 'package:rintel/utils/helpers/helper_functions.dart';
 class CTxnsView extends StatefulWidget {
   const CTxnsView({
     super.key,
-    //required this.forContactScreen,
-    //required this.space,
+    required this.forContactScreen,
+    required this.space,
   });
 
-  //final bool forContactScreen;
-  //final String space;
+  final bool forContactScreen;
+  final String space;
 
   @override
   State<CTxnsView> createState() => _CTxnsViewState();
@@ -64,11 +66,18 @@ class _CTxnsViewState extends State<CTxnsView> {
       future: _itemsFuture,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return Center(child: CircularProgressIndicator());
+          return Center(
+            child: CircularProgressIndicator(),
+          );
         } else if (snapshot.hasError) {
           return Center(child: Text('Error: ${snapshot.error}'));
         } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-          return Center(child: Text('No data found'));
+          return Center(
+            child: NoDataScreen(
+              lottieImage: CImages.noDataLottie,
+              txt: '${widget.space} will be displayed here...',
+            ),
+          );
         }
 
         final data = snapshot.data!;
@@ -173,32 +182,48 @@ class _CTxnsViewState extends State<CTxnsView> {
                                 CRoundedContainer(
                                   bgColor: CColors.transparent,
                                   width: CHelperFunctions.screenWidth() * .3,
-                                  child: Row(
+                                  child: Column(
                                     children: [
-                                      Text(
-                                        '${CFormatter.formatItemQtyDisplays(childItem.quantity, childItem.itemMetrics)} ${CFormatter.formatItemMetrics(childItem.itemMetrics, childItem.quantity)} - ',
-                                        style: Theme.of(
-                                          context,
-                                        ).textTheme.labelMedium!.apply(),
-                                      ),
-                                      Text(
-                                        '$userCurrency.',
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .labelSmall!
-                                            .apply(
-                                              fontFeatures: [
-                                                FontFeature.superscripts(),
-                                              ],
-                                              fontSizeFactor: .8,
+                                      if (childItem.quantity > 0)
+                                        Row(
+                                          children: [
+                                            Text(
+                                              '${CFormatter.formatItemQtyDisplays(childItem.quantity, childItem.itemMetrics)} ${CFormatter.formatItemMetrics(childItem.itemMetrics, childItem.quantity)} - ',
+                                              style: Theme.of(
+                                                context,
+                                              ).textTheme.labelMedium!.apply(),
                                             ),
-                                      ),
-                                      Text(
-                                        '${childItem.unitSellingPrice * childItem.quantity}',
-                                        style: Theme.of(
-                                          context,
-                                        ).textTheme.labelMedium!.apply(),
-                                      ),
+                                            Text(
+                                              '$userCurrency.',
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .labelSmall!
+                                                  .apply(
+                                                    fontFeatures: [
+                                                      FontFeature.superscripts(),
+                                                    ],
+                                                    fontSizeFactor: .8,
+                                                  ),
+                                            ),
+                                            Text(
+                                              '${childItem.unitSellingPrice * childItem.quantity}',
+                                              style: Theme.of(
+                                                context,
+                                              ).textTheme.labelMedium!.apply(),
+                                            ),
+                                          ],
+                                        ),
+                                      if (childItem.qtyRefunded > 0)
+                                        Text(
+                                          '${CFormatter.formatItemQtyDisplays(childItem.qtyRefunded, childItem.itemMetrics)} ${CFormatter.formatItemMetrics(childItem.itemMetrics, childItem.qtyRefunded)} refunded',
+                                          style:
+                                              Theme.of(
+                                                context,
+                                              ).textTheme.labelSmall!.apply(
+                                                color: CColors.darkGrey,
+                                                fontStyle: FontStyle.italic,
+                                              ),
+                                        ),
                                     ],
                                   ),
                                 ),
