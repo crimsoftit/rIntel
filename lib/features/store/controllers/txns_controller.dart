@@ -1082,7 +1082,6 @@ class CTxnsController extends GetxController {
       useSafeArea: true,
       //transitionAnimationController: ,
       builder: (context) {
-        txtRefundQty.clear();
         return Padding(
           padding: MediaQuery.of(context).viewInsets,
           child: CRoundedContainer(
@@ -1105,7 +1104,7 @@ class CTxnsController extends GetxController {
                 ),
 
                 Text(
-                  '${CFormatter.formatItemQtyDisplays(soldItem.quantity, soldItem.itemMetrics)} ${CFormatter.formatItemMetrics(soldItem.itemMetrics, soldItem.quantity)} sold; ${CFormatter.formatItemQtyDisplays(soldItem.qtyRefunded, soldItem.itemMetrics)} refunded)',
+                  '${CFormatter.formatItemQtyDisplays(soldItem.quantity, soldItem.itemMetrics)} ${CFormatter.formatItemMetrics(soldItem.itemMetrics, soldItem.quantity)} sold; ${CFormatter.formatItemQtyDisplays(soldItem.qtyRefunded, soldItem.itemMetrics)} refunded',
                   style: Theme.of(context).textTheme.labelMedium!.apply(
                     color: isDarkTheme ? CColors.white : CColors.rBrown,
                   ),
@@ -1145,13 +1144,23 @@ class CTxnsController extends GetxController {
                           ),
                           enabledBorder: UnderlineInputBorder(
                             borderSide: BorderSide(
-                              color: Colors.grey, // Customize border color
+                              color: isDarkTheme
+                                  ? CColors.white
+                                  : CColors.rBrown, // Customize border color
                               width: 2.0, // Customize border width
+                            ),
+                          ),
+                          errorBorder: UnderlineInputBorder(
+                            borderSide: BorderSide(
+                              color: Colors.red, // Color when there's an error
+                              width: 2.0,
                             ),
                           ),
                           focusedBorder: UnderlineInputBorder(
                             borderSide: BorderSide(
-                              color: CColors.white, // Color when focused
+                              color: isDarkTheme
+                                  ? CColors.white
+                                  : CColors.rBrown, // Color when focused
                               width: 2.0,
                             ),
                           ),
@@ -1162,7 +1171,7 @@ class CTxnsController extends GetxController {
                               Iconsax.minus_cirlce,
                               size: CSizes.iconMd,
                             ),
-                            color: CColors.darkGrey,
+                            color: isDarkTheme ? CColors.white : CColors.rBrown,
                             onPressed: () {
                               if (refundQty.value > 0 &&
                                   refundQty.value <= soldItem.quantity) {
@@ -1233,7 +1242,7 @@ class CTxnsController extends GetxController {
                         ),
                         validator: (String? value) {
                           if (value == null || value.isEmpty) {
-                            return 'qty is required';
+                            return '*refund qty is required!';
                           } else if (double.parse(value) > soldItem.quantity) {
                             txtRefundQty.text =
                                 CFormatter.formatItemQtyDisplays(
@@ -1311,8 +1320,13 @@ class CTxnsController extends GetxController {
                               )
                               .then(
                                 (_) {
+                                  // -- update txn details on cloud firestore --
+                                  storeRepo.cloudUpdateTxn(parentTxn);
                                   dbHelper.updateSoldItemDetails(soldItem).then(
                                     (_) async {
+                                      // -- update txn details on cloud firestore --
+                                      storeRepo.cloudUpdateSale(soldItem);
+
                                       // -- update inventory details --
                                       var invItemIndex = invController
                                           .inventoryItems
@@ -1341,9 +1355,18 @@ class CTxnsController extends GetxController {
                                               'yyyy-MM-dd @ kk:mm',
                                             ).format(clock.now());
                                         thisInventoryItem.syncAction = 'none';
-                                        dbHelper.updateInventoryItem(
-                                          thisInventoryItem,
-                                        );
+                                        dbHelper
+                                            .updateInventoryItem(
+                                              thisInventoryItem,
+                                            )
+                                            .then(
+                                              (_) {
+                                                // -- update inventory cloud data --
+                                                storeRepo.updateInvCloudData(
+                                                  thisInventoryItem,
+                                                );
+                                              },
+                                            );
                                       }
                                     },
                                   );
@@ -1353,6 +1376,9 @@ class CTxnsController extends GetxController {
                           fetchUserTxns();
                           fetchUserTxnItems().then(
                             (_) {
+                              txtRefundQty.clear();
+                              txtRefundReason.clear();
+                              refundQty.value = 0;
                               // -- guard against unmounted widget --
                               if (!context.mounted) return;
 
@@ -1875,7 +1901,7 @@ class CTxnsController extends GetxController {
                                     .then(
                                       (result) {
                                         // -- update txn item details on cloud firestore --
-                                        storeRepo.cloudUpdateTxnItem(txn);
+                                        storeRepo.cloudUpdateTxn(txn);
                                         initializeSalesSummaryValues();
 
                                         resetSalesFields();

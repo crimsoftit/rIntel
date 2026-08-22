@@ -2,7 +2,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:rintel/features/store/models/inv_model.dart';
 import 'package:rintel/features/store/models/txns/sold_item_model.dart';
 import 'package:rintel/features/store/models/txns/txn_model.dart';
-import 'package:rintel/features/store/models/txns_model.dart';
 import 'package:rintel/utils/exceptions/platform_exceptions.dart';
 import 'package:rintel/utils/popups/snackbars.dart';
 import 'package:flutter/foundation.dart';
@@ -493,7 +492,7 @@ class CStoreRepo extends GetxController {
   }
 
   /// -- update specific txn --
-  Future<void> cloudUpdateTxnItem(CTxn txn) async {
+  Future<void> cloudUpdateTxn(CTxn txn) async {
     try {
       firestoreDb
           .collection('txns')
@@ -516,7 +515,7 @@ class CStoreRepo extends GetxController {
     } on FormatException catch (e) {
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
-          title: 'cloud txn datails threw a format error!',
+          title: 'cloud txn details threw a format error!',
           message: e.message,
         );
       } else {
@@ -545,6 +544,65 @@ class CStoreRepo extends GetxController {
           message:
               'an unknown error occurred while updating txn details on the cloud! please try again later...',
           title: "error updating txn details",
+        );
+      }
+      rethrow;
+    }
+  }
+
+  /// -- update a specific txn item --
+  Future<void> cloudUpdateSale(CSoldItemModel soldItem) async {
+    try {
+      firestoreDb
+          .collection('sales')
+          .doc(soldItem.soldItemId.toString())
+          .update(soldItem.toMap());
+    } on FirebaseException catch (e) {
+      if (kDebugMode) {
+        CPopupSnackBar.errorSnackBar(
+          title: 'firebase cloud error!',
+          message: 'unable to update cloud sale details: ${e.code}',
+        );
+      } else {
+        CPopupSnackBar.errorSnackBar(
+          title: 'Oh Snap!',
+          message:
+              'an unknown error occurred while updating cloud sale details! please try again later',
+        );
+      }
+      rethrow;
+    } on FormatException catch (e) {
+      if (kDebugMode) {
+        CPopupSnackBar.errorSnackBar(
+          title: 'cloud sale details threw a format error!',
+          message: e.message,
+        );
+      } else {
+        CPopupSnackBar.errorSnackBar(
+          title: 'Oh Snap!',
+          message:
+              'an unknown error occurred while updating cloud sale details! please try again later',
+        );
+      }
+      rethrow;
+    } on PlatformException catch (e) {
+      CPopupSnackBar.errorSnackBar(
+        message: CPlatformExceptions(e.code).message,
+        title: "sale cloud data update threw a platform exception error",
+      );
+
+      rethrow;
+    } catch (e) {
+      if (kDebugMode) {
+        CPopupSnackBar.errorSnackBar(
+          message: e.toString(),
+          title: "error updating sale details",
+        );
+      } else {
+        CPopupSnackBar.errorSnackBar(
+          message:
+              'an unknown error occurred while updating sale details on the cloud! please try again later...',
+          title: "error updating sale details",
         );
       }
       rethrow;
