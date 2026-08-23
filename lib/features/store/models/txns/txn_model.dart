@@ -21,6 +21,7 @@ class CTxn {
   String _txnStatus = "";
   String _txnAddress = "";
   String _txnAddressCoordinates = "";
+  List<CSoldItemModel>? _txnItems;
 
   CTxn(
     //this._invoiceId,
@@ -39,6 +40,26 @@ class CTxn {
     this._txnStatus,
     this._txnAddress,
     this._txnAddressCoordinates,
+  );
+
+  CTxn.withItems(
+    //this._invoiceId,
+    this._txnId,
+    this._userId,
+    this._userEmail,
+    this._userName,
+    this._amountPaid,
+    this._totalAmount,
+    this._discount,
+    this._paymentMethod,
+    this._customerName,
+    this._customerContacts,
+    this._dateAdded,
+    this._lastModified,
+    this._txnStatus,
+    this._txnAddress,
+    this._txnAddressCoordinates,
+    this._txnItems,
   );
 
   static CTxn empty() {
@@ -83,6 +104,7 @@ class CTxn {
   String get txnStatus => _txnStatus;
   String get txnAddress => _txnAddress;
   String get txnAddressCoordinates => _txnAddressCoordinates;
+  List<CSoldItemModel>? get txnItems => _txnItems;
 
   set txnId(int newTxnId) {
     _txnId = newTxnId;
@@ -144,26 +166,53 @@ class CTxn {
     _txnStatus = newTxnStatus;
   }
 
+  set txnItems(List<CSoldItemModel>? newTxnItems) {
+    _txnItems = newTxnItems;
+  }
+
   // convert a CInvoicesModel Object into a Map object
   Map<String, dynamic> toMap() {
-    return {
-      'txnId': _txnId,
-      'userId': _userId,
-      'userEmail': _userEmail,
-      'userName': _userName,
-      'amountPaid': _amountPaid,
-      'totalAmount': _totalAmount,
-      'discount': _discount,
-      'paymentMethod': _paymentMethod,
-      'customerName': _customerName,
-      'customerContacts': _customerContacts,
-      'txnAddress': _txnAddress,
-      'txnAddressCoordinates': _txnAddressCoordinates,
-      'dateAdded': _dateAdded,
-      'lastModified': _lastModified,
-      'txnStatus': _txnStatus,
-    };
+    var map = <String, dynamic>{};
+    map['txnId'] = _txnId;
+    map['userId'] = _userId;
+    map['userEmail'] = _userEmail;
+    map['userName'] = _userName;
+    map['amountPaid'] = _amountPaid;
+    map['totalAmount'] = _totalAmount;
+    map['discount'] = _discount;
+    map['paymentMethod'] = _paymentMethod;
+    map['customerName'] = _customerName;
+    map['customerContacts'] = _customerContacts;
+    map['txnAddress'] = _txnAddress;
+    map['txnAddressCoordinates'] = _txnAddressCoordinates;
+    map['dateAdded'] = _dateAdded;
+    map['lastModified'] = _lastModified;
+    map['txnStatus'] = _txnStatus;
+    if (_txnItems != null) {
+      map['txnItems'] = _txnItems!.map((item) => item.toMap()).toList();
+    }
+    return map;
   }
+  // Map<String, dynamic> toMap() {
+  //   return {
+  //     'txnId': _txnId,
+  //     'userId': _userId,
+  //     'userEmail': _userEmail,
+  //     'userName': _userName,
+  //     'amountPaid': _amountPaid,
+  //     'totalAmount': _totalAmount,
+  //     'discount': _discount,
+  //     'paymentMethod': _paymentMethod,
+  //     'customerName': _customerName,
+  //     'customerContacts': _customerContacts,
+  //     'txnAddress': _txnAddress,
+  //     'txnAddressCoordinates': _txnAddressCoordinates,
+  //     'dateAdded': _dateAdded,
+  //     'lastModified': _lastModified,
+  //     'txnStatus': _txnStatus,
+  //     'txnItems': _txnItems?.map((item) => item.toMap()).toList(),
+  //   };
+  // }
 
   /// -- factory method to create an CTxnsModel from a Firebase document snapshot --
   factory CTxn.fromSnapshot(
@@ -193,7 +242,7 @@ class CTxn {
 
   // extract a CInvoicesModel object from a Map object
   factory CTxn.fromMap(Map<String, dynamic> map) {
-    return CTxn(
+    return CTxn.withItems(
       map['txnId'],
       map['userId'],
       map['userEmail'],
@@ -209,7 +258,11 @@ class CTxn {
       map['txnStatus'],
       map['txnAddress'],
       map['txnAddressCoordinates'],
+      map['txnItems'] != null
+          ? List<CSoldItemModel>.from(
+              map['txnItems'].map((item) => CSoldItemModel.fromMapObject(item)),
+            )
+          : null,
     );
   }
- 
 }

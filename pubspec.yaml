@@ -180,6 +180,8 @@ dependencies:
   intl_phone_field: any
   intl_phone_number_input: ^0.7.5
   phone_numbers_parser: ^9.0.21
+
+  darq: ^2.1.0
   
   
   carousel_slider: any

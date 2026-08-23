@@ -16,7 +16,7 @@ class CSalesScreen extends StatelessWidget {
 
     Get.put(CInventoryController());
     Get.put(CTxnsController());
-    txnsController.fetchTxns();
+    txnsController.fetchUserTxns();
 
     return DefaultTabController(
       length: 2,

@@ -20,7 +20,7 @@ class CTxnsScreen extends StatelessWidget {
         child: Obx(() {
           if (!txnsController.isLoading.value &&
               txnsController.receipts.isEmpty) {
-            txnsController.fetchTxns();
+            txnsController.fetchUserTxns();
           }
           return ExpansionPanelList.radio(
             animationDuration: const Duration(milliseconds: 600),

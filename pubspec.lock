@@ -353,6 +353,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.0.9"
+  darq:
+    dependency: "direct main"
+    description:
+      name: darq
+      sha256: ae2d39b09c2c40e8286e03bf2d746490532da8bef34dbf66b78e2231d8fffbe7
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.1.0"
   dart_style:
     dependency: transitive
     description:

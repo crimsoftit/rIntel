@@ -51,7 +51,7 @@ class CTxnsController extends GetxController {
 
   final RxList<CTxnsModel> foundSales = <CTxnsModel>[].obs;
   final RxList<CTxnsModel> txns = <CTxnsModel>[].obs;
-  final RxList<CTxnsModel> foundTxns = <CTxnsModel>[].obs;
+
   RxList<CTxnsModel> transactionItems = <CTxnsModel>[].obs;
   final RxList<CTxnsModel> refunds = <CTxnsModel>[].obs;
   final RxList<CTxnsModel> foundRefunds = <CTxnsModel>[].obs;
@@ -147,6 +147,7 @@ class CTxnsController extends GetxController {
 
   final storeRepo = Get.put(CStoreRepo());
   final RxList<CTxn> userTxns = <CTxn>[].obs;
+  final RxList<CTxn> foundTxns = <CTxn>[].obs;
   final RxList<CSoldItemModel> userTxnItems = <CSoldItemModel>[].obs;
 
   @override
@@ -348,7 +349,7 @@ class CTxnsController extends GetxController {
 
           //dbHelper.updateReceiptItem(relatedItem);
         }
-        await fetchTxns();
+        //await fetchTxns();
       }
 
       // -- stop loader --
@@ -371,50 +372,50 @@ class CTxnsController extends GetxController {
     }
   }
 
-  /// -- fetch txns from sqflite db --
-  Future<List<CTxnsModel>> fetchTxns() async {
-    try {
-      final dashboardController = Get.put(CDashboardController());
-      // start loader while txns are fetched
-      isLoading.value = true;
-      //await dbHelper.openDb();
-      await fetchSoldItems();
+  // /// -- fetch txns from sqflite db --
+  // Future<List<CTxnsModel>> fetchTxns() async {
+  //   try {
+  //     final dashboardController = Get.put(CDashboardController());
+  //     // start loader while txns are fetched
+  //     isLoading.value = true;
+  //     //await dbHelper.openDb();
+  //     await fetchSoldItems();
 
-      // fetch txns from sqflite db
-      final transactions = await dbHelper.fetchSoldItemsGroupedByTxnId(
-        userController.user.value.email,
-      );
+  //     // fetch txns from sqflite db
+  //     final transactions = await dbHelper.fetchSoldItemsGroupedByTxnId(
+  //       userController.user.value.email,
+  //     );
 
-      // assign transactions to txns list
-      txns.assignAll(transactions);
+  //     // assign transactions to txns list
+  //     txns.assignAll(transactions);
 
-      if (searchController.showSearchField.value &&
-          searchController.txtSearchField.text == '') {
-        foundTxns.assignAll(transactions);
-      }
+  //     if (searchController.showSearchField.value &&
+  //         searchController.txtSearchField.text == '') {
+  //       foundTxns.assignAll(transactions);
+  //     }
 
-      dashboardController.generateSalesFilterItems().then((_) {
-        dashboardController.setDefaultSalesFilterPeriod();
-      });
+  //     dashboardController.generateSalesFilterItems().then((_) {
+  //       dashboardController.setDefaultSalesFilterPeriod();
+  //     });
 
-      // stop loader
-      isLoading.value = false;
-      txnsFetched.value = true;
-      return txns;
-    } catch (e) {
-      isLoading.value = false;
-      txnsFetched.value = false;
+  //     // stop loader
+  //     isLoading.value = false;
+  //     txnsFetched.value = true;
+  //     return txns;
+  //   } catch (e) {
+  //     isLoading.value = false;
+  //     txnsFetched.value = false;
 
-      if (kDebugMode) {
-        CPopupSnackBar.errorSnackBar(
-          title: 'error fetching txns!',
-          message: e.toString(),
-        );
-      }
-      //throw e.toString();
-      rethrow;
-    }
-  }
+  //     if (kDebugMode) {
+  //       CPopupSnackBar.errorSnackBar(
+  //         title: 'error fetching txns!',
+  //         message: e.toString(),
+  //       );
+  //     }
+  //     //throw e.toString();
+  //     rethrow;
+  //   }
+  // }
 
   /// -- fetch txn items by txn id --
   Future<List<CTxnsModel>> fetchTxnItems(int txnId) async {
@@ -592,123 +593,25 @@ class CTxnsController extends GetxController {
   // -- search store --
   Future<void> searchSales(String value) async {
     try {
-      await fetchTxns();
+      //await fetchUserTxns();
 
       /// -- search all sold items --
-      var salesFound = sales
-          .where(
-            (soldItem) =>
-                soldItem.productName.toLowerCase().contains(
-                  value.toLowerCase(),
-                ) ||
-                soldItem.txnId.toString().toLowerCase().contains(
-                  value.toLowerCase(),
-                ) ||
-                soldItem.productCode.toLowerCase().contains(
-                  value.toLowerCase(),
-                ) ||
-                soldItem.productId.toString().toLowerCase().contains(
-                  value.toLowerCase(),
-                ) ||
-                soldItem.lastModified.toLowerCase().contains(
-                  value.toLowerCase(),
-                ) ||
-                soldItem.customerName.toLowerCase().contains(
-                  value.toLowerCase(),
-                ) ||
-                soldItem.customerContacts.toLowerCase().contains(
-                  value.toLowerCase(),
-                ),
-          )
-          .toList();
-      foundSales.assignAll(salesFound);
-
-      /// -- search refunded items --
-      var refundsFound = refunds
-          .where(
-            (refundedItem) =>
-                refundedItem.productCode.toLowerCase().contains(
-                  value.toLowerCase(),
-                ) ||
-                refundedItem.productId.toString().toLowerCase().contains(
-                  value.toLowerCase(),
-                ) ||
-                refundedItem.productName.toLowerCase().contains(
-                  value.toLowerCase(),
-                ) ||
-                refundedItem.txnId.toString().toLowerCase().contains(
-                  value.toLowerCase(),
-                ) ||
-                refundedItem.lastModified.toLowerCase().contains(
-                  value.toLowerCase(),
-                ) ||
-                refundedItem.customerName.toLowerCase().contains(
-                  value.toLowerCase(),
-                ) ||
-                refundedItem.customerContacts.toLowerCase().contains(
-                  value.toLowerCase(),
-                ),
-          )
-          .toList();
-      foundRefunds.assignAll(refundsFound);
-
-      /// -- search receipt items(complete txns) --
-      var receiptsFound = receipts
-          .where(
-            (completeTxn) =>
-                completeTxn.productCode.toLowerCase().contains(
-                  value.toLowerCase(),
-                ) ||
-                completeTxn.productId.toString().toLowerCase().contains(
-                  value.toLowerCase(),
-                ) ||
-                completeTxn.productName.toLowerCase().contains(
-                  value.toLowerCase(),
-                ) ||
-                completeTxn.txnId.toString().toLowerCase().contains(
-                  value.toLowerCase(),
-                ) ||
-                completeTxn.lastModified.toLowerCase().contains(
-                  value.toLowerCase(),
-                ) ||
-                completeTxn.customerName.toLowerCase().contains(
-                  value.toLowerCase(),
-                ) ||
-                completeTxn.customerContacts.toLowerCase().contains(
-                  value.toLowerCase(),
-                ),
-          )
-          .toList();
-      foundReceipts.assignAll(receiptsFound);
-
-      /// -- search itemssold on credit (invoices) --
-      var invoicesFound = invoices
-          .where(
-            (invoice) =>
-                invoice.productCode.toLowerCase().trim().contains(
-                  value.toLowerCase().trim(),
-                ) ||
-                invoice.productId.toString().toLowerCase().trim().contains(
-                  value.toLowerCase().trim(),
-                ) ||
-                invoice.productName.toLowerCase().trim().contains(
-                  value.toLowerCase().trim(),
-                ) ||
-                invoice.txnId.toString().toLowerCase().trim().contains(
-                  value.toLowerCase().trim(),
-                ) ||
-                invoice.lastModified.toLowerCase().trim().contains(
-                  value.toLowerCase().trim(),
-                ) ||
-                invoice.customerName.toLowerCase().trim().contains(
-                  value.toLowerCase().trim(),
-                ) ||
-                invoice.customerContacts.toLowerCase().trim().contains(
-                  value.toLowerCase().trim(),
-                ),
-          )
-          .toList();
-      foundInvoices.assignAll(invoicesFound);
+      var txnsFound = userTxns.where((foundTxn) {
+        return foundTxn.txnId.toString().toLowerCase().contains(
+              value.toLowerCase(),
+            ) ||
+            foundTxn.lastModified.toLowerCase().contains(
+              value.toLowerCase(),
+            ) ||
+            foundTxn.customerName.toLowerCase().contains(
+              value.toLowerCase(),
+            ) ||
+            foundTxn.customerContacts.toLowerCase().contains(
+              value.toLowerCase(),
+            );
+      }).toList();
+      foundTxns.assignAll(txnsFound);
+      //return foundTxns;
     } catch (e) {
       CPopupSnackBar.errorSnackBar(
         title: 'error searching sales',
@@ -2171,16 +2074,14 @@ class CTxnsController extends GetxController {
   Future<List<CTxn>> fetchUserTxns() async {
     try {
       isLoading.value = true;
-      foundSales.clear();
-      foundRefunds.clear();
+      foundTxns.clear();
+      //foundRefunds.clear();
 
       final txns = await dbHelper.fetchUserTxns(
         userController.user.value.email,
       );
       // assign sold items to sales list
       userTxns.assignAll(txns);
-
-      await fetchUserTxnItems();
 
       isLoading.value = false;
       return userTxns;

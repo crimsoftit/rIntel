@@ -30,7 +30,10 @@ class CExpandedSearchField extends StatelessWidget {
       children: [
         Expanded(
           child: Padding(
-            padding: const EdgeInsets.only(bottom: 6.0, left: 0.0),
+            padding: const EdgeInsets.only(
+              bottom: 6.0,
+              left: 0.0,
+            ),
             child: TextFormField(
               controller: controller,
               autofocus: true,
@@ -85,8 +88,7 @@ class CExpandedSearchField extends StatelessWidget {
             onTap: () async {
               searchController.toggleSearchFieldVisibility();
               await invController.fetchUserInventoryItems();
-              //txnsController.fetchSoldItems();
-              await txnsController.fetchTxns();
+              await txnsController.fetchUserTxns();
             },
             child: Padding(
               padding: const EdgeInsets.all(

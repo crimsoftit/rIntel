@@ -910,61 +910,7 @@ class CCheckoutController extends GetxController {
     }
   }
 
-  void confirmInvoicePaymentDialog(int txnId) {
-    Get.defaultDialog(
-      contentPadding: const EdgeInsets.all(CSizes.md),
-      title: 'complete transaction?',
-      middleText: 'are you certain payment is complete?',
-      confirm: ElevatedButton(
-        onPressed: () async {
-          // -- check internet connectivity --
-          if (txnsController.transactionItems.isEmpty) {
-            if (kDebugMode) {
-              CPopupSnackBar.customToast(
-                message: 'receipt items cleared!!',
-                forInternetConnectivityStatus: false,
-              );
-            }
-            txnsController.fetchTxnItems(txnId);
-          }
-
-          for (var item in txnsController.transactionItems) {
-            item.lastModified = DateFormat(
-              'yyyy-MM-dd @ kk:mm',
-            ).format(clock.now()).toString();
-
-            item.syncAction = item.isSynced == 0 ? 'append' : 'update';
-
-            item.txnStatus = 'complete';
-
-            await dbHelper.updateMultipleFieldsWithTransactionId(
-              item.txnId,
-              item.lastModified,
-              item.syncAction,
-              item.txnStatus,
-            );
-          }
-          txnsController.fetchTxns();
-          Navigator.of(Get.overlayContext!).pop();
-        },
-        style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.red,
-          side: const BorderSide(color: Colors.red),
-        ),
-        child: const Padding(
-          padding: EdgeInsets.symmetric(horizontal: CSizes.lg),
-          child: Text('confirm'),
-        ),
-      ),
-      cancel: OutlinedButton(
-        onPressed: () {
-          //fetchUserInventoryItems();
-          Navigator.of(Get.overlayContext!).pop();
-        },
-        child: const Text('cancel'),
-      ),
-    );
-  }
+  
 
   Future updateTxnItemCloudData(int txnId, CTxnsModel itemModel) async {
     try {

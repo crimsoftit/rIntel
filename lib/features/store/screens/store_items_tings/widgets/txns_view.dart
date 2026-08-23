@@ -8,6 +8,7 @@ import 'package:rintel/features/personalization/screens/no_data/no_data_screen.d
 import 'package:rintel/features/store/controllers/search_bar_controller.dart';
 import 'package:rintel/features/store/controllers/txns_controller.dart';
 import 'package:rintel/features/store/models/txns/txn_model.dart';
+import 'package:rintel/features/store/screens/search/widgets/no_results_screen.dart';
 import 'package:rintel/utils/constants/colors.dart';
 import 'package:rintel/utils/constants/img_strings.dart';
 import 'package:rintel/utils/constants/sizes.dart';
@@ -47,7 +48,9 @@ class _CTxnsViewState extends State<CTxnsView> {
       () {
         WidgetsBinding.instance.addPostFrameCallback(
           (_) {
-            txnsController.fetchUserTxns();
+            setState(() {
+              txnsController.fetchUserTxnItems();
+            });
           },
         );
       },
@@ -64,42 +67,47 @@ class _CTxnsViewState extends State<CTxnsView> {
     final userCurrency = userController.user.value.currencyCode;
 
     return FutureBuilder<List<CTxn>>(
-          future: _itemsFuture,
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting ||
-                txnsController.isLoading.value) {
-              return Center(
-                child: CVerticalProductShimmer(
-                  itemCount: 7,
-                ),
-              );
-            } else if (snapshot.hasError) {
-              return Center(
-                child: Text(
-                  'Error: ${snapshot.error}',
-                ),
-              );
-            } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-              return Center(
-                child: NoDataScreen(
-                  lottieImage: CImages.noDataLottie,
-                  txt: '${widget.space} will be displayed here...',
-                ),
-              );
-            }
+      future: _itemsFuture,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting ||
+            txnsController.isLoading.value) {
+          return Center(
+            child: CVerticalProductShimmer(
+              itemCount: 7,
+            ),
+          );
+        } else if (snapshot.hasError) {
+          return Center(
+            child: Text(
+              'Error: ${snapshot.error}',
+            ),
+          );
+        } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+          return Center(
+            child: NoDataScreen(
+              lottieImage: CImages.noDataLottie,
+              txt: '${widget.space} will be displayed here...',
+            ),
+          );
+        }
 
+        return Obx(
+          () {
             var demItems = <CTxn>[];
 
             switch (widget.space) {
               case 'invoices':
                 demItems.assignAll(
-                  snapshot.data!
-                      .where(
-                        (invoice) => invoice.txnStatus.toLowerCase().contains(
-                          'invoiced',
-                        ),
-                      )
-                      .toList(),
+                  searchController.showSearchField.value
+                      ? txnsController.foundTxns
+                      : snapshot.data!
+                            .where(
+                              (invoice) =>
+                                  invoice.txnStatus.toLowerCase().contains(
+                                    'invoiced',
+                                  ),
+                            )
+                            .toList(),
                 );
                 break;
               case 'receipts':
@@ -118,6 +126,11 @@ class _CTxnsViewState extends State<CTxnsView> {
                 break;
             }
 
+            if (searchController.showSearchField.value &&
+                !txnsController.isLoading.value &&
+                demItems.isEmpty) {
+              return const NoSearchResultsScreen();
+            }
             return ListView.builder(
               itemCount: demItems.length,
               itemBuilder: (context, txnIndex) {
@@ -200,6 +213,7 @@ class _CTxnsViewState extends State<CTxnsView> {
                                   .where((item) => item.txnId == txn.txnId)
                                   .length, // Nested data count
                               itemBuilder: (context, innerIndex) {
+                                //txnsController.fetchUserTxnItems();
                                 var txnItems = txnsController.userTxnItems
                                     .where((item) => item.txnId == txn.txnId)
                                     .toList();
@@ -339,6 +353,7 @@ class _CTxnsViewState extends State<CTxnsView> {
             );
           },
         );
-      
+      },
+    );
   }
 }

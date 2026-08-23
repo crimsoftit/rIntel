@@ -34,7 +34,7 @@ class CStoreScreen extends StatelessWidget {
 
     final searchController = Get.put(CSearchBarController());
 
-    txnsController.fetchTxns();
+    txnsController.fetchUserTxns();
 
     return DefaultTabController(
       animationDuration: Duration(
