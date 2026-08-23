@@ -59,7 +59,6 @@ class CTxnsController extends GetxController {
   final RxList<CBestSellersModel> bestSellers = <CBestSellersModel>[].obs;
 
   final RxList<CTxnsModel> receipts = <CTxnsModel>[].obs;
-  final RxList<CTxnsModel> foundReceipts = <CTxnsModel>[].obs;
 
   final RxList<CTxnsModel> allGsheetTxnsData = <CTxnsModel>[].obs;
   final RxList<CTxnsModel> unsyncedTxnAppends = <CTxnsModel>[].obs;
@@ -147,7 +146,7 @@ class CTxnsController extends GetxController {
 
   final storeRepo = Get.put(CStoreRepo());
   final RxList<CTxn> userTxns = <CTxn>[].obs;
-  final RxList<CTxn> foundTxns = <CTxn>[].obs;
+  final RxList<CTxn> foundReceipts = <CTxn>[].obs;
   final RxList<CSoldItemModel> userTxnItems = <CSoldItemModel>[].obs;
 
   @override
@@ -268,7 +267,7 @@ class CTxnsController extends GetxController {
 
       if (searchController.showSearchField.value &&
           searchController.txtSearchField.text == '') {
-        foundReceipts.assignAll(receipts);
+        //foundReceipts.assignAll(receipts);
         foundInvoices.assignAll(creditSales);
       }
 
@@ -593,7 +592,7 @@ class CTxnsController extends GetxController {
   // -- search store --
   Future<void> searchSales(String value) async {
     try {
-      //await fetchUserTxns();
+      await fetchUserTxns();
 
       /// -- search all sold items --
       var txnsFound = userTxns.where((foundTxn) {
@@ -610,7 +609,9 @@ class CTxnsController extends GetxController {
               value.toLowerCase(),
             );
       }).toList();
-      foundTxns.assignAll(txnsFound);
+      foundReceipts.assignAll(
+        txnsFound.where((txn) => txn.txnStatus == 'complete'),
+      );
       //return foundTxns;
     } catch (e) {
       CPopupSnackBar.errorSnackBar(
@@ -2074,7 +2075,7 @@ class CTxnsController extends GetxController {
   Future<List<CTxn>> fetchUserTxns() async {
     try {
       isLoading.value = true;
-      foundTxns.clear();
+      foundReceipts.clear();
       //foundRefunds.clear();
 
       final txns = await dbHelper.fetchUserTxns(
@@ -2082,6 +2083,12 @@ class CTxnsController extends GetxController {
       );
       // assign sold items to sales list
       userTxns.assignAll(txns);
+
+      if (searchController.showSearchField.value &&
+          searchController.txtSearchField.text == '') {
+        foundReceipts.assignAll(userTxns);
+        //foundInvoices.assignAll(creditSales);
+      }
 
       isLoading.value = false;
       return userTxns;

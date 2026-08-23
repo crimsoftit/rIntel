@@ -257,15 +257,15 @@ class _CTxnItemsListViewState extends State<CTxnItemsListView> {
               ),
             );
             break;
-          case 'receipts':
-            demItems.assignAll(
-              searchController.showSearchField.value &&
-                      searchController.txtSearchField.text != '' &&
-                      !txnsController.isLoading.value
-                  ? txnsController.foundReceipts
-                  : txnsController.receipts,
-            );
-            break;
+          // case 'receipts':
+          //   demItems.assignAll(
+          //     searchController.showSearchField.value &&
+          //             searchController.txtSearchField.text != '' &&
+          //             !txnsController.isLoading.value
+          //         ? txnsController.foundReceipts
+          //         : txnsController.receipts,
+          //   );
+          //   break;
           case 'contact receipts':
             demItems.assignAll(
               txnsController.receipts.where(

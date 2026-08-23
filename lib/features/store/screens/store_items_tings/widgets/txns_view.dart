@@ -98,27 +98,28 @@ class _CTxnsViewState extends State<CTxnsView> {
             switch (widget.space) {
               case 'invoices':
                 demItems.assignAll(
-                  searchController.showSearchField.value
-                      ? txnsController.foundTxns
-                      : snapshot.data!
-                            .where(
-                              (invoice) =>
-                                  invoice.txnStatus.toLowerCase().contains(
-                                    'invoiced',
-                                  ),
-                            )
-                            .toList(),
+                  snapshot.data!
+                      .where(
+                        (invoice) => invoice.txnStatus.toLowerCase().contains(
+                          'invoiced',
+                        ),
+                      )
+                      .toList(),
                 );
                 break;
               case 'receipts':
                 demItems.assignAll(
-                  snapshot.data!
-                      .where(
-                        (invoice) => invoice.txnStatus.toLowerCase().contains(
-                          'complete',
-                        ),
-                      )
-                      .toList(),
+                  searchController.showSearchField.value &&
+                          searchController.txtSearchField.text != ''
+                      ? txnsController.foundReceipts
+                      : snapshot.data!
+                            .where(
+                              (receipt) =>
+                                  receipt.txnStatus.toLowerCase().contains(
+                                    'complete',
+                                  ),
+                            )
+                            .toList(),
                 );
                 break;
               default:
