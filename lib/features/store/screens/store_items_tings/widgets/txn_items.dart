@@ -229,15 +229,15 @@ class _CTxnItemsListViewState extends State<CTxnItemsListView> {
         }
 
         switch (widget.space) {
-          case 'invoices':
-            demItems.assignAll(
-              searchController.showSearchField.value &&
-                      searchController.txtSearchField.text != '' &&
-                      !txnsController.isLoading.value
-                  ? txnsController.foundInvoices
-                  : txnsController.invoices,
-            );
-            break;
+          // case 'invoices':
+          //   demItems.assignAll(
+          //     searchController.showSearchField.value &&
+          //             searchController.txtSearchField.text != '' &&
+          //             !txnsController.isLoading.value
+          //         ? txnsController.foundInvoices
+          //         : txnsController.invoices,
+          //   );
+          //   break;
           case 'contact invoices':
             demItems.assignAll(
               txnsController.invoices.where(

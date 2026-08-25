@@ -5,6 +5,7 @@ import 'package:rintel/common/widgets/shimmers/vert_items_shimmer.dart';
 import 'package:rintel/features/personalization/controllers/contacts_controller.dart';
 import 'package:rintel/features/personalization/controllers/user_controller.dart';
 import 'package:rintel/features/personalization/screens/no_data/no_data_screen.dart';
+import 'package:rintel/features/store/controllers/inv_controller.dart';
 import 'package:rintel/features/store/controllers/search_bar_controller.dart';
 import 'package:rintel/features/store/controllers/txns_controller.dart';
 import 'package:rintel/features/store/models/txns/txn_model.dart';
@@ -32,6 +33,7 @@ class CTxnsView extends StatefulWidget {
 
 class _CTxnsViewState extends State<CTxnsView> {
   late Future<List<CTxn>> _itemsFuture;
+  final invController = Get.put(CInventoryController());
   final txnsController = Get.put(CTxnsController());
   final userController = Get.put(CUserController());
 
@@ -48,9 +50,7 @@ class _CTxnsViewState extends State<CTxnsView> {
       () {
         WidgetsBinding.instance.addPostFrameCallback(
           (_) {
-            setState(() {
-              txnsController.fetchUserTxnItems();
-            });
+            txnsController.fetchUserTxnItems();
           },
         );
       },
@@ -69,11 +69,10 @@ class _CTxnsViewState extends State<CTxnsView> {
     return FutureBuilder<List<CTxn>>(
       future: _itemsFuture,
       builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting ||
-            txnsController.isLoading.value) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
           return Center(
             child: CVerticalProductShimmer(
-              itemCount: 7,
+              itemCount: 2,
             ),
           );
         } else if (snapshot.hasError) {
@@ -98,13 +97,17 @@ class _CTxnsViewState extends State<CTxnsView> {
             switch (widget.space) {
               case 'invoices':
                 demItems.assignAll(
-                  snapshot.data!
-                      .where(
-                        (invoice) => invoice.txnStatus.toLowerCase().contains(
-                          'invoiced',
-                        ),
-                      )
-                      .toList(),
+                  searchController.showSearchField.value &&
+                          searchController.txtSearchField.text != ''
+                      ? txnsController.foundInvoices
+                      : snapshot.data!
+                            .where(
+                              (invoice) =>
+                                  invoice.txnStatus.toLowerCase().contains(
+                                    'invoiced',
+                                  ),
+                            )
+                            .toList(),
                 );
                 break;
               case 'receipts':
@@ -306,11 +309,21 @@ class _CTxnsViewState extends State<CTxnsView> {
                                             items: [
                                               PopupMenuItem(
                                                 onTap: () async {
+                                                  var inventoryItem =
+                                                      invController
+                                                          .inventoryItems
+                                                          .firstWhere(
+                                                            (item) =>
+                                                                item.productId ==
+                                                                childItem
+                                                                    .productId,
+                                                          );
                                                   await txnsController
                                                       .refundItemActionModal(
                                                         context,
                                                         txn,
                                                         childItem,
+                                                        inventoryItem,
                                                       );
                                                   await txnsController
                                                       .fetchUserTxnItems();

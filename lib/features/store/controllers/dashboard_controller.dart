@@ -84,11 +84,10 @@ class CDashboardController extends GetxController {
       () {
         WidgetsBinding.instance.addPostFrameCallback(
           (_) async {
-            await txnsController.fetchSoldItems().then(
+            await txnsController.fetchUserTxnItems().then(
               (result) async {
                 if (result.isNotEmpty) {
                   calculateCurrentWeekSales();
-                  calculateLastWeekSales();
                   filterHourlySales();
                 }
               },
@@ -103,7 +102,7 @@ class CDashboardController extends GetxController {
       () {
         WidgetsBinding.instance.addPostFrameCallback(
           (_) async {
-            if (txnsController.sales.isNotEmpty) {
+            if (txnsController.userTxns.isNotEmpty) {
               await txnsController.fetchTopSellersFromSales();
             }
           },
@@ -115,10 +114,11 @@ class CDashboardController extends GetxController {
   }
 
   Future<List<DateTime>> generateSalesFilterItems() async {
+    
     int firstYr;
     int lastYr;
-    if (txnsController.sales.isNotEmpty) {
-      salesDatesOnly.value = txnsController.sales
+    if (txnsController.userTxns.isNotEmpty) {
+      salesDatesOnly.value = txnsController.userTxns
           .map((item) => DateTime.parse(item.lastModified.replaceAll(' @', '')))
           .toList();
 
@@ -149,13 +149,10 @@ class CDashboardController extends GetxController {
     thisWeekSalesList.value = List<double>.filled(7, 0.0);
     currentWeekSalesAmount.value = 0.0;
 
-    txnsController.fetchSoldItems().then((result) {
+    txnsController.fetchUserTxns().then((result) {
       if (result.isNotEmpty) {
-        var demLegitSales = txnsController.sales
-            .where((soldItem) => soldItem.quantity >= 0.01)
-            .toList();
-        for (var sale in demLegitSales) {
-          final String rawSaleDate = sale.lastModified.trim();
+        for (var txn in txnsController.userTxns) {
+          final String rawSaleDate = txn.lastModified.trim();
           var formattedDate = rawSaleDate.replaceAll(' @', '');
           final DateTime currentWeekSalesStart =
               CHelperFunctions.getStartOfCurrentWeek(
@@ -171,9 +168,8 @@ class CDashboardController extends GetxController {
 
             // ensure the index is non-negative
             index = index < 0 ? index + 7 : index;
-            thisWeekSalesList[index] += (sale.unitSellingPrice * sale.quantity);
-            currentWeekSalesAmount.value +=
-                (sale.unitSellingPrice * sale.quantity);
+            thisWeekSalesList[index] += txn.totalAmount;
+            currentWeekSalesAmount.value += txn.totalAmount;
           }
         }
       }
@@ -182,60 +178,6 @@ class CDashboardController extends GetxController {
           ? thisWeekSalesList.reduce(max)
           : 1000;
     });
-  }
-
-  /// -- calculate last week's sales --
-  void calculateLastWeekSales() {
-    // reset lastWeekSales value to zero
-    lastWeekSalesAmount.value = 0.0;
-    weeklyPercentageChange.value = 0.0;
-
-    final now = DateTime.now();
-    final lastWeekStart = now.subtract(
-      Duration(days: now.weekday + 6),
-    ); // Monday of last week
-    final lastWeekEnd = lastWeekStart.add(
-      Duration(
-        days: 6,
-      ),
-    ); // Sunday of last week
-
-    // Filter sales data for the last week
-    Future.delayed(
-      Duration.zero,
-      () {
-        WidgetsBinding.instance.addPostFrameCallback(
-          (_) {
-            txnsController.fetchSoldItems().then(
-              (result) {
-                if (result.isNotEmpty) {
-                  var demLegitSales = txnsController.sales
-                      .where((soldItem) => soldItem.quantity >= 0.001)
-                      .toList();
-
-                  // -- filter sales data for last week --
-                  lastWeekSalesAmount.value = demLegitSales
-                      .where((sale) {
-                        final String rawSaleDate = sale.lastModified.trim();
-                        var formattedDate = rawSaleDate.replaceAll(' @', '');
-
-                        return DateTime.parse(
-                              formattedDate,
-                            ).isAfter(lastWeekStart) &&
-                            DateTime.parse(formattedDate).isBefore(lastWeekEnd);
-                      })
-                      .fold(
-                        0.0,
-                        (sum, sale) =>
-                            sum + (sale.unitSellingPrice * sale.quantity),
-                      );
-                }
-              },
-            );
-          },
-        );
-      },
-    );
   }
 
   FlTitlesData buildFlBarChartTitlesData(bool forAnnualData) {
@@ -353,7 +295,7 @@ class CDashboardController extends GetxController {
     final timeAtMidnight = 24 * 60;
 
     /// -- sales btn midnight and 3:00hrs --
-    var salesPast0and3 = txnsController.sales.where((sale) {
+    var salesPast0and3 = txnsController.userTxns.where((sale) {
       var formattedDate = DateTime.parse(
         sale.lastModified.replaceAll(' @', ''),
       );
@@ -362,23 +304,23 @@ class CDashboardController extends GetxController {
     }).toList();
     salesPastMidnightTo3.value = salesPast0and3.fold(
       0.0,
-      (sum, sale) => sum + (sale.unitSellingPrice * sale.quantity),
+      (sum, txn) => sum + txn.totalAmount,
     );
 
-    var salesBtn0and3 = txnsController.sales.where((sale) {
+    var salesBtn0and3 = txnsController.userTxns.where((txn) {
       var formattedDate = DateTime.parse(
-        sale.lastModified.replaceAll(' @', ''),
+        txn.lastModified.replaceAll(' @', ''),
       );
       final timeInMunites = formattedDate.hour * 60 + formattedDate.minute;
       return timeInMunites >= timeAtMidnight && timeInMunites < timeAt3Hrs;
     }).toList();
     salesBtnMidnightTo3.value = salesBtn0and3.fold(
       0.0,
-      (sum, sale) => sum + (sale.unitSellingPrice * sale.quantity),
+      (sum, txn) => sum + txn.totalAmount,
     );
 
     /// -- sales btn 3:00hrs and 6:00hrs --
-    var salesBtn3and6 = txnsController.sales.where((sale) {
+    var salesBtn3and6 = txnsController.userTxns.where((sale) {
       var formattedDate = DateTime.parse(
         sale.lastModified.replaceAll(' @', ''),
       );
@@ -388,11 +330,11 @@ class CDashboardController extends GetxController {
 
     salesBtn3to6.value = salesBtn3and6.fold(
       0.0,
-      (sum, sale) => sum + (sale.unitSellingPrice * sale.quantity),
+      (sum, txn) => sum + txn.totalAmount,
     );
 
     /// -- sales btn 6:00hrs and 9:00hrs --
-    var salesBtn6and9 = txnsController.sales.where((sale) {
+    var salesBtn6and9 = txnsController.userTxns.where((sale) {
       var formattedDate = DateTime.parse(
         sale.lastModified.replaceAll(' @', ''),
       );
@@ -402,11 +344,11 @@ class CDashboardController extends GetxController {
 
     salesBtn6to9.value = salesBtn6and9.fold(
       0.0,
-      (sum, sale) => sum + (sale.unitSellingPrice * sale.quantity),
+      (sum, txn) => sum + txn.totalAmount,
     );
 
     /// -- sales btn 9:00hrs and 12:00hrs --
-    var salesBtn9and12 = txnsController.sales.where((sale) {
+    var salesBtn9and12 = txnsController.userTxns.where((sale) {
       var formattedDate = DateTime.parse(
         sale.lastModified.replaceAll(' @', ''),
       );
@@ -415,11 +357,11 @@ class CDashboardController extends GetxController {
     }).toList();
     salesBtn9to12.value = salesBtn9and12.fold(
       0.0,
-      (sum, sale) => sum + (sale.unitSellingPrice * sale.quantity),
+      (sum, txn) => sum + txn.totalAmount,
     );
 
     /// -- sales btn 12:00hrs and 15:00hrs --
-    var salesBtn12and15 = txnsController.sales.where((sale) {
+    var salesBtn12and15 = txnsController.userTxns.where((sale) {
       var formattedDate = DateTime.parse(
         sale.lastModified.replaceAll(' @', ''),
       );
@@ -429,11 +371,11 @@ class CDashboardController extends GetxController {
 
     salesBtn12to15.value = salesBtn12and15.fold(
       0.0,
-      (sum, sale) => sum + (sale.unitSellingPrice * sale.quantity),
+      (sum, txn) => sum + txn.totalAmount,
     );
 
     /// -- sales btn 15:00hrs and 18:00hrs --
-    var salesBtn15and18 = txnsController.sales.where((sale) {
+    var salesBtn15and18 = txnsController.userTxns.where((sale) {
       var formattedDate = DateTime.parse(
         sale.lastModified.replaceAll(" @", ''),
       );
@@ -443,11 +385,11 @@ class CDashboardController extends GetxController {
 
     salesBtn15to18.value = salesBtn15and18.fold(
       0.0,
-      (sum, sale) => sum + (sale.unitSellingPrice * sale.quantity),
+      (sum, txn) => sum + txn.totalAmount,
     );
 
     /// -- sales btn 18:00hrs and 21:00hrs --
-    var salesBtn18and21 = txnsController.sales.where((sale) {
+    var salesBtn18and21 = txnsController.userTxns.where((sale) {
       var formattedDate = DateTime.parse(
         sale.lastModified.replaceAll(' @', ''),
       );
@@ -459,11 +401,11 @@ class CDashboardController extends GetxController {
 
     salesBtn18to21.value = salesBtn18and21.fold(
       0.0,
-      (sum, sale) => sum + (sale.unitSellingPrice * sale.quantity),
+      (sum, txn) => sum + txn.totalAmount,
     );
 
     /// -- sales btn 21:00hrs and midnight --
-    var salesBtn21andMidght = txnsController.sales.where((sale) {
+    var salesBtn21andMidght = txnsController.userTxns.where((sale) {
       var formattedDate = DateTime.parse(
         sale.lastModified.replaceAll(' @', ''),
       );
@@ -474,17 +416,18 @@ class CDashboardController extends GetxController {
 
     salesBtn21toMidnight.value = salesBtn21andMidght.fold(
       0.0,
-      (sum, sale) => sum + (sale.unitSellingPrice * sale.quantity),
+      (sum, txn) => txn.totalAmount,
     );
 
     /// -- peak sales amount --
-    peakSalesAmount.value = txnsController.sales.fold(
+    peakSalesAmount.value = txnsController.userTxns.fold(
       0.0,
-      (sum, sale) => sum + (sale.unitSellingPrice * sale.quantity),
+      (sum, txn) => sum + txn.totalAmount,
     );
   }
 
   String setDefaultSalesFilterPeriod() {
+    
     defautSalesFilterPeriod.value = selectedSalesFilterPeriod.value == ''
         ? salesFilters[0]
         : selectedSalesFilterPeriod.value;
@@ -498,16 +441,16 @@ class CDashboardController extends GetxController {
   }
 
   List<CMonthlySalesModel> generateMonthlySalesWithoutMonths(int yr) {
+    
     monthlyTotals.value = <int, double>{};
-    for (var monthSales in txnsController.sales) {
+    for (var monthSales in txnsController.userTxns) {
       final String rawSaleDate = monthSales.lastModified.trim();
       var formattedDate = DateTime.parse(rawSaleDate.replaceAll(' @', ''));
 
       if (formattedDate.year == yr) {
         final monthIndex = formattedDate.month;
         monthlyTotals[monthIndex] =
-            (monthlyTotals[monthIndex] ?? 0) +
-            (monthSales.unitSellingPrice * monthSales.quantity);
+            (monthlyTotals[monthIndex] ?? 0) + (monthSales.totalAmount);
         monthlySalesHighestAmount.value = monthlyTotals.values.reduce(max) > 1
             ? monthlyTotals.values.reduce(max)
             : 1000;
@@ -533,15 +476,14 @@ class CDashboardController extends GetxController {
   }
 
   List<CMonthlySalesModel> generateMonthlySalesWithMonths(int yr) {
-    for (var monthSales in txnsController.sales) {
+    for (var monthSales in txnsController.userTxns) {
       final String rawSaleDate = monthSales.lastModified.trim();
       var formattedDate = DateTime.parse(rawSaleDate.replaceAll(' @', ''));
 
       if (formattedDate.year == yr) {
         final monthIndex = formattedDate.month;
         monthlyTotals[monthIndex] =
-            (monthlyTotals[monthIndex] ?? 0) +
-            (monthSales.unitSellingPrice * monthSales.quantity);
+            (monthlyTotals[monthIndex] ?? 0) + (monthSales.totalAmount);
       }
     }
 

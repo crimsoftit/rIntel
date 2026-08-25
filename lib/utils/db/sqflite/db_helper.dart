@@ -120,7 +120,7 @@ class DbHelper extends GetxController {
             unitBP REAL NOT NULL,
             unitSellingPrice REAL NOT NULL,
             userEmail TEXT NOT NULL,
-            FOREIGN KEY(productId) REFERENCES inventory(productId),
+            FOREIGN KEY(productId) REFERENCES inventory(productId) ON DELETE CASCADE,
             FOREIGN KEY(txnId) REFERENCES sales(txnId) ON DELETE CASCADE
             )          
           ''');
@@ -155,7 +155,7 @@ class DbHelper extends GetxController {
             syncAction TEXT NOT NULL,
             txnStatus TEXT NOT NULL,
             FOREIGN KEY(productId) REFERENCES inventory(productId)
-            )          
+            )
           ''');
 
         // -- create contacts table --
@@ -658,7 +658,7 @@ class DbHelper extends GetxController {
     try {
       final db = _db;
       final topSellers = await db!.rawQuery(
-        'SELECT productId, productName, itemMetrics, SUM(quantity) as totalSales, unitSellingPrice, quantity FROM $txnsTable WHERE userEmail = ? GROUP BY productId ORDER BY totalSales DESC',
+        'SELECT productId, productName, itemMetrics, SUM(quantity) as totalSales, unitSellingPrice, quantity FROM txnItemsTable WHERE userEmail = ? GROUP BY productId ORDER BY totalSales DESC',
         [email],
       );
 

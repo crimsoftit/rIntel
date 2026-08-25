@@ -1,7 +1,5 @@
 // ignore_for_file: unnecessary_getters_setters, prefer_final_fields
 
-import 'dart:convert';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:rintel/features/store/models/txns/sold_item_model.dart';
 

@@ -44,7 +44,6 @@ class CTxnsController extends GetxController {
 
   DbHelper dbHelper = DbHelper.instance;
 
-  final RxList<CTxnsModel> foundInvoices = <CTxnsModel>[].obs;
   final RxList<CTxnsModel> invoices = <CTxnsModel>[].obs;
 
   final RxList<CTxnsModel> sales = <CTxnsModel>[].obs;
@@ -146,6 +145,7 @@ class CTxnsController extends GetxController {
 
   final storeRepo = Get.put(CStoreRepo());
   final RxList<CTxn> userTxns = <CTxn>[].obs;
+  final RxList<CTxn> foundInvoices = <CTxn>[].obs;
   final RxList<CTxn> foundReceipts = <CTxn>[].obs;
   final RxList<CSoldItemModel> userTxnItems = <CSoldItemModel>[].obs;
 
@@ -154,7 +154,8 @@ class CTxnsController extends GetxController {
     dateRangeFieldController.clear();
 
     if (await CNetworkManager.instance.isConnected() &&
-        CNetworkManager.instance.connectionIsStable.value) {
+        CNetworkManager.instance.connectionIsStable.value &&
+        userTxns.isEmpty) {
       //StoreSheetsApi.initSpreadSheets();
       await initTxnsSync();
     }
@@ -162,8 +163,6 @@ class CTxnsController extends GetxController {
     await fetchUserTxns();
 
     await fetchTopSellersFromSales();
-
-    //await fetchTxns();
 
     showAmountIssuedField.value = true;
     txtRefundQty.text = '';
@@ -268,7 +267,7 @@ class CTxnsController extends GetxController {
       if (searchController.showSearchField.value &&
           searchController.txtSearchField.text == '') {
         //foundReceipts.assignAll(receipts);
-        foundInvoices.assignAll(creditSales);
+        //foundInvoices.assignAll(creditSales);
       }
 
       // assign values for refunded items
@@ -283,24 +282,6 @@ class CTxnsController extends GetxController {
         foundSales.assignAll(sales);
         foundRefunds.assignAll(refundedItems);
       }
-
-      final dashboardController = Get.put(CDashboardController());
-
-      dashboardController.generateSalesFilterItems().then((_) {
-        dashboardController.setDefaultSalesFilterPeriod();
-      });
-
-      /// -- initialize sales summary values --
-
-      if (dateRangeFieldController.text == '' &&
-          !dashboardController.showSummaryFilterField.value) {
-        initializeSalesSummaryValues();
-      }
-
-      /// -- compute hourly sales --
-      dashboardController.filterHourlySales();
-
-      await fetchTopSellersFromSales();
 
       // stop loader
       soldItemsFetched.value = true;
@@ -370,51 +351,6 @@ class CTxnsController extends GetxController {
       rethrow;
     }
   }
-
-  // /// -- fetch txns from sqflite db --
-  // Future<List<CTxnsModel>> fetchTxns() async {
-  //   try {
-  //     final dashboardController = Get.put(CDashboardController());
-  //     // start loader while txns are fetched
-  //     isLoading.value = true;
-  //     //await dbHelper.openDb();
-  //     await fetchSoldItems();
-
-  //     // fetch txns from sqflite db
-  //     final transactions = await dbHelper.fetchSoldItemsGroupedByTxnId(
-  //       userController.user.value.email,
-  //     );
-
-  //     // assign transactions to txns list
-  //     txns.assignAll(transactions);
-
-  //     if (searchController.showSearchField.value &&
-  //         searchController.txtSearchField.text == '') {
-  //       foundTxns.assignAll(transactions);
-  //     }
-
-  //     dashboardController.generateSalesFilterItems().then((_) {
-  //       dashboardController.setDefaultSalesFilterPeriod();
-  //     });
-
-  //     // stop loader
-  //     isLoading.value = false;
-  //     txnsFetched.value = true;
-  //     return txns;
-  //   } catch (e) {
-  //     isLoading.value = false;
-  //     txnsFetched.value = false;
-
-  //     if (kDebugMode) {
-  //       CPopupSnackBar.errorSnackBar(
-  //         title: 'error fetching txns!',
-  //         message: e.toString(),
-  //       );
-  //     }
-  //     //throw e.toString();
-  //     rethrow;
-  //   }
-  // }
 
   /// -- fetch txn items by txn id --
   Future<List<CTxnsModel>> fetchTxnItems(int txnId) async {
@@ -592,7 +528,7 @@ class CTxnsController extends GetxController {
   // -- search store --
   Future<void> searchSales(String value) async {
     try {
-      await fetchUserTxns();
+      userTxns.refresh();
 
       /// -- search all sold items --
       var txnsFound = userTxns.where((foundTxn) {
@@ -610,7 +546,11 @@ class CTxnsController extends GetxController {
             );
       }).toList();
       foundReceipts.assignAll(
-        txnsFound.where((txn) => txn.txnStatus == 'complete'),
+        txnsFound.where((receipt) => receipt.txnStatus == 'complete'),
+      );
+
+      foundInvoices.assignAll(
+        txnsFound.where((invoice) => invoice.txnStatus == 'invoiced'),
       );
       //return foundTxns;
     } catch (e) {
@@ -939,44 +879,12 @@ class CTxnsController extends GetxController {
     }
   }
 
-  /// -- popup for item refund --
-  Future<void> refundItemWarningPopup(CTxnsModel soldItem) async {
-    await Get.defaultDialog(
-      contentPadding: const EdgeInsets.all(
-        CSizes.sm,
-      ),
-      title: 'Refund ${soldItem.productName}?',
-      // middleText:
-      //     'Are you certain you want to refund ${soldItem.productName} for $userCurrency.${soldItem.unitSellingPrice * soldItem.quantity}? This action can\'t be undone!',
-      middleText: 'Are you certain you want to refund ${soldItem.productName}?',
-      confirm: ElevatedButton(
-        onPressed: () async {},
-        style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.red,
-          side: const BorderSide(color: Colors.red),
-        ),
-        child: const Padding(
-          padding: EdgeInsets.symmetric(horizontal: CSizes.sm),
-          child: Text(
-            'confirm refund',
-          ),
-        ),
-      ),
-      cancel: OutlinedButton(
-        onPressed: () {
-          Navigator.of(Get.overlayContext!).pop();
-        },
-        child: const Text(
-          'cancel',
-        ),
-      ),
-    );
-  }
-
+  /// -- perform a refund --
   Future<dynamic> refundItemActionModal(
     BuildContext context,
     CTxn parentTxn,
-    CSoldItemModel soldItem,
+    CSoldItemModel refundItem,
+    CInventoryModel invItem,
   ) async {
     final isDarkTheme = CHelperFunctions.isDarkMode(context);
     return await showModalBottomSheet(
@@ -998,7 +906,7 @@ class CTxnsController extends GetxController {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Text(
-                  'Refund ${soldItem.productName.toUpperCase()}?',
+                  'Refund ${refundItem.productName.toUpperCase()}?',
                   style: Theme.of(context).textTheme.labelMedium!.apply(
                     color: isDarkTheme ? CColors.white : CColors.rBrown,
                   ),
@@ -1008,7 +916,7 @@ class CTxnsController extends GetxController {
                 ),
 
                 Text(
-                  '${CFormatter.formatItemQtyDisplays(soldItem.quantity, soldItem.itemMetrics)} ${CFormatter.formatItemMetrics(soldItem.itemMetrics, soldItem.quantity)} sold; ${CFormatter.formatItemQtyDisplays(soldItem.qtyRefunded, soldItem.itemMetrics)} refunded',
+                  '${CFormatter.formatItemQtyDisplays(refundItem.quantity, refundItem.itemMetrics)} ${CFormatter.formatItemMetrics(refundItem.itemMetrics, refundItem.quantity)} sold; ${CFormatter.formatItemQtyDisplays(refundItem.qtyRefunded, refundItem.itemMetrics)} refunded',
                   style: Theme.of(context).textTheme.labelMedium!.apply(
                     color: isDarkTheme ? CColors.white : CColors.rBrown,
                   ),
@@ -1026,7 +934,7 @@ class CTxnsController extends GetxController {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      '${CFormatter.formatItemMetrics(soldItem.itemMetrics, qtyAvailable.value)})',
+                      '${CFormatter.formatItemMetrics(refundItem.itemMetrics, qtyAvailable.value)})',
                     ),
                     const SizedBox(
                       width: CSizes.spaceBtnInputFields,
@@ -1078,13 +986,13 @@ class CTxnsController extends GetxController {
                             color: isDarkTheme ? CColors.white : CColors.rBrown,
                             onPressed: () {
                               if (refundQty.value > 0 &&
-                                  refundQty.value <= soldItem.quantity) {
+                                  refundQty.value <= refundItem.quantity) {
                                 refundQty.value -=
-                                    soldItem.itemMetrics == 'units' ? 1 : .25;
+                                    refundItem.itemMetrics == 'units' ? 1 : .25;
                                 txtRefundQty.text =
                                     CFormatter.formatItemQtyDisplays(
                                       refundQty.value,
-                                      soldItem.itemMetrics,
+                                      refundItem.itemMetrics,
                                     );
                               }
                             },
@@ -1102,13 +1010,13 @@ class CTxnsController extends GetxController {
                             ),
                             color: CColors.darkGrey,
                             onPressed: () {
-                              if (refundQty.value < soldItem.quantity) {
+                              if (refundQty.value < refundItem.quantity) {
                                 refundQty.value +=
-                                    soldItem.itemMetrics == 'units' ? 1 : .25;
+                                    refundItem.itemMetrics == 'units' ? 1 : .25;
                                 txtRefundQty.text =
                                     CFormatter.formatItemQtyDisplays(
                                       refundQty.value,
-                                      soldItem.itemMetrics,
+                                      refundItem.itemMetrics,
                                     );
                               }
                             },
@@ -1122,7 +1030,7 @@ class CTxnsController extends GetxController {
                         ),
                         //initialValue: '0',
                         keyboardType: TextInputType.numberWithOptions(
-                          decimal: soldItem.itemMetrics == 'units'
+                          decimal: refundItem.itemMetrics == 'units'
                               ? false
                               : true,
                           signed: false,
@@ -1136,7 +1044,7 @@ class CTxnsController extends GetxController {
                         onChanged: (value) {
                           if ((txtRefundQty.text != '' ||
                                   txtRefundQty.text.isNotEmpty) &&
-                              double.parse(value) <= soldItem.quantity) {
+                              double.parse(value) <= refundItem.quantity) {
                             refundQty.value = double.parse(value);
                           }
                         },
@@ -1147,13 +1055,14 @@ class CTxnsController extends GetxController {
                         validator: (String? value) {
                           if (value == null || value.isEmpty) {
                             return '*refund qty is required!';
-                          } else if (double.parse(value) > soldItem.quantity) {
+                          } else if (double.parse(value) >
+                              refundItem.quantity) {
                             txtRefundQty.text =
                                 CFormatter.formatItemQtyDisplays(
-                                  soldItem.quantity,
-                                  soldItem.itemMetrics,
+                                  refundItem.quantity,
+                                  refundItem.itemMetrics,
                                 );
-                            return 'only ${CFormatter.formatItemQtyDisplays(soldItem.quantity, soldItem.itemMetrics)} ${CFormatter.formatItemMetrics(soldItem.itemMetrics, soldItem.quantity)} sold';
+                            return 'only ${CFormatter.formatItemQtyDisplays(refundItem.quantity, refundItem.itemMetrics)} ${CFormatter.formatItemMetrics(refundItem.itemMetrics, refundItem.quantity)} sold';
                           }
                           return null;
                         },
@@ -1203,20 +1112,34 @@ class CTxnsController extends GetxController {
                           parentTxn.lastModified = DateFormat(
                             'yyyy-MM-dd @ kk:mm',
                           ).format(clock.now());
-                          soldItem.refundReason = txtRefundReason.text.trim();
-                          soldItem.qtyRefunded += double.parse(
+                          refundItem.refundReason = txtRefundReason.text.trim();
+                          refundItem.qtyRefunded += double.parse(
                             txtRefundQty.text.trim(),
                           );
-                          soldItem.quantity -= double.parse(
+
+                          refundItem.quantity -= double.parse(
                             txtRefundQty.text.trim(),
                           );
                           if (txtRefundReason.text.trim().isNotEmpty) {
-                            soldItem.refundReason = txtRefundReason.text.trim();
+                            refundItem.refundReason = txtRefundReason.text
+                                .trim();
                           }
+
+                          // -- inventory --
+                          invItem.qtyRefunded += double.parse(
+                            txtRefundQty.text.trim(),
+                          );
+                          invItem.quantity += double.parse(
+                            txtRefundQty.text.trim(),
+                          );
+                          invItem.qtySold -= double.parse(
+                            txtRefundQty.text.trim(),
+                          );
+                          invItem.syncAction = 'none';
 
                           parentTxn.totalAmount -=
                               double.parse(txtRefundQty.text.trim()) *
-                              soldItem.unitSellingPrice;
+                              refundItem.unitSellingPrice;
 
                           dbHelper
                               .updateParentTxnDetails(
@@ -1226,52 +1149,23 @@ class CTxnsController extends GetxController {
                                 (_) {
                                   // -- update txn details on cloud firestore --
                                   storeRepo.cloudUpdateTxn(parentTxn);
-                                  dbHelper.updateSoldItemDetails(soldItem).then(
+                                  dbHelper.updateSoldItemDetails(refundItem).then(
                                     (_) async {
                                       // -- update txn details on cloud firestore --
-                                      storeRepo.cloudUpdateSale(soldItem);
+                                      storeRepo.cloudUpdateSale(refundItem);
 
-                                      // -- update inventory details --
-                                      var invItemIndex = invController
-                                          .inventoryItems
-                                          .indexWhere(
-                                            (item) =>
-                                                item.productId ==
-                                                soldItem.productId,
+                                      dbHelper
+                                          .updateInventoryItem(
+                                            invItem,
+                                          )
+                                          .then(
+                                            (_) {
+                                              // -- update inventory cloud data --
+                                              storeRepo.updateInvCloudData(
+                                                invItem,
+                                              );
+                                            },
                                           );
-                                      if (invItemIndex != -1) {
-                                        var thisInventoryItem = invController
-                                            .inventoryItems[invItemIndex];
-                                        thisInventoryItem.quantity +=
-                                            double.parse(
-                                              txtRefundQty.text.trim(),
-                                            );
-                                        thisInventoryItem.qtyRefunded +=
-                                            double.parse(
-                                              txtRefundQty.text.trim(),
-                                            );
-                                        thisInventoryItem.qtySold -=
-                                            double.parse(
-                                              txtRefundQty.text.trim(),
-                                            );
-                                        thisInventoryItem.lastModified =
-                                            DateFormat(
-                                              'yyyy-MM-dd @ kk:mm',
-                                            ).format(clock.now());
-                                        thisInventoryItem.syncAction = 'none';
-                                        dbHelper
-                                            .updateInventoryItem(
-                                              thisInventoryItem,
-                                            )
-                                            .then(
-                                              (_) {
-                                                // -- update inventory cloud data --
-                                                storeRepo.updateInvCloudData(
-                                                  thisInventoryItem,
-                                                );
-                                              },
-                                            );
-                                      }
                                     },
                                   );
                                 },
@@ -1622,7 +1516,7 @@ class CTxnsController extends GetxController {
   }
 
   bool salesExistForAnnualPeriod(String yr) {
-    var yrSales = sales.where(
+    var yrSales = userTxns.where(
       (annualSale) =>
           annualSale.lastModified.toLowerCase().contains(yr.toLowerCase()),
     );
@@ -2083,6 +1977,26 @@ class CTxnsController extends GetxController {
       );
       // assign sold items to sales list
       userTxns.assignAll(txns);
+
+      final dashboardController = Get.put(CDashboardController());
+
+      dashboardController.generateSalesFilterItems().then(
+        (_) {
+          dashboardController.setDefaultSalesFilterPeriod();
+        },
+      );
+
+      /// -- initialize sales summary values --
+
+      if (dateRangeFieldController.text == '' &&
+          !dashboardController.showSummaryFilterField.value) {
+        initializeSalesSummaryValues();
+      }
+
+      /// -- compute hourly sales --
+      dashboardController.filterHourlySales();
+
+      await fetchTopSellersFromSales();
 
       if (searchController.showSearchField.value &&
           searchController.txtSearchField.text == '') {

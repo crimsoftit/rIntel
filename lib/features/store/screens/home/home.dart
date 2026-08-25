@@ -41,12 +41,12 @@ class HomeScreen extends StatelessWidget {
     final navController = Get.put(CNavMenuController());
     final txnsController = Get.put(CTxnsController());
 
-    var salesCount = txnsController.sales.fold(0.0, (sum, sale) {
+    var salesCount = txnsController.userTxnItems.fold(0.0, (sum, sale) {
       return sum + sale.quantity;
     });
 
     if (invController.inventoryItems.isEmpty ||
-        txnsController.sales.isEmpty ||
+        txnsController.userTxnItems.isEmpty ||
         salesCount <= 0) {
       return const CFreshDashboardScreen();
     }
@@ -114,13 +114,13 @@ class HomeScreen extends StatelessWidget {
                   () {
                     if ((invController.inventoryItems.isEmpty &&
                             !invController.isLoading.value) ||
-                        (txnsController.sales.isEmpty &&
+                        (txnsController.userTxns.isEmpty &&
                             !txnsController.isLoading.value)) {
                       invController.fetchUserInventoryItems();
                     }
                     if (invController.isLoading.value &&
                             invController.inventoryItems.isNotEmpty ||
-                        (txnsController.sales.isNotEmpty &&
+                        (txnsController.userTxns.isNotEmpty &&
                             txnsController.isLoading.value)) {
                       return CHorizontalProductShimmer();
                     }
@@ -149,7 +149,9 @@ class HomeScreen extends StatelessWidget {
                                 ),
                               ),
                             ),
-                            const SizedBox(height: CSizes.defaultSpace / 6),
+                            const SizedBox(
+                              height: CSizes.defaultSpace / 6,
+                            ),
 
                             /// -- sales summary cards --
                             CStoreSummary(),
@@ -198,7 +200,9 @@ class HomeScreen extends StatelessWidget {
                           actionWidget: Align(
                             alignment: Alignment.topLeft,
                             child: Padding(
-                              padding: const EdgeInsets.only(right: 8.0),
+                              padding: const EdgeInsets.only(
+                                right: 8.0,
+                              ),
                               child: CRoundedContainer(
                                 borderRadius: 10.0,
                                 height: 40.0,
