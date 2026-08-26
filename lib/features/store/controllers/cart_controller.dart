@@ -357,6 +357,7 @@ class CCartController extends GetxController {
       quantity: quantity,
       availableStockQty: item.quantity,
       price: item.unitSellingPrice,
+      unitBP: item.unitBp,
     );
   }
 
@@ -371,7 +372,7 @@ class CCartController extends GetxController {
       item.quantity,
       0.0, // qtyRefunded
       '', // refundReason
-      item.price, // unitBP
+      item.unitBP, // unitBP
       item.price, // unitSellingPrice
       userController.user.value.email,
     );

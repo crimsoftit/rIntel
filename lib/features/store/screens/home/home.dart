@@ -57,11 +57,18 @@ class HomeScreen extends StatelessWidget {
         appBar: AppBar(
           automaticallyImplyLeading: false,
           title: Padding(
-            padding: const EdgeInsets.only(left: 0.5, right: 0.5),
+            padding: const EdgeInsets.only(
+              left: 0.5,
+              right: 0.5,
+            ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Icon(Iconsax.menu, size: 25.0, color: CColors.rBrown),
+                Icon(
+                  Iconsax.menu,
+                  size: 25.0,
+                  color: CColors.rBrown,
+                ),
                 CCartCounterIcon(
                   iconColor: CColors.rBrown,
                   showCounterWidget: true,
@@ -132,7 +139,9 @@ class HomeScreen extends StatelessWidget {
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const SizedBox(height: CSizes.defaultSpace / 6),
+                            const SizedBox(
+                              height: CSizes.defaultSpace / 6,
+                            ),
                             Visibility(
                               visible: dashboardController
                                   .showSummaryFilterField
@@ -211,7 +220,7 @@ class HomeScreen extends StatelessWidget {
                                 ),
                                 showBorder: true,
                                 child: CCustomDropdownBtn(
-                                  defaultItemColor: CColors.black,
+                                  defaultItemColor: CColors.white,
                                   defaultItemFontSizeFactor: 1.1,
                                   dropdownItems:
                                       dashboardController.salesFilters,

@@ -28,34 +28,51 @@ class CCustomDropdownBtn extends StatelessWidget {
     //final isDarkTheme = CHelperFunctions.isDarkMode(context);
 
     return DropdownButton<String>(
-      borderRadius: BorderRadius.circular(10.0),
+      borderRadius: BorderRadius.circular(10.0,),
       elevation: 8,
-      items: dropdownItems.map((String value) {
-        return DropdownMenuItem<String>(
-          value: value,
-          child: Text(
-            value,
-            style: Theme.of(context).textTheme.labelMedium!.apply(
-              // color: isDarkTheme ? CColors.white : CColors.rBrown,
-              color: defaultItemColor ?? CColors.rBrown,
-              fontSizeFactor: defaultItemFontSizeFactor ?? 1.0,
+      items: dropdownItems.map(
+        (String value) {
+          return DropdownMenuItem<String>(
+            value: value,
+            child: Text(
+              value,
+              style: Theme.of(context).textTheme.labelMedium!.apply(
+                // color: isDarkTheme ? CColors.white : CColors.rBrown,
+                color: defaultItemColor ?? CColors.rBrown,
+                fontSizeFactor: defaultItemFontSizeFactor ?? 1.0,
+              ),
             ),
-          ),
-        );
-      }).toList(),
+          );
+        },
+      ).toList(),
       onChanged: onValueChanged,
-      style: Theme.of(
-        context,
-      ).textTheme.labelMedium!.apply(color: CColors.rBrown),
-      dropdownColor: dropdownBoxColor ?? CColors.white.withValues(alpha: 0.6),
-      icon: Icon(Icons.arrow_drop_down, color: iconColor ?? CColors.rBrown),
+      style:
+          Theme.of(
+            context,
+          ).textTheme.labelMedium!.apply(
+            color: CColors.rBrown,
+          ),
+      dropdownColor:
+          dropdownBoxColor ??
+          CColors.white.withValues(
+            alpha: 0.6,
+          ),
+      icon: Icon(
+        Icons.arrow_drop_down,
+        color: iconColor ?? CColors.rBrown,
+      ),
       underline: Container(
         // color: isDarkTheme ? CColors.white : CColors.rBrown,
         color: underlineColor,
         height: underlineHeight ?? 2.0,
         width: 20.0,
       ),
-      padding: padding ?? const EdgeInsets.only(left: 5.0, right: 5.0),
+      padding:
+          padding ??
+          const EdgeInsets.only(
+            left: 5.0,
+            right: 5.0,
+          ),
       value: selectedValue,
     );
   }

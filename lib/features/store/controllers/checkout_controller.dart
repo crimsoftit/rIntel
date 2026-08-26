@@ -149,7 +149,7 @@ class CCheckoutController extends GetxController {
         null,
       );
 
-      await txnsController.fetchSoldItems();
+      await txnsController.fetchUserTxnItems();
 
       final cartController = Get.put(CCartController());
 
@@ -909,8 +909,6 @@ class CCheckoutController extends GetxController {
       rethrow;
     }
   }
-
-  
 
   Future updateTxnItemCloudData(int txnId, CTxnsModel itemModel) async {
     try {

@@ -1,6 +1,4 @@
 import 'package:rintel/common/styles/spacing_styles.dart';
-import 'package:rintel/common/widgets/switches/custom_switch.dart';
-import 'package:rintel/features/personalization/controllers/app_settings_controller.dart';
 import 'package:rintel/features/personalization/controllers/user_controller.dart';
 import 'package:rintel/features/store/controllers/sync_controller.dart';
 import 'package:rintel/utils/constants/colors.dart';
@@ -26,7 +24,6 @@ class CTxnSuccessScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final appSettingsController = Get.put(CAppSettingsController());
     final syncController = Get.put(CSyncController());
     final userController = Get.put(CUserController());
 

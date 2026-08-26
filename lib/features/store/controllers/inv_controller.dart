@@ -241,6 +241,7 @@ class CInventoryController extends GetxController {
       // -- initialize inventory summary --
       if (CTxnsController.instance.dateRangeFieldController.text == '') {
         await initializeInventorySummary();
+        CTxnsController.instance.initializeSalesSummaryValues();
       }
 
       List<CInventoryModel> returnItems;

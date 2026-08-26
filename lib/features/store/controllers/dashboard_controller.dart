@@ -19,8 +19,6 @@ class CDashboardController extends GetxController {
   /// -- variables --
   final carouselSliderIndex = 0.obs;
 
-  final invController = Get.put(CInventoryController());
-
   final RxBool isLoading = false.obs;
 
   final RxBool showSummaryFilterField = false.obs;
@@ -84,14 +82,23 @@ class CDashboardController extends GetxController {
       () {
         WidgetsBinding.instance.addPostFrameCallback(
           (_) async {
-            await txnsController.fetchUserTxnItems().then(
+            await txnsController.fetchUserTxns().then(
               (result) async {
                 if (result.isNotEmpty) {
                   calculateCurrentWeekSales();
                   filterHourlySales();
                 }
+                txnsController.initializeSalesSummaryValues();
               },
             );
+            // await txnsController.fetchUserTxnItems().then(
+            //   (result) async {
+            //     if (result.isNotEmpty) {
+            //       calculateCurrentWeekSales();
+            //       filterHourlySales();
+            //     }
+            //   },
+            // );
           },
         );
       },
@@ -114,7 +121,6 @@ class CDashboardController extends GetxController {
   }
 
   Future<List<DateTime>> generateSalesFilterItems() async {
-    
     int firstYr;
     int lastYr;
     if (txnsController.userTxns.isNotEmpty) {
@@ -427,7 +433,6 @@ class CDashboardController extends GetxController {
   }
 
   String setDefaultSalesFilterPeriod() {
-    
     defautSalesFilterPeriod.value = selectedSalesFilterPeriod.value == ''
         ? salesFilters[0]
         : selectedSalesFilterPeriod.value;
@@ -441,7 +446,6 @@ class CDashboardController extends GetxController {
   }
 
   List<CMonthlySalesModel> generateMonthlySalesWithoutMonths(int yr) {
-    
     monthlyTotals.value = <int, double>{};
     for (var monthSales in txnsController.userTxns) {
       final String rawSaleDate = monthSales.lastModified.trim();

@@ -10,6 +10,7 @@ class CCartItemModel {
     required this.quantity,
 
     this.price = 0.0,
+    required this.unitBP,
   });
 
   int productId;
@@ -17,30 +18,35 @@ class CCartItemModel {
   double quantity;
   double availableStockQty;
   double price;
+  double unitBP;
 
   /// -- empty cart --
   static CCartItemModel empty() {
     return CCartItemModel(
+      productId: 0,
       email: '',
       pCode: '',
-      productId: 0,
+      pName: '',
       itemMetrics: '',
       quantity: 0.0,
       availableStockQty: 0.0,
+      price: 0.0,
+      unitBP: 0.0,
     );
   }
 
   /// -- convert a CartItem to a JSON map --
   Map<String, dynamic> toJson() {
     return {
-      'email': email,
       'productId': productId,
+      'email': email,
       'pCode': pCode,
       'pName': pName,
       'itemMetrics': itemMetrics,
       'quantity': quantity,
       'availableStockQty': availableStockQty,
       'price': price,
+      'unitBP': unitBP,
     };
   }
 
@@ -55,6 +61,7 @@ class CCartItemModel {
       quantity: json['quantity'],
       availableStockQty: json['availableStockQty'],
       price: json['price'],
+      unitBP: json['unitBP'],
     );
   }
 }

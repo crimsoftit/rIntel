@@ -89,12 +89,6 @@ class CTxnsController extends GetxController {
 
   final RxDouble invoiceAmountOwed = 0.0.obs;
 
-  final RxDouble invoicesValue = 0.0.obs;
-  final RxDouble moneyCollected = 0.0.obs;
-  final RxDouble netProfit = 0.0.obs;
-  final RxDouble onTheHauzSales = 0.0.obs;
-  final RxDouble gProfit = 0.0.obs;
-
   final dateRangeFieldController = TextEditingController();
   final txtAmountIssued = TextEditingController();
   final txtCustomerName = TextEditingController();
@@ -145,17 +139,23 @@ class CTxnsController extends GetxController {
 
   final storeRepo = Get.put(CStoreRepo());
   final RxList<CTxn> userTxns = <CTxn>[].obs;
+  final RxList<CTxn> userInvoices = <CTxn>[].obs;
   final RxList<CTxn> foundInvoices = <CTxn>[].obs;
   final RxList<CTxn> foundReceipts = <CTxn>[].obs;
   final RxList<CSoldItemModel> userTxnItems = <CSoldItemModel>[].obs;
+
+  final RxDouble invoicesValue = 0.0.obs;
+  final RxDouble moneyCollected = 0.0.obs;
+  final RxDouble netProfit = 0.0.obs;
+  final RxDouble onTheHauzSales = 0.0.obs;
+  final RxDouble gProfit = 0.0.obs;
 
   @override
   void onInit() async {
     dateRangeFieldController.clear();
 
     if (await CNetworkManager.instance.isConnected() &&
-        CNetworkManager.instance.connectionIsStable.value &&
-        userTxns.isEmpty) {
+        CNetworkManager.instance.connectionIsStable.value) {
       //StoreSheetsApi.initSpreadSheets();
       await initTxnsSync();
     }
@@ -181,7 +181,8 @@ class CTxnsController extends GetxController {
 
   /// -- initialize cloud sync --
   Future initTxnsSync() async {
-    if (localStorage.read('SyncTxnsDataWithCloud') == true && sales.isEmpty) {
+    if (localStorage.read('SyncTxnsDataWithCloud') == true &&
+        userTxns.isEmpty) {
       if (await importTxnsFromCloudFirestore()) {
         await importTxnItemsFromCloudFirestore().then(
           (result) {
@@ -1331,19 +1332,19 @@ class CTxnsController extends GetxController {
   }
 
   /// -- initialize sales summary values --
-  Future<void> initializeSalesSummaryValues() async {
+  void initializeSalesSummaryValues() {
     try {
       // -- start loader --
       isLoading.value = true;
 
       // -- compute value of goods sold on credit --
-      invoicesValue.value = invoices.fold(
+      invoicesValue.value = userInvoices.fold(
         0.0,
-        (sum, sale) => sum + (sale.totalAmount - sale.amountIssued),
+        (sum, invoice) => sum + invoice.totalAmount,
       );
 
       // -- compute on the house sales --
-      onTheHauzSales.value = sales
+      onTheHauzSales.value = userTxns
           .where(
             (sale) => sale.paymentMethod.toLowerCase().contains(
               'On the house'.toLowerCase(),
@@ -1351,42 +1352,41 @@ class CTxnsController extends GetxController {
           )
           .fold(
             0.0,
-            (sum, sale) => sum + (sale.quantity * sale.unitSellingPrice),
+            (sum, sale) => sum + sale.totalAmount,
           );
 
       // -- compute cost of goods sold --
-      costOfSales.value = sales.fold(
+
+      costOfSales.value = userTxnItems.fold(
         0.0,
-        (sum, sale) => sum + (sale.quantity * sale.unitBP),
+        (sum, txnItem) => sum + (txnItem.quantity * txnItem.unitBP),
       );
 
-      grossRevenue.value = sales.fold(
+      grossRevenue.value = userTxns.fold(
         0.0,
-        (sum, sale) => sum + (sale.quantity * sale.unitSellingPrice),
+        (sum, txnItem) => sum + txnItem.totalAmount,
       );
 
       // -- compute total money collected (complete txns) --
-      moneyCollected.value = sales
+      moneyCollected.value = userTxns
           .where(
-            (soldItem) =>
-                soldItem.txnStatus == 'complete' &&
-                soldItem.paymentMethod.toLowerCase() !=
-                    'On the house'.toLowerCase(),
+            (txn) =>
+                txn.txnStatus == 'complete' &&
+                txn.paymentMethod.toLowerCase() != 'On the house'.toLowerCase(),
           )
           .fold(
             0.0,
-            (sum, sale) => sum + (sale.quantity * sale.unitSellingPrice),
+            (sum, sale) => sum + sale.totalAmount,
           );
 
       // -- compute gross profit --
       gProfit.value = grossRevenue.value - costOfSales.value;
 
       // -- compute net profit --
-      // -- TODO: hatuna discounts na other expenses as yet --
       netProfit.value =
           gProfit.value - onTheHauzSales.value - invoicesValue.value;
 
-      await fetchTopSellersFromSales();
+      fetchTopSellersFromSales();
 
       // -- stop loader
       isLoading.value = false;
@@ -1410,6 +1410,7 @@ class CTxnsController extends GetxController {
     try {
       // -- start loader --
       isLoading.value = true;
+      userTxns.refresh();
 
       final rawDateRange = dateRangeController.selectedDateRange.value;
 
@@ -1427,19 +1428,19 @@ class CTxnsController extends GetxController {
       );
 
       // -- compute total revenue --
-      var filteredSales = sales
-          .where(
-            (soldItem) =>
-                DateTime.parse(
-                  soldItem.lastModified.replaceAll(' @', ''),
-                ).isAfter(formattedStartDate.subtract(Duration(days: 0))) &&
-                DateTime.parse(
-                  soldItem.lastModified.replaceAll(' @', ''),
-                ).isBefore(formattedEndDate.add(Duration(days: 1))),
-          )
-          .toList();
 
-      var filteredInvoices = invoices
+      var filteredTxns = userTxns.where(
+        (txn) {
+          return DateTime.parse(
+                txn.lastModified.replaceAll(' @', ''),
+              ).isAfter(formattedStartDate.subtract(Duration(days: 0))) &&
+              DateTime.parse(
+                txn.lastModified.replaceAll(' @', ''),
+              ).isBefore(formattedEndDate.add(Duration(days: 1)));
+        },
+      ).toList();
+
+      var filteredInvoices = userInvoices
           .where(
             (invoicedItem) =>
                 DateTime.parse(
@@ -1451,23 +1452,31 @@ class CTxnsController extends GetxController {
           )
           .toList();
 
+      var filteredTxnItems = [];
+      for (var filteredTxn in filteredTxns) {
+        var filteredTxnItem = userTxnItems.where(
+          (item) => item.txnId == filteredTxn.txnId,
+        );
+        filteredTxnItems.assign(filteredTxnItem);
+      }
+
       // -- compute cost of sales --
-      var cogs = filteredSales.fold(
+      var cogs = filteredTxnItems.fold(
         0.0,
-        (sum, sale) => sum + (sale.unitBP * sale.quantity),
+        (sum, sale) => sum + (sale.quantity * sale.unitBP),
       );
       costOfSales.value = cogs;
 
       // -- compute money collected --
-      moneyCollected.value = filteredSales
+      moneyCollected.value = filteredTxns
           .where((sale) => sale.txnStatus == 'complete')
           .fold(
             0.0,
-            (sum, sale) => sum + (sale.unitSellingPrice * sale.quantity),
+            (sum, sale) => sum + sale.totalAmount,
           );
 
       // -- compute on the house sales for selected period --
-      onTheHauzSales.value = filteredSales
+      onTheHauzSales.value = filteredTxns
           .where(
             (sale) => sale.paymentMethod.toLowerCase().contains(
               'On the house'.toLowerCase(),
@@ -1475,28 +1484,25 @@ class CTxnsController extends GetxController {
           )
           .fold(
             0.0,
-            (sum, sale) => sum + (sale.unitSellingPrice * sale.quantity),
+            (sum, sale) => sum + sale.totalAmount,
           );
 
       invoicesValue.value = filteredInvoices.fold(
         0.0,
-        (sum, credit) =>
-            sum +
-            ((credit.unitSellingPrice * credit.quantity) - credit.amountIssued),
+        (sum, credit) => sum + credit.totalAmount,
       );
 
       // -- compute gross revenue --
-      var tRevenue = filteredSales.fold(
+      var tRevenue = filteredTxns.fold(
         0.0,
-        (sum, sale) => sum + (sale.unitSellingPrice * sale.quantity),
+        (sum, sale) => sum + sale.totalAmount,
       );
-      grossRevenue.value = tRevenue;
 
       // -- compute gross profit --
-      gProfit.value = grossRevenue.value - costOfSales.value;
+      gProfit.value = tRevenue - costOfSales.value;
 
       // -- compute net profit --
-      // TODO: kumbuka bado tunahitaji expenses and discounts data
+
       var nProfit = gProfit.value - onTheHauzSales.value - invoicesValue.value;
       netProfit.value = nProfit;
 
@@ -1803,35 +1809,23 @@ class CTxnsController extends GetxController {
   /// -- FINANCIAL KEY PERFORMANCE INDICATORS (KPIs)' CALCULATION --
 
   // -- compute Gross Margin Return on Investment (GMROI) for a specific product --
-  // TODO: kumbuka deposit; na sales data in place of inventory data...
+
   void computeKPIs(CInventoryModel invItem) {
-    var soldItems = sales.where(
-      (profitableSale) =>
-          profitableSale.productId == invItem.productId &&
-          profitableSale.paymentMethod.toLowerCase().trim() !=
-              'On the house'.toLowerCase(),
-    );
+    // var soldItems = userTxnItems.where((profitableSale) {
+    //   var parentTxn = userTxns.where(
+    //     (txn) => txn.txnId == profitableSale.txnId,
+    //   );
+    //   return profitableSale.productId == invItem.productId;
+    // });
 
-    costOfGoodsSold.value = soldItems.fold(
-      0.0,
-      (sum, sale) {
-        return sum + (sale.quantity * sale.unitBP);
-      },
-    );
+    costOfGoodsSold.value = invItem.qtySold * invItem.unitBp;
 
-    numberOfUnitsSold.value = soldItems.fold(
-      0.0,
-      (sum, sale) {
-        return sum + sale.quantity;
-      },
-    );
+    numberOfUnitsSold.value = invItem.qtySold;
 
     averageInvCost.value = costOfGoodsSold.value / numberOfUnitsSold.value;
 
     /// factor in discounts... KUONA MBELE...
-    totalAmtSold.value = soldItems.fold(0.0, (sum, sale) {
-      return sum + ((sale.quantity * sale.unitSellingPrice) - sale.discount);
-    });
+    totalAmtSold.value = invItem.qtySold * invItem.unitSellingPrice;
     grossProfit.value = totalAmtSold.value - costOfGoodsSold.value;
 
     grossProfitPercentage.value =
@@ -1846,49 +1840,6 @@ class CTxnsController extends GetxController {
     roi.value = inventoryTurn.value * grossProfitPercentage.value;
 
     /// -- TODO: tunataka sales on the house pia --
-  }
-
-  /// -- compute a single item's totals --
-  double singleItemTotals(int productId, String space) {
-    var thisItem = sales.firstWhere(
-      (item) {
-        return item.productId == productId;
-      },
-    );
-
-    if (space == 'refunds' || space == 'contact refunds') {
-      return thisItem.qtyRefunded * thisItem.unitSellingPrice;
-    } else {
-      return thisItem.quantity * thisItem.unitSellingPrice;
-    }
-  }
-
-  /// -- compute txn items' totals --
-  double txnTotals(CTxnsModel txn, String space) {
-    var salesListToSearchFrom =
-        searchController.showSearchField.value &&
-            searchController.txtSearchField.text != '' &&
-            !isLoading.value
-        ? foundSales
-        : sales;
-
-    var txnTotals = salesListToSearchFrom
-        .where(
-          (txnItem) {
-            return txnItem.txnId == txn.txnId;
-          },
-        )
-        .fold(
-          0.0,
-          (sum, sale) {
-            var totals = space == 'refunds' || space == 'contact refunds'
-                ? sum + (sale.qtyRefunded * sale.unitSellingPrice)
-                : sum + (sale.quantity * sale.unitSellingPrice);
-            return totals;
-          },
-        );
-
-    return txnTotals;
   }
 
   /// -- import txns data from cloud firestre --
@@ -1978,6 +1929,10 @@ class CTxnsController extends GetxController {
       // assign sold items to sales list
       userTxns.assignAll(txns);
 
+      userInvoices.assignAll(
+        userTxns.where((txn) => txn.txnStatus == 'invoiced'),
+      );
+
       final dashboardController = Get.put(CDashboardController());
 
       dashboardController.generateSalesFilterItems().then(
@@ -1985,6 +1940,8 @@ class CTxnsController extends GetxController {
           dashboardController.setDefaultSalesFilterPeriod();
         },
       );
+
+      fetchUserTxnItems();
 
       /// -- initialize sales summary values --
 

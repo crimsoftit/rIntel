@@ -121,7 +121,6 @@ class AuthRepo extends GetxController {
             await invController.initInvSync();
 
             await invController.fetchUserInventoryItems();
-            await txnsController.fetchUserTxns();
             await txnsController.initTxnsSync();
 
             Get.put(CCheckoutController());
@@ -154,7 +153,11 @@ class AuthRepo extends GetxController {
           }
         }
       } else {
-        Get.offAll(() => VerifyEmailScreen(email: _auth.currentUser?.email));
+        Get.offAll(
+          () => VerifyEmailScreen(
+            email: _auth.currentUser?.email,
+          ),
+        );
       }
     } else {
       // local storage

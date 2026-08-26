@@ -64,19 +64,26 @@ class CDateController extends GetxController {
           children: [
             // -- action buttons --
             Padding(
-              padding: const EdgeInsets.only(left: 10.0, right: 10.0),
+              padding: const EdgeInsets.only(
+                left: 10.0,
+                right: 10.0,
+              ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   IconButton(
-                    icon: const Icon(Icons.cancel),
+                    icon: const Icon(
+                      Icons.cancel,
+                    ),
                     onPressed: () {
                       invController.txtExpiryDatePicker.text = '';
                       Navigator.of(context).pop();
                     },
                   ),
                   IconButton(
-                    icon: const Icon(Icons.check),
+                    icon: const Icon(
+                      Icons.check,
+                    ),
                     onPressed: () {
                       Navigator.of(context).pop();
                     },
