@@ -213,6 +213,9 @@ class HomeScreen extends StatelessWidget {
                                 right: 8.0,
                               ),
                               child: CRoundedContainer(
+                                bgColor: CColors.rBrown.withValues(
+                                  alpha: .2,
+                                ),
                                 borderRadius: 10.0,
                                 height: 40.0,
                                 padding: const EdgeInsets.all(

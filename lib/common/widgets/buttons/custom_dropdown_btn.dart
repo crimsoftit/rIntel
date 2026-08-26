@@ -9,6 +9,7 @@ class CCustomDropdownBtn extends StatelessWidget {
     this.defaultItemColor,
     this.defaultItemFontSizeFactor,
     this.dropdownBoxColor,
+    this.focusColor,
     this.iconColor,
     this.padding,
     this.selectedValue,
@@ -16,7 +17,11 @@ class CCustomDropdownBtn extends StatelessWidget {
     this.underlineHeight,
   });
 
-  final Color? defaultItemColor, dropdownBoxColor, iconColor, underlineColor;
+  final Color? defaultItemColor,
+      dropdownBoxColor,
+      focusColor,
+      iconColor,
+      underlineColor;
   final EdgeInsetsGeometry? padding;
   final double? defaultItemFontSizeFactor, underlineHeight;
   final List<String> dropdownItems;
@@ -28,8 +33,15 @@ class CCustomDropdownBtn extends StatelessWidget {
     //final isDarkTheme = CHelperFunctions.isDarkMode(context);
 
     return DropdownButton<String>(
-      borderRadius: BorderRadius.circular(10.0,),
+      borderRadius: BorderRadius.circular(
+        10.0,
+      ),
       elevation: 8,
+      focusColor:
+          focusColor ??
+          CColors.rBrown.withValues(
+            alpha: 0.2,
+          ),
       items: dropdownItems.map(
         (String value) {
           return DropdownMenuItem<String>(
@@ -52,6 +64,7 @@ class CCustomDropdownBtn extends StatelessWidget {
           ).textTheme.labelMedium!.apply(
             color: CColors.rBrown,
           ),
+
       dropdownColor:
           dropdownBoxColor ??
           CColors.white.withValues(

@@ -95,19 +95,18 @@ class CTopSellers extends StatelessWidget {
                           maxLines: 1,
                         ),
 
-                        Align(
-                          alignment: Alignment.topLeft,
-                          child: SelectableText(
-                            '#${txnsController.bestSellers[index].productId}',
-                            style: Theme.of(context).textTheme.labelSmall!
-                                .apply(
-                                  color: CColors.darkGrey,
-                                  fontStyle: FontStyle.italic,
-                                ),
-                            maxLines: 1,
-                          ),
-                        ),
-
+                        // Align(
+                        //   alignment: Alignment.topLeft,
+                        //   child: SelectableText(
+                        //     '#${txnsController.bestSellers[index].productId}',
+                        //     style: Theme.of(context).textTheme.labelSmall!
+                        //         .apply(
+                        //           color: CColors.darkGrey,
+                        //           fontStyle: FontStyle.italic,
+                        //         ),
+                        //     maxLines: 1,
+                        //   ),
+                        // ),
                         Text(
                           '${txnsController.bestSellers[index].itemMetrics == 'units' ? txnsController.bestSellers[index].totalSales.toStringAsFixed(0) : txnsController.bestSellers[index].totalSales} ${CFormatter.formatItemMetrics(txnsController.bestSellers[index].itemMetrics, txnsController.bestSellers[index].totalSales)}- $userCurrency.${CFormatter.kSuffixFormatter(txnsController.bestSellers[index].unitSellingPrice * txnsController.bestSellers[index].totalSales)}',
                           maxLines: 1,
