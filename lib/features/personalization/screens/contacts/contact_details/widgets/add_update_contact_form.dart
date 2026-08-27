@@ -209,7 +209,6 @@ class CAddUpdateContactForm extends StatelessWidget {
 
                             var contactDetails = CContactsModel(
                               userController.user.value.email,
-                              0,
                               contactsController.txtContactNameController.text
                                   .trim(),
                               contactsController.contactCountryCode.value

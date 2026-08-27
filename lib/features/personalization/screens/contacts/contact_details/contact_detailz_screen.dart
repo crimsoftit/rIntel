@@ -693,15 +693,7 @@ class CContactDetailsScreen extends StatelessWidget {
                   const SizedBox(
                     height: CSizes.spaceBtnItems / 3.0,
                   ),
-                  SelectableText(
-                    'product id: ${contactItem.productId}',
-                    style:
-                        Theme.of(
-                          context,
-                        ).textTheme.labelLarge!.apply(
-                          fontSizeFactor: 1.0,
-                        ),
-                  ),
+
                   Text(
                     'country code (eg. KE): ${contactItem.contactCountryCode}',
                     style:

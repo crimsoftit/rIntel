@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:iconsax/iconsax.dart';
+import 'package:rintel/common/widgets/buttons/icon_buttons/square_icon_btn.dart';
+import 'package:rintel/common/widgets/buttons/txt_buttons/custom_txt_btn.dart';
 import 'package:rintel/common/widgets/custom_shapes/containers/rounded_container.dart';
 import 'package:rintel/common/widgets/shimmers/vert_items_shimmer.dart';
 import 'package:rintel/features/personalization/controllers/contacts_controller.dart';
@@ -125,6 +128,17 @@ class _CTxnsViewState extends State<CTxnsView> {
                             .toList(),
                 );
                 break;
+              case 'On the house':
+                demItems.assignAll(
+                  snapshot.data!
+                      .where(
+                        (txn) => txn.paymentMethod.toLowerCase().contains(
+                          'On the house'.toLowerCase(),
+                        ),
+                      )
+                      .toList(),
+                );
+                break;
               default:
                 demItems.clear();
                 break;
@@ -135,7 +149,17 @@ class _CTxnsViewState extends State<CTxnsView> {
                 demItems.isEmpty) {
               return const NoSearchResultsScreen();
             }
-            return ListView.builder(
+
+            if (!searchController.showSearchField.value && demItems.isEmpty) {
+              return Center(
+                child: NoDataScreen(
+                  lottieImage: CImages.noDataLottie,
+                  txt: '${widget.space} txns will be displayed here...',
+                ),
+              );
+            }
+
+            return ListView.separated(
               itemCount: demItems.length,
               itemBuilder: (context, txnIndex) {
                 final txn = demItems[txnIndex];
@@ -146,8 +170,9 @@ class _CTxnsViewState extends State<CTxnsView> {
                       child: CRoundedContainer(
                         bgColor: CColors.transparent,
                         padding: const EdgeInsets.only(
-                          top: 5.0,
                           bottom: 2.0,
+                          top: 5.0,
+                          right: 5.0,
                         ),
                         width: CHelperFunctions.screenWidth() * .35,
                         child: Row(
@@ -176,141 +201,241 @@ class _CTxnsViewState extends State<CTxnsView> {
                       ),
                     ),
                     Card(
-                      margin: EdgeInsets.all(
-                        8.0,
+                      color: isDarkTheme
+                          ? CColors.rBrown.withValues(
+                              alpha: 0.2,
+                            )
+                          : CColors.lightGrey,
+                      elevation: 0,
+                      margin: EdgeInsets.only(
+                        bottom: 10.0,
+                        left: 5.0,
+                        right: 5.0,
                       ),
-                      child: ListTile(
-                        title: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              txn.txnId.toString(),
-                              style:
-                                  Theme.of(
-                                    context,
-                                  ).textTheme.labelMedium!.apply(
-                                    fontSizeFactor: 1.3,
-                                    fontWeightDelta: 2,
-                                  ),
-                            ),
-                            Text(
-                              '$userCurrency.${txn.totalAmount} ',
-                              style:
-                                  Theme.of(
-                                    context,
-                                  ).textTheme.labelMedium!.apply(
-                                    fontSizeFactor: 1.3,
-                                    fontWeightDelta: 2,
-                                  ),
-                            ),
-                          ],
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(
+                          CSizes.borderRadiusMd,
                         ),
-                        subtitle: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            // Inner ListView Builder
-                            ListView.builder(
-                              shrinkWrap: true, // Crucial for nesting
-                              physics:
-                                  NeverScrollableScrollPhysics(), // Disable inner scroll
-                              itemCount: txnsController.userTxnItems
-                                  .where((item) => item.txnId == txn.txnId)
-                                  .length, // Nested data count
-                              itemBuilder: (context, innerIndex) {
-                                //txnsController.fetchUserTxnItems();
-                                var txnItems = txnsController.userTxnItems
-                                    .where((item) => item.txnId == txn.txnId)
-                                    .toList();
-                                final childItem = txnItems[innerIndex];
-                                return Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    CRoundedContainer(
-                                      bgColor: CColors.transparent,
-                                      width:
-                                          CHelperFunctions.screenWidth() * .4,
-                                      child: Text(
-                                        childItem.productName.toUpperCase(),
-                                        style: Theme.of(
+                        child: ListTile(
+                          contentPadding: EdgeInsets.only(
+                            left: 5.0,
+                            right: 5.0,
+                          ),
+                          minLeadingWidth: 2.0,
+                          title: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    '#${txn.txnId}',
+                                    style:
+                                        Theme.of(
                                           context,
-                                        ).textTheme.labelMedium!.apply(),
-                                      ),
-                                    ),
-                                    CRoundedContainer(
-                                      bgColor: CColors.transparent,
-                                      width:
-                                          CHelperFunctions.screenWidth() * .3,
-                                      child: Column(
-                                        children: [
-                                          if (childItem.quantity > 0)
-                                            Row(
-                                              children: [
-                                                Text(
-                                                  '${CFormatter.formatItemQtyDisplays(childItem.quantity, childItem.itemMetrics)} ${CFormatter.formatItemMetrics(childItem.itemMetrics, childItem.quantity)} - ',
-                                                  style:
-                                                      Theme.of(
-                                                            context,
-                                                          )
-                                                          .textTheme
-                                                          .labelMedium!
-                                                          .apply(),
-                                                ),
-                                                Text(
-                                                  '$userCurrency.',
-                                                  style: Theme.of(context)
-                                                      .textTheme
-                                                      .labelSmall!
-                                                      .apply(
-                                                        fontFeatures: [
-                                                          FontFeature.superscripts(),
-                                                        ],
-                                                        fontSizeFactor: .8,
-                                                      ),
-                                                ),
-                                                Text(
-                                                  '${childItem.unitSellingPrice * childItem.quantity}',
-                                                  style:
-                                                      Theme.of(
-                                                            context,
-                                                          )
-                                                          .textTheme
-                                                          .labelMedium!
-                                                          .apply(),
-                                                ),
-                                              ],
-                                            ),
-                                          if (childItem.qtyRefunded > 0)
+                                        ).textTheme.labelMedium!.apply(
+                                          fontSizeFactor: 1.2,
+                                        ),
+                                  ),
+                                  Text(
+                                    '$userCurrency.${txn.totalAmount} ',
+                                    style:
+                                        Theme.of(
+                                          context,
+                                        ).textTheme.labelMedium!.apply(
+                                          fontSizeFactor: 1.2,
+                                        ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(
+                                height: CSizes.spaceBtnItems / 2.0,
+                              ),
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    'Customer details:',
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .labelSmall!
+                                        .apply(
+                                          color: CColors.rBrown,
+                                          fontSizeFactor: 1.2,
+                                          fontStyle: FontStyle.italic,
+                                        ),
+                                  ),
+                                  txn.customerName != ''
+                                      ? Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.end,
+                                          children: [
                                             Text(
-                                              '${CFormatter.formatItemQtyDisplays(childItem.qtyRefunded, childItem.itemMetrics)} ${CFormatter.formatItemMetrics(childItem.itemMetrics, childItem.qtyRefunded)} refunded',
-                                              style:
-                                                  Theme.of(
-                                                    context,
-                                                  ).textTheme.labelSmall!.apply(
-                                                    color: CColors.darkGrey,
+                                              'name: ${txn.customerName}',
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .labelSmall!
+                                                  .apply(
+                                                    color: CColors.rBrown,
+                                                    fontSizeFactor: 1.2,
                                                     fontStyle: FontStyle.italic,
                                                   ),
                                             ),
-                                        ],
-                                      ),
-                                    ),
-                                    CRoundedContainer(
-                                      bgColor: CColors.transparent,
-                                      child: GestureDetector(
-                                        onTapDown: (TapDownDetails details) {
-                                          showMenu<int>(
-                                            context: context,
-                                            position: RelativeRect.fromLTRB(
-                                              details.globalPosition.dx,
-                                              details.globalPosition.dy,
-                                              details.globalPosition.dx,
-                                              details.globalPosition.dy,
+                                            Text(
+                                              'contacts: ${txn.customerContacts}',
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .labelSmall!
+                                                  .apply(
+                                                    color: CColors.rBrown,
+                                                    fontSizeFactor: 1.2,
+                                                    fontStyle: FontStyle.italic,
+                                                  ),
                                             ),
-                                            items: [
-                                              PopupMenuItem(
-                                                onTap: () async {
-                                                  var inventoryItem =
-                                                      invController
+                                          ],
+                                        )
+                                      : CRoundedContainer(
+                                          bgColor: CColors.rBrown.withValues(
+                                            alpha: .15,
+                                          ),
+                                          borderRadius: 8.0,
+                                          height: 30.0,
+                                          width: 30.0,
+                                          padding: const EdgeInsets.all(
+                                            0,
+                                          ),
+                                          child: Center(
+                                            child: CSquareIconBtn(
+                                              icon: Iconsax.add,
+                                              iconColor: CColors.rOrange,
+                                              onBtnTap: () {},
+                                            ),
+                                          ),
+                                        ),
+                                ],
+                              ),
+                            ],
+                          ),
+                          subtitle: Padding(
+                            padding: const EdgeInsets.only(
+                              top: 10.0,
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                // Inner ListView Builder
+                                ListView.builder(
+                                  shrinkWrap: true, // Crucial for nesting
+                                  // physics:
+                                  //     NeverScrollableScrollPhysics(), // Disable inner scroll
+                                  itemCount: txnsController.userTxnItems
+                                      .where((item) => item.txnId == txn.txnId)
+                                      .length, // Nested data count
+                                  itemBuilder: (context, innerIndex) {
+                                    //txnsController.fetchUserTxnItems();
+                                    var txnItems = txnsController.userTxnItems
+                                        .where(
+                                          (item) => item.txnId == txn.txnId,
+                                        )
+                                        .toList();
+                                    final childItem = txnItems[innerIndex];
+                                    return Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        CRoundedContainer(
+                                          bgColor: CColors.transparent,
+                                          width:
+                                              CHelperFunctions.screenWidth() *
+                                              .4,
+                                          child: SelectableText(
+                                            childItem.productName.toUpperCase(),
+                                            style: Theme.of(
+                                              context,
+                                            ).textTheme.labelMedium!.apply(),
+                                          ),
+                                        ),
+                                        CRoundedContainer(
+                                          bgColor: CColors.transparent,
+                                          width:
+                                              CHelperFunctions.screenWidth() *
+                                              .3,
+                                          child: Column(
+                                            children: [
+                                              if (childItem.quantity > 0)
+                                                Row(
+                                                  children: [
+                                                    Text(
+                                                      '${CFormatter.formatItemQtyDisplays(childItem.quantity, childItem.itemMetrics)} ${CFormatter.formatItemMetrics(childItem.itemMetrics, childItem.quantity)} - ',
+                                                      style:
+                                                          Theme.of(
+                                                                context,
+                                                              )
+                                                              .textTheme
+                                                              .labelMedium!
+                                                              .apply(),
+                                                    ),
+                                                    Text(
+                                                      '$userCurrency.',
+                                                      style: Theme.of(context)
+                                                          .textTheme
+                                                          .labelSmall!
+                                                          .apply(
+                                                            fontFeatures: [
+                                                              FontFeature.superscripts(),
+                                                            ],
+                                                            fontSizeFactor: .8,
+                                                          ),
+                                                    ),
+                                                    Text(
+                                                      '${childItem.unitSellingPrice * childItem.quantity}',
+                                                      style:
+                                                          Theme.of(
+                                                                context,
+                                                              )
+                                                              .textTheme
+                                                              .labelMedium!
+                                                              .apply(),
+                                                    ),
+                                                  ],
+                                                ),
+                                              if (childItem.qtyRefunded > 0)
+                                                Text(
+                                                  '${CFormatter.formatItemQtyDisplays(childItem.qtyRefunded, childItem.itemMetrics)} ${CFormatter.formatItemMetrics(childItem.itemMetrics, childItem.qtyRefunded)} refunded',
+                                                  style:
+                                                      Theme.of(
+                                                            context,
+                                                          )
+                                                          .textTheme
+                                                          .labelSmall!
+                                                          .apply(
+                                                            color: CColors
+                                                                .darkGrey,
+                                                            fontStyle: FontStyle
+                                                                .italic,
+                                                          ),
+                                                ),
+                                            ],
+                                          ),
+                                        ),
+                                        CRoundedContainer(
+                                          bgColor: CColors.transparent,
+                                          child: GestureDetector(
+                                            onTapDown: (TapDownDetails details) {
+                                              showMenu<int>(
+                                                context: context,
+                                                position: RelativeRect.fromLTRB(
+                                                  details.globalPosition.dx,
+                                                  details.globalPosition.dy,
+                                                  details.globalPosition.dx,
+                                                  details.globalPosition.dy,
+                                                ),
+                                                items: [
+                                                  PopupMenuItem(
+                                                    onTap: () async {
+                                                      var inventoryItem = invController
                                                           .inventoryItems
                                                           .firstWhere(
                                                             (item) =>
@@ -318,50 +443,101 @@ class _CTxnsViewState extends State<CTxnsView> {
                                                                 childItem
                                                                     .productId,
                                                           );
-                                                  await txnsController
-                                                      .refundItemActionModal(
-                                                        context,
-                                                        txn,
-                                                        childItem,
-                                                        inventoryItem,
-                                                      );
-                                                  await txnsController
-                                                      .fetchUserTxnItems();
-                                                  setState(() {});
-                                                },
-                                                value: 1,
-                                                child: Text(
-                                                  'Refund',
-                                                ),
-                                              ),
-                                              PopupMenuItem(
-                                                value: 2,
-                                                child: Text(
-                                                  'Option 2',
-                                                ),
-                                              ),
-                                            ],
+                                                      await txnsController
+                                                          .refundItemActionModal(
+                                                            context,
+                                                            txn,
+                                                            childItem,
+                                                            inventoryItem,
+                                                          );
+                                                      await txnsController
+                                                          .fetchUserTxnItems();
+                                                      setState(() {});
+                                                    },
+                                                    value: 1,
+                                                    child: Text(
+                                                      'Refund',
+                                                    ),
+                                                  ),
+                                                  PopupMenuItem(
+                                                    value: 2,
+                                                    child: Text(
+                                                      'Option 2',
+                                                    ),
+                                                  ),
+                                                ],
+                                              );
+                                            },
+                                            child: Icon(
+                                              Icons.more_vert,
+                                              color: isDarkTheme
+                                                  ? CColors.darkGrey
+                                                  : CColors.rBrown,
+                                              size: CSizes.iconSm,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    );
+                                  },
+                                ),
+
+                                Padding(
+                                  padding: const EdgeInsets.only(
+                                    bottom: 5.0,
+                                    top: 10.0,
+                                  ),
+                                ),
+
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    CCustomTxtBtn(
+                                      icon: Iconsax.printer,
+                                      labelTxt:
+                                          widget.space == 'invoices' ||
+                                              widget.space == 'contact invoices'
+                                          ? 'Invoice'
+                                          : 'Receipt',
+                                      onPressed: () {},
+                                    ),
+
+                                    if (widget.space == 'invoices' ||
+                                        widget.space == 'contact invoices')
+                                      CCustomTxtBtn(
+                                        btnWidth: 150.0,
+                                        icon: Iconsax.money_recive,
+                                        labelTxt: 'Take payment',
+                                        onPressed: () async {
+                                          txnsController.takeInvoicePayment(
+                                            context,
+                                            txn,
+                                          );
+                                          setState(
+                                            () {},
                                           );
                                         },
-                                        child: Icon(
-                                          Icons.more_vert,
-                                          color: isDarkTheme
-                                              ? CColors.darkGrey
-                                              : CColors.rBrown,
-                                          size: CSizes.iconSm,
-                                        ),
                                       ),
-                                    ),
                                   ],
-                                );
-                              },
+                                ),
+                              ],
                             ),
-                            Divider(),
-                          ],
+                          ),
                         ),
                       ),
                     ),
                   ],
+                );
+              },
+              padding: const EdgeInsets.only(
+                left: 5.0,
+                right: 5.0,
+                top: 1.0,
+              ),
+              separatorBuilder: (context, index) {
+                return const SizedBox(
+                  height: 2.0,
                 );
               },
             );

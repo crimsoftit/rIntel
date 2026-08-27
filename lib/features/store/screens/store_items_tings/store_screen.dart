@@ -150,7 +150,7 @@ class CStoreScreen extends StatelessWidget {
                         ),
                         Tab(
                           child: Text(
-                            'Refunds',
+                            'On the house',
                           ),
                         ),
                         Tab(
@@ -200,9 +200,9 @@ class CStoreScreen extends StatelessWidget {
                   //   forContactScreen: false,
                   //   space: 'invoices',
                   // ),
-                  CTxnItemsListView(
+                  CTxnsView(
                     forContactScreen: false,
-                    space: 'refunds',
+                    space: 'On the house',
                   ),
 
                   CTxnItemsListView(

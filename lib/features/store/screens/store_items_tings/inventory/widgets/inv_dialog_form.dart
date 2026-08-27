@@ -827,7 +827,6 @@ class AddUpdateInventoryForm extends StatelessWidget {
 
                           var contactDetails = CContactsModel(
                             userController.user.value.email,
-                            inventoryItem.productId,
                             invController.txtSupplierName.text.trim(),
                             contactsController.contactCountryCode.value,
                             contactsController.contactDialCode.value,

@@ -162,7 +162,6 @@ class DbHelper extends GetxController {
         database.execute('''
           CREATE TABLE IF NOT EXISTS $contactsTable (
             contactId INTEGER PRIMARY KEY AUTOINCREMENT,
-            productId INTEGER NOT NULL,
             addedBy TEXT NOT NULL,
             contactName TEXT NOT NULL,
             contactCountryCode TEXT NOT NULL,
@@ -175,8 +174,7 @@ class DbHelper extends GetxController {
             isSynced INTEGER NOT NULL,
             syncAction TEXT NOT NULL,
             isStarred INTEGER NOT NULL,
-            isTrashed INTEGER NOT NULL,
-            FOREIGN KEY(productId) REFERENCES inventory(productId)
+            isTrashed INTEGER NOT NULL
           )
         ''');
 

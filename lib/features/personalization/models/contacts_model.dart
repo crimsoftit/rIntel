@@ -7,7 +7,6 @@ import 'package:rintel/features/personalization/models/gsheets_contact_model.dar
 
 class CContactsModel {
   int? _contactId;
-  int? _productId;
 
   String _addedBy = '';
   String _contactName = '';
@@ -27,7 +26,6 @@ class CContactsModel {
 
   CContactsModel(
     this._addedBy,
-    this._productId,
     this._contactName,
     this._contactCountryCode,
     this._contactDialCode,
@@ -44,7 +42,6 @@ class CContactsModel {
 
   CContactsModel.withId(
     this._contactId,
-    this._productId,
     this._addedBy,
     this._contactName,
     this._contactCountryCode,
@@ -65,7 +62,6 @@ class CContactsModel {
   static CContactsModel empty() {
     return CContactsModel.withId(
       0,
-      0,
       '',
       '',
       '',
@@ -83,7 +79,6 @@ class CContactsModel {
   }
 
   int? get contactId => _contactId;
-  int? get productId => _productId;
   String get addedBy => _addedBy;
   String get contactName => _contactName;
   String get contactCountryCode => _contactCountryCode;
@@ -102,10 +97,6 @@ class CContactsModel {
 
   set contactId(int? newContactId) {
     _contactId = newContactId;
-  }
-
-  set productId(int? newProductId) {
-    _contactId = newProductId;
   }
 
   set addedBy(String deviceUser) {
@@ -184,16 +175,12 @@ class CContactsModel {
     if (contactId != null) {
       map['contactId'] = _contactId;
     }
-    if (productId != null) {
-      map['productId'] = _productId;
-    }
     return map;
   }
 
   /// -- extract a Contact object from a Map object --
   CContactsModel.fromMapObject(Map<String, dynamic> map) {
     _contactId = map['contactId'];
-    _productId = map['productId'];
     _addedBy = map['addedBy'];
     _contactName = map['contactName'];
     _contactCountryCode = map['contactCountryCode'];
@@ -213,7 +200,6 @@ class CContactsModel {
   static CContactsModel gSheetsFromJson(Map<String, dynamic> json) {
     return CContactsModel.withId(
       jsonDecode(json[GsheetsContactModel.contactId]),
-      jsonDecode(json[GsheetsContactModel.productId]),
       json[GsheetsContactModel.addedBy],
       json[GsheetsContactModel.contactName],
       json[GsheetsContactModel.contactCountryCode],

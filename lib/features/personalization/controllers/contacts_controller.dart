@@ -84,6 +84,8 @@ class CContactsController extends GetxController {
     'Customer',
     'Friend',
     'Supplier',
+    'Family',
+    'Colleague',
   ].obs;
   final RxList alphabet = [].obs;
 
@@ -1495,7 +1497,6 @@ class CContactsController extends GetxController {
         var cloudContactAppends = unsyncedContactAppends.map((element) {
           return {
             'contactId': element.contactId,
-            'productId': element.productId,
             'addedBy': element.addedBy,
             'contactName': element.contactName,
             'contactCountryCode': element.contactCountryCode,
@@ -1567,7 +1568,6 @@ class CContactsController extends GetxController {
         for (var contactAppend in unsyncedContactAppends) {
           var forSyncContact = CContactsModel.withId(
             contactAppend.contactId,
-            contactAppend.productId,
             contactAppend.addedBy,
             contactAppend.contactName,
             contactAppend.contactCountryCode,
@@ -1620,7 +1620,6 @@ class CContactsController extends GetxController {
             for (var contact in userCloudContacts) {
               var forImportContacts = CContactsModel.withId(
                 contact.contactId,
-                contact.productId,
                 contact.addedBy,
                 contact.contactName,
                 contact.contactCountryCode,
@@ -1714,7 +1713,6 @@ class CContactsController extends GetxController {
           for (var contact in unsyncedContactUpdates) {
             final forSyncContact = CContactsModel.withId(
               contact.contactId,
-              contact.productId,
               contact.addedBy,
               contact.contactName,
               contact.contactCountryCode,
@@ -1982,7 +1980,7 @@ class CContactsController extends GetxController {
       contactTotalPurchasesValue.value = 0.0;
       contactInvoicedPurchasesValue.value = 0.0;
       contactTotalPurchasesValue.value = 0.0;
-      var contactTotalTxns = txnsController.sales
+      var contactTotalTxns = txnsController.userTxns
           .where(
             (sale) =>
                 sale.customerName.toLowerCase().contains(
@@ -1998,10 +1996,10 @@ class CContactsController extends GetxController {
           .toList();
       contactTotalPurchasesValue.value = contactTotalTxns.fold(
         0.0,
-        (sum, sale) => sum + (sale.quantity * sale.unitSellingPrice),
+        (sum, sale) => sum + sale.totalAmount,
       );
 
-      var contactCompleteTxns = txnsController.txns
+      var contactCompleteTxns = txnsController.userTxns
           .where(
             (txn) =>
                 txn.customerName.toLowerCase().contains(
@@ -2022,7 +2020,7 @@ class CContactsController extends GetxController {
         (sum, sale) => sum + sale.totalAmount,
       );
 
-      var contactInvoicedTxns = txnsController.invoices
+      var contactInvoicedTxns = txnsController.userInvoices
           .where(
             (credit) =>
                 credit.customerName.toLowerCase().contains(
@@ -2039,7 +2037,7 @@ class CContactsController extends GetxController {
 
       contactInvoicedPurchasesValue.value = contactInvoicedTxns.fold(
         0.0,
-        (sum, credit) => sum + (credit.totalAmount - credit.amountIssued),
+        (sum, credit) => sum + credit.totalAmount,
       );
 
       var contactSupplies = invController.inventoryItems.where(
@@ -2081,7 +2079,7 @@ class CContactsController extends GetxController {
 
   /// -- check if contact is a customer or has transactions --
   bool contactHasPurchases(CContactsModel contact) {
-    var contactTxns = txnsController.sales.where(
+    var contactTxns = txnsController.userTxns.where(
       (contactTxn) {
         return contactTxn.customerName.toLowerCase().contains(
               contact.contactName.toLowerCase(),
@@ -2221,7 +2219,6 @@ class CContactsController extends GetxController {
 
           var forDeviceImportContact = CContactsModel(
             userController.user.value.email,
-            0,
             contactName!,
             CFormatter.getCountryCodeFromDialCode(
               dialCode,

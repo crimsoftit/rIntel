@@ -846,7 +846,6 @@ class CCheckoutController extends GetxController {
 
           var customerDetails = CContactsModel(
             userController.user.value.email,
-            0,
             customerNameFieldController.text.trim(),
             '',
             CValidator.isValidPhoneNumber(

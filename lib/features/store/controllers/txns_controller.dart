@@ -1692,10 +1692,15 @@ class CTxnsController extends GetxController {
                                   txtAmountIssued.text.trim(),
                                 );
 
-                                txn.txnStatus =
-                                    txn.amountPaid - txn.totalAmount >= 0
-                                    ? 'complete'
-                                    : 'invoiced';
+                                if (txn.amountPaid - txn.totalAmount >= 0) {
+                                  // txn.totalAmount -= double.parse(
+                                  //   txtAmountIssued.text.trim(),
+                                  // );
+                                  txn.txnStatus = 'complete';
+                                }
+                                txn.lastModified = DateFormat(
+                                  'yyyy-MM-dd @ kk:mm',
+                                ).format(clock.now());
 
                                 // -- update txn on local db --
                                 dbHelper
@@ -1710,7 +1715,7 @@ class CTxnsController extends GetxController {
 
                                         resetSalesFields();
 
-                                        fetchSoldItems();
+                                        fetchUserTxns();
                                         // Guard against unmounted context
                                         if (!context.mounted) {
                                           CPopupSnackBar.warningSnackBar(

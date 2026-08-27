@@ -7,12 +7,15 @@ class CSquareIconBtn extends StatelessWidget {
   const CSquareIconBtn({
     super.key,
     this.bgColor,
+    this.icon,
+    this.iconColor = CColors.white,
     this.iconSize = CSizes.md,
     required this.onBtnTap,
   });
 
-  final Color? bgColor;
+  final Color? bgColor, iconColor;
   final double? iconSize;
+  final IconData? icon;
   final VoidCallback onBtnTap;
 
   @override
@@ -22,15 +25,19 @@ class CSquareIconBtn extends StatelessWidget {
       child: Container(
         decoration: BoxDecoration(
           color: bgColor,
-          borderRadius: const BorderRadius.all(Radius.circular(0)),
+          borderRadius: const BorderRadius.all(
+            Radius.circular(
+              0,
+            ),
+          ),
         ),
         child: SizedBox(
           width: CSizes.iconLg,
           height: CSizes.iconLg,
           child: Center(
             child: Icon(
-              Iconsax.edit,
-              color: CColors.white,
+              icon ?? Iconsax.edit,
+              color: iconColor,
               // size: CSizes.md,
               size: iconSize,
             ),
