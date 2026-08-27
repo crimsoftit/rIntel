@@ -1531,7 +1531,7 @@ class CTxnsController extends GetxController {
   }
 
   /// -- take partial/full payment on invoices --
-  void takeInvoicePayment(
+  Future<void> takeInvoicePayment(
     BuildContext context,
     CTxn txn,
   ) async {
@@ -1660,7 +1660,7 @@ class CTxnsController extends GetxController {
                               label: Text(
                                 'Update',
                               ),
-                              onPressed: () {
+                              onPressed: () async {
                                 if (!invoicePaymentFormKey.currentState!
                                     .validate()) {
                                   return;
@@ -1703,19 +1703,19 @@ class CTxnsController extends GetxController {
                                 ).format(clock.now());
 
                                 // -- update txn on local db --
-                                dbHelper
+                                await dbHelper
                                     .updateParentTxnDetails(
                                       txn,
                                     )
                                     .then(
-                                      (result) {
+                                      (result) async {
                                         // -- update txn item details on cloud firestore --
                                         storeRepo.cloudUpdateTxn(txn);
                                         initializeSalesSummaryValues();
 
                                         resetSalesFields();
 
-                                        fetchUserTxns();
+                                        await fetchUserTxns();
                                         // Guard against unmounted context
                                         if (!context.mounted) {
                                           CPopupSnackBar.warningSnackBar(

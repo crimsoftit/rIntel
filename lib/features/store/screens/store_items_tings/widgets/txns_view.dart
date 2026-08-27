@@ -257,6 +257,33 @@ class _CTxnsViewState extends State<CTxnsView> {
                                     MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text(
+                                    'Amount paid:',
+                                    style:
+                                        Theme.of(
+                                          context,
+                                        ).textTheme.labelMedium!.apply(
+                                          color: CColors.darkGrey,
+                                        ),
+                                  ),
+                                  Text(
+                                    '$userCurrency.${txn.amountPaid} ',
+                                    style:
+                                        Theme.of(
+                                          context,
+                                        ).textTheme.labelMedium!.apply(
+                                          color: CColors.darkGrey,
+                                        ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(
+                                height: CSizes.spaceBtnItems / 6.0,
+                              ),
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
                                     'Customer details:',
                                     style: Theme.of(context)
                                         .textTheme
@@ -510,12 +537,15 @@ class _CTxnsViewState extends State<CTxnsView> {
                                         icon: Iconsax.money_recive,
                                         labelTxt: 'Take payment',
                                         onPressed: () async {
-                                          txnsController.takeInvoicePayment(
-                                            context,
-                                            txn,
-                                          );
+                                          await txnsController
+                                              .takeInvoicePayment(
+                                                context,
+                                                txn,
+                                              );
                                           setState(
-                                            () {},
+                                            () {
+                                              txnsController.userTxns.refresh();
+                                            },
                                           );
                                         },
                                       ),
