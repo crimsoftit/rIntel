@@ -35,6 +35,7 @@ class CTxnsView extends StatefulWidget {
 }
 
 class _CTxnsViewState extends State<CTxnsView> {
+  int? _expandedIndex; // Stores the index of the currently expanded item
   late Future<List<CTxn>> _itemsFuture;
   final invController = Get.put(CInventoryController());
   final txnsController = Get.put(CTxnsController());
@@ -123,7 +124,8 @@ class _CTxnsViewState extends State<CTxnsView> {
                               (receipt) =>
                                   receipt.txnStatus.toLowerCase().contains(
                                     'complete',
-                                  ),
+                                  ) &&
+                                  receipt.paymentMethod != 'On the house',
                             )
                             .toList(),
                 );
@@ -162,6 +164,7 @@ class _CTxnsViewState extends State<CTxnsView> {
             return ListView.separated(
               itemCount: demItems.length,
               itemBuilder: (context, txnIndex) {
+                final bool isExpanded = _expandedIndex == txnIndex;
                 final txn = demItems[txnIndex];
                 return Column(
                   children: [
@@ -202,10 +205,20 @@ class _CTxnsViewState extends State<CTxnsView> {
                     ),
                     Card(
                       color: isDarkTheme
-                          ? CColors.rBrown.withValues(
-                              alpha: 0.2,
+                          ? isExpanded
+                                ? CColors.rBrown.withValues(
+                                    alpha: .1,
+                                  )
+                                : CColors.rBrown.withValues(
+                                    alpha: .3,
+                                  )
+                          : isExpanded
+                          ? CColors.lightGrey.withValues(
+                              alpha: .1,
                             )
-                          : CColors.lightGrey,
+                          : CColors.lightGrey.withValues(
+                              alpha: .3,
+                            ),
                       elevation: 0,
                       margin: EdgeInsets.only(
                         bottom: 10.0,
@@ -343,216 +356,319 @@ class _CTxnsViewState extends State<CTxnsView> {
                                         ),
                                 ],
                               ),
-                            ],
-                          ),
-                          subtitle: Padding(
-                            padding: const EdgeInsets.only(
-                              top: 10.0,
-                            ),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                // Inner ListView Builder
-                                ListView.builder(
-                                  shrinkWrap: true, // Crucial for nesting
-                                  // physics:
-                                  //     NeverScrollableScrollPhysics(), // Disable inner scroll
-                                  itemCount: txnsController.userTxnItems
-                                      .where((item) => item.txnId == txn.txnId)
-                                      .length, // Nested data count
-                                  itemBuilder: (context, innerIndex) {
-                                    //txnsController.fetchUserTxnItems();
-                                    var txnItems = txnsController.userTxnItems
-                                        .where(
-                                          (item) => item.txnId == txn.txnId,
-                                        )
-                                        .toList();
-                                    final childItem = txnItems[innerIndex];
-                                    return Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        CRoundedContainer(
-                                          bgColor: CColors.transparent,
-                                          width:
-                                              CHelperFunctions.screenWidth() *
-                                              .4,
-                                          child: SelectableText(
-                                            childItem.productName.toUpperCase(),
-                                            style: Theme.of(
-                                              context,
-                                            ).textTheme.labelMedium!.apply(),
-                                          ),
-                                        ),
-                                        CRoundedContainer(
-                                          bgColor: CColors.transparent,
-                                          width:
-                                              CHelperFunctions.screenWidth() *
-                                              .3,
-                                          child: Column(
-                                            children: [
-                                              if (childItem.quantity > 0)
-                                                Row(
-                                                  children: [
-                                                    Text(
-                                                      '${CFormatter.formatItemQtyDisplays(childItem.quantity, childItem.itemMetrics)} ${CFormatter.formatItemMetrics(childItem.itemMetrics, childItem.quantity)} - ',
-                                                      style:
-                                                          Theme.of(
-                                                                context,
-                                                              )
-                                                              .textTheme
-                                                              .labelMedium!
-                                                              .apply(),
-                                                    ),
-                                                    Text(
-                                                      '$userCurrency.',
-                                                      style: Theme.of(context)
-                                                          .textTheme
-                                                          .labelSmall!
-                                                          .apply(
-                                                            fontFeatures: [
-                                                              FontFeature.superscripts(),
-                                                            ],
-                                                            fontSizeFactor: .8,
-                                                          ),
-                                                    ),
-                                                    Text(
-                                                      '${childItem.unitSellingPrice * childItem.quantity}',
-                                                      style:
-                                                          Theme.of(
-                                                                context,
-                                                              )
-                                                              .textTheme
-                                                              .labelMedium!
-                                                              .apply(),
-                                                    ),
-                                                  ],
-                                                ),
-                                              if (childItem.qtyRefunded > 0)
-                                                Text(
-                                                  '${CFormatter.formatItemQtyDisplays(childItem.qtyRefunded, childItem.itemMetrics)} ${CFormatter.formatItemMetrics(childItem.itemMetrics, childItem.qtyRefunded)} refunded',
-                                                  style:
-                                                      Theme.of(
-                                                            context,
+                              CRoundedContainer(
+                                bgColor: CColors.transparent,
+                                padding: const EdgeInsets.only(
+                                  bottom: 10.0,
+                                  top: 5.0,
+                                ),
+                                child: Center(
+                                  child: CSquareIconBtn(
+                                    icon: isExpanded
+                                        ? Iconsax.arrow_bottom
+                                        : Iconsax.arrow_up,
+                                    iconColor: CColors.rOrange,
+                                    onBtnTap: () {
+                                      setState(
+                                        () {
+                                          if (_expandedIndex == txnIndex) {
+                                            _expandedIndex = null; // Collapse
+                                          } else {
+                                            _expandedIndex = txnIndex; // Expand
+                                          }
+                                        },
+                                      );
+                                    },
+                                  ),
+                                ),
+                              ),
+
+                              isExpanded
+                                  ? Padding(
+                                      padding: const EdgeInsets.only(
+                                        top: 10.0,
+                                      ),
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          // Inner ListView Builder
+                                          AnimatedContainer(
+                                            clipBehavior: Clip.antiAlias,
+                                            color: CColors.transparent,
+                                            curve: Curves.easeInOut,
+                                            duration: const Duration(
+                                              milliseconds: 200,
+                                            ),
+                                            height: isExpanded
+                                                ? txnsController.userTxnItems
+                                                          .where(
+                                                            (item) =>
+                                                                item.txnId ==
+                                                                txn.txnId,
                                                           )
-                                                          .textTheme
-                                                          .labelSmall!
-                                                          .apply(
-                                                            color: CColors
-                                                                .darkGrey,
-                                                            fontStyle: FontStyle
-                                                                .italic,
+                                                          .length *
+                                                      37
+                                                : 20,
+                                            padding: const EdgeInsets.all(
+                                              5.0,
+                                            ),
+                                            width:
+                                                CHelperFunctions.screenWidth(),
+                                            child: CRoundedContainer(
+                                              bgColor: CColors.transparent,
+                                              borderColor: CColors.rBrown,
+                                              showBorder: true,
+                                              child: ListView.builder(
+                                                shrinkWrap:
+                                                    true, // Crucial for nesting
+                                                // physics:
+                                                //     NeverScrollableScrollPhysics(), // Disable inner scroll
+                                                itemCount: txnsController
+                                                    .userTxnItems
+                                                    .where(
+                                                      (item) =>
+                                                          item.txnId ==
+                                                          txn.txnId,
+                                                    )
+                                                    .length, // Nested data count
+                                                itemBuilder: (context, innerIndex) {
+                                                  //txnsController.fetchUserTxnItems();
+                                                  var txnItems = txnsController
+                                                      .userTxnItems
+                                                      .where(
+                                                        (item) =>
+                                                            item.txnId ==
+                                                            txn.txnId,
+                                                      )
+                                                      .toList();
+                                                  final childItem =
+                                                      txnItems[innerIndex];
+                                                  return Padding(
+                                                    padding:
+                                                        const EdgeInsets.all(
+                                                          5.0,
+                                                        ),
+                                                    child: Row(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .spaceBetween,
+                                                      children: [
+                                                        CRoundedContainer(
+                                                          bgColor: CColors
+                                                              .transparent,
+                                                          width:
+                                                              CHelperFunctions.screenWidth() *
+                                                              .45,
+                                                          child: SelectableText(
+                                                            childItem
+                                                                .productName
+                                                                .toUpperCase(),
+                                                            style:
+                                                                Theme.of(
+                                                                      context,
+                                                                    )
+                                                                    .textTheme
+                                                                    .labelMedium!
+                                                                    .apply(
+                                                                      color: CColors
+                                                                          .darkGrey,
+                                                                    ),
                                                           ),
+                                                        ),
+                                                        CRoundedContainer(
+                                                          bgColor: CColors
+                                                              .transparent,
+                                                          width:
+                                                              CHelperFunctions.screenWidth() *
+                                                              .3,
+                                                          child: Column(
+                                                            children: [
+                                                              if (childItem
+                                                                      .quantity >
+                                                                  0)
+                                                                Row(
+                                                                  children: [
+                                                                    Text(
+                                                                      '${CFormatter.formatItemQtyDisplays(childItem.quantity, childItem.itemMetrics)} ${CFormatter.formatItemMetrics(childItem.itemMetrics, childItem.quantity)} - ',
+                                                                      style: Theme.of(
+                                                                        context,
+                                                                      ).textTheme.labelMedium!.apply(),
+                                                                    ),
+                                                                    Text(
+                                                                      '$userCurrency.',
+                                                                      style: Theme.of(context)
+                                                                          .textTheme
+                                                                          .labelSmall!
+                                                                          .apply(
+                                                                            fontFeatures: [
+                                                                              FontFeature.superscripts(),
+                                                                            ],
+                                                                            fontSizeFactor:
+                                                                                .8,
+                                                                          ),
+                                                                    ),
+                                                                    Text(
+                                                                      '${childItem.unitSellingPrice * childItem.quantity}',
+                                                                      style: Theme.of(
+                                                                        context,
+                                                                      ).textTheme.labelMedium!.apply(),
+                                                                    ),
+                                                                  ],
+                                                                ),
+                                                              if (childItem
+                                                                      .qtyRefunded >
+                                                                  0)
+                                                                Text(
+                                                                  '${CFormatter.formatItemQtyDisplays(childItem.qtyRefunded, childItem.itemMetrics)} ${CFormatter.formatItemMetrics(childItem.itemMetrics, childItem.qtyRefunded)} refunded',
+                                                                  style:
+                                                                      Theme.of(
+                                                                        context,
+                                                                      ).textTheme.labelSmall!.apply(
+                                                                        color: CColors
+                                                                            .darkGrey,
+                                                                        fontStyle:
+                                                                            FontStyle.italic,
+                                                                      ),
+                                                                ),
+                                                            ],
+                                                          ),
+                                                        ),
+                                                        CRoundedContainer(
+                                                          bgColor: CColors
+                                                              .transparent,
+                                                          child: GestureDetector(
+                                                            onTapDown:
+                                                                (
+                                                                  TapDownDetails
+                                                                  details,
+                                                                ) {
+                                                                  showMenu<int>(
+                                                                    context:
+                                                                        context,
+                                                                    position: RelativeRect.fromLTRB(
+                                                                      details
+                                                                          .globalPosition
+                                                                          .dx,
+                                                                      details
+                                                                          .globalPosition
+                                                                          .dy,
+                                                                      details
+                                                                          .globalPosition
+                                                                          .dx,
+                                                                      details
+                                                                          .globalPosition
+                                                                          .dy,
+                                                                    ),
+                                                                    items: [
+                                                                      PopupMenuItem(
+                                                                        onTap: () async {
+                                                                          var inventoryItem = invController.inventoryItems.firstWhere(
+                                                                            (
+                                                                              item,
+                                                                            ) =>
+                                                                                item.productId ==
+                                                                                childItem.productId,
+                                                                          );
+                                                                          await txnsController.refundItemActionModal(
+                                                                            context,
+                                                                            txn,
+                                                                            childItem,
+                                                                            inventoryItem,
+                                                                          );
+                                                                          await txnsController
+                                                                              .fetchUserTxnItems();
+                                                                          setState(
+                                                                            () {},
+                                                                          );
+                                                                        },
+                                                                        value:
+                                                                            1,
+                                                                        child: Text(
+                                                                          'Refund',
+                                                                        ),
+                                                                      ),
+                                                                      PopupMenuItem(
+                                                                        value:
+                                                                            2,
+                                                                        child: Text(
+                                                                          'Option 2',
+                                                                        ),
+                                                                      ),
+                                                                    ],
+                                                                  );
+                                                                },
+                                                            child: Icon(
+                                                              Icons.more_vert,
+                                                              color: isDarkTheme
+                                                                  ? CColors
+                                                                        .darkGrey
+                                                                  : CColors
+                                                                        .rBrown,
+                                                              size:
+                                                                  CSizes.iconSm,
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  );
+                                                },
+                                              ),
+                                            ),
+                                          ),
+
+                                          Padding(
+                                            padding: const EdgeInsets.only(
+                                              bottom: 5.0,
+                                              top: 10.0,
+                                            ),
+                                          ),
+
+                                          Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              CCustomTxtBtn(
+                                                icon: Iconsax.printer,
+                                                labelTxt:
+                                                    widget.space ==
+                                                            'invoices' ||
+                                                        widget.space ==
+                                                            'contact invoices'
+                                                    ? 'Invoice'
+                                                    : 'Receipt',
+                                                onPressed: () {},
+                                              ),
+
+                                              if (widget.space == 'invoices' ||
+                                                  widget.space ==
+                                                      'contact invoices')
+                                                CCustomTxtBtn(
+                                                  btnWidth: 150.0,
+                                                  icon: Iconsax.money_recive,
+                                                  labelTxt: 'Take payment',
+                                                  onPressed: () async {
+                                                    await txnsController
+                                                        .takeInvoicePayment(
+                                                          context,
+                                                          txn,
+                                                        );
+                                                    setState(
+                                                      () {
+                                                        txnsController.userTxns
+                                                            .refresh();
+                                                      },
+                                                    );
+                                                  },
                                                 ),
                                             ],
                                           ),
-                                        ),
-                                        CRoundedContainer(
-                                          bgColor: CColors.transparent,
-                                          child: GestureDetector(
-                                            onTapDown: (TapDownDetails details) {
-                                              showMenu<int>(
-                                                context: context,
-                                                position: RelativeRect.fromLTRB(
-                                                  details.globalPosition.dx,
-                                                  details.globalPosition.dy,
-                                                  details.globalPosition.dx,
-                                                  details.globalPosition.dy,
-                                                ),
-                                                items: [
-                                                  PopupMenuItem(
-                                                    onTap: () async {
-                                                      var inventoryItem = invController
-                                                          .inventoryItems
-                                                          .firstWhere(
-                                                            (item) =>
-                                                                item.productId ==
-                                                                childItem
-                                                                    .productId,
-                                                          );
-                                                      await txnsController
-                                                          .refundItemActionModal(
-                                                            context,
-                                                            txn,
-                                                            childItem,
-                                                            inventoryItem,
-                                                          );
-                                                      await txnsController
-                                                          .fetchUserTxnItems();
-                                                      setState(() {});
-                                                    },
-                                                    value: 1,
-                                                    child: Text(
-                                                      'Refund',
-                                                    ),
-                                                  ),
-                                                  PopupMenuItem(
-                                                    value: 2,
-                                                    child: Text(
-                                                      'Option 2',
-                                                    ),
-                                                  ),
-                                                ],
-                                              );
-                                            },
-                                            child: Icon(
-                                              Icons.more_vert,
-                                              color: isDarkTheme
-                                                  ? CColors.darkGrey
-                                                  : CColors.rBrown,
-                                              size: CSizes.iconSm,
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    );
-                                  },
-                                ),
-
-                                Padding(
-                                  padding: const EdgeInsets.only(
-                                    bottom: 5.0,
-                                    top: 10.0,
-                                  ),
-                                ),
-
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    CCustomTxtBtn(
-                                      icon: Iconsax.printer,
-                                      labelTxt:
-                                          widget.space == 'invoices' ||
-                                              widget.space == 'contact invoices'
-                                          ? 'Invoice'
-                                          : 'Receipt',
-                                      onPressed: () {},
-                                    ),
-
-                                    if (widget.space == 'invoices' ||
-                                        widget.space == 'contact invoices')
-                                      CCustomTxtBtn(
-                                        btnWidth: 150.0,
-                                        icon: Iconsax.money_recive,
-                                        labelTxt: 'Take payment',
-                                        onPressed: () async {
-                                          await txnsController
-                                              .takeInvoicePayment(
-                                                context,
-                                                txn,
-                                              );
-                                          setState(
-                                            () {
-                                              txnsController.userTxns.refresh();
-                                            },
-                                          );
-                                        },
+                                        ],
                                       ),
-                                  ],
-                                ),
-                              ],
-                            ),
+                                    )
+                                  : SizedBox.shrink(),
+                            ],
                           ),
                         ),
                       ),
