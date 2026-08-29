@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:collection/collection.dart';
 import 'package:rintel/api/sheets/store_sheets_api.dart';
 import 'package:rintel/common/widgets/custom_shapes/containers/rounded_container.dart';
 import 'package:rintel/common/widgets/txt_fields/custom_txtfield.dart';
@@ -138,10 +139,12 @@ class CTxnsController extends GetxController {
   final RxDouble totalAmtSold = 0.0.obs;
 
   final storeRepo = Get.put(CStoreRepo());
-  final RxList<CTxn> userTxns = <CTxn>[].obs;
-  final RxList<CTxn> userInvoices = <CTxn>[].obs;
   final RxList<CTxn> foundInvoices = <CTxn>[].obs;
   final RxList<CTxn> foundReceipts = <CTxn>[].obs;
+  final RxList<CTxn> matchingOnDaHauzItems = <CTxn>[].obs;
+  final RxList<CTxn> userTxns = <CTxn>[].obs;
+  final RxList<CTxn> userInvoices = <CTxn>[].obs;
+
   final RxList<CSoldItemModel> userTxnItems = <CSoldItemModel>[].obs;
 
   final RxDouble invoicesValue = 0.0.obs;
@@ -156,7 +159,6 @@ class CTxnsController extends GetxController {
 
     if (await CNetworkManager.instance.isConnected() &&
         CNetworkManager.instance.connectionIsStable.value) {
-      //StoreSheetsApi.initSpreadSheets();
       await initTxnsSync();
     }
 
@@ -213,8 +215,6 @@ class CTxnsController extends GetxController {
     try {
       // start loader while txns are fetched
       isLoading.value = true;
-      foundSales.clear();
-      foundRefunds.clear();
 
       // fetch sales from local db
       final soldItems = await dbHelper.fetchUserSoldItems(
@@ -264,12 +264,6 @@ class CTxnsController extends GetxController {
           )
           .toList();
       invoices.assignAll(creditSales);
-
-      if (searchController.showSearchField.value &&
-          searchController.txtSearchField.text == '') {
-        //foundReceipts.assignAll(receipts);
-        //foundInvoices.assignAll(creditSales);
-      }
 
       // assign values for refunded items
       var refundedItems = soldItems
@@ -533,6 +527,18 @@ class CTxnsController extends GetxController {
 
       /// -- search all sold items --
       var txnsFound = userTxns.where((foundTxn) {
+        var foundTxnItems = userTxnItems.where(
+          (txnItem) {
+            return txnItem.txnId == foundTxn.txnId;
+          },
+        );
+
+        // Group by the common ID field
+        Map<int, List<CSoldItemModel>> groupedChildren = groupBy(
+          foundTxnItems,
+          (child) => child.txnId,
+        );
+
         return foundTxn.txnId.toString().toLowerCase().contains(
               value.toLowerCase(),
             ) ||
@@ -544,16 +550,43 @@ class CTxnsController extends GetxController {
             ) ||
             foundTxn.customerContacts.toLowerCase().contains(
               value.toLowerCase(),
+            ) ||
+            foundTxn.dateAdded.toLowerCase().contains(
+              value.toLowerCase(),
+            ) ||
+            foundTxn.txnAddress.toLowerCase().contains(
+              value.toLowerCase(),
+            ) ||
+            groupedChildren.entries.any(
+              (entry) => entry.value.any(
+                (child) => child.productName.toLowerCase().contains(
+                  value.toLowerCase(),
+                ),
+              ),
             );
       }).toList();
       foundReceipts.assignAll(
-        txnsFound.where((receipt) => receipt.txnStatus == 'complete'),
+        txnsFound.where(
+          (receipt) =>
+              receipt.txnStatus == 'complete' &&
+              !receipt.paymentMethod.toLowerCase().contains(
+                'On the house'.toLowerCase(),
+              ),
+        ),
       );
 
       foundInvoices.assignAll(
-        txnsFound.where((invoice) => invoice.txnStatus == 'invoiced'),
+        txnsFound.where(
+          (invoice) => invoice.txnStatus == 'invoiced',
+        ),
       );
-      //return foundTxns;
+      matchingOnDaHauzItems.assignAll(
+        txnsFound.where(
+          (txn) => txn.paymentMethod.toLowerCase().contains(
+            'On the house'.toLowerCase(),
+          ),
+        ),
+      );
     } catch (e) {
       CPopupSnackBar.errorSnackBar(
         title: 'error searching sales',
@@ -657,128 +690,6 @@ class CTxnsController extends GetxController {
     txtCustomerContacts.clear();
     txtTxnAddress.clear();
   }
-
-  /// -- add unsynced txns to the cloud --
-  // Future<bool> addUpdateSalesDataToCloud() async {
-  //   try {
-  //     isLoading.value = true;
-  //     txnsSyncIsLoading.value = true;
-  //     fetchSoldItems().then((result) {
-  //       if (result.isNotEmpty) {
-  //         final unsyncedTxnsForAppends = sales.where(
-  //           (unsyncedTxn) =>
-  //               unsyncedTxn.syncAction.toLowerCase() ==
-  //                   'append'.toLowerCase() &&
-  //               unsyncedTxn.isSynced == 0,
-  //         );
-
-  //         // -- update refunds data
-  //         if (unsyncedTxnUpdates.isNotEmpty) {
-  //           for (var updateItem in unsyncedTxnUpdates) {
-  //             updateItem.syncAction = 'none';
-  //             updateItem.txnStatus = updateItem.txnStatus == 'invoiced'
-  //                 ? 'invoiced'
-  //                 : 'complete';
-
-  //             // -- update sales data on the cloud
-  //             updateReceiptItemCloudData(updateItem.soldItemId!, updateItem);
-
-  //             // -- update sales data locally
-  //             dbHelper.updateParentTxnDetails(updateItem);
-  //           }
-  //         }
-
-  //         if (unsyncedTxnsForAppends.isNotEmpty) {
-  //           var gSheetTxnAppends = unsyncedTxnsForAppends
-  //               .map(
-  //                 (sale) => {
-  //                   'soldItemId': sale.soldItemId,
-  //                   'txnId': sale.txnId,
-  //                   'userId': sale.userId,
-  //                   'userEmail': sale.userEmail,
-  //                   'userName': sale.userName,
-  //                   'productId': sale.productId,
-  //                   'productCode': sale.productCode,
-  //                   'productName': sale.productName,
-  //                   'itemMetrics': sale.itemMetrics,
-  //                   'quantity': sale.quantity,
-  //                   'qtyRefunded': sale.qtyRefunded,
-  //                   'refundReason': sale.refundReason,
-  //                   'totalAmount': sale.totalAmount,
-  //                   'amountIssued': sale.amountIssued,
-  //                   'customerBalance': sale.customerBalance,
-  //                   'unitBP': sale.unitBP,
-  //                   'unitSellingPrice': sale.unitSellingPrice,
-  //                   'discount': sale.discount,
-  //                   'paymentMethod': sale.paymentMethod,
-  //                   'customerName': sale.customerName,
-  //                   'customerContacts': sale.customerContacts,
-  //                   'txnAddress': sale.txnAddress,
-  //                   'txnAddressCoordinates': sale.txnAddressCoordinates,
-  //                   'lastModified': sale.lastModified,
-  //                   'isSynced': 1,
-  //                   'syncAction': 'none',
-  //                   'txnStatus': sale.txnStatus,
-  //                 },
-  //               )
-  //               .toList();
-
-  //           // -- save sales data to cloud --
-  //           //StoreSheetsApi.initSpreadSheets();
-  //           StoreSheetsApi.saveTxnsToGSheets(gSheetTxnAppends).then((
-  //             result,
-  //           ) async {
-  //             if (result) {
-  //               // -- update txns status locally --
-  //               fetchSoldItems();
-  //               for (var forSyncItem in unsyncedTxnsForAppends) {
-  //                 await dbHelper.updateTxnItemsSyncStatus(
-  //                   1,
-  //                   'none',
-  //                   forSyncItem.soldItemId!,
-  //                 );
-  //               }
-  //               isLoading.value = false;
-  //               txnsSyncIsLoading.value = false;
-  //             } else {
-  //               isLoading.value = false;
-  //               txnsSyncIsLoading.value = false;
-  //               // CPopupSnackBar.errorSnackBar(
-  //               //   title: 'ERROR SYNCING TXNS TO CLOUD...',
-  //               //   message: 'an error occurred while uploading txns to cloud',
-  //               // );
-  //             }
-  //           });
-  //         } else {
-  //           if (kDebugMode) {
-  //             CPopupSnackBar.customToast(
-  //               forInternetConnectivityStatus: false,
-  //               message: '***** ALL TXNS RADA SAFI *****',
-  //             );
-  //           }
-  //           txnsSyncIsLoading.value = false;
-  //           isLoading.value = false;
-  //         }
-  //       } else {
-  //         txnsSyncIsLoading.value = false;
-  //         isLoading.value = false;
-  //       }
-  //     });
-  //     fetchSoldItems();
-  //     return true;
-  //   } catch (e) {
-  //     txnsSyncIsLoading.value = false;
-  //     isLoading.value = false;
-  //     if (kDebugMode) {
-  //       CPopupSnackBar.errorSnackBar(
-  //         title: 'ERROR SYNCING TXNS TO CLOUD...',
-  //         message: 'an error occurred while uploading txns to cloud: $e',
-  //       );
-  //     }
-
-  //     rethrow;
-  //   }
-  // }
 
   /// -- fetch txns from google sheets by userEmail --
   Future fetchUserTxnsSheetData() async {
@@ -1926,7 +1837,8 @@ class CTxnsController extends GetxController {
     try {
       isLoading.value = true;
       foundReceipts.clear();
-      //foundRefunds.clear();
+      foundInvoices.clear();
+      matchingOnDaHauzItems.clear();
 
       final txns = await dbHelper.fetchUserTxns(
         userController.user.value.email,
@@ -1963,7 +1875,19 @@ class CTxnsController extends GetxController {
       if (searchController.showSearchField.value &&
           searchController.txtSearchField.text == '') {
         foundReceipts.assignAll(userTxns);
-        //foundInvoices.assignAll(creditSales);
+        foundInvoices.assignAll(
+          userTxns.where(
+            (txn) =>
+                txn.txnStatus.toLowerCase().contains('invoiced'.toLowerCase()),
+          ),
+        );
+        matchingOnDaHauzItems.assignAll(
+          userTxns.where(
+            (txn) => txn.paymentMethod.toLowerCase().contains(
+              'On the house'.toLowerCase(),
+            ),
+          ),
+        );
       }
 
       isLoading.value = false;

@@ -94,11 +94,7 @@ class AuthRepo extends GetxController {
             CColors.white,
           );
 
-          /// -- initialize spreadsheets --
-          if (await CNetworkManager.instance.isConnected() &&
-              CNetworkManager.instance.hasConnection.value) {
-            await StoreSheetsApi.initSpreadSheets();
-          }
+          
 
           if (await userController.fetchUserDetails()) {
             final invController = Get.put(CInventoryController());

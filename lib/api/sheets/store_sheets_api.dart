@@ -23,7 +23,6 @@ class StoreSheetsApi extends GetxController {
     deletingInvItems.value = false;
 
     await initSpreadSheets();
-    //initSpreadSheets();
     super.onInit();
   }
 

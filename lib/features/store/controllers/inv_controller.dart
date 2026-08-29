@@ -1235,8 +1235,7 @@ class CInventoryController extends GetxController {
       // -- check internet connectivity
 
       if (await CNetworkManager.instance.isConnected()) {
-        /// -- initialize spreadsheets --
-        //await StoreSheetsApi.initSpreadSheets();
+        
         await syncInvDelsAndNotForUpdates();
         await addUnsyncedInvToCloud();
         await syncInvUpdatesToCloud();

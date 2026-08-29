@@ -51,7 +51,9 @@ class LoginForm extends StatelessWidget {
               () => TextFormField(
                 controller: loginController.password,
                 obscureText: loginController.hidePswdTxt.value,
-                style: const TextStyle(height: 0.8),
+                style: const TextStyle(
+                  height: 0.8,
+                ),
                 decoration: InputDecoration(
                   enabledBorder: OutlineInputBorder(
                     borderSide: BorderSide(
@@ -60,7 +62,9 @@ class LoginForm extends StatelessWidget {
                     ),
                   ),
                   labelText: CTexts.password,
-                  prefixIcon: const Icon(Iconsax.password_check),
+                  prefixIcon: const Icon(
+                    Iconsax.password_check,
+                  ),
                   suffixIcon: IconButton(
                     onPressed: () {
                       loginController.hidePswdTxt.value =
@@ -80,7 +84,9 @@ class LoginForm extends StatelessWidget {
               ),
             ),
 
-            const SizedBox(height: CSizes.spaceBtnInputFields / 2),
+            const SizedBox(
+              height: CSizes.spaceBtnInputFields / 2,
+            ),
 
             // -- remember me & forgot password checkbox and textbutton --
             Row(
