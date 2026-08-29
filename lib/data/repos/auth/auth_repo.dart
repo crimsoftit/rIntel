@@ -1,4 +1,3 @@
-import 'package:rintel/api/sheets/store_sheets_api.dart';
 import 'package:rintel/data/repos/user/user_repo.dart';
 import 'package:rintel/features/authentication/controllers/signup/signup_controller.dart';
 import 'package:rintel/features/authentication/screens/login/login.dart';
@@ -94,8 +93,6 @@ class AuthRepo extends GetxController {
             CColors.white,
           );
 
-          
-
           if (await userController.fetchUserDetails()) {
             final invController = Get.put(CInventoryController());
             final txnsController = Get.put(CTxnsController());
@@ -118,6 +115,8 @@ class AuthRepo extends GetxController {
 
             await invController.fetchUserInventoryItems();
             await txnsController.initTxnsSync();
+
+            await contactsController.fetchMyContacts();
 
             Get.put(CCheckoutController());
 

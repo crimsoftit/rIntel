@@ -170,14 +170,14 @@ class CCheckoutController extends GetxController {
         // -- separate phone number and dial code --
         final (dialCode, customerContacts) =
             CValidator.isValidPhoneNumber(
-              customerContactsFieldController.text.trim().removeAllWhitespace,
+              customerContactsFieldController.text.trim(),
             )
             ? CFormatter.seperatePhoneAndDialCode(
-                customerContactsFieldController.text.trim().removeAllWhitespace,
+                customerContactsFieldController.text.trim(),
               )
             : (
                 '',
-                customerContactsFieldController.text.trim().removeAllWhitespace,
+                customerContactsFieldController.text.trim(),
               );
 
         var txnItems = cartController.cartItems
@@ -201,7 +201,7 @@ class CCheckoutController extends GetxController {
               cartController.totalDiscount.value,
           cartController.totalDiscount.value,
           selectedPaymentMethod.value.platformName,
-          customerNameFieldController.text.trim().removeAllWhitespace,
+          customerNameFieldController.text.trim(),
           customerContacts,
           DateFormat('yyyy-MM-dd @ kk:mm').format(clock.now()),
           DateFormat('yyyy-MM-dd @ kk:mm').format(clock.now()),
@@ -790,7 +790,7 @@ class CCheckoutController extends GetxController {
               customerContactsFieldController.text.trim(),
             ) &&
             !CValidator.isValidEmail(
-              customerContactsFieldController.text.removeAllWhitespace.trim(),
+              customerContactsFieldController.text.trim(),
             )) {
           CPopupSnackBar.warningSnackBar(
             title: 'Invalid value for customer contacts!',
@@ -830,17 +830,15 @@ class CCheckoutController extends GetxController {
       if (customerNameFieldController.text != '' &&
           customerContactsFieldController.text != '') {
         if (await contactsController.contactActionIsAdd(
-          customerNameFieldController.text.trim().removeAllWhitespace,
-          customerContactsFieldController.text.trim().removeAllWhitespace,
+          customerNameFieldController.text.trim(),
+          customerContactsFieldController.text.trim(),
         )) {
           final (dialCode, mobileNumber) =
               CValidator.isValidPhoneNumber(
-                customerContactsFieldController.text.trim().removeAllWhitespace,
+                customerContactsFieldController.text.trim(),
               )
               ? CFormatter.seperatePhoneAndDialCode(
-                  customerContactsFieldController.text
-                      .trim()
-                      .removeAllWhitespace,
+                  customerContactsFieldController.text.trim(),
                 )
               : ('', '');
 
@@ -848,20 +846,8 @@ class CCheckoutController extends GetxController {
             userController.user.value.email,
             customerNameFieldController.text.trim(),
             '',
-            CValidator.isValidPhoneNumber(
-                  customerContactsFieldController.text
-                      .trim()
-                      .removeAllWhitespace,
-                )
-                ? dialCode
-                : '',
-            CValidator.isValidPhoneNumber(
-                  customerContactsFieldController.text
-                      .trim()
-                      .removeAllWhitespace,
-                )
-                ? mobileNumber
-                : '',
+            dialCode,
+            mobileNumber,
             // CValidator.isValidPhoneNumber(
             //       customerContactsFieldController.text.trim(),
             //     )

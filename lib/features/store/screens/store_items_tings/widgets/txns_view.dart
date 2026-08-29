@@ -7,6 +7,7 @@ import 'package:rintel/common/widgets/custom_shapes/containers/rounded_container
 import 'package:rintel/common/widgets/shimmers/vert_items_shimmer.dart';
 import 'package:rintel/features/personalization/controllers/contacts_controller.dart';
 import 'package:rintel/features/personalization/controllers/user_controller.dart';
+import 'package:rintel/features/personalization/models/contacts_model.dart';
 import 'package:rintel/features/personalization/screens/no_data/no_data_screen.dart';
 import 'package:rintel/features/store/controllers/inv_controller.dart';
 import 'package:rintel/features/store/controllers/search_bar_controller.dart';
@@ -96,9 +97,70 @@ class _CTxnsViewState extends State<CTxnsView> {
 
         return Obx(
           () {
+            CContactsModel contactItem = CContactsModel.empty();
             var demItems = <CTxn>[];
 
+            if (widget.forContactScreen) {
+              contactItem = contactsController.myContacts.firstWhere(
+                (element) => element.contactId == Get.arguments,
+              );
+            }
+
             switch (widget.space) {
+              case 'contact invoices':
+                demItems.assignAll(
+                  searchController.showSearchField.value &&
+                          searchController.txtSearchField.text != ''
+                      ? txnsController.foundInvoices.where(
+                          (contactInvoice) {
+                            return contactInvoice.customerName
+                                    .toLowerCase()
+                                    .contains(
+                                      contactItem.contactName.toLowerCase(),
+                                    ) &&
+                                (contactInvoice.customerContacts
+                                        .toLowerCase()
+                                        .contains(
+                                          contactItem.contactPhone
+                                              .toLowerCase(),
+                                        ) ||
+                                    contactInvoice.customerContacts
+                                        .toLowerCase()
+                                        .contains(
+                                          contactItem.contactEmail
+                                              .toLowerCase(),
+                                        ));
+                          },
+                        )
+                      : snapshot.data!
+                            .where(
+                              (contactInvoice) =>
+                                  contactInvoice.txnStatus
+                                      .toLowerCase()
+                                      .contains(
+                                        'invoiced',
+                                      ) &&
+                                  contactInvoice.customerName
+                                      .toLowerCase()
+                                      .contains(
+                                        contactItem.contactName.toLowerCase(),
+                                      ) &&
+                                  (contactInvoice.customerContacts
+                                          .toLowerCase()
+                                          .contains(
+                                            contactItem.contactPhone
+                                                .toLowerCase(),
+                                          ) ||
+                                      contactInvoice.customerContacts
+                                          .toLowerCase()
+                                          .contains(
+                                            contactItem.contactEmail,
+                                          )),
+                            )
+                            .toList(),
+                );
+                break;
+
               case 'invoices':
                 demItems.assignAll(
                   searchController.showSearchField.value &&
@@ -114,6 +176,7 @@ class _CTxnsViewState extends State<CTxnsView> {
                             .toList(),
                 );
                 break;
+
               case 'receipts':
                 demItems.assignAll(
                   searchController.showSearchField.value &&
@@ -552,6 +615,8 @@ class _CTxnsViewState extends State<CTxnsView> {
                                                                         Theme.of(
                                                                           context,
                                                                         ).textTheme.labelMedium!.apply(
+                                                                          color:
+                                                                              CColors.darkGrey,
                                                                           fontStyle:
                                                                               FontStyle.italic,
                                                                         ),

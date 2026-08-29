@@ -107,14 +107,15 @@ class CContactsController extends GetxController {
     isLoading.value = false;
     processingContactsSync.value = false;
     undoTrashBtnPressed.value = false;
-    //await initContactsSync();
-    await fetchContactsForCloudDeletion();
+    await initContactsSync();
+    //
 
     super.onInit();
   }
 
   /// -- initialize cloud sync --
   Future<void> initContactsSync() async {
+    await fetchMyContacts();
     if (localStorage.read('SyncContactsWithCloud') == true) {
       //await importContacts();
       if (await importContactsFromCloud()) {
@@ -2079,6 +2080,7 @@ class CContactsController extends GetxController {
 
   /// -- check if contact is a customer or has transactions --
   bool contactHasPurchases(CContactsModel contact) {
+    txnsController.userTxns.refresh();
     var contactTxns = txnsController.userTxns.where(
       (contactTxn) {
         return contactTxn.customerName.toLowerCase().contains(

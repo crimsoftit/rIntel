@@ -559,9 +559,29 @@ class CTxnsController extends GetxController {
             ) ||
             groupedChildren.entries.any(
               (entry) => entry.value.any(
-                (child) => child.productName.toLowerCase().contains(
-                  value.toLowerCase(),
-                ),
+                (child) {
+                  return child.productCode.toLowerCase().contains(
+                        value.toLowerCase(),
+                      ) ||
+                      child.productName.toLowerCase().contains(
+                        value.toLowerCase(),
+                      ) ||
+                      child.productId.toString().toLowerCase().contains(
+                        value.toLowerCase(),
+                      ) ||
+                      child.itemMetrics.toLowerCase().contains(
+                        value.toLowerCase(),
+                      ) ||
+                      child.quantity.toString().toLowerCase().contains(
+                        value.toLowerCase(),
+                      ) ||
+                      child.unitBP.toString().toLowerCase().contains(
+                        value.toLowerCase(),
+                      ) ||
+                      child.unitSellingPrice.toString().toLowerCase().contains(
+                        value.toLowerCase(),
+                      );
+                },
               ),
             );
       }).toList();
