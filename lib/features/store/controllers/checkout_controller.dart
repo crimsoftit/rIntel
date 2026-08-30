@@ -843,6 +843,7 @@ class CCheckoutController extends GetxController {
               : ('', '');
 
           var customerDetails = CContactsModel(
+            txnId.value,
             userController.user.value.email,
             customerNameFieldController.text.trim(),
             '',
@@ -859,8 +860,7 @@ class CCheckoutController extends GetxController {
             'customers',
             DateFormat('yyyy-MM-dd kk:mm').format(clock.now()),
             DateFormat('yyyy-MM-dd kk:mm').format(clock.now()),
-            0,
-            'append',
+
             0,
             0,
           );

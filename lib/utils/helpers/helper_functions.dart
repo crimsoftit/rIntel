@@ -167,6 +167,11 @@ class CHelperFunctions {
     return now.millisecondsSinceEpoch + generateRandom4DigitNumber();
   }
 
+  static int generateContactId() {
+    final now = DateTime.now();
+    return now.microsecondsSinceEpoch - generateRandom4DigitNumber();
+  }
+
   static int generateAlertId() {
     //final now = DateTime.now();
     return generateRandom4DigitNumber();

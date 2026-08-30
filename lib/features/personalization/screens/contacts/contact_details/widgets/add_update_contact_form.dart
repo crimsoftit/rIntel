@@ -208,6 +208,7 @@ class CAddUpdateContactForm extends StatelessWidget {
                             // }
 
                             var contactDetails = CContactsModel(
+                              CHelperFunctions.generateContactId(),
                               userController.user.value.email,
                               contactsController.txtContactNameController.text
                                   .trim(),
@@ -223,8 +224,7 @@ class CAddUpdateContactForm extends StatelessWidget {
                               DateFormat(
                                 'yyyy-MM-dd kk:mm',
                               ).format(clock.now()),
-                              0,
-                              'append',
+                              
                               0,
                               0,
                             );

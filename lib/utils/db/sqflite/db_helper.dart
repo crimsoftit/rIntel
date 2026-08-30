@@ -161,7 +161,7 @@ class DbHelper extends GetxController {
         // -- create contacts table --
         database.execute('''
           CREATE TABLE IF NOT EXISTS $contactsTable (
-            contactId INTEGER PRIMARY KEY AUTOINCREMENT,
+            contactId INTEGER PRIMARY KEY,
             addedBy TEXT NOT NULL,
             contactName TEXT NOT NULL,
             contactCountryCode TEXT NOT NULL,
@@ -171,8 +171,6 @@ class DbHelper extends GetxController {
             contactCategory TEXT NOT NULL,
             lastModified TEXT NOT NULL,
             createdAt TEXT NOT NULL,
-            isSynced INTEGER NOT NULL,
-            syncAction TEXT NOT NULL,
             isStarred INTEGER NOT NULL,
             isTrashed INTEGER NOT NULL
           )
@@ -956,30 +954,6 @@ class DbHelper extends GetxController {
     }
   }
 
-  Future<bool> updateMultipleFieldsWithTransactionId(
-    int transactionId,
-    String date,
-    String syncAction,
-    String txnStatus,
-  ) async {
-    try {
-      await _db!.transaction((txn) async {
-        // Update multiple fields for all records where the transaction_id matches the provided ID
-        // The 'where' clause uses the transaction_id column and 'whereArgs' to safely pass the value
-
-        // The transaction is committed if no error is thrown. 'count' will indicate how many rows were updated.
-      });
-
-      return true;
-    } catch (e) {
-      CPopupSnackBar.errorSnackBar(
-        title: 'error updating txn details',
-        message: e.toString(),
-      );
-      return false;
-    }
-  }
-
   /// -- fetch transactions --
   Future<List<CTxnsModel>> fetchSoldItemsGroupedByTxnId(String email) async {
     try {
@@ -1269,14 +1243,16 @@ class DbHelper extends GetxController {
   /// --- ### CRUD OPERATIONS ON CONTACTS TABLE ### ---
 
   /// -- add a contact to sqflite db --
-  Future<void> addContact(CContactsModel contact) async {
+  Future<int> addContactAndRetrieveId(CContactsModel contact) async {
     try {
+      var db = _db;
       // -- insert contact details to local db --
-      await _db?.insert(
+      var contactId = await db!.insert(
         contactsTable,
         contact.toMap(),
         conflictAlgorithm: ConflictAlgorithm.replace,
       );
+      return contactId;
     } catch (e) {
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
@@ -1292,6 +1268,20 @@ class DbHelper extends GetxController {
       }
       rethrow;
     }
+  }
+
+  /// -- batch insert contacts --
+  Future<void> batchInsertContacts(List<CContactsModel> contacts) async {
+    final db = _db;
+    final contactsBatch = db!.batch();
+
+    for (var contact in contacts) {
+      contactsBatch.insert(contactsTable, contact.toMap());
+    }
+
+    await contactsBatch.commit(
+      noResult: true,
+    );
   }
 
   /// -- fetch contacts from local db --

@@ -151,7 +151,10 @@ class CDashboardController extends GetxController {
   /// -- calculate this week's sales --
   void calculateCurrentWeekSales() async {
     // reset weeklySales values to zero
-    thisWeekSalesList.value = List<double>.filled(7, 0.0);
+    thisWeekSalesList.value = List<double>.filled(
+      7,
+      0.0,
+    );
     currentWeekSalesAmount.value = 0.0;
 
     txnsController.fetchUserTxns().then((result) {
@@ -197,7 +200,15 @@ class CDashboardController extends GetxController {
             // map index to the desired day of the week
             final period = forAnnualData
                 ? monthNames
-                : ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+                : [
+                    'Mon',
+                    'Tue',
+                    'Wed',
+                    'Thu',
+                    'Fri',
+                    'Sat',
+                    'Sun',
+                  ];
 
             // calculate the index and ensure it wraps around the corresponding day of the week or month of they year
             final index = value.toInt() % period.length;

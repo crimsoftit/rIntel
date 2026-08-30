@@ -33,7 +33,9 @@ class CContactDetailsScreen extends StatelessWidget {
 
     return Obx(() {
       if (contactsController.isLoading.value) {
-        return CVerticalProductShimmer(itemCount: 5);
+        return CVerticalProductShimmer(
+          itemCount: 5,
+        );
       }
 
       /// -- summarize contact txns --
@@ -48,7 +50,9 @@ class CContactDetailsScreen extends StatelessWidget {
           appBar: AppBar(
             automaticallyImplyLeading: true,
             elevation: 1.0,
-            shadowColor: CColors.rBrown.withValues(alpha: 0.1),
+            shadowColor: CColors.rBrown.withValues(
+              alpha: 0.1,
+            ),
             iconTheme: IconThemeData(
               color: isDarkTheme ? CColors.white : CColors.rBrown,
             ),
@@ -84,7 +88,9 @@ class CContactDetailsScreen extends StatelessWidget {
               ),
             ],
           ),
-          backgroundColor: CColors.rBrown.withValues(alpha: 0.2),
+          backgroundColor: CColors.rBrown.withValues(
+            alpha: 0.2,
+          ),
           body: SingleChildScrollView(
             child: Padding(
               padding: const EdgeInsets.all(10.0),
@@ -669,25 +675,6 @@ class CContactDetailsScreen extends StatelessWidget {
                         ],
                       ),
                     ),
-                  ),
-
-                  Text(
-                    'is synced: ${contactItem.isSynced}',
-                    style:
-                        Theme.of(
-                          context,
-                        ).textTheme.labelLarge!.apply(
-                          fontSizeFactor: 1.0,
-                        ),
-                  ),
-                  Text(
-                    'sync action: ${contactItem.syncAction}',
-                    style:
-                        Theme.of(
-                          context,
-                        ).textTheme.labelLarge!.apply(
-                          fontSizeFactor: 1.0,
-                        ),
                   ),
 
                   const SizedBox(

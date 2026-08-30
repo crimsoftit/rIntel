@@ -8,6 +8,7 @@ import 'package:rintel/common/widgets/buttons/custom_dropdown_btn.dart';
 import 'package:rintel/common/widgets/custom_shapes/containers/rounded_container.dart';
 import 'package:rintel/common/widgets/flushbars/flushbars.dart';
 import 'package:rintel/common/widgets/txt_fields/custom_type_ahead_field.dart';
+import 'package:rintel/data/repos/user/contacts_repo.dart';
 import 'package:rintel/features/personalization/controllers/user_controller.dart';
 import 'package:rintel/features/personalization/models/contacts_del_model.dart';
 import 'package:rintel/features/personalization/models/contacts_model.dart';
@@ -46,6 +47,9 @@ class CContactsController extends GetxController {
 
   /// -- variables --
   DbHelper dbHelper = DbHelper.instance;
+
+  final contactsRepo = Get.put(CContactsRepo());
+
   final invController = Get.put(CInventoryController());
 
   final localStorage = GetStorage();
@@ -118,11 +122,11 @@ class CContactsController extends GetxController {
     await fetchMyContacts();
     if (localStorage.read('SyncContactsWithCloud') == true) {
       //await importContacts();
-      if (await importContactsFromCloud()) {
-        localStorage.write('SyncContactsWithCloud', false);
-      } else {
-        localStorage.write('SyncContactsWithCloud', true);
-      }
+      // if (await importContactsFromCloud()) {
+      //   localStorage.write('SyncContactsWithCloud', false);
+      // } else {
+      //   localStorage.write('SyncContactsWithCloud', true);
+      // }
     }
   }
 
@@ -199,15 +203,16 @@ class CContactsController extends GetxController {
   ) async {
     try {
       isLoading.value = true;
+
+      await dbHelper.addContactAndRetrieveId(contact).then(
+        (_) {
+          contactsRepo.addContactToCloud(contact);
+        },
+      );
       if (refreshContacts) {
-        await dbHelper.addContact(contact).then(
-          (_) {
-            fetchMyContacts();
-          },
-        );
-      } else {
-        await dbHelper.addContact(contact);
+        await fetchMyContacts();
       }
+      // -- upload contact details to cloud firestore
 
       isLoading.value = false;
     } catch (e) {
@@ -243,31 +248,9 @@ class CContactsController extends GetxController {
       );
       myContacts.assignAll(fetchedContacts);
 
-      unsyncedContactAppends.assignAll(
-        fetchedContacts
-            .where(
-              (unsyncedAppend) =>
-                  unsyncedAppend.isSynced == 0 &&
-                  unsyncedAppend.syncAction == 'append',
-            )
-            .toList(),
-      );
-
       trashedContacts.value = myContacts
           .where((trashedContact) => trashedContact.isTrashed == 1)
           .toList();
-
-      unsyncedContactUpdates.assignAll(
-        fetchedContacts
-            .where(
-              (unsyncedUpdate) =>
-                  unsyncedUpdate.isSynced == 1 &&
-                  unsyncedUpdate.syncAction.toLowerCase().contains(
-                    'update'.toLowerCase(),
-                  ),
-            )
-            .toList(),
-      );
 
       List<CContactsModel> returnItems;
 
@@ -675,10 +658,6 @@ class CContactsController extends GetxController {
                                         'yyyy-MM-dd kk:mm',
                                       ).format(clock.now());
 
-                                      contactItem.syncAction =
-                                          contactItem.isSynced == 0
-                                          ? 'append'
-                                          : 'update';
                                       await updateContact(contactItem);
                                       if (await updateContact(contactItem)) {
                                         Navigator.pop(
@@ -850,7 +829,7 @@ class CContactsController extends GetxController {
       trashedItem.lastModified = DateFormat(
         'yyyy-MM-dd kk:mm',
       ).format(clock.now());
-      trashedItem.syncAction = trashedItem.isSynced == 1 ? 'update' : 'append';
+
       await updateContact(trashedItem);
     } catch (e) {
       if (kDebugMode) {
@@ -921,28 +900,27 @@ class CContactsController extends GetxController {
 
         confirm: ElevatedButton(
           onPressed: () async {
-            if (contact.isSynced == 1) {
-              // -- check internet connectivity
-              //final isConnected = await CNetworkManager.instance.isConnected();
-              var forCloudDeleteItem = CContactsDelModel(
-                contact.contactId!,
-                contact.contactEmail,
-                contact.contactName,
-                contact.contactPhone,
-                userController.user.value.email,
-                DateFormat('yyyy-MM-dd kk:mm').format(clock.now()),
-                contact.isSynced,
-                contact.syncAction,
-              );
+            // if (contact.isSynced == 1) {
+            //   // -- check internet connectivity
+            //   //final isConnected = await CNetworkManager.instance.isConnected();
+            //   var forCloudDeleteItem = CContactsDelModel(
+            //     contact.contactId!,
+            //     contact.contactEmail,
+            //     contact.contactName,
+            //     contact.contactPhone,
+            //     userController.user.value.email,
+            //     DateFormat('yyyy-MM-dd kk:mm').format(clock.now()),
 
-              dbHelper.addUnsyncedContactDeletions(forCloudDeleteItem).then((
-                _,
-              ) async {
-                await dbHelper.deleteContact(contact);
-              });
-            } else {
-              await dbHelper.deleteContact(contact);
-            }
+            //   );
+
+            //   dbHelper.addUnsyncedContactDeletions(forCloudDeleteItem).then((
+            //     _,
+            //   ) async {
+            //     await dbHelper.deleteContact(contact);
+            //   });
+            // } else {
+            //   await dbHelper.deleteContact(contact);
+            // }
 
             await fetchContactsForCloudDeletion();
             await fetchMyContacts().then((_) {
@@ -1431,7 +1409,6 @@ class CContactsController extends GetxController {
         trashItem.lastModified = DateFormat(
           'yyyy-MM-dd kk:mm',
         ).format(clock.now());
-        trashItem.syncAction = trashItem.isSynced == 0 ? 'append' : 'update';
 
         updateContact(trashItem);
         Get.offAll(() {
@@ -1455,10 +1432,10 @@ class CContactsController extends GetxController {
   Future<void> processContactsSync() async {
     try {
       processingContactsSync.value = true;
-      await addUnsyncedContactAppendsToCloud().then((_) async {
-        await updateInitiallySyncedContacts();
-        await deleteCloudSyncedContacts();
-      });
+      // await addUnsyncedContactAppendsToCloud().then((_) async {
+      //   await updateInitiallySyncedContacts();
+      //   await deleteCloudSyncedContacts();
+      // });
 
       // -- stop loader --
       processingContactsSync.value = false;
@@ -1482,193 +1459,190 @@ class CContactsController extends GetxController {
   }
 
   /// -- add unsynced contacts to cloud --
-  Future<bool> addUnsyncedContactAppendsToCloud() async {
-    try {
-      // -- start loader --
-      isLoading.value = true;
+  // Future<bool> addUnsyncedContactAppendsToCloud() async {
+  //   try {
+  //     // -- start loader --
+  //     isLoading.value = true;
 
-      await fetchMyContacts();
+  //     await fetchMyContacts();
 
-      // -- check internet connectivity
-      final isConnectedToInternet = await CNetworkManager.instance
-          .isConnected();
+  //     // -- check internet connectivity
+  //     final isConnectedToInternet = await CNetworkManager.instance
+  //         .isConnected();
 
-      if (isConnectedToInternet &&
-          CNetworkManager.instance.connectionIsStable.value) {
-        var cloudContactAppends = unsyncedContactAppends.map((element) {
-          return {
-            'contactId': element.contactId,
-            'addedBy': element.addedBy,
-            'contactName': element.contactName,
-            'contactCountryCode': element.contactCountryCode,
-            'contactDialCode': element.contactDialCode,
-            'contactPhone': element.contactPhone,
-            'contactEmail': element.contactEmail,
-            'contactCategory': element.contactCategory,
-            'lastModified': element.lastModified,
-            'createdAt': element.createdAt,
-            'isSynced': 1,
-            'syncAction': 'none',
-            'isStarred': element.isStarred,
-            'isTrashed': element.isTrashed,
-          };
-        }).toList();
+  //     if (isConnectedToInternet &&
+  //         CNetworkManager.instance.connectionIsStable.value) {
+  //       var cloudContactAppends = unsyncedContactAppends.map((element) {
+  //         return {
+  //           'contactId': element.contactId,
+  //           'addedBy': element.addedBy,
+  //           'contactName': element.contactName,
+  //           'contactCountryCode': element.contactCountryCode,
+  //           'contactDialCode': element.contactDialCode,
+  //           'contactPhone': element.contactPhone,
+  //           'contactEmail': element.contactEmail,
+  //           'contactCategory': element.contactCategory,
+  //           'lastModified': element.lastModified,
+  //           'createdAt': element.createdAt,
+  //           'isSynced': 1,
+  //           'syncAction': 'none',
+  //           'isStarred': element.isStarred,
+  //           'isTrashed': element.isTrashed,
+  //         };
+  //       }).toList();
 
-        if (cloudContactAppends.isNotEmpty ||
-            unsyncedContactAppends.isNotEmpty) {
-          await StoreSheetsApi.addLocalContactsToCloud(
-            cloudContactAppends,
-          ).then(
-            (_) async {
-              await updateSyncedContactsLocally();
-            },
-          );
-        } else {
-          CPopupSnackBar.customToast(
-            forInternetConnectivityStatus: false,
-            message: 'rada safi nani...',
-          );
-        }
-        // -- stop loader --
-        isLoading.value = false;
-        fetchMyContacts();
-        return true;
-      } else {
-        CPopupSnackBar.customToast(
-          forInternetConnectivityStatus: false,
-          message:
-              "Your internet connection is not stable enough for cloud sync!",
-        );
-        // -- stop loader --
-        isLoading.value = false;
-        return false;
-      }
-    } catch (e) {
-      // -- stop loader --
-      isLoading.value = false;
-      if (kDebugMode) {
-        CPopupSnackBar.errorSnackBar(
-          message: 'error adding contact to cloud: $e',
-          title: 'error adding contact to cloud',
-        );
-      } else {
-        CPopupSnackBar.errorSnackBar(
-          message:
-              'Unable to add unsynced contacts to cloud! Please try again later..',
-          title: 'error adding contact to cloud',
-        );
-      }
-      rethrow;
-    }
-  }
+  //       if (cloudContactAppends.isNotEmpty ||
+  //           unsyncedContactAppends.isNotEmpty) {
+  //         await StoreSheetsApi.addLocalContactsToCloud(
+  //           cloudContactAppends,
+  //         ).then(
+  //           (_) async {
+  //             await updateSyncedContactsLocally();
+  //           },
+  //         );
+  //       } else {
+  //         CPopupSnackBar.customToast(
+  //           forInternetConnectivityStatus: false,
+  //           message: 'rada safi nani...',
+  //         );
+  //       }
+  //       // -- stop loader --
+  //       isLoading.value = false;
+  //       fetchMyContacts();
+  //       return true;
+  //     } else {
+  //       CPopupSnackBar.customToast(
+  //         forInternetConnectivityStatus: false,
+  //         message:
+  //             "Your internet connection is not stable enough for cloud sync!",
+  //       );
+  //       // -- stop loader --
+  //       isLoading.value = false;
+  //       return false;
+  //     }
+  //   } catch (e) {
+  //     // -- stop loader --
+  //     isLoading.value = false;
+  //     if (kDebugMode) {
+  //       CPopupSnackBar.errorSnackBar(
+  //         message: 'error adding contact to cloud: $e',
+  //         title: 'error adding contact to cloud',
+  //       );
+  //     } else {
+  //       CPopupSnackBar.errorSnackBar(
+  //         message:
+  //             'Unable to add unsynced contacts to cloud! Please try again later..',
+  //         title: 'error adding contact to cloud',
+  //       );
+  //     }
+  //     rethrow;
+  //   }
+  // }
 
   /// -- update synced contacts locally --
-  Future<void> updateSyncedContactsLocally() async {
-    try {
-      if (unsyncedContactAppends.isNotEmpty) {
-        for (var contactAppend in unsyncedContactAppends) {
-          var forSyncContact = CContactsModel.withId(
-            contactAppend.contactId,
-            contactAppend.addedBy,
-            contactAppend.contactName,
-            contactAppend.contactCountryCode,
-            contactAppend.contactDialCode,
-            contactAppend.contactPhone,
-            contactAppend.contactEmail,
-            contactAppend.contactCategory,
-            contactAppend.lastModified,
-            contactAppend.createdAt,
-            1,
-            'none',
-            contactAppend.isStarred,
-            contactAppend.isTrashed,
-          );
+  // Future<void> updateSyncedContactsLocally() async {
+  //   try {
+  //     if (unsyncedContactAppends.isNotEmpty) {
+  //       for (var contactAppend in unsyncedContactAppends) {
+  //         var forSyncContact = CContactsModel(
+  //           contactAppend.contactId,
+  //           contactAppend.addedBy,
+  //           contactAppend.contactName,
+  //           contactAppend.contactCountryCode,
+  //           contactAppend.contactDialCode,
+  //           contactAppend.contactPhone,
+  //           contactAppend.contactEmail,
+  //           contactAppend.contactCategory,
+  //           contactAppend.lastModified,
+  //           contactAppend.createdAt,
 
-          /// -- TODO: consider batch insert, updates, deletions for performance reasons --
-          await dbHelper.updateContact(forSyncContact);
-        }
-      }
+  //           contactAppend.isStarred,
+  //           contactAppend.isTrashed,
+  //         );
 
-      fetchMyContacts();
-    } catch (e) {
-      if (kDebugMode) {
-        CPopupSnackBar.errorSnackBar(
-          message: 'error updating contacts\' sync status locally: $e',
-          title: 'error updating contacts\' sync status!',
-        );
-      } else {
-        CPopupSnackBar.errorSnackBar(
-          message:
-              'Unable to update contacts\' sync status on your devices! Please try again later...',
-          title: 'error updating contacts\' sync status!',
-        );
-      }
-      rethrow;
-    }
-  }
+  //         /// -- TODO: consider batch insert, updates, deletions for performance reasons --
+  //         await dbHelper.updateContact(forSyncContact);
+  //       }
+  //     }
 
-  /// -- import contacts from cloud to local storage --
-  Future<bool> importContactsFromCloud() async {
-    try {
-      // -- start loader --
-      processingContactsSync.value = true;
+  //     fetchMyContacts();
+  //   } catch (e) {
+  //     if (kDebugMode) {
+  //       CPopupSnackBar.errorSnackBar(
+  //         message: 'error updating contacts\' sync status locally: $e',
+  //         title: 'error updating contacts\' sync status!',
+  //       );
+  //     } else {
+  //       CPopupSnackBar.errorSnackBar(
+  //         message:
+  //             'Unable to update contacts\' sync status on your devices! Please try again later...',
+  //         title: 'error updating contacts\' sync status!',
+  //       );
+  //     }
+  //     rethrow;
+  //   }
+  // }
 
-      await fetchUserCloudContacts().then(
-        (result) async {
-          if (userCloudContacts.isNotEmpty &&
-              await CNetworkManager.instance.isConnected() &&
-              CNetworkManager.instance.connectionIsStable.value) {
-            for (var contact in userCloudContacts) {
-              var forImportContacts = CContactsModel.withId(
-                contact.contactId,
-                contact.addedBy,
-                contact.contactName,
-                contact.contactCountryCode,
-                contact.contactDialCode,
-                contact.contactPhone,
-                contact.contactEmail,
-                contact.contactCategory,
-                contact.lastModified,
-                contact.createdAt,
-                contact.isSynced,
-                contact.syncAction,
-                contact.isStarred,
-                contact.isTrashed,
-              );
+  // /// -- import contacts from cloud to local storage --
+  // Future<bool> importContactsFromCloud() async {
+  //   try {
+  //     // -- start loader --
+  //     processingContactsSync.value = true;
 
-              // -- save imported data to local sqflite database --
-              dbHelper.addContact(forImportContacts);
-            }
-          }
-        },
-      );
+  //     await fetchUserCloudContacts().then(
+  //       (result) async {
+  //         if (userCloudContacts.isNotEmpty &&
+  //             await CNetworkManager.instance.isConnected() &&
+  //             CNetworkManager.instance.connectionIsStable.value) {
+  //           for (var contact in userCloudContacts) {
+  //             var forImportContacts = CContactsModel(
+  //               contact.contactId,
+  //               contact.addedBy,
+  //               contact.contactName,
+  //               contact.contactCountryCode,
+  //               contact.contactDialCode,
+  //               contact.contactPhone,
+  //               contact.contactEmail,
+  //               contact.contactCategory,
+  //               contact.lastModified,
+  //               contact.createdAt,
+  //               contact.isStarred,
+  //               contact.isTrashed,
+  //             );
 
-      // -- refresh myContacts list --
-      await fetchMyContacts();
-      myContacts.refresh();
+  //             // -- save imported data to local sqflite database --
+  //             //dbHelper.addContact(forImportContacts);
+  //           }
+  //         }
+  //       },
+  //     );
 
-      // -- stop loader --
-      processingContactsSync.value = false;
+  //     // -- refresh myContacts list --
+  //     await fetchMyContacts();
+  //     myContacts.refresh();
 
-      return true;
-    } catch (e) {
-      // -- stop loader --
-      processingContactsSync.value = false;
-      if (kDebugMode) {
-        CPopupSnackBar.errorSnackBar(
-          message: 'error importing contacts from cloud: $e',
-          title: 'error importing contacts from cloud!',
-        );
-      } else {
-        CPopupSnackBar.errorSnackBar(
-          message:
-              'Unable to import your contacts from cloud! Please try again later...',
-          title: 'error importing contacts from cloud!',
-        );
-      }
-      rethrow;
-    }
-  }
+  //     // -- stop loader --
+  //     processingContactsSync.value = false;
+
+  //     return true;
+  //   } catch (e) {
+  //     // -- stop loader --
+  //     processingContactsSync.value = false;
+  //     if (kDebugMode) {
+  //       CPopupSnackBar.errorSnackBar(
+  //         message: 'error importing contacts from cloud: $e',
+  //         title: 'error importing contacts from cloud!',
+  //       );
+  //     } else {
+  //       CPopupSnackBar.errorSnackBar(
+  //         message:
+  //             'Unable to import your contacts from cloud! Please try again later...',
+  //         title: 'error importing contacts from cloud!',
+  //       );
+  //     }
+  //     rethrow;
+  //   }
+  // }
 
   /// -- fetch all contacts from cloud --
   Future<bool> fetchUserCloudContacts() async {
@@ -1702,72 +1676,72 @@ class CContactsController extends GetxController {
     }
   }
 
-  /// -- update initially synced contacts that need updating now --
-  Future updateInitiallySyncedContacts() async {
-    try {
-      // final isConnectedToInternet = await CNetworkManager.instance
-      //     .isConnected();
+  // /// -- update initially synced contacts that need updating now --
+  // Future updateInitiallySyncedContacts() async {
+  //   try {
+  //     // final isConnectedToInternet = await CNetworkManager.instance
+  //     //     .isConnected();
 
-      if (CNetworkManager.instance.hasConnection.value &&
-          CNetworkManager.instance.connectionIsStable.value) {
-        if (unsyncedContactUpdates.isNotEmpty) {
-          for (var contact in unsyncedContactUpdates) {
-            final forSyncContact = CContactsModel.withId(
-              contact.contactId,
-              contact.addedBy,
-              contact.contactName,
-              contact.contactCountryCode,
-              contact.contactDialCode,
-              contact.contactPhone,
-              contact.contactEmail,
-              contact.contactCategory,
-              contact.lastModified,
-              contact.createdAt,
-              1,
-              'none',
-              contact.isStarred,
-              contact.isTrashed,
-            );
-            await StoreSheetsApi.updateInitiallySyncedContacts(
-              contact.contactId!,
-              forSyncContact.toMap(),
-            ).then((_) async {
-              contact.isSynced = 1;
-              contact.syncAction = 'none';
-              await dbHelper.updateContact(contact);
-            });
-          }
-        } else {
-          CPopupSnackBar.customToast(
-            forInternetConnectivityStatus: false,
-            message: 'contact sync rada safi!',
-          );
-        }
-      } else {
-        CPopupSnackBar.warningSnackBar(
-          title: 'internet unavailable/unstable',
-          message: 'This action requires a stable internet connection!',
-        );
-        return;
-      }
-      await fetchMyContacts();
-    } catch (e) {
-      if (kDebugMode) {
-        CPopupSnackBar.errorSnackBar(
-          title: 'error updating contacts\'s cloud data',
-          message: e.toString(),
-        );
-      } else {
-        CPopupSnackBar.errorSnackBar(
-          title: 'Error updating contacts\'s cloud data',
-          message:
-              'An unknown error occurred while updating contacts\'s cloud data. Please try again later!',
-        );
-      }
+  //     if (CNetworkManager.instance.hasConnection.value &&
+  //         CNetworkManager.instance.connectionIsStable.value) {
+  //       if (unsyncedContactUpdates.isNotEmpty) {
+  //         for (var contact in unsyncedContactUpdates) {
+  //           final forSyncContact = CContactsModel.withId(
+  //             contact.contactId,
+  //             contact.addedBy,
+  //             contact.contactName,
+  //             contact.contactCountryCode,
+  //             contact.contactDialCode,
+  //             contact.contactPhone,
+  //             contact.contactEmail,
+  //             contact.contactCategory,
+  //             contact.lastModified,
+  //             contact.createdAt,
+  //             1,
+  //             'none',
+  //             contact.isStarred,
+  //             contact.isTrashed,
+  //           );
+  //           await StoreSheetsApi.updateInitiallySyncedContacts(
+  //             contact.contactId!,
+  //             forSyncContact.toMap(),
+  //           ).then((_) async {
+  //             contact.isSynced = 1;
+  //             contact.syncAction = 'none';
+  //             await dbHelper.updateContact(contact);
+  //           });
+  //         }
+  //       } else {
+  //         CPopupSnackBar.customToast(
+  //           forInternetConnectivityStatus: false,
+  //           message: 'contact sync rada safi!',
+  //         );
+  //       }
+  //     } else {
+  //       CPopupSnackBar.warningSnackBar(
+  //         title: 'internet unavailable/unstable',
+  //         message: 'This action requires a stable internet connection!',
+  //       );
+  //       return;
+  //     }
+  //     await fetchMyContacts();
+  //   } catch (e) {
+  //     if (kDebugMode) {
+  //       CPopupSnackBar.errorSnackBar(
+  //         title: 'error updating contacts\'s cloud data',
+  //         message: e.toString(),
+  //       );
+  //     } else {
+  //       CPopupSnackBar.errorSnackBar(
+  //         title: 'Error updating contacts\'s cloud data',
+  //         message:
+  //             'An unknown error occurred while updating contacts\'s cloud data. Please try again later!',
+  //       );
+  //     }
 
-      rethrow;
-    }
-  }
+  //     rethrow;
+  //   }
+  // }
 
   /// -- delete cloud-synced contacts --
   Future<bool> deleteCloudSyncedContacts() async {
@@ -1972,11 +1946,11 @@ class CContactsController extends GetxController {
   }
 
   /// -- summarize a contact item's transactional data --
-  void summarizeContactTxns(
+  Future<void> summarizeContactTxns(
     String contactName,
     String contactPhone,
     String contactEmail,
-  ) {
+  ) async {
     try {
       contactTotalPurchasesValue.value = 0.0;
       contactInvoicedPurchasesValue.value = 0.0;
@@ -2134,7 +2108,13 @@ class CContactsController extends GetxController {
       final status = await Permission.contacts.status;
 
       if (status.isGranted) {
-        await deviceContactsImportLogic();
+        var importedDeviceContacts = await deviceContactsImportLogic();
+
+        dbHelper.batchInsertContacts(importedDeviceContacts).then(
+          (_) {
+            contactsRepo.batchInsertCloudContacts(importedDeviceContacts);
+          },
+        );
       } else if (status.isDenied) {
         // -- request permission to access device contacts --
         final permissionStatus = await Permission.contacts.request();
@@ -2177,7 +2157,83 @@ class CContactsController extends GetxController {
     }
   }
 
-  Future<void> deviceContactsImportLogic() async {
+  // Future<void> deviceContactsImportLogic() async {
+  //   try {
+  //     List<Contact> deviceContacts = await FlutterContacts.getAll(
+  //       properties: {
+  //         ContactProperty.name,
+  //         ContactProperty.phone,
+  //         ContactProperty.email,
+  //         ContactProperty.address,
+  //       },
+  //     );
+
+  //     // -- process and save device contacts to local database --
+  //     for (var contact in deviceContacts) {
+  //       if (contact.displayName != null && contact.phones.isNotEmpty) {
+  //         var contactName = contact.displayName;
+  //         var contactPhone = contact.phones.isNotEmpty
+  //             ? contact.phones.first.number
+  //             : '';
+  //         var contactEmail = contact.emails.isNotEmpty
+  //             ? contact.emails.first.address
+  //             : '';
+
+  //         // -- extract dial code from phone number --
+  //         final (
+  //           dialCode,
+  //           mobileNumber,
+  //         ) = CFormatter.seperatePhoneAndDialCode(
+  //           contactPhone,
+  //         );
+
+  //         var forDeviceImportContact = CContactsModel(
+  //           CHelperFunctions.generateContactId(),
+  //           userController.user.value.email,
+  //           contactName!,
+  //           CFormatter.getCountryCodeFromDialCode(
+  //             dialCode,
+  //           ), // country code (to be set later)
+  //           dialCode, // dial code (to be set later)
+  //           mobileNumber,
+  //           contactEmail,
+  //           'Device',
+  //           DateFormat('yyyy-MM-dd kk:mm').format(clock.now()),
+  //           DateFormat('yyyy-MM-dd kk:mm').format(clock.now()),
+  //           0, // isStarred
+  //           0, // isTrashed
+  //         );
+
+  //         // -- filter out already imported contacts --
+  //         if (await contactActionIsAdd(
+  //           forDeviceImportContact.contactName,
+  //           forDeviceImportContact.contactPhone,
+  //         )) {
+  //           await addContact(
+  //             forDeviceImportContact,
+  //             0,
+  //             false,
+  //           );
+  //         }
+  //       }
+  //     }
+  //   } catch (e) {
+  //     if (kDebugMode) {
+  //       CPopupSnackBar.errorSnackBar(
+  //         message: 'unable to import device contacts: $e',
+  //         title: 'unable to import device contacts',
+  //       );
+  //     } else {
+  //       CPopupSnackBar.errorSnackBar(
+  //         message:
+  //             'an unknown error occurred while importing contacts from your device! please try again later...',
+  //         title: 'unable to import device contacts',
+  //       );
+  //     }
+  //     rethrow;
+  //   }
+  // }
+  Future<List<CContactsModel>> deviceContactsImportLogic() async {
     try {
       List<Contact> deviceContacts = await FlutterContacts.getAll(
         properties: {
@@ -2188,17 +2244,7 @@ class CContactsController extends GetxController {
         },
       );
 
-      // if (kDebugMode) {
-      //   print('\n ====================\n');
-      //   print('device contacts: $deviceContacts');
-      //   print('\n ====================\n');
-
-      //   CPopupSnackBar.customToast(
-      //     forInternetConnectivityStatus: false,
-      //     message:
-      //         'Contacts permission is granted. Importing device contacts...',
-      //   );
-      // }
+      List<CContactsModel> appContacts = <CContactsModel>[];
 
       // -- process and save device contacts to local database --
       for (var contact in deviceContacts) {
@@ -2220,6 +2266,7 @@ class CContactsController extends GetxController {
           );
 
           var forDeviceImportContact = CContactsModel(
+            CHelperFunctions.generateContactId(),
             userController.user.value.email,
             contactName!,
             CFormatter.getCountryCodeFromDialCode(
@@ -2231,8 +2278,6 @@ class CContactsController extends GetxController {
             'Device',
             DateFormat('yyyy-MM-dd kk:mm').format(clock.now()),
             DateFormat('yyyy-MM-dd kk:mm').format(clock.now()),
-            0, // isSynced
-            'append', // syncAction
             0, // isStarred
             0, // isTrashed
           );
@@ -2242,14 +2287,12 @@ class CContactsController extends GetxController {
             forDeviceImportContact.contactName,
             forDeviceImportContact.contactPhone,
           )) {
-            await addContact(
-              forDeviceImportContact,
-              0,
-              false,
-            );
+            appContacts.assign(forDeviceImportContact);
           }
         }
       }
+
+      return appContacts;
     } catch (e) {
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
@@ -2265,6 +2308,27 @@ class CContactsController extends GetxController {
       }
       rethrow;
     }
+  }
+
+  /// -- convert a Contact model Object to a CContactsModel Object --
+  CContactsModel convertDeviceContactToCContactModel(
+    Contact deviceContact,
+    CContactsModel appContact,
+  ) {
+    return CContactsModel(
+      appContact.contactId,
+      appContact.addedBy,
+      appContact.contactName,
+      appContact.contactCountryCode,
+      appContact.contactDialCode,
+      appContact.contactPhone,
+      appContact.contactEmail,
+      appContact.contactCategory,
+      appContact.lastModified,
+      appContact.createdAt,
+      appContact.isStarred,
+      appContact.isTrashed,
+    );
   }
 
   /// -- reset contact form fields --

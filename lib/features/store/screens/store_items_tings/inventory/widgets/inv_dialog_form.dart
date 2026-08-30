@@ -826,6 +826,7 @@ class AddUpdateInventoryForm extends StatelessWidget {
                               : ('', '');
 
                           var contactDetails = CContactsModel(
+                            CHelperFunctions.generateContactId(),
                             userController.user.value.email,
                             invController.txtSupplierName.text.trim(),
                             contactsController.contactCountryCode.value,
@@ -843,8 +844,7 @@ class AddUpdateInventoryForm extends StatelessWidget {
                             'supplier',
                             DateFormat('yyyy-MM-dd kk:mm').format(clock.now()),
                             DateFormat('yyyy-MM-dd kk:mm').format(clock.now()),
-                            0,
-                            'append',
+
                             0,
                             0,
                           );

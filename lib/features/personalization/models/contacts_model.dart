@@ -6,7 +6,7 @@ import 'dart:convert';
 import 'package:rintel/features/personalization/models/gsheets_contact_model.dart';
 
 class CContactsModel {
-  int? _contactId;
+  int _contactId = 0;
 
   String _addedBy = '';
   String _contactName = '';
@@ -17,30 +17,12 @@ class CContactsModel {
   String _contactCategory = '';
   String _lastModified = '';
   String _createdAt = '';
-  int _isSynced = 0;
-  String _syncAction = '';
   int _isStarred = 0;
   int _isTrashed = 0;
 
   String? _tag = '';
 
   CContactsModel(
-    this._addedBy,
-    this._contactName,
-    this._contactCountryCode,
-    this._contactDialCode,
-    this._contactPhone,
-    this._contactEmail,
-    this._contactCategory,
-    this._lastModified,
-    this._createdAt,
-    this._isSynced,
-    this._syncAction,
-    this._isStarred,
-    this._isTrashed,
-  );
-
-  CContactsModel.withId(
     this._contactId,
     this._addedBy,
     this._contactName,
@@ -51,16 +33,17 @@ class CContactsModel {
     this._contactCategory,
     this._lastModified,
     this._createdAt,
-    this._isSynced,
-    this._syncAction,
     this._isStarred,
     this._isTrashed,
   );
 
-  CContactsModel.withTagAndTitle(this._contactName, this._tag);
+  CContactsModel.withTagAndTitle(
+    this._contactName,
+    this._tag,
+  );
 
   static CContactsModel empty() {
-    return CContactsModel.withId(
+    return CContactsModel(
       0,
       '',
       '',
@@ -70,15 +53,13 @@ class CContactsModel {
       '',
       '',
       '',
-      '',
-      0,
       '',
       0,
       0,
     );
   }
 
-  int? get contactId => _contactId;
+  int get contactId => _contactId;
   String get addedBy => _addedBy;
   String get contactName => _contactName;
   String get contactCountryCode => _contactCountryCode;
@@ -88,14 +69,12 @@ class CContactsModel {
   String get contactCategory => _contactCategory;
   String get lastModified => _lastModified;
   String get createdAt => _createdAt;
-  int get isSynced => _isSynced;
-  String get syncAction => _syncAction;
   int get isTrashed => _isTrashed;
   int get isStarred => _isStarred;
 
   String? get tag => _tag;
 
-  set contactId(int? newContactId) {
+  set contactId(int newContactId) {
     _contactId = newContactId;
   }
 
@@ -135,14 +114,6 @@ class CContactsModel {
     _createdAt = newCreatedAt;
   }
 
-  set isSynced(int newIsSynced) {
-    _isSynced = newIsSynced;
-  }
-
-  set syncAction(String newSyncAction) {
-    _syncAction = newSyncAction;
-  }
-
   set isStarred(int newStar) {
     _isStarred = newStar;
   }
@@ -158,6 +129,7 @@ class CContactsModel {
   /// -- convert a Contact object into a Map object --
   Map<String, dynamic> toMap() {
     var map = <String, dynamic>{
+      'contactId': _contactId,
       'addedBy': _addedBy,
       'contactName': _contactName,
       'contactCountryCode': _contactCountryCode,
@@ -167,14 +139,10 @@ class CContactsModel {
       'contactCategory': _contactCategory,
       'lastModified': _lastModified,
       'createdAt': _createdAt,
-      'isSynced': _isSynced,
-      'syncAction': _syncAction,
       'isStarred': _isStarred,
       'isTrashed': _isTrashed,
     };
-    if (contactId != null) {
-      map['contactId'] = _contactId;
-    }
+
     return map;
   }
 
@@ -190,15 +158,13 @@ class CContactsModel {
     _contactCategory = map['contactCategory'];
     _lastModified = map['lastModified'];
     _createdAt = map['createdAt'];
-    _isSynced = map['isSynced'];
-    _syncAction = map['syncAction'];
     _isStarred = map['isStarred'];
     _isTrashed = map['isTrashed'];
   }
 
   /// -- extract a CContactsModel object from a Gsheet Map object --
   static CContactsModel gSheetsFromJson(Map<String, dynamic> json) {
-    return CContactsModel.withId(
+    return CContactsModel(
       jsonDecode(json[GsheetsContactModel.contactId]),
       json[GsheetsContactModel.addedBy],
       json[GsheetsContactModel.contactName],
@@ -209,8 +175,6 @@ class CContactsModel {
       json[GsheetsContactModel.contactCategory],
       json[GsheetsContactModel.lastModified],
       json[GsheetsContactModel.createdAt],
-      jsonDecode(json[GsheetsContactModel.isSynced]),
-      json[GsheetsContactModel.syncAction],
       jsonDecode(json[GsheetsContactModel.isStarred]),
       jsonDecode(json[GsheetsContactModel.isTrashed]),
     );

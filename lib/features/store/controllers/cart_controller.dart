@@ -361,7 +361,7 @@ class CCartController extends GetxController {
     );
   }
 
-  /// -- convert a CCartItemModel to a CCreditItemModel --
+  /// -- convert a CCartItemModel to a CSoldItemModel --
   CSoldItemModel convertCartItemToCreditItem(CCartItemModel item, int txnId) {
     return CSoldItemModel(
       txnId,
