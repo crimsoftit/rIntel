@@ -21,6 +21,7 @@ class CCustomTypeaheadField extends StatelessWidget {
     this.minHeight,
     this.onFieldValueChanged,
     this.prefixIcon,
+    this.verticalDirection = VerticalDirection.up,
     required this.includeAvatarOnSuggestion,
     required this.includePrefixIcon,
     required this.labelTxt,
@@ -32,14 +33,14 @@ class CCustomTypeaheadField extends StatelessWidget {
   final Color? fillColor, focusedBorderColor;
   final double? fieldHeight, minHeight;
   final EdgeInsetsGeometry? contentPadding;
-
+  final FormFieldValidator<String>? fieldValidator;
   final String labelTxt;
   final TextEditingController typeAheadFieldController;
   final TextStyle? fieldLabelStyle;
   final Widget? prefixIcon;
+  final VerticalDirection? verticalDirection;
   final void Function(CContactsModel) onItemSelected;
   final void Function(String)? onFieldValueChanged;
-  final FormFieldValidator<String>? fieldValidator;
 
   // @override
   @override
@@ -50,6 +51,7 @@ class CCustomTypeaheadField extends StatelessWidget {
 
     return TypeAheadField<CContactsModel>(
       controller: typeAheadFieldController,
+      direction: verticalDirection,
       builder: (context, controller, focusNode) {
         return TextFormField(
           autofocus: false,
@@ -107,28 +109,38 @@ class CCustomTypeaheadField extends StatelessWidget {
         );
       },
       constraints: BoxConstraints(
+        maxHeight: 500,
         maxWidth: screenWidth,
       ),
       hideOnEmpty: true,
       offset: Offset(
         0,
-        1.0,
+        0.0,
       ),
-
+      decorationBuilder: (context, child) => Material(
+        type: MaterialType.card,
+        elevation: 4,
+        borderRadius: BorderRadius.circular(
+          CSizes.cardRadiusXs,
+        ),
+        child: child,
+      ),
       listBuilder: (context, children) {
-        return Obx(() {
-          return ListView.separated(
-            itemCount: contactsController.foundMatches.length,
-            separatorBuilder: (context, index) {
-              return const SizedBox(
-                height: 5.0,
-              );
-            }, // 10px space between items
-            itemBuilder: (context, index) {
-              return children[index];
-            },
-          );
-        });
+        return Obx(
+          () {
+            return ListView.separated(
+              itemCount: contactsController.foundMatches.length,
+              separatorBuilder: (context, index) {
+                return const SizedBox(
+                  height: 5.0,
+                );
+              }, // 10px space between items
+              itemBuilder: (context, index) {
+                return children[index];
+              },
+            );
+          },
+        );
       },
 
       suggestionsCallback: (pattern) {
@@ -222,19 +234,25 @@ class CCustomTypeaheadField extends StatelessWidget {
                           fontWeightDelta: 2,
                         ),
                       ),
-                      const SizedBox(height: CSizes.spaceBtnItems / 4.0),
+                      const SizedBox(
+                        height: CSizes.spaceBtnItems / 4.0,
+                      ),
                       suggestion.contactPhone != ''
                           ? Text(
                               'Mobile: ${suggestion.contactPhone}',
                               style: Theme.of(context).textTheme.labelMedium!
-                                  .apply(color: CColors.black),
+                                  .apply(
+                                    color: CColors.black,
+                                  ),
                             )
                           : SizedBox.shrink(),
                       suggestion.contactEmail != ''
                           ? Text(
                               'Email: ${suggestion.contactEmail}',
                               style: Theme.of(context).textTheme.labelSmall!
-                                  .apply(color: CColors.black),
+                                  .apply(
+                                    color: CColors.black,
+                                  ),
                             )
                           : SizedBox.shrink(),
                     ],

@@ -3,6 +3,7 @@
 import 'dart:convert';
 
 // import 'package:azlistview/azlistview.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:rintel/features/personalization/models/gsheets_contact_model.dart';
 
 class CContactsModel {
@@ -177,6 +178,30 @@ class CContactsModel {
       json[GsheetsContactModel.createdAt],
       jsonDecode(json[GsheetsContactModel.isStarred]),
       jsonDecode(json[GsheetsContactModel.isTrashed]),
+    );
+  }
+
+  /// -- factory method to create an CTxnsModel from a Firebase document snapshot --
+  factory CContactsModel.fromSnapshot(
+    DocumentSnapshot<Map<String, dynamic>> contactDoc,
+  ) {
+    if (contactDoc.data() == null) return CContactsModel.empty();
+
+    final contact = contactDoc.data()!;
+
+    return CContactsModel(
+      int.parse(contactDoc.id),
+      contact['addedBy'],
+      contact['contactName'],
+      contact['contactCountryCode'],
+      contact['contactDialCode'],
+      contact['contactPhone'],
+      contact['contactEmail'],
+      contact['contactCategory'],
+      contact['lastModified'],
+      contact['createdAt'],
+      contact['isStarred'],
+      contact['isTrashed'],
     );
   }
 }

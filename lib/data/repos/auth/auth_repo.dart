@@ -116,7 +116,7 @@ class AuthRepo extends GetxController {
             await invController.fetchUserInventoryItems();
             await txnsController.initTxnsSync();
 
-            await contactsController.fetchMyContacts();
+            await contactsController.initContactsSync();
 
             Get.put(CCheckoutController());
 

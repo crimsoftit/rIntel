@@ -1799,14 +1799,14 @@ class CTxnsController extends GetxController {
       isLoading.value = false;
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
-          title: 'ERROR fetching inventory data from cloud firestore!',
+          title: 'ERROR fetching sales data from cloud firestore!',
           message: e.toString(),
         );
       } else {
         CPopupSnackBar.errorSnackBar(
           message:
-              'an unknown error occurred while fetching inventory data from cloud firestore',
-          title: 'ERROR IMPORTING inventory DATA FROM CLOUD!',
+              'an unknown error occurred while fetching transactions from cloud firestore',
+          title: 'ERROR IMPORTING TRANSACTIONS FROM THE CLOUD!',
         );
       }
       rethrow;
@@ -1836,14 +1836,14 @@ class CTxnsController extends GetxController {
       isLoading.value = false;
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
-          title: 'ERROR fetching inventory data from cloud firestore!',
+          title: 'ERROR fetching sales from cloud firestore!',
           message: e.toString(),
         );
       } else {
         CPopupSnackBar.errorSnackBar(
           message:
-              'an unknown error occurred while fetching inventory data from cloud firestore',
-          title: 'ERROR IMPORTING inventory DATA FROM CLOUD!',
+              'an unknown error occurred while fetching sales from cloud firestore',
+          title: 'ERROR IMPORTING sales FROM the cloud!',
         );
       }
       rethrow;

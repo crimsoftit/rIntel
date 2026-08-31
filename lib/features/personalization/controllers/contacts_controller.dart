@@ -112,22 +112,20 @@ class CContactsController extends GetxController {
     processingContactsSync.value = false;
     undoTrashBtnPressed.value = false;
     await initContactsSync();
-    //
 
     super.onInit();
   }
 
   /// -- initialize cloud sync --
   Future<void> initContactsSync() async {
-    await fetchMyContacts();
     if (localStorage.read('SyncContactsWithCloud') == true) {
-      //await importContacts();
-      // if (await importContactsFromCloud()) {
-      //   localStorage.write('SyncContactsWithCloud', false);
-      // } else {
-      //   localStorage.write('SyncContactsWithCloud', true);
-      // }
+      if (await importContactsFromCloudFirestore()) {
+        localStorage.write('SyncContactsWithCloud', false);
+      } else {
+        localStorage.write('SyncContactsWithCloud', true);
+      }
     }
+    await fetchMyContacts();
   }
 
   /// -- check if contact details exist in the database --
@@ -279,6 +277,42 @@ class CContactsController extends GetxController {
         );
       }
       rethrow;
+    }
+  }
+
+  Future<bool> importContactsFromCloudFirestore() async {
+    try {
+      // -- start loader --
+      isLoading.value = true;
+      final myContacts = await contactsRepo.fetchContactsFromFirestore(
+        userController.user.value.email,
+      );
+
+      // -- batch insert contacts to sqflite db --
+      await dbHelper.batchInsertContacts(myContacts);
+
+      await fetchMyContacts();
+
+      // -- stop loader --
+      isLoading.value = false;
+      return true;
+    } catch (e) {
+      isLoading.value = false;
+      if (kDebugMode) {
+        CPopupSnackBar.errorSnackBar(
+          title: 'ERROR fetching contacts from cloud firestore!',
+          message: e.toString(),
+        );
+      } else {
+        CPopupSnackBar.errorSnackBar(
+          message:
+              'an unknown error occurred while fetching contacts from cloud firestore',
+          title: 'ERROR importing contacts from the cloud!',
+        );
+      }
+      rethrow;
+    } finally {
+      isLoading.value = false;
     }
   }
 
@@ -2108,13 +2142,9 @@ class CContactsController extends GetxController {
       final status = await Permission.contacts.status;
 
       if (status.isGranted) {
-        var importedDeviceContacts = await deviceContactsImportLogic();
+        await deviceContactsImportLogic();
 
-        dbHelper.batchInsertContacts(importedDeviceContacts).then(
-          (_) {
-            contactsRepo.batchInsertCloudContacts(importedDeviceContacts);
-          },
-        );
+        fetchMyContacts();
       } else if (status.isDenied) {
         // -- request permission to access device contacts --
         final permissionStatus = await Permission.contacts.request();
@@ -2157,83 +2187,7 @@ class CContactsController extends GetxController {
     }
   }
 
-  // Future<void> deviceContactsImportLogic() async {
-  //   try {
-  //     List<Contact> deviceContacts = await FlutterContacts.getAll(
-  //       properties: {
-  //         ContactProperty.name,
-  //         ContactProperty.phone,
-  //         ContactProperty.email,
-  //         ContactProperty.address,
-  //       },
-  //     );
-
-  //     // -- process and save device contacts to local database --
-  //     for (var contact in deviceContacts) {
-  //       if (contact.displayName != null && contact.phones.isNotEmpty) {
-  //         var contactName = contact.displayName;
-  //         var contactPhone = contact.phones.isNotEmpty
-  //             ? contact.phones.first.number
-  //             : '';
-  //         var contactEmail = contact.emails.isNotEmpty
-  //             ? contact.emails.first.address
-  //             : '';
-
-  //         // -- extract dial code from phone number --
-  //         final (
-  //           dialCode,
-  //           mobileNumber,
-  //         ) = CFormatter.seperatePhoneAndDialCode(
-  //           contactPhone,
-  //         );
-
-  //         var forDeviceImportContact = CContactsModel(
-  //           CHelperFunctions.generateContactId(),
-  //           userController.user.value.email,
-  //           contactName!,
-  //           CFormatter.getCountryCodeFromDialCode(
-  //             dialCode,
-  //           ), // country code (to be set later)
-  //           dialCode, // dial code (to be set later)
-  //           mobileNumber,
-  //           contactEmail,
-  //           'Device',
-  //           DateFormat('yyyy-MM-dd kk:mm').format(clock.now()),
-  //           DateFormat('yyyy-MM-dd kk:mm').format(clock.now()),
-  //           0, // isStarred
-  //           0, // isTrashed
-  //         );
-
-  //         // -- filter out already imported contacts --
-  //         if (await contactActionIsAdd(
-  //           forDeviceImportContact.contactName,
-  //           forDeviceImportContact.contactPhone,
-  //         )) {
-  //           await addContact(
-  //             forDeviceImportContact,
-  //             0,
-  //             false,
-  //           );
-  //         }
-  //       }
-  //     }
-  //   } catch (e) {
-  //     if (kDebugMode) {
-  //       CPopupSnackBar.errorSnackBar(
-  //         message: 'unable to import device contacts: $e',
-  //         title: 'unable to import device contacts',
-  //       );
-  //     } else {
-  //       CPopupSnackBar.errorSnackBar(
-  //         message:
-  //             'an unknown error occurred while importing contacts from your device! please try again later...',
-  //         title: 'unable to import device contacts',
-  //       );
-  //     }
-  //     rethrow;
-  //   }
-  // }
-  Future<List<CContactsModel>> deviceContactsImportLogic() async {
+  Future<void> deviceContactsImportLogic() async {
     try {
       List<Contact> deviceContacts = await FlutterContacts.getAll(
         properties: {
@@ -2243,8 +2197,6 @@ class CContactsController extends GetxController {
           ContactProperty.address,
         },
       );
-
-      List<CContactsModel> appContacts = <CContactsModel>[];
 
       // -- process and save device contacts to local database --
       for (var contact in deviceContacts) {
@@ -2287,12 +2239,14 @@ class CContactsController extends GetxController {
             forDeviceImportContact.contactName,
             forDeviceImportContact.contactPhone,
           )) {
-            appContacts.assign(forDeviceImportContact);
+            await addContact(
+              forDeviceImportContact,
+              0,
+              true,
+            );
           }
         }
       }
-
-      return appContacts;
     } catch (e) {
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
@@ -2309,6 +2263,82 @@ class CContactsController extends GetxController {
       rethrow;
     }
   }
+  // Future<List<CContactsModel>> deviceContactsImportLogic() async {
+  //   try {
+  //     List<Contact> deviceContacts = await FlutterContacts.getAll(
+  //       properties: {
+  //         ContactProperty.name,
+  //         ContactProperty.phone,
+  //         ContactProperty.email,
+  //         ContactProperty.address,
+  //       },
+  //     );
+
+  //     List<CContactsModel> appContacts = <CContactsModel>[];
+
+  //     // -- process and save device contacts to local database --
+  //     for (var contact in deviceContacts) {
+  //       if (contact.displayName != null && contact.phones.isNotEmpty) {
+  //         var contactName = contact.displayName;
+  //         var contactPhone = contact.phones.isNotEmpty
+  //             ? contact.phones.first.number
+  //             : '';
+  //         var contactEmail = contact.emails.isNotEmpty
+  //             ? contact.emails.first.address
+  //             : '';
+
+  //         // -- extract dial code from phone number --
+  //         final (
+  //           dialCode,
+  //           mobileNumber,
+  //         ) = CFormatter.seperatePhoneAndDialCode(
+  //           contactPhone,
+  //         );
+
+  //         var forDeviceImportContact = CContactsModel(
+  //           CHelperFunctions.generateContactId(),
+  //           userController.user.value.email,
+  //           contactName!,
+  //           CFormatter.getCountryCodeFromDialCode(
+  //             dialCode,
+  //           ), // country code (to be set later)
+  //           dialCode, // dial code (to be set later)
+  //           mobileNumber,
+  //           contactEmail,
+  //           'Device',
+  //           DateFormat('yyyy-MM-dd kk:mm').format(clock.now()),
+  //           DateFormat('yyyy-MM-dd kk:mm').format(clock.now()),
+  //           0, // isStarred
+  //           0, // isTrashed
+  //         );
+
+  //         // -- filter out already imported contacts --
+  //         if (await contactActionIsAdd(
+  //           forDeviceImportContact.contactName,
+  //           forDeviceImportContact.contactPhone,
+  //         )) {
+  //           appContacts.add(forDeviceImportContact);
+  //         }
+  //       }
+  //     }
+
+  //     return appContacts;
+  //   } catch (e) {
+  //     if (kDebugMode) {
+  //       CPopupSnackBar.errorSnackBar(
+  //         message: 'unable to import device contacts: $e',
+  //         title: 'unable to import device contacts',
+  //       );
+  //     } else {
+  //       CPopupSnackBar.errorSnackBar(
+  //         message:
+  //             'an unknown error occurred while importing contacts from your device! please try again later...',
+  //         title: 'unable to import device contacts',
+  //       );
+  //     }
+  //     rethrow;
+  //   }
+  // }
 
   /// -- convert a Contact model Object to a CContactsModel Object --
   CContactsModel convertDeviceContactToCContactModel(

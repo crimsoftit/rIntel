@@ -129,7 +129,7 @@ class CStoreRepo extends GetxController {
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
           message: e.toString(),
-          title: "error uploading inventory details",
+          title: "error fetching inventory details",
         );
       } else {
         CPopupSnackBar.errorSnackBar(

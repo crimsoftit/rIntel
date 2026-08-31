@@ -142,4 +142,72 @@ class CContactsRepo extends GetxController {
       rethrow;
     }
   }
+
+  /// -- fetch contacts from cloud firestore --
+  Future<List<CContactsModel>> fetchContactsFromFirestore(
+    String userEmail,
+  ) async {
+    try {
+      final snapshot = await firestoreDb
+          .collection('myContacts')
+          .where('addedBy', isEqualTo: userEmail)
+          .get();
+
+      return snapshot.docs.map(
+        (contact) {
+          return CContactsModel.fromSnapshot(contact);
+        },
+      ).toList();
+    } on FirebaseException catch (e) {
+      if (kDebugMode) {
+        CPopupSnackBar.errorSnackBar(
+          title: 'firebase cloud error!',
+          message: 'unable to fetch cloud contacts: ${e.code}',
+        );
+      } else {
+        CPopupSnackBar.errorSnackBar(
+          title: 'Oh Snap! Error fetching cloud contacts!',
+          message:
+              'an unknown error occurred while fetching contacts from cloud firestore!! please try again later',
+        );
+      }
+      rethrow;
+    } on FormatException catch (e) {
+      if (kDebugMode) {
+        CPopupSnackBar.errorSnackBar(
+          title: 'contacts cloud data fetch format error!',
+          message: e.message,
+        );
+      } else {
+        CPopupSnackBar.errorSnackBar(
+          title: 'Oh Snap!',
+          message:
+              'an unknown error occurred while fetching contacts from cloud firestore!! please try again later',
+        );
+      }
+      rethrow;
+    } on PlatformException catch (e) {
+      CPopupSnackBar.errorSnackBar(
+        message: CPlatformExceptions(e.code).message,
+        title: "contacts cloud data fetch platform exception error",
+      );
+
+      rethrow;
+    } catch (e) {
+      if (kDebugMode) {
+        CPopupSnackBar.errorSnackBar(
+          message: e.toString(),
+          title: "error fetching cloud contacts",
+        );
+      } else {
+        CPopupSnackBar.errorSnackBar(
+          message:
+              'an unknown error occurred while fetching contacts from cloud firestore! please try again later...',
+          title: "error fetching contacts from cloud firestore!",
+        );
+      }
+
+      rethrow;
+    }
+  }
 }

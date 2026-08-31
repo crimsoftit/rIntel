@@ -287,6 +287,16 @@ class CContactsListview extends StatelessWidget {
                             ),
                             horizontalTitleGap: 0.1,
                             leading: null,
+                            subtitle: Text(
+                              contacts[itemIndex].contactPhone != ''
+                                  ? contacts[itemIndex].contactPhone
+                                  : contacts[itemIndex].contactEmail,
+                              style: Theme.of(context).textTheme.labelSmall!
+                                  .apply(
+                                    color: CColors.darkGrey,
+                                    fontStyle: FontStyle.italic,
+                                  ),
+                            ),
                             title: Row(
                               mainAxisAlignment: MainAxisAlignment.start,
                               mainAxisSize: MainAxisSize.min,
