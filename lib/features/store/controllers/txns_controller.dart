@@ -157,57 +157,52 @@ class CTxnsController extends GetxController {
   void onInit() async {
     dateRangeFieldController.clear();
 
-    if (await CNetworkManager.instance.isConnected() &&
-        CNetworkManager.instance.connectionIsStable.value) {
-      await initTxnsSync();
-    }
-
-    await fetchUserTxns();
-
     await fetchTopSellersFromSales();
 
     showAmountIssuedField.value = true;
     txtRefundQty.text = '';
     refundQty.value = 0;
 
-    // AwesomeNotifications().isNotificationAllowed().then((isAllowed) async {
-    //   if (!isAllowed) {
-    //     // This is just a basic example. For real apps, you must show some
-    //     // friendly dialog box before call the request method.
-    //     // This is very important to not harm the user experience
-    //     AwesomeNotifications().requestPermissionToSendNotifications();
-    //   }
-    // });
+    if (await CNetworkManager.instance.isConnected() &&
+        CNetworkManager.instance.connectionIsStable.value) {
+      await initTxnsSync();
+    } else {
+      await fetchUserTxns();
+    }
     super.onInit();
   }
 
   /// -- initialize cloud sync --
   Future initTxnsSync() async {
-    if (localStorage.read('SyncTxnsDataWithCloud') == true &&
-        userTxns.isEmpty) {
-      if (await importTxnsFromCloudFirestore()) {
-        await importTxnItemsFromCloudFirestore().then(
-          (result) {
-            if (result) {
-              localStorage.write(
-                'SyncTxnsDataWithCloud',
-                false,
-              );
-            } else {
-              localStorage.write(
-                'SyncTxnsDataWithCloud',
-                true,
-              );
-            }
-          },
-        );
-      } else {
-        localStorage.write(
-          'SyncTxnsDataWithCloud',
-          true,
-        );
-      }
-    }
+    await fetchUserTxns().then(
+      (result) async {
+        if (localStorage.read('SyncTxnsDataWithCloud') == true &&
+            (result.isEmpty || userTxns.isEmpty)) {
+          if (await importTxnsFromCloudFirestore()) {
+            await importTxnItemsFromCloudFirestore().then(
+              (result) {
+                if (result) {
+                  localStorage.write(
+                    'SyncTxnsDataWithCloud',
+                    false,
+                  );
+                } else {
+                  localStorage.write(
+                    'SyncTxnsDataWithCloud',
+                    true,
+                  );
+                }
+              },
+            );
+          } else {
+            localStorage.write(
+              'SyncTxnsDataWithCloud',
+              true,
+            );
+          }
+        }
+      },
+    );
   }
 
   /// -- fetch sold items from sqflite db --

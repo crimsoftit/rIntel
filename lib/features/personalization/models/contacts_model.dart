@@ -1,13 +1,13 @@
-// ignore_for_file: unnecessary_getters_setters
+// ignore_for_file = unnecessary_getters_setters
 
 import 'dart:convert';
 
-// import 'package:azlistview/azlistview.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:rintel/features/personalization/models/gsheets_contact_model.dart';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class CContactsModel {
-  int _contactId = 0;
+  int? _contactId;
 
   String _addedBy = '';
   String _contactName = '';
@@ -24,6 +24,20 @@ class CContactsModel {
   String? _tag = '';
 
   CContactsModel(
+    this._addedBy,
+    this._contactName,
+    this._contactCountryCode,
+    this._contactDialCode,
+    this._contactPhone,
+    this._contactEmail,
+    this._contactCategory,
+    this._lastModified,
+    this._createdAt,
+    this._isStarred,
+    this._isTrashed,
+  );
+
+  CContactsModel.withId(
     this._contactId,
     this._addedBy,
     this._contactName,
@@ -45,7 +59,6 @@ class CContactsModel {
 
   static CContactsModel empty() {
     return CContactsModel(
-      0,
       '',
       '',
       '',
@@ -60,7 +73,7 @@ class CContactsModel {
     );
   }
 
-  int get contactId => _contactId;
+  int? get contactId => _contactId;
   String get addedBy => _addedBy;
   String get contactName => _contactName;
   String get contactCountryCode => _contactCountryCode;
@@ -74,10 +87,6 @@ class CContactsModel {
   int get isStarred => _isStarred;
 
   String? get tag => _tag;
-
-  set contactId(int newContactId) {
-    _contactId = newContactId;
-  }
 
   set addedBy(String deviceUser) {
     _addedBy = deviceUser;
@@ -129,20 +138,22 @@ class CContactsModel {
 
   /// -- convert a Contact object into a Map object --
   Map<String, dynamic> toMap() {
-    var map = <String, dynamic>{
-      'contactId': _contactId,
-      'addedBy': _addedBy,
-      'contactName': _contactName,
-      'contactCountryCode': _contactCountryCode,
-      'contactDialCode': _contactDialCode,
-      'contactPhone': _contactPhone,
-      'contactEmail': _contactEmail,
-      'contactCategory': _contactCategory,
-      'lastModified': _lastModified,
-      'createdAt': _createdAt,
-      'isStarred': _isStarred,
-      'isTrashed': _isTrashed,
-    };
+    var map = <String, dynamic>{};
+
+    if (contactId != null) {
+      map['contactId'] = _contactId;
+    }
+    map['addedBy'] = _addedBy;
+    map['contactName'] = _contactName;
+    map['contactCountryCode'] = _contactCountryCode;
+    map['contactDialCode'] = _contactDialCode;
+    map['contactPhone'] = _contactPhone;
+    map['contactEmail'] = _contactEmail;
+    map['contactCategory'] = _contactCategory;
+    map['lastModified'] = _lastModified;
+    map['createdAt'] = _createdAt;
+    map['isStarred'] = _isStarred;
+    map['isTrashed'] = _isTrashed;
 
     return map;
   }
@@ -165,7 +176,7 @@ class CContactsModel {
 
   /// -- extract a CContactsModel object from a Gsheet Map object --
   static CContactsModel gSheetsFromJson(Map<String, dynamic> json) {
-    return CContactsModel(
+    return CContactsModel.withId(
       jsonDecode(json[GsheetsContactModel.contactId]),
       json[GsheetsContactModel.addedBy],
       json[GsheetsContactModel.contactName],
@@ -189,7 +200,7 @@ class CContactsModel {
 
     final contact = contactDoc.data()!;
 
-    return CContactsModel(
+    return CContactsModel.withId(
       int.parse(contactDoc.id),
       contact['addedBy'],
       contact['contactName'],

@@ -118,14 +118,19 @@ class CContactsController extends GetxController {
 
   /// -- initialize cloud sync --
   Future<void> initContactsSync() async {
-    if (localStorage.read('SyncContactsWithCloud') == true) {
-      if (await importContactsFromCloudFirestore()) {
-        localStorage.write('SyncContactsWithCloud', false);
-      } else {
-        localStorage.write('SyncContactsWithCloud', true);
-      }
-    }
-    await fetchMyContacts();
+    await fetchMyContacts().then(
+      (result) async {
+        if (result.isEmpty &&
+            localStorage.read('SyncContactsWithCloud') == true &&
+            myContacts.isEmpty) {
+          if (await importContactsFromCloudFirestore()) {
+            localStorage.write('SyncContactsWithCloud', false);
+          } else {
+            localStorage.write('SyncContactsWithCloud', true);
+          }
+        }
+      },
+    );
   }
 
   /// -- check if contact details exist in the database --
@@ -203,8 +208,8 @@ class CContactsController extends GetxController {
       isLoading.value = true;
 
       await dbHelper.addContactAndRetrieveId(contact).then(
-        (_) {
-          contactsRepo.addContactToCloud(contact);
+        (int contactId) {
+          contactsRepo.addContactToCloud(contact, contactId);
         },
       );
       if (refreshContacts) {
@@ -2218,7 +2223,6 @@ class CContactsController extends GetxController {
           );
 
           var forDeviceImportContact = CContactsModel(
-            CHelperFunctions.generateContactId(),
             userController.user.value.email,
             contactName!,
             CFormatter.getCountryCodeFromDialCode(
@@ -2346,7 +2350,6 @@ class CContactsController extends GetxController {
     CContactsModel appContact,
   ) {
     return CContactsModel(
-      appContact.contactId,
       appContact.addedBy,
       appContact.contactName,
       appContact.contactCountryCode,

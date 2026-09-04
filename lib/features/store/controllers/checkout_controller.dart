@@ -843,7 +843,6 @@ class CCheckoutController extends GetxController {
               : ('', '');
 
           var customerDetails = CContactsModel(
-            txnId.value,
             userController.user.value.email,
             customerNameFieldController.text.trim(),
             '',

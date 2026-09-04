@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -17,14 +16,17 @@ class CContactsRepo extends GetxController {
   final RxBool isLoading = false.obs;
 
   /// -- add contact to cloud firestore --
-  Future<void> addContactToCloud(CContactsModel cloudContact) async {
+  Future<void> addContactToCloud(
+    CContactsModel cloudContact,
+    int contactId,
+  ) async {
     try {
       // -- start loader --
       isLoading.value = true;
 
       firestoreDb
           .collection('myContacts')
-          .doc(cloudContact.contactId.toString())
+          .doc(contactId.toString())
           .set(cloudContact.toMap());
 
       // -- stop loader --

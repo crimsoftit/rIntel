@@ -194,21 +194,7 @@ class CAddUpdateContactForm extends StatelessWidget {
                               return;
                             }
 
-                            // if (!CValidator.isValidIntlPhoneNumber(
-                            //   contactsController.txtPhoneController.text
-                            //       .trim(),
-                            //   contactsController.contactDialCode.value,
-                            // )) {
-                            //   CPopupSnackBar.errorSnackBar(
-                            //     message:
-                            //         'The supplied phone number is invalid!',
-                            //     title: 'Invalid phone number!',
-                            //   );
-                            //   return;
-                            // }
-
                             var contactDetails = CContactsModel(
-                              CHelperFunctions.generateContactId(),
                               userController.user.value.email,
                               contactsController.txtContactNameController.text
                                   .trim(),
@@ -224,7 +210,7 @@ class CAddUpdateContactForm extends StatelessWidget {
                               DateFormat(
                                 'yyyy-MM-dd kk:mm',
                               ).format(clock.now()),
-                              
+
                               0,
                               0,
                             );

@@ -161,7 +161,7 @@ class DbHelper extends GetxController {
         // -- create contacts table --
         database.execute('''
           CREATE TABLE IF NOT EXISTS $contactsTable (
-            contactId INTEGER PRIMARY KEY,
+            contactId INTEGER PRIMARY KEY AUTOINCREMENT,
             addedBy TEXT NOT NULL,
             contactName TEXT NOT NULL,
             contactCountryCode TEXT NOT NULL,
@@ -263,13 +263,43 @@ class DbHelper extends GetxController {
     final db = _db;
     final batch = db!.batch();
 
-    for (var invItem in inventoryItems) {
-      batch.insert(invTable, invItem.toMap());
+    const int chunkSize = 500;
+
+    // for (var invItem in inventoryItems) {
+    //   batch.insert(
+    //     invTable,
+    //     invItem.toMap(),
+    //     conflictAlgorithm: ConflictAlgorithm.replace,
+    //   );
+
+    // }
+
+    for (int i = 0; i < inventoryItems.length; i++) {
+      batch.insert(
+        invTable,
+        inventoryItems[i].toMap(),
+        conflictAlgorithm: ConflictAlgorithm.replace,
+      );
+
+      // Commit every chunk size
+      if ((i + 1) % chunkSize == 0) {
+        await batch.commit(noResult: true);
+        // Create a new batch for the next chunk
+        // Note: You must re-initialize batch if you want to continue using the same instance logic,
+        // but typically you create a new batch or just continue appending if the DB connection allows.
+        // A safer pattern for large loops often involves creating a new batch instance or using transaction boundaries.
+      }
     }
 
-    await batch.commit(
-      noResult: true,
-    );
+    // await batch.commit(
+    //   noResult: true,
+    // );
+    // Commit any remaining items
+    if (inventoryItems.length % chunkSize != 0) {
+      await batch.commit(
+        noResult: true,
+      );
+    }
   }
 
   Future<void> addInventoryItem(CInventoryModel inventoryItem) async {
@@ -525,23 +555,6 @@ class DbHelper extends GetxController {
     }
   }
 
-  Future<void> saveInvDelsForSync(CInvDelsModel delItem) async {
-    try {
-      final db = _db;
-      await db!.insert(
-        invDelsForSyncTable,
-        delItem.toMap(),
-        conflictAlgorithm: ConflictAlgorithm.replace,
-      );
-    } catch (e) {
-      CPopupSnackBar.errorSnackBar(
-        title: 'error performing transaction',
-        message: e.toString(),
-      );
-      throw e.toString();
-    }
-  }
-
   /// -- fetch all updatesForSyncItems --
   Future<List<CInvDelsModel>> fetchAllInvUpdates() async {
     try {
@@ -691,7 +704,7 @@ class DbHelper extends GetxController {
     }
   }
 
-  /// ==== ### CRUD OPERATIONS ON SALES TABLE ### ====
+  /// ==== ### CRUD OPERATIONS ON TXNS TABLES ### ====
 
   // -- save txn to the database --
   Future<int> addTxn(CTxn txn) async {
@@ -761,12 +774,46 @@ class DbHelper extends GetxController {
     final txnsBatch = db!.batch();
 
     for (var txn in txns) {
-      txnsBatch.insert('sales', txn.toMap());
+      txnsBatch.insert(
+        'sales',
+        txn.toMap(),
+        conflictAlgorithm: ConflictAlgorithm.replace,
+      );
     }
 
     await txnsBatch.commit(
       noResult: true,
     );
+  }
+
+  Future<void> bulkInsertTxnsWithChunks(
+    List<Map<String, dynamic>> items,
+  ) async {
+    final db = _db;
+    final batch = db!.batch();
+    const int chunkSize = 1000;
+
+    for (int i = 0; i < items.length; i++) {
+      batch.insert(
+        'items',
+        items[i],
+        conflictAlgorithm: ConflictAlgorithm.replace,
+      );
+
+      // Commit every chunk size
+      if ((i + 1) % chunkSize == 0) {
+        await batch.commit(noResult: true);
+        // Create a new batch for the next chunk
+        // Note: You must re-initialize batch if you want to continue using the same instance logic,
+        // but typically you create a new batch or just continue appending if the DB connection allows.
+        // A safer pattern for large loops often involves creating a new batch instance or using transaction boundaries.
+      }
+    }
+
+    // Commit any remaining items
+    if (items.length % chunkSize != 0) {
+      await batch.commit(noResult: true);
+    }
   }
 
   /// -- batch insert txn items --
@@ -775,7 +822,11 @@ class DbHelper extends GetxController {
     final salesBatch = db!.batch();
 
     for (var soldItem in soldItems) {
-      salesBatch.insert('txnItemsTable', soldItem.toMap());
+      salesBatch.insert(
+        'txnItemsTable',
+        soldItem.toMap(),
+        conflictAlgorithm: ConflictAlgorithm.replace,
+      );
     }
 
     await salesBatch.commit(
@@ -1276,7 +1327,11 @@ class DbHelper extends GetxController {
     final contactsBatch = db!.batch();
 
     for (var contact in contacts) {
-      contactsBatch.insert(contactsTable, contact.toMap());
+      contactsBatch.insert(
+        contactsTable,
+        contact.toMap(),
+        conflictAlgorithm: ConflictAlgorithm.replace,
+      );
     }
 
     await contactsBatch.commit(

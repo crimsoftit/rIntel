@@ -123,11 +123,12 @@ class CInventoryController extends GetxController {
   void onInit() async {
     bpFocusNode = FocusNode();
     sellAtLoss.value = false;
-    await fetchUserInventoryItems();
 
     if (await CNetworkManager.instance.isConnected() &&
         CNetworkManager.instance.connectionIsStable.value) {
       await initInvSync();
+    } else {
+      await fetchUserInventoryItems();
     }
 
     // fetchInvDels();
@@ -153,14 +154,18 @@ class CInventoryController extends GetxController {
 
   // }
   Future<void> initInvSync() async {
-    if (localStorage.read('SyncInvDataWithCloud') == true &&
-        inventoryItems.isEmpty) {
-      if (await importInventoryDataFromFirestore()) {
-        localStorage.write('SyncInvDataWithCloud', false);
-      } else {
-        localStorage.write('SyncInvDataWithCloud', true);
-      }
-    }
+    await fetchUserInventoryItems().then(
+      (result) async {
+        if (localStorage.read('SyncInvDataWithCloud') == true &&
+            (result.isEmpty || inventoryItems.isEmpty)) {
+          if (await importInventoryDataFromFirestore()) {
+            localStorage.write('SyncInvDataWithCloud', false);
+          } else {
+            localStorage.write('SyncInvDataWithCloud', true);
+          }
+        }
+      },
+    );
   }
 
   /// -- fetch list of inventory items from sqflite db --
@@ -1235,7 +1240,6 @@ class CInventoryController extends GetxController {
       // -- check internet connectivity
 
       if (await CNetworkManager.instance.isConnected()) {
-        
         await syncInvDelsAndNotForUpdates();
         await addUnsyncedInvToCloud();
         await syncInvUpdatesToCloud();
