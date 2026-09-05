@@ -289,9 +289,9 @@ class CFormatter {
 
     if (foundedCountry.isNotEmpty) {
       dialCode = phoneNumber.substring(0, foundedCountry["dial_code"]!.length);
-      newPhoneNumber =
-          '0${phoneNumber.substring(foundedCountry["dial_code"]!.length)}'
-              .removeAllWhitespace;
+      newPhoneNumber = phoneNumber
+          .substring(foundedCountry["dial_code"]!.length)
+          .removeAllWhitespace;
     } else {
       dialCode = '';
       newPhoneNumber = phoneNumber;

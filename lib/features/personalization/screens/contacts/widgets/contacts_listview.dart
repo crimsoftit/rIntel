@@ -280,23 +280,14 @@ class CContactsListview extends StatelessWidget {
                           },
                           child: ListTile(
                             contentPadding: EdgeInsets.fromLTRB(
-                              5.0,
+                              10.0,
                               2.0,
-                              1.0,
+                              10.0,
                               2.0,
                             ),
                             horizontalTitleGap: 0.1,
                             leading: null,
-                            subtitle: Text(
-                              contacts[itemIndex].contactPhone != ''
-                                  ? contacts[itemIndex].contactPhone
-                                  : contacts[itemIndex].contactEmail,
-                              style: Theme.of(context).textTheme.labelSmall!
-                                  .apply(
-                                    color: CColors.darkGrey,
-                                    fontStyle: FontStyle.italic,
-                                  ),
-                            ),
+
                             title: Row(
                               mainAxisAlignment: MainAxisAlignment.start,
                               mainAxisSize: MainAxisSize.min,
@@ -328,15 +319,33 @@ class CContactsListview extends StatelessWidget {
                                 const SizedBox(
                                   width: CSizes.spaceBtnItems,
                                 ),
-                                Text(
-                                  contacts[itemIndex].contactName,
-                                  maxLines: 1,
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .labelMedium!
-                                      .apply(
-                                        fontSizeFactor: 1.1,
-                                      ),
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      contacts[itemIndex].contactName,
+                                      maxLines: 1,
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .labelMedium!
+                                          .apply(
+                                            fontSizeFactor: 1.1,
+                                          ),
+                                    ),
+
+                                    Text(
+                                      contacts[itemIndex].contactPhone != ''
+                                          ? contacts[itemIndex].contactPhone
+                                          : contacts[itemIndex].contactEmail,
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .labelSmall!
+                                          .apply(
+                                            color: CColors.darkGrey,
+                                            fontStyle: FontStyle.italic,
+                                          ),
+                                    ),
+                                  ],
                                 ),
                               ],
                             ),

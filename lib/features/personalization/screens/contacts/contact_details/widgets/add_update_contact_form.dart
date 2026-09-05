@@ -1,4 +1,5 @@
 import 'package:clock/clock.dart';
+import 'package:rintel/common/widgets/buttons/custom_dropdown_btn.dart';
 import 'package:rintel/common/widgets/custom_shapes/containers/rounded_container.dart';
 import 'package:rintel/common/widgets/txt_fields/custom_type_ahead_field.dart';
 import 'package:rintel/features/personalization/controllers/contacts_controller.dart';
@@ -6,6 +7,7 @@ import 'package:rintel/features/personalization/controllers/user_controller.dart
 import 'package:rintel/features/personalization/models/contacts_model.dart';
 import 'package:rintel/utils/constants/colors.dart';
 import 'package:rintel/utils/constants/sizes.dart';
+import 'package:rintel/utils/helpers/formatter.dart';
 import 'package:rintel/utils/helpers/helper_functions.dart';
 import 'package:rintel/utils/validators/validation.dart';
 import 'package:flutter/foundation.dart';
@@ -19,8 +21,10 @@ class CAddUpdateContactForm extends StatelessWidget {
   const CAddUpdateContactForm({
     super.key,
     this.onActionBtnPressed,
+    this.presetContactCategory = 'Customer',
   });
 
+  final String? presetContactCategory;
   final VoidCallback? onActionBtnPressed;
 
   @override
@@ -46,39 +50,162 @@ class CAddUpdateContactForm extends StatelessWidget {
             child: CRoundedContainer(
               bgColor: CColors.transparent,
               borderColor: CColors.rBrown,
-              padding: const EdgeInsets.all(CSizes.defaultSpace),
+              padding: const EdgeInsets.all(
+                CSizes.defaultSpace,
+              ),
               showBorder: false,
               child: Column(
-                mainAxisSize: MainAxisSize.min,
+                mainAxisSize: MainAxisSize.max,
                 children: [
-                  TextFormField(
-                    autovalidateMode: AutovalidateMode.onUserInteraction,
-                    controller: contactsController.txtContactNameController,
-                    decoration: InputDecoration(
-                      constraints: BoxConstraints(minHeight: 60.0),
-                      fillColor: isDarkTheme
-                          ? CColors.transparent
-                          : CColors.lightGrey,
-                      filled: true,
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      IconButton(
+                        icon: Icon(
+                          Iconsax.close_square,
+                          size: CSizes.iconLg,
+                          color: isDarkTheme ? CColors.white : CColors.rBrown,
+                        ),
 
-                      labelStyle: Theme.of(context).textTheme.labelMedium,
-                      labelText: 'Name',
+                        onPressed: () {
+                          //Navigator.pop(context, true);
 
-                      prefixIcon: Icon(
-                        Iconsax.tag,
-                        color: CColors.darkGrey,
-                        size: CSizes.iconXs,
+                          contactsController.resetFields();
+                          Navigator.pop(Get.overlayContext!, true);
+                        },
                       ),
-                    ),
-                    style: const TextStyle(fontWeight: FontWeight.normal),
-                    validator: (value) {
-                      return CValidator.validateEmptyText('Name', value);
-                    },
+                      TextButton.icon(
+                        icon: Icon(
+                          Iconsax.save_add,
+                          size: CSizes.iconSm,
+                          color: isDarkTheme ? CColors.rBrown : CColors.white,
+                        ),
+                        label: Text(
+                          'save',
+                          style: Theme.of(context).textTheme.labelMedium!.apply(
+                            color: isDarkTheme ? CColors.rBrown : CColors.white,
+                          ),
+                        ),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: isDarkTheme
+                              ? CColors.white
+                              : CColors.rBrown,
+                          foregroundColor: CColors.white,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadiusGeometry.circular(
+                              10.0,
+                            ),
+                          ),
+                        ),
+                        onPressed: () async {
+                          // -- form validation
+                          if (!contactsController
+                              .addUpdateContactItemFormKey
+                              .currentState!
+                              .validate()) {
+                            return;
+                          }
+
+                          var contactDetails = CContactsModel(
+                            userController.user.value.email,
+                            contactsController.txtContactNameController.text
+                                .trim(),
+                            contactsController.contactCountryCode.value.trim(),
+                            contactsController.contactDialCode.value.trim(),
+                            contactsController.txtPhoneController.text.trim(),
+                            contactsController.txtEmailController.text.trim(),
+                            contactsController.selectedContactCategory.value,
+                            DateFormat(
+                              'yyyy-MM-dd kk:mm',
+                            ).format(clock.now()),
+                            DateFormat(
+                              'yyyy-MM-dd kk:mm',
+                            ).format(clock.now()),
+
+                            0,
+                            0,
+                          );
+
+                          contactsController
+                              .addContact(
+                                contactDetails,
+                                0,
+                                true,
+                              )
+                              .then(
+                                (_) {
+                                  contactsController.resetFields();
+
+                                  Navigator.of(Get.overlayContext!).pop(true);
+                                },
+                              );
+                        },
+                      ),
+                    ],
                   ),
-                  const SizedBox(height: CSizes.spaceBtnInputFields / 2.0),
+                  const SizedBox(
+                    height: CSizes.spaceBtnInputFields,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      TextFormField(
+                        autovalidateMode: AutovalidateMode.onUserInteraction,
+                        controller: contactsController.txtContactNameController,
+                        decoration: InputDecoration(
+                          constraints: BoxConstraints(
+                            minHeight: 60.0,
+                          ),
+                          fillColor: isDarkTheme
+                              ? CColors.transparent
+                              : CColors.lightGrey,
+                          filled: true,
+
+                          labelStyle: Theme.of(context).textTheme.labelMedium,
+                          labelText: 'Name',
+
+                          // prefixIcon: Icon(
+                          //   Iconsax.tag,
+                          //   color: CColors.darkGrey,
+                          //   size: CSizes.iconXs,
+                          // ),
+                        ),
+                        style: const TextStyle(fontWeight: FontWeight.normal),
+                        validator: (value) {
+                          return CValidator.validateEmptyText('Name', value);
+                        },
+                      ),
+                      Obx(
+                        () {
+                          return CCustomDropdownBtn(
+                            defaultItemColor: isDarkTheme
+                                ? CColors.darkGrey
+                                : CColors.rBrown,
+                            defaultItemFontSizeFactor: 1.3,
+                            dropdownItems: contactsController.contactCategories,
+                            onValueChanged: (value) {
+                              contactsController.selectedContactCategory.value =
+                                  value!;
+                            },
+                            selectedValue: contactsController
+                                .setDefaultContactCategory(
+                                  presetContactCategory,
+                                ),
+                            underlineColor: CColors.rBrown,
+                            underlineHeight: .8,
+                          );
+                        },
+                      ),
+                    ],
+                  ),
+                  const SizedBox(
+                    height: CSizes.spaceBtnInputFields / 2.0,
+                  ),
 
                   IntlPhoneField(
+                    autovalidateMode: AutovalidateMode.onUnfocus,
                     controller: contactsController.txtPhoneController,
+
                     decoration: InputDecoration(
                       border: OutlineInputBorder(),
                       fillColor: isDarkTheme
@@ -88,6 +215,11 @@ class CAddUpdateContactForm extends StatelessWidget {
                     ),
                     initialCountryCode: 'KE',
                     invalidNumberMessage: 'Invalid phone number!',
+                    //inputFormatters: [],
+                    keyboardType: TextInputType.numberWithOptions(
+                      signed: false,
+                      decimal: false,
+                    ),
                     onChanged: (phone) {
                       contactsController.contactCountryCode.value =
                           phone.countryISOCode;
@@ -95,16 +227,26 @@ class CAddUpdateContactForm extends StatelessWidget {
                       contactsController.contactDialCode.value =
                           phone.countryCode;
 
+                      contactsController.txtPhoneController.text = phone
+                          .toString()
+                          .replaceAll(
+                            RegExp(r'\s'),
+                            '',
+                          );
+
                       if (kDebugMode) {
                         print('=========\n');
                         print('country code: ${phone.countryCode}\n');
                         print('---------\n');
                         print('country iso code: ${phone.countryISOCode}\n');
                         print('---------\n');
+                        print('phone number: ${phone.number}\n');
+                        print('---------\n');
                         print('complete number: ${phone.completeNumber}\n');
                         print('=========\n');
                       }
                     },
+
                     onCountryChanged: (country) {
                       contactsController.contactCountryCode.value =
                           country.code;
@@ -124,8 +266,19 @@ class CAddUpdateContactForm extends StatelessWidget {
                         print('=========\n');
                       }
                     },
+
+                    onSubmitted: (phoneNumber) {
+                      contactsController.txtPhoneController.text = phoneNumber
+                          .replaceAll(
+                            RegExp(r'\s'),
+                            '',
+                          );
+                    },
+                    //textInputAction: TextInputAction.,
                   ),
-                  const SizedBox(height: CSizes.spaceBtnInputFields / 2.0),
+                  const SizedBox(
+                    height: CSizes.spaceBtnInputFields / 2.0,
+                  ),
                   CCustomTypeaheadField(
                     // fieldValidator: (value) {
                     //   return CValidator.validateEmail(value);
@@ -155,111 +308,6 @@ class CAddUpdateContactForm extends StatelessWidget {
                     ),
                     typeAheadFieldController:
                         contactsController.txtEmailController,
-                  ),
-
-                  const SizedBox(height: CSizes.spaceBtnInputFields),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Expanded(
-                        flex: 4,
-                        child: TextButton.icon(
-                          icon: Icon(
-                            Iconsax.save_add,
-                            size: CSizes.iconSm,
-                            color: isDarkTheme ? CColors.rBrown : CColors.white,
-                          ),
-                          label: Text(
-                            'Add',
-                            style: Theme.of(context).textTheme.labelMedium!
-                                .apply(
-                                  color: isDarkTheme
-                                      ? CColors.rBrown
-                                      : CColors.white,
-                                ),
-                          ),
-                          style: ElevatedButton.styleFrom(
-                            foregroundColor:
-                                CColors.white, // foreground (text) color
-                            backgroundColor: isDarkTheme
-                                ? CColors.white
-                                : CColors.rBrown, // background color
-                          ),
-                          onPressed: () async {
-                            // -- form validation
-                            if (!contactsController
-                                .addUpdateContactItemFormKey
-                                .currentState!
-                                .validate()) {
-                              return;
-                            }
-
-                            var contactDetails = CContactsModel(
-                              userController.user.value.email,
-                              contactsController.txtContactNameController.text
-                                  .trim(),
-                              contactsController.contactCountryCode.value
-                                  .trim(),
-                              contactsController.contactDialCode.value.trim(),
-                              contactsController.txtPhoneController.text.trim(),
-                              contactsController.txtEmailController.text.trim(),
-                              contactsController.selectedContactCategory.value,
-                              DateFormat(
-                                'yyyy-MM-dd kk:mm',
-                              ).format(clock.now()),
-                              DateFormat(
-                                'yyyy-MM-dd kk:mm',
-                              ).format(clock.now()),
-
-                              0,
-                              0,
-                            );
-
-                            contactsController
-                                .addContact(
-                                  contactDetails,
-                                  0,
-                                  true,
-                                )
-                                .then(
-                                  (_) {
-                                    contactsController.resetFields();
-                                    Navigator.of(Get.overlayContext!).pop(true);
-                                  },
-                                );
-                          },
-                        ),
-                      ),
-                      const SizedBox(width: CSizes.spaceBtnSections / 4),
-                      Expanded(
-                        flex: 4,
-                        child: TextButton.icon(
-                          icon: const Icon(
-                            Iconsax.undo,
-                            size: CSizes.iconSm,
-                            color: CColors.rBrown,
-                          ),
-                          label: Text(
-                            'Back',
-                            style: Theme.of(context).textTheme.labelMedium!
-                                .apply(color: CColors.rBrown),
-                          ),
-                          style: ElevatedButton.styleFrom(
-                            foregroundColor:
-                                CColors.rBrown, // foreground (text) color
-                            backgroundColor: isDarkTheme
-                                ? CColors.darkGrey
-                                : CColors.white, // background color
-                          ),
-                          onPressed: () {
-                            //Navigator.pop(context, true);
-
-                            contactsController.resetFields();
-                            Navigator.pop(Get.overlayContext!, true);
-                          },
-                        ),
-                      ),
-                    ],
                   ),
                 ],
               ),

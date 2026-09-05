@@ -295,9 +295,11 @@ class CContactsScreen extends StatelessWidget {
                           ),
                           InkWell(
                             onTap: () async {
-                              await contactsController.addContactActionModal(
-                                context,
-                              );
+                              await contactsController
+                                  .addUpdateContactActionModal(
+                                    context,
+                                    'Friend',
+                                  );
                             },
                             child: Icon(
                               Icons.add,

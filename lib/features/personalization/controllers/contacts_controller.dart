@@ -90,6 +90,7 @@ class CContactsController extends GetxController {
     'Supplier',
     'Family',
     'Colleague',
+    'Other',
   ].obs;
   final RxList alphabet = [].obs;
 
@@ -466,7 +467,9 @@ class CContactsController extends GetxController {
                               onValueChanged: (value) {
                                 selectedContactCategory.value = value!;
                               },
-                              selectedValue: setDefaultContactCategory(),
+                              selectedValue: setDefaultContactCategory(
+                                contactItem.contactCategory,
+                              ),
                               underlineColor: CColors.rBrown,
                               underlineHeight: .8,
                             );
@@ -765,14 +768,21 @@ class CContactsController extends GetxController {
   }
 
   /// -- add contact modal popup--
-  Future<dynamic> addContactActionModal(BuildContext context) async {
+  Future<dynamic> addUpdateContactActionModal(
+    BuildContext context,
+    String? presetCategory,
+  ) async {
     final isDarkTheme = CHelperFunctions.isDarkMode(context);
 
     try {
       return await showModalBottomSheet(
         backgroundColor: isDarkTheme
-            ? CColors.black.withValues(alpha: .9)
-            : CColors.white,
+            ? CColors.rBrown.withValues(
+                alpha: .85,
+              )
+            : CColors.white.withValues(
+                alpha: .85,
+              ),
         context: context,
         isDismissible: true,
         isScrollControlled: true,
@@ -785,7 +795,7 @@ class CContactsController extends GetxController {
               padding: MediaQuery.of(context).viewInsets,
               child: CRoundedContainer(
                 bgColor: CColors.transparent,
-                height: CHelperFunctions.screenHeight() * .56,
+                height: CHelperFunctions.screenHeight() * .59,
                 padding: const EdgeInsets.only(
                   left: CSizes.lg / 4,
                   right: CSizes.lg / 4,
@@ -793,10 +803,11 @@ class CContactsController extends GetxController {
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisSize: MainAxisSize.max,
+                  //mainAxisSize: MainAxisSize.max,
                   children: [
                     Padding(
                       padding: const EdgeInsets.only(
+                        bottom: CSizes.spaceBtnItems,
                         left: CSizes.defaultSpace / 4.0,
                         right: CSizes.defaultSpace / 4.0,
                       ),
@@ -813,31 +824,12 @@ class CContactsController extends GetxController {
                               size: CSizes.iconSm,
                             ),
                           ),
-
-                          Text(
-                            'add contact',
-                            style: Theme.of(
-                              context,
-                            ).textTheme.labelLarge!.apply(),
-                          ),
-
-                          Obx(() {
-                            return CCustomDropdownBtn(
-                              defaultItemColor: isDarkTheme
-                                  ? CColors.darkGrey
-                                  : CColors.rBrown,
-                              defaultItemFontSizeFactor: 1.3,
-                              dropdownItems: contactCategories,
-                              onValueChanged: (value) {
-                                selectedContactCategory.value = value!;
-                              },
-                              selectedValue: setDefaultContactCategory(),
-                              underlineColor: CColors.rBrown,
-                              underlineHeight: .8,
-                            );
-                          }),
                         ],
                       ),
+                    ),
+                    Text(
+                      'add contact',
+                      style: Theme.of(context).textTheme.labelLarge!.apply(),
                     ),
 
                     CAddUpdateContactForm(),
@@ -906,7 +898,9 @@ class CContactsController extends GetxController {
                       color: CHelperFunctions.randomAestheticColor(),
                     ),
             ),
-            const SizedBox(height: CSizes.spaceBtnSections),
+            const SizedBox(
+              height: CSizes.spaceBtnSections,
+            ),
             Text(
               contact.contactName,
               style: Theme.of(Get.overlayContext!).textTheme.bodyMedium!.apply(
@@ -1836,19 +1830,20 @@ class CContactsController extends GetxController {
     }
   }
 
-  String setDefaultContactCategory() {
+  String setDefaultContactCategory(String? presetCategory) {
     if (selectedContactCategory.value == '') {
       // CPopupSnackBar.customToast(
       //   forInternetConnectivityStatus: false,
       //   message: 'contact category has to be set',
       // );
-      selectedContactCategory.value = contactCategories[1];
+      selectedContactCategory.value = presetCategory ?? contactCategories[1];
     } else {
       // CPopupSnackBar.customToast(
       //   forInternetConnectivityStatus: false,
       //   message: 'contact category ALREADY set',
       // );
-      selectedContactCategory.value = selectedContactCategory.value;
+      selectedContactCategory.value =
+          presetCategory ?? selectedContactCategory.value;
     }
 
     return selectedContactCategory.value;
@@ -2227,7 +2222,7 @@ class CContactsController extends GetxController {
               dialCode,
             ), // country code (to be set later)
             dialCode, // dial code (to be set later)
-            mobileNumber,
+            mobileNumber.trim().removeAllWhitespace,
             contactEmail,
             'Device',
             DateFormat('yyyy-MM-dd kk:mm').format(clock.now()),
