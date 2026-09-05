@@ -156,8 +156,7 @@ class CInventoryController extends GetxController {
   Future<void> initInvSync() async {
     await fetchUserInventoryItems().then(
       (result) async {
-        if (localStorage.read('SyncInvDataWithCloud') == true &&
-            (result.isEmpty || inventoryItems.isEmpty)) {
+        if (localStorage.read('SyncInvDataWithCloud') == true) {
           if (await importInventoryDataFromFirestore()) {
             localStorage.write('SyncInvDataWithCloud', false);
           } else {

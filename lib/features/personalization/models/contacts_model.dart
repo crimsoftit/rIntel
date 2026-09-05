@@ -1,5 +1,7 @@
 // ignore_for_file = unnecessary_getters_setters
 
+// ignore_for_file: unnecessary_getters_setters
+
 import 'dart:convert';
 
 import 'package:rintel/features/personalization/models/gsheets_contact_model.dart';

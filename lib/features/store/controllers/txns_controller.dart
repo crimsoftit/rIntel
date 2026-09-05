@@ -157,8 +157,6 @@ class CTxnsController extends GetxController {
   void onInit() async {
     dateRangeFieldController.clear();
 
-    await fetchTopSellersFromSales();
-
     showAmountIssuedField.value = true;
     txtRefundQty.text = '';
     refundQty.value = 0;
@@ -166,43 +164,40 @@ class CTxnsController extends GetxController {
     if (await CNetworkManager.instance.isConnected() &&
         CNetworkManager.instance.connectionIsStable.value) {
       await initTxnsSync();
-    } else {
-      await fetchUserTxns();
     }
+    await fetchUserTxns();
+    await fetchUserTxnItems();
+    await fetchTopSellersFromSales();
     super.onInit();
   }
 
   /// -- initialize cloud sync --
   Future initTxnsSync() async {
-    await fetchUserTxns().then(
-      (result) async {
-        if (localStorage.read('SyncTxnsDataWithCloud') == true &&
-            (result.isEmpty || userTxns.isEmpty)) {
-          if (await importTxnsFromCloudFirestore()) {
-            await importTxnItemsFromCloudFirestore().then(
-              (result) {
-                if (result) {
-                  localStorage.write(
-                    'SyncTxnsDataWithCloud',
-                    false,
-                  );
-                } else {
-                  localStorage.write(
-                    'SyncTxnsDataWithCloud',
-                    true,
-                  );
-                }
-              },
-            );
-          } else {
-            localStorage.write(
-              'SyncTxnsDataWithCloud',
-              true,
-            );
-          }
-        }
-      },
-    );
+    if (localStorage.read('SyncTxnsDataWithCloud') == true) {
+      if (await importTxnsFromCloudFirestore()) {
+        await importTxnItemsFromCloudFirestore().then(
+          (result) {
+            if (result) {
+              localStorage.write(
+                'SyncTxnsDataWithCloud',
+                false,
+              );
+            } else {
+              localStorage.write(
+                'SyncTxnsDataWithCloud',
+                true,
+              );
+            }
+            fetchUserTxnItems();
+          },
+        );
+      } else {
+        localStorage.write(
+          'SyncTxnsDataWithCloud',
+          true,
+        );
+      }
+    }
   }
 
   /// -- fetch sold items from sqflite db --
@@ -1781,11 +1776,9 @@ class CTxnsController extends GetxController {
       final txnsCloudData = storeRepo.fetchUserTxnsFromFirestore(
         userController.user.value.email,
       );
-      await dbHelper.batchInsertTxns(await txnsCloudData).then(
-        (_) async {
-          await fetchUserTxns();
-        },
-      );
+      await dbHelper.batchInsertTxns(await txnsCloudData);
+
+      await fetchUserTxns();
 
       // -- stop loader --
       isLoading.value = false;
@@ -1815,10 +1808,10 @@ class CTxnsController extends GetxController {
     try {
       // -- start loader --
       isLoading.value = true;
-      final txnItems = storeRepo.fetchUserTxnItemsFromFirestore(
+      final txnItems = await storeRepo.fetchUserTxnItemsFromFirestore(
         userController.user.value.email,
       );
-      await dbHelper.batchInsertSoldItems(await txnItems).then(
+      await dbHelper.batchInsertSoldItems(txnItems).then(
         (_) async {
           await fetchUserTxnItems();
         },

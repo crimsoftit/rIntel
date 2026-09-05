@@ -55,7 +55,11 @@ class _CTxnsViewState extends State<CTxnsView> {
       () {
         WidgetsBinding.instance.addPostFrameCallback(
           (_) {
-            txnsController.fetchUserTxnItems();
+            setState(
+              () {
+                txnsController.fetchUserTxnItems();
+              },
+            );
           },
         );
       },
@@ -468,6 +472,12 @@ class _CTxnsViewState extends State<CTxnsView> {
                                                 } else {
                                                   _expandedIndex =
                                                       txnIndex; // Expand
+
+                                                  if (demItems.isNotEmpty &&
+                                                      txnItems.isEmpty) {
+                                                    txnsController
+                                                        .fetchUserTxnItems();
+                                                  }
                                                 }
                                               },
                                             );
@@ -515,7 +525,7 @@ class _CTxnsViewState extends State<CTxnsView> {
                                             bgColor: CColors.transparent,
                                             borderColor: CColors.rBrown,
                                             borderRadius: 5.0,
-                                            showBorder: true,
+                                            showBorder: false,
                                             child: ListView.builder(
                                               shrinkWrap:
                                                   true, // Crucial for nesting
@@ -633,7 +643,7 @@ class _CTxnsViewState extends State<CTxnsView> {
                                                                       context,
                                                                     ).textTheme.labelSmall!.apply(
                                                                       color: CColors
-                                                                          .darkGrey,
+                                                                          .rOrange,
                                                                       fontStyle:
                                                                           FontStyle
                                                                               .italic,
@@ -684,10 +694,11 @@ class _CTxnsViewState extends State<CTxnsView> {
                                                                           childItem,
                                                                           inventoryItem,
                                                                         );
-                                                                        await txnsController
-                                                                            .fetchUserTxnItems();
+
                                                                         setState(
-                                                                          () {},
+                                                                          () async {
+                                                                            await txnsController.fetchUserTxnItems();
+                                                                          },
                                                                         );
                                                                       },
                                                                       value: 1,

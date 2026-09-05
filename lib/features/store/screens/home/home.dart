@@ -41,8 +41,8 @@ class HomeScreen extends StatelessWidget {
     final navController = Get.put(CNavMenuController());
     final txnsController = Get.put(CTxnsController());
 
-    var salesCount = txnsController.userTxnItems.fold(0.0, (sum, sale) {
-      return sum + sale.quantity;
+    var salesCount = txnsController.userTxns.fold(0.0, (sum, sale) {
+      return sum + sale.totalAmount;
     });
 
     if (invController.inventoryItems.isEmpty ||

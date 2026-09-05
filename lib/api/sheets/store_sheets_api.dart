@@ -138,7 +138,7 @@ class StoreSheetsApi extends GetxController {
   ) async {
     try {
       if (invSheet == null) return false;
-      return invSheet!.values.map.insertRowByKey(id, itemModel);
+      return await invSheet!.values.map.insertRowByKey(id, itemModel);
     } catch (e) {
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
@@ -159,7 +159,7 @@ class StoreSheetsApi extends GetxController {
   }) async {
     try {
       if (invSheet == null) return false;
-      return invSheet!.values.insertValueByKeys(
+      return await invSheet!.values.insertValueByKeys(
         value,
         columnKey: key,
         rowKey: id,
@@ -184,7 +184,7 @@ class StoreSheetsApi extends GetxController {
   }) async {
     try {
       if (invSheet == null) return false;
-      return invSheet!.values.insertValueByKeys(
+      return await invSheet!.values.insertValueByKeys(
         value,
         columnKey: key,
         rowKey: id,
@@ -311,7 +311,7 @@ class StoreSheetsApi extends GetxController {
   ) async {
     try {
       if (txnsSheet == null) return false;
-      return txnsSheet!.values.map.insertRowByKey(soldItemId, receiptItemModel);
+      return await txnsSheet!.values.map.insertRowByKey(soldItemId, receiptItemModel);
     } catch (e) {
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
@@ -337,7 +337,7 @@ class StoreSheetsApi extends GetxController {
   ) async {
     try {
       if (txnsSheet == null) return false;
-      return txnsSheet!.values.map.insertRowByKey(txnId, txnItemModel);
+      return await txnsSheet!.values.map.insertRowByKey(txnId, txnItemModel);
     } catch (e) {
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
@@ -453,7 +453,7 @@ class StoreSheetsApi extends GetxController {
         );
         return false;
       }
-      return contactsSheet!.deleteRow(contactItemIndex);
+      return await contactsSheet!.deleteRow(contactItemIndex);
     } catch (e) {
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(

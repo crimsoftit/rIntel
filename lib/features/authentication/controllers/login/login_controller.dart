@@ -72,11 +72,11 @@ class CLoginController extends GetxController {
         email.text.trim(),
         password.text.trim(),
       );
-      // stop loader
-      CFullScreenLoader.stopLoading();
 
       // redirect to relevant screen
       AuthRepo.instance.screenRedirect();
+      // stop loader
+      CFullScreenLoader.stopLoading();
     } catch (e) {
       CFullScreenLoader.stopLoading();
       if (kDebugMode) {

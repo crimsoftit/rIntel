@@ -120,9 +120,7 @@ class CContactsController extends GetxController {
   Future<void> initContactsSync() async {
     await fetchMyContacts().then(
       (result) async {
-        if (result.isEmpty &&
-            localStorage.read('SyncContactsWithCloud') == true &&
-            myContacts.isEmpty) {
+        if (localStorage.read('SyncContactsWithCloud') == true) {
           if (await importContactsFromCloudFirestore()) {
             localStorage.write('SyncContactsWithCloud', false);
           } else {

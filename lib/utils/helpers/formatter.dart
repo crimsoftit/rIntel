@@ -161,7 +161,7 @@ class CFormatter {
         (item) => item.productId == productId,
       );
 
-      var soldItemIndex = txnsController.sales.indexWhere(
+      var soldItemIndex = txnsController.userTxnItems.indexWhere(
         (item) => item.productId == productId,
       );
       if (itemInvIndex != -1) {
@@ -175,7 +175,7 @@ class CFormatter {
 
         return formattedOutput;
       } else if (soldItemIndex != -1) {
-        var thisItem = txnsController.sales.firstWhereOrNull(
+        var thisItem = txnsController.userTxnItems.firstWhereOrNull(
           (soldItem) => soldItem.productId == productId,
         );
 

@@ -34,11 +34,18 @@ class CFreshDashboardScreen extends StatelessWidget {
         appBar: AppBar(
           automaticallyImplyLeading: false,
           title: Padding(
-            padding: const EdgeInsets.only(left: 0.5, right: 0.5),
+            padding: const EdgeInsets.only(
+              left: 0.5,
+              right: 0.5,
+            ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Icon(Iconsax.menu, size: 25.0, color: CColors.rBrown),
+                Icon(
+                  Iconsax.menu,
+                  size: 25.0,
+                  color: CColors.rBrown,
+                ),
                 CCartCounterIcon(
                   iconColor: CColors.rBrown,
                   showCounterWidget: true,
@@ -47,13 +54,17 @@ class CFreshDashboardScreen extends StatelessWidget {
             ),
           ),
         ),
-        backgroundColor: CColors.rBrown.withValues(alpha: 0.2),
+        backgroundColor: CColors.rBrown.withValues(
+          alpha: 0.2,
+        ),
         body: SingleChildScrollView(
           child: Obx(() {
             return Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                const SizedBox(height: CSizes.defaultSpace / 4.0),
+                const SizedBox(
+                  height: CSizes.defaultSpace / 4.0,
+                ),
 
                 /// -- dashboard header widget --
                 DashboardHeaderWidget(
@@ -67,11 +78,15 @@ class CFreshDashboardScreen extends StatelessWidget {
                 /// -- custom divider --
                 CCustomDivider(),
 
-                const SizedBox(height: CSizes.defaultSpace * 2.5),
+                const SizedBox(
+                  height: CSizes.defaultSpace * 2.5,
+                ),
 
                 CAutoImgSlider(),
 
-                const SizedBox(height: CSizes.defaultSpace * 2.5),
+                const SizedBox(
+                  height: CSizes.defaultSpace * 2.5,
+                ),
                 Text(
                   'welcome aboard!!'.toUpperCase(),
                   style: Theme.of(context).textTheme.bodyLarge!.apply(
@@ -99,7 +114,9 @@ class CFreshDashboardScreen extends StatelessWidget {
                   ),
                 ),
 
-                const SizedBox(height: CSizes.defaultSpace),
+                const SizedBox(
+                  height: CSizes.defaultSpace,
+                ),
 
                 invController.inventoryItems.isEmpty
                     ? CFreshDashboardScreenView(
