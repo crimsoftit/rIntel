@@ -40,7 +40,10 @@ class LoginForm extends StatelessWidget {
                 prefixIcon: Icon(Iconsax.direct_right),
               ),
               validator: (value) {
-                return CValidator.validateEmail(value);
+                return CValidator.validateEmail(
+                  value,
+                  true,
+                );
               },
             ),
 

@@ -1,3 +1,4 @@
+import 'package:rintel/common/widgets/custom_shapes/containers/rounded_container.dart';
 import 'package:rintel/common/widgets/shimmers/vert_items_shimmer.dart';
 import 'package:rintel/features/personalization/controllers/contacts_controller.dart';
 import 'package:rintel/features/personalization/models/contacts_model.dart';
@@ -234,139 +235,129 @@ class CContactsListview extends StatelessWidget {
         // SuspensionUtil.sortListBySuspensionTag(demContacts);
         // SuspensionUtil.setShowSuspensionStatus(demContacts);
 
-        return ListView.builder(
-          itemCount: groupedContacts.keys.length,
-          itemBuilder: (context, groupIndex) {
-            String letter = groupedContacts.keys.elementAt(groupIndex);
-            List<CContactsModel> contacts = groupedContacts[letter]!;
+        return CRoundedContainer(
+          bgColor: CColors.transparent,
+          margin: const EdgeInsets.only(
+            left: 10.0,
+            right: 10.0,
+          ),
+          child: ListView.builder(
+            itemCount: groupedContacts.keys.length,
+            itemBuilder: (context, groupIndex) {
+              String letter = groupedContacts.keys.elementAt(groupIndex);
+              List<CContactsModel> contacts = groupedContacts[letter]!;
 
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                // Section Header (e.g., "A")
-                Padding(
-                  padding: const EdgeInsets.only(
-                    right: 15.0,
-                    top: 7.0,
-                  ),
-                  child: Text(
-                    letter,
-                    style: Theme.of(context).textTheme.labelSmall,
-                  ),
-                ),
-                // Inner ListView for contacts in this group
-                Card(
-                  color: isDarkTheme
-                      ? CColors.rBrown.withValues(
-                          alpha: 0.3,
-                        )
-                      : CColors.lightGrey,
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(
-                      CSizes.borderRadiusLg,
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  // Section Header (e.g., "A")
+                  Padding(
+                    padding: const EdgeInsets.only(
+                      right: 15.0,
+                      top: 7.0,
                     ),
-                    child: ListView.separated(
-                      shrinkWrap: true, // Prevents overflow
-                      physics:
-                          NeverScrollableScrollPhysics(), // Disables inner scrolling
-                      itemCount: contacts.length,
-                      itemBuilder: (context, itemIndex) {
-                        return InkWell(
-                          onTap: () {
-                            Get.toNamed(
-                              '/my_contacts/contact_details',
-                              arguments: contacts[itemIndex].contactId,
-                            );
-                          },
-                          child: ListTile(
-                            contentPadding: EdgeInsets.fromLTRB(
-                              10.0,
-                              2.0,
-                              10.0,
-                              2.0,
-                            ),
-                            horizontalTitleGap: 0.1,
-                            leading: null,
+                    child: Text(
+                      letter,
+                      style: Theme.of(context).textTheme.labelSmall,
+                    ),
+                  ),
+                  // Inner ListView for contacts in this group
+                  Card(
+                    color: isDarkTheme
+                        ? CColors.rBrown.withValues(
+                            alpha: 0.3,
+                          )
+                        : CColors.lightGrey,
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(
+                        CSizes.borderRadiusLg,
+                      ),
+                      child: ListView.separated(
+                        itemCount: contacts.length,
+                        itemBuilder: (context, itemIndex) {
+                          return InkWell(
+                            onTap: () {
+                              Get.toNamed(
+                                '/my_contacts/contact_details',
+                                arguments: contacts[itemIndex].contactId,
+                              );
+                            },
+                            child: ListTile(
+                              contentPadding: EdgeInsets.fromLTRB(
+                                10.0,
+                                2.0,
+                                10.0,
+                                2.0,
+                              ),
+                              horizontalTitleGap: 0.1,
+                              leading: null,
 
-                            title: Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                CircleAvatar(
-                                  backgroundColor:
-                                      CHelperFunctions.randomAestheticColor(),
-                                  radius: 20.0,
-                                  child:
-                                      CValidator.isFirstCharacterALetter(
-                                        contacts[itemIndex].contactName,
-                                      )
-                                      ? Text(
-                                          contacts[itemIndex].contactName[0]
-                                              .toUpperCase(),
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .bodyLarge!
-                                              .apply(
-                                                color: CColors.white,
-                                              ),
+                              title: Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  CircleAvatar(
+                                    backgroundColor:
+                                        CHelperFunctions.randomAestheticColor(),
+                                    radius: 20.0,
+                                    child:
+                                        CValidator.isFirstCharacterALetter(
+                                          contacts[itemIndex].contactName,
                                         )
-                                      : Icon(
-                                          Iconsax.user,
-                                          color: CColors.white,
-                                          size: CSizes.iconSm,
+                                        ? Text(
+                                            contacts[itemIndex].contactName[0]
+                                                .toUpperCase(),
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .bodyLarge!
+                                                .apply(
+                                                  color: CColors.white,
+                                                ),
+                                          )
+                                        : Icon(
+                                            Iconsax.user,
+                                            color: CColors.white,
+                                            size: CSizes.iconSm,
+                                          ),
+                                  ),
+                                  const SizedBox(
+                                    width: CSizes.spaceBtnItems,
+                                  ),
+                                  Text(
+                                    contacts[itemIndex].contactName,
+                                    maxLines: 1,
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .labelMedium!
+                                        .apply(
+                                          fontSizeFactor: 1.1,
                                         ),
-                                ),
-                                const SizedBox(
-                                  width: CSizes.spaceBtnItems,
-                                ),
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      contacts[itemIndex].contactName,
-                                      maxLines: 1,
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .labelMedium!
-                                          .apply(
-                                            fontSizeFactor: 1.1,
-                                          ),
-                                    ),
-
-                                    Text(
-                                      contacts[itemIndex].contactPhone != ''
-                                          ? contacts[itemIndex].contactPhone
-                                          : contacts[itemIndex].contactEmail,
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .labelSmall!
-                                          .apply(
-                                            color: CColors.darkGrey,
-                                            fontStyle: FontStyle.italic,
-                                          ),
-                                    ),
-                                  ],
-                                ),
-                              ],
+                                  ),
+                                ],
+                              ),
+                              titleAlignment: ListTileTitleAlignment.top,
                             ),
-                            titleAlignment: ListTileTitleAlignment.top,
-                          ),
-                        );
-                      },
-                      separatorBuilder: (context, index) {
-                        return Divider(
-                          color: CColors.rBrown,
-                          endIndent: 20.0,
-                          indent: 60.0,
-                          thickness: .3,
-                        );
-                      },
+                          );
+                        },
+
+                        physics:
+                            NeverScrollableScrollPhysics(), // Disables inner scrolling
+                        separatorBuilder: (context, index) {
+                          return Divider(
+                            color: CColors.rBrown,
+                            endIndent: 20.0,
+                            indent: 60.0,
+                            thickness: .3,
+                          );
+                        },
+                        shrinkWrap: true, // Prevents overflow
+                      ),
                     ),
                   ),
-                ),
-              ],
-            );
-          },
+                ],
+              );
+            },
+          ),
         );
       },
     );

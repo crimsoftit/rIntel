@@ -33,7 +33,9 @@ class CReAuthLoginForm extends StatelessWidget {
       ),
       body: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.all(CSizes.defaultSpace),
+          padding: const EdgeInsets.all(
+            CSizes.defaultSpace,
+          ),
           child: Form(
             key: userController.reAuthFormKey,
             child: Column(
@@ -43,12 +45,21 @@ class CReAuthLoginForm extends StatelessWidget {
                 TextFormField(
                   controller: userController.verifyEmail,
                   decoration: const InputDecoration(
-                    prefixIcon: Icon(Iconsax.direct_right),
+                    prefixIcon: Icon(
+                      Iconsax.direct_right,
+                    ),
                     labelText: CTexts.email,
                   ),
-                  validator: CValidator.validateEmail,
+                  validator: (value) {
+                    return CValidator.validateEmail(
+                      value,
+                      true,
+                    );
+                  },
                 ),
-                const SizedBox(height: CSizes.spaceBtnInputFields),
+                const SizedBox(
+                  height: CSizes.spaceBtnInputFields,
+                ),
 
                 // -- password field --
                 Obx(() {
@@ -57,7 +68,9 @@ class CReAuthLoginForm extends StatelessWidget {
                     controller: userController.verifyPassword,
                     decoration: InputDecoration(
                       labelText: CTexts.password,
-                      prefixIcon: const Icon(Iconsax.password_check),
+                      prefixIcon: const Icon(
+                        Iconsax.password_check,
+                      ),
                       suffixIcon: IconButton(
                         onPressed: () {
                           userController.hidePassword.value =
@@ -74,11 +87,16 @@ class CReAuthLoginForm extends StatelessWidget {
                       ),
                     ),
                     validator: (value) {
-                      return CValidator.validateEmptyText('password', value);
+                      return CValidator.validateEmptyText(
+                        'password',
+                        value,
+                      );
                     },
                   );
                 }),
-                const SizedBox(height: CSizes.spaceBtnInputFields),
+                const SizedBox(
+                  height: CSizes.spaceBtnInputFields,
+                ),
 
                 // -- login button --
                 SizedBox(

@@ -298,6 +298,8 @@ class CContactsScreen extends StatelessWidget {
                               await contactsController
                                   .addUpdateContactActionModal(
                                     context,
+                                    null,
+                                    'add',
                                     'Friend',
                                   );
                             },

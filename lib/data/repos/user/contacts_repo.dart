@@ -212,4 +212,29 @@ class CContactsRepo extends GetxController {
       rethrow;
     }
   }
+
+  /// -- update cloud contact --
+  Future<void> updateCloudContact(CContactsModel contact) async {
+    try {
+      firestoreDb
+          .collection('myContacts')
+          .doc(contact.contactId.toString())
+          .update(contact.toMap());
+    } catch (e) {
+      if (kDebugMode) {
+        CPopupSnackBar.errorSnackBar(
+          message: e.toString(),
+          title: "error updating contact on the cloud ",
+        );
+      } else {
+        CPopupSnackBar.errorSnackBar(
+          message:
+              'an unknown error occurred while updating contact on the cloud! please try again later...',
+          title: "error updating contact on the cloud!",
+        );
+      }
+
+      rethrow;
+    }
+  }
 }

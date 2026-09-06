@@ -47,7 +47,12 @@ class ForgotPasswordScreen extends StatelessWidget {
                   prefixIcon: Icon(Iconsax.direct_right),
                   labelText: CTexts.email,
                 ),
-                validator: CValidator.validateEmail,
+                validator: (value) {
+                  return CValidator.validateEmail(
+                    value,
+                    true,
+                  );
+                },
               ),
             ),
 

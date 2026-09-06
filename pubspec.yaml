@@ -122,13 +122,11 @@ dependencies:
   anim_search_bar: any
   azlistview_plus: any
   collection: any
-  # country_picker: any
-  country_picker: any
-  internet_speed_meter: ^1.0.2
-  
-  #csv: any
   csv: ^6.0.0
   equatable: any
+  country_picker: any
+  flutter_multi_formatter: ^2.13.11
+  
   flutter_launcher_icons: ^0.14.4
   flutter_native_splash: any
   flutter_typeahead: ^6.0.0
@@ -136,6 +134,10 @@ dependencies:
   googleapis: any
   http: any
   image_picker: any
+  internet_speed_meter: ^1.0.2
+  
+  #csv: any
+  
   intl: ^0.20.0
   jiffy: any
   logger: any

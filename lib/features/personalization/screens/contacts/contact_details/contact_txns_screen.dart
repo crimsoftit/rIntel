@@ -67,12 +67,19 @@ class CContactTxnsScreen extends StatelessWidget {
               ),
               IconButton(
                 onPressed: () async {
-                  await contactsController.updateContactActionModal(
+                  // await contactsController.updateContactActionModal(
+                  //   context,
+                  //   thisContact,
+                  //   'edit',
+                  // );
+                  // await contactsController.fetchMyContacts();
+                  await contactsController.addUpdateContactActionModal(
                     context,
                     thisContact,
-                    'edit',
+                    'update',
+                    thisContact.contactCategory,
                   );
-                  await contactsController.fetchMyContacts();
+                  contactsController.myContacts.refresh();
                 },
                 icon: Icon(
                   Iconsax.edit,

@@ -1594,9 +1594,25 @@ class CInventoryController extends GetxController {
           : 1;
 
       // -- update entry
-      await dbHelper.updateInventoryItem(
-        inventoryItem,
-      );
+      await dbHelper
+          .updateInventoryItem(
+            inventoryItem,
+          )
+          .then(
+            (updateResult) {
+              if (updateResult >= 1) {
+                storeRepo.updateInvCloudData(inventoryItem);
+              } else {
+                if (kDebugMode) {
+                  CPopupSnackBar.warningSnackBar(
+                    message:
+                        "an error occurred while updating ${inventoryItem.name.toUpperCase()}'s favorite status",
+                    title: 'update failed',
+                  );
+                }
+              }
+            },
+          );
       // -- refresh inventory list
       await fetchUserInventoryItems();
       inventoryItems.refresh();

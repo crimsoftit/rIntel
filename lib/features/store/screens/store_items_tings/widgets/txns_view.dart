@@ -431,8 +431,12 @@ class _CTxnsViewState extends State<CTxnsView> {
                                                 await contactsController
                                                     .addUpdateContactActionModal(
                                                       context,
+                                                      null,
+                                                      'add',
                                                       'Customer',
                                                     );
+                                                contactsController.myContacts
+                                                    .refresh();
                                               },
                                             ),
                                           ),

@@ -346,7 +346,9 @@ class CContactsController extends GetxController {
       // --  start loader --
       isLoading.value = true;
 
-      await dbHelper.updateContact(contact);
+      await dbHelper.updateContact(contact).then((_) {
+        contactsRepo.updateCloudContact(contact);
+      },);
 
       fetchMyContacts();
 
@@ -373,404 +375,406 @@ class CContactsController extends GetxController {
   }
 
   /// -- update contact details modal popup --
-  Future<dynamic> updateContactActionModal(
-    BuildContext context,
-    CContactsModel? contactItem,
-    String updateAction,
-  ) async {
-    try {
-      final isDarkTheme = CHelperFunctions.isDarkMode(context);
-      return await showModalBottomSheet(
-        backgroundColor: isDarkTheme
-            ? CColors.black.withValues(
-                alpha: .7,
-              )
-            : CColors.white,
-        context: context,
-        isDismissible: true,
-        isScrollControlled: true,
-        useSafeArea: true,
-        useRootNavigator: true,
-        builder: (context) {
-          // -- set field values --
+  // Future<dynamic> updateContactActionModal(
+  //   BuildContext context,
+  //   CContactsModel? contactItem,
+  //   String updateAction,
+  // ) async {
+  //   try {
+  //     final isDarkTheme = CHelperFunctions.isDarkMode(context);
+  //     return await showModalBottomSheet(
+  //       backgroundColor: isDarkTheme
+  //           ? CColors.black.withValues(
+  //               alpha: .7,
+  //             )
+  //           : CColors.white,
+  //       context: context,
+  //       isDismissible: true,
+  //       isScrollControlled: true,
+  //       useSafeArea: true,
+  //       useRootNavigator: true,
+  //       builder: (context) {
+  //         // -- set field values --
 
-          contactDialCode.value = contactItem!.contactDialCode != ''
-              ? contactItem.contactDialCode
-              : contactDialCode.value;
+  //         contactDialCode.value = contactItem!.contactDialCode != ''
+  //             ? contactItem.contactDialCode
+  //             : contactDialCode.value;
 
-          txtEmailController.text = txtEmailController.text == ''
-              ? contactItem.contactEmail
-              : txtEmailController.text.trim();
-          txtContactNameController.text =
-              txtContactNameController.text.trim() == ''
-              ? contactItem.contactName
-              : txtContactNameController.text.trim();
-          txtPhoneController.text = txtPhoneController.text == ''
-              ? contactItem.contactPhone
-              : txtPhoneController.text.trim();
+  //         txtEmailController.text = txtEmailController.text == ''
+  //             ? contactItem.contactEmail
+  //             : txtEmailController.text.trim();
+  //         txtContactNameController.text =
+  //             txtContactNameController.text.trim() == ''
+  //             ? contactItem.contactName
+  //             : txtContactNameController.text.trim();
+  //         txtPhoneController.text = txtPhoneController.text == ''
+  //             ? contactItem.contactPhone
+  //             : txtPhoneController.text.trim();
 
-          return SingleChildScrollView(
-            child: Padding(
-              padding: MediaQuery.of(context).viewInsets,
-              child: CRoundedContainer(
-                bgColor: CColors.transparent,
-                // height: updateAction.toLowerCase() == 'edit'.toLowerCase()
-                //     ? CHelperFunctions.screenHeight() * .51
-                //     : CHelperFunctions.screenHeight() * .39,
-                //height: CHelperFunctions.screenHeight() * .49,
-                padding: const EdgeInsets.all(CSizes.lg / 3),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    CircleAvatar(
-                      backgroundColor: CHelperFunctions.randomAestheticColor(),
-                      radius: 20.0,
-                      child:
-                          CValidator.isFirstCharacterALetter(
-                            contactItem.contactName,
-                          )
-                          ? Text(
-                              contactItem.contactName[0].toUpperCase(),
-                              style:
-                                  Theme.of(
-                                    context,
-                                  ).textTheme.bodyLarge!.apply(
-                                    color: CColors.white,
-                                  ),
-                            )
-                          : Icon(
-                              Iconsax.user,
-                              color: CHelperFunctions.randomAestheticColor(),
-                            ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(left: 30.0, right: 0.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            contactItem.contactName.toUpperCase(),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: Theme.of(
-                              context,
-                            ).textTheme.headlineMedium!.apply(),
-                          ),
-                          Obx(() {
-                            return CCustomDropdownBtn(
-                              defaultItemColor: isDarkTheme
-                                  ? CColors.white
-                                  : CColors.rBrown,
-                              defaultItemFontSizeFactor: 1.3,
-                              dropdownItems: contactCategories,
-                              onValueChanged: (value) {
-                                selectedContactCategory.value = value!;
-                              },
-                              selectedValue: setDefaultContactCategory(
-                                contactItem.contactCategory,
-                              ),
-                              underlineColor: CColors.rBrown,
-                              underlineHeight: .8,
-                            );
-                          }),
-                        ],
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(
-                        left: 30.0,
-                        right: 30.0,
-                        top: 30.0,
-                      ),
-                      child: Form(
-                        key: addUpdateContactItemFormKey,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Visibility(
-                              maintainState: false,
-                              visible:
-                                  updateAction.toLowerCase() ==
-                                  'edit'.toLowerCase(),
-                              child: Column(
-                                children: [
-                                  TextFormField(
-                                    autovalidateMode:
-                                        AutovalidateMode.onUserInteraction,
-                                    controller: txtContactNameController,
-                                    decoration: InputDecoration(
-                                      constraints: BoxConstraints(
-                                        minHeight: 60.0,
-                                      ),
-                                      filled: true,
-                                      fillColor: isDarkTheme
-                                          ? CColors.transparent
-                                          : CColors.lightGrey,
-                                      labelText: 'Name',
-                                      labelStyle: Theme.of(
-                                        context,
-                                      ).textTheme.labelSmall,
-                                      prefixIcon: Icon(
-                                        Iconsax.tag,
-                                        color: CColors.darkGrey,
-                                        size: CSizes.iconXs,
-                                      ),
-                                    ),
-                                    style: const TextStyle(
-                                      fontWeight: FontWeight.normal,
-                                    ),
-                                    validator:
-                                        updateAction.toLowerCase() == 'edit'
-                                        ? (value) {
-                                            return CValidator.validateEmptyText(
-                                              'Name',
-                                              value,
-                                            );
-                                          }
-                                        : null,
-                                  ),
-                                  const SizedBox(
-                                    height: CSizes.spaceBtnInputFields,
-                                  ),
-                                ],
-                              ),
-                            ),
+  //         return SingleChildScrollView(
+  //           child: Padding(
+  //             padding: MediaQuery.of(context).viewInsets,
+  //             child: CRoundedContainer(
+  //               bgColor: CColors.transparent,
+  //               // height: updateAction.toLowerCase() == 'edit'.toLowerCase()
+  //               //     ? CHelperFunctions.screenHeight() * .51
+  //               //     : CHelperFunctions.screenHeight() * .39,
+  //               //height: CHelperFunctions.screenHeight() * .49,
+  //               padding: const EdgeInsets.all(CSizes.lg / 3),
+  //               child: Column(
+  //                 crossAxisAlignment: CrossAxisAlignment.center,
+  //                 mainAxisSize: MainAxisSize.min,
+  //                 children: [
+  //                   CircleAvatar(
+  //                     backgroundColor: CHelperFunctions.randomAestheticColor(),
+  //                     radius: 20.0,
+  //                     child:
+  //                         CValidator.isFirstCharacterALetter(
+  //                           contactItem.contactName,
+  //                         )
+  //                         ? Text(
+  //                             contactItem.contactName[0].toUpperCase(),
+  //                             style:
+  //                                 Theme.of(
+  //                                   context,
+  //                                 ).textTheme.bodyLarge!.apply(
+  //                                   color: CColors.white,
+  //                                 ),
+  //                           )
+  //                         : Icon(
+  //                             Iconsax.user,
+  //                             color: CHelperFunctions.randomAestheticColor(),
+  //                           ),
+  //                   ),
+  //                   Padding(
+  //                     padding: const EdgeInsets.only(left: 30.0, right: 0.0),
+  //                     child: Row(
+  //                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  //                       children: [
+  //                         Text(
+  //                           contactItem.contactName.toUpperCase(),
+  //                           maxLines: 1,
+  //                           overflow: TextOverflow.ellipsis,
+  //                           style: Theme.of(
+  //                             context,
+  //                           ).textTheme.headlineMedium!.apply(),
+  //                         ),
+  //                         Obx(() {
+  //                           return CCustomDropdownBtn(
+  //                             defaultItemColor: isDarkTheme
+  //                                 ? CColors.white
+  //                                 : CColors.rBrown,
+  //                             defaultItemFontSizeFactor: 1.3,
+  //                             dropdownItems: contactCategories,
+  //                             onValueChanged: (value) {
+  //                               selectedContactCategory.value = value!;
+  //                             },
+  //                             selectedValue: setDefaultContactCategory(
+  //                               contactItem.contactCategory,
+  //                             ),
+  //                             underlineColor: CColors.rBrown,
+  //                             underlineHeight: .8,
+  //                           );
+  //                         }),
+  //                       ],
+  //                     ),
+  //                   ),
+  //                   Padding(
+  //                     padding: const EdgeInsets.only(
+  //                       left: 30.0,
+  //                       right: 30.0,
+  //                       top: 30.0,
+  //                     ),
+  //                     child: Form(
+  //                       key: addUpdateContactItemFormKey,
+  //                       child: Column(
+  //                         crossAxisAlignment: CrossAxisAlignment.start,
+  //                         children: [
+  //                           Visibility(
+  //                             maintainState: false,
+  //                             visible:
+  //                                 updateAction.toLowerCase() ==
+  //                                 'edit'.toLowerCase(),
+  //                             child: Column(
+  //                               children: [
+  //                                 TextFormField(
+  //                                   autovalidateMode:
+  //                                       AutovalidateMode.onUserInteraction,
+  //                                   controller: txtContactNameController,
+  //                                   decoration: InputDecoration(
+  //                                     constraints: BoxConstraints(
+  //                                       minHeight: 60.0,
+  //                                     ),
+  //                                     filled: true,
+  //                                     fillColor: isDarkTheme
+  //                                         ? CColors.transparent
+  //                                         : CColors.lightGrey,
+  //                                     labelText: 'Name',
+  //                                     labelStyle: Theme.of(
+  //                                       context,
+  //                                     ).textTheme.labelSmall,
+  //                                     prefixIcon: Icon(
+  //                                       Iconsax.tag,
+  //                                       color: CColors.darkGrey,
+  //                                       size: CSizes.iconXs,
+  //                                     ),
+  //                                   ),
+  //                                   style: const TextStyle(
+  //                                     fontWeight: FontWeight.normal,
+  //                                   ),
+  //                                   validator:
+  //                                       updateAction.toLowerCase() == 'edit'
+  //                                       ? (value) {
+  //                                           return CValidator.validateEmptyText(
+  //                                             'Name',
+  //                                             value,
+  //                                           );
+  //                                         }
+  //                                       : null,
+  //                                 ),
+  //                                 const SizedBox(
+  //                                   height: CSizes.spaceBtnInputFields,
+  //                                 ),
+  //                               ],
+  //                             ),
+  //                           ),
 
-                            // CInternationalPhoneNumberInput(
-                            //   controller: txtPhoneController,
-                            // ),
+  //                           // CInternationalPhoneNumberInput(
+  //                           //   controller: txtPhoneController,
+  //                           // ),
 
-                            // const SizedBox(
-                            //   height: CSizes.spaceBtnInputFields,
-                            // ),
-                            IntlPhoneField(
-                              controller: txtPhoneController,
-                              decoration: InputDecoration(
-                                border: OutlineInputBorder(),
-                                fillColor: isDarkTheme
-                                    ? CColors.transparent
-                                    : CColors.lightGrey,
-                                labelText: 'Phone number',
-                              ),
-                              // Default country code (e.g., India)
-                              // initialCountryCode: contactItem.contactIsoCode != ''
-                              //     ? contactItem.contactIsoCode
-                              //     : 'UG',
-                              initialCountryCode:
-                                  contactItem.contactCountryCode,
+  //                           // const SizedBox(
+  //                           //   height: CSizes.spaceBtnInputFields,
+  //                           // ),
+  //                           IntlPhoneField(
+  //                             controller: txtPhoneController,
+  //                             decoration: InputDecoration(
+  //                               border: OutlineInputBorder(),
+  //                               fillColor: isDarkTheme
+  //                                   ? CColors.transparent
+  //                                   : CColors.lightGrey,
+  //                               labelText: 'Phone number',
+  //                             ),
+  //                             // Default country code (e.g., India)
+  //                             // initialCountryCode: contactItem.contactIsoCode != ''
+  //                             //     ? contactItem.contactIsoCode
+  //                             //     : 'UG',
+  //                             initialCountryCode:
+  //                                 contactItem.contactCountryCode,
 
-                              invalidNumberMessage: 'Invalid phone number!',
-                              onChanged: (phone) {
-                                contactCountryCode.value = phone.countryISOCode;
+  //                             invalidNumberMessage: 'Invalid phone number!',
+  //                             onChanged: (phone) {
+  //                               contactCountryCode.value = phone.countryISOCode;
 
-                                contactDialCode.value = phone.countryCode;
+  //                               contactDialCode.value = phone.countryCode;
 
-                                if (kDebugMode) {
-                                  print('=========\n');
-                                  print('country code: ${phone.countryCode}\n');
-                                  print('---------\n');
-                                  print(
-                                    'country iso code: ${phone.countryISOCode}\n',
-                                  );
-                                  print('---------\n');
-                                  print(
-                                    'complete number: ${phone.completeNumber}\n',
-                                  );
-                                  print('=========\n');
-                                }
-                              },
-                              onCountryChanged: (country) {
-                                contactCountryCode.value = country.code;
+  //                               if (kDebugMode) {
+  //                                 print('=========\n');
+  //                                 print('country code: ${phone.countryCode}\n');
+  //                                 print('---------\n');
+  //                                 print(
+  //                                   'country iso code: ${phone.countryISOCode}\n',
+  //                                 );
+  //                                 print('---------\n');
+  //                                 print(
+  //                                   'complete number: ${phone.completeNumber}\n',
+  //                                 );
+  //                                 print('=========\n');
+  //                               }
+  //                             },
+  //                             onCountryChanged: (country) {
+  //                               contactCountryCode.value = country.code;
 
-                                contactDialCode.value = country.dialCode;
+  //                               contactDialCode.value = country.dialCode;
 
-                                if (kDebugMode) {
-                                  print('=========\n');
-                                  print('country code: ${country.code}\n');
-                                  print('---------\n');
-                                  print('dial code: ${country.dialCode}');
-                                  print('---------\n');
-                                  print(
-                                    'full country code: ${country.fullCountryCode}\n',
-                                  );
-                                  print('=========\n');
-                                }
-                              },
-                            ),
-                            const SizedBox(height: CSizes.spaceBtnInputFields),
-                            CCustomTypeaheadField(
-                              fieldValidator: updateAction == 'add email'
-                                  ? (value) {
-                                      return CValidator.validateEmail(value);
-                                    }
-                                  : null,
-                              fillColor: isDarkTheme
-                                  ? CColors.transparent
-                                  : CColors.lightGrey,
-                              focusedBorderColor: isDarkTheme
-                                  ? CColors.white
-                                  : CColors.rBrown,
-                              includeAvatarOnSuggestion: true,
-                              includePrefixIcon: true,
-                              labelTxt: 'E-mail address',
-                              onFieldValueChanged: (value) {
-                                txtEmailController.text = value.trim();
-                              },
-                              onItemSelected: (suggestion) {
-                                txtEmailController.text =
-                                    suggestion.contactEmail;
-                              },
-                              prefixIcon: Icon(
-                                Icons.contact_mail,
-                                color: CColors.darkGrey,
-                                size: CSizes.iconXs,
-                              ),
-                              typeAheadFieldController: txtEmailController,
-                            ),
-                            const SizedBox(height: CSizes.spaceBtnInputFields),
+  //                               if (kDebugMode) {
+  //                                 print('=========\n');
+  //                                 print('country code: ${country.code}\n');
+  //                                 print('---------\n');
+  //                                 print('dial code: ${country.dialCode}');
+  //                                 print('---------\n');
+  //                                 print(
+  //                                   'full country code: ${country.fullCountryCode}\n',
+  //                                 );
+  //                                 print('=========\n');
+  //                               }
+  //                             },
+  //                           ),
+  //                           const SizedBox(height: CSizes.spaceBtnInputFields),
+  //                           CCustomTypeaheadField(
+  //                             fieldValidator: updateAction == 'add email'
+  //                                 ? (value) {
+  //                                     return CValidator.validateEmail(value);
+  //                                   }
+  //                                 : null,
+  //                             fillColor: isDarkTheme
+  //                                 ? CColors.transparent
+  //                                 : CColors.lightGrey,
+  //                             focusedBorderColor: isDarkTheme
+  //                                 ? CColors.white
+  //                                 : CColors.rBrown,
+  //                             includeAvatarOnSuggestion: true,
+  //                             includePrefixIcon: true,
+  //                             labelTxt: 'E-mail address',
+  //                             onFieldValueChanged: (value) {
+  //                               txtEmailController.text = value.trim();
+  //                             },
+  //                             onItemSelected: (suggestion) {
+  //                               txtEmailController.text =
+  //                                   suggestion.contactEmail;
+  //                             },
+  //                             prefixIcon: Icon(
+  //                               Icons.contact_mail,
+  //                               color: CColors.darkGrey,
+  //                               size: CSizes.iconXs,
+  //                             ),
+  //                             typeAheadFieldController: txtEmailController,
+  //                           ),
+  //                           const SizedBox(height: CSizes.spaceBtnInputFields),
 
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Expanded(
-                                  flex: 4,
-                                  child: TextButton.icon(
-                                    icon: Icon(
-                                      Iconsax.save_add,
-                                      size: CSizes.iconSm,
-                                      color: isDarkTheme
-                                          ? CColors.rBrown
-                                          : CColors.white,
-                                    ),
-                                    label: Text(
-                                      'Update',
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .labelMedium!
-                                          .apply(
-                                            color: isDarkTheme
-                                                ? CColors.rBrown
-                                                : CColors.white,
-                                          ),
-                                    ),
-                                    style: ElevatedButton.styleFrom(
-                                      foregroundColor: CColors
-                                          .white, // foreground (text) color
-                                      backgroundColor: isDarkTheme
-                                          ? CColors.white
-                                          : CColors.rBrown, // background color
-                                    ),
-                                    onPressed: () async {
-                                      // -- form validation
-                                      if (!addUpdateContactItemFormKey
-                                          .currentState!
-                                          .validate()) {
-                                        return;
-                                      }
+  //                           Row(
+  //                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  //                             children: [
+  //                               Expanded(
+  //                                 flex: 4,
+  //                                 child: TextButton.icon(
+  //                                   icon: Icon(
+  //                                     Iconsax.save_add,
+  //                                     size: CSizes.iconSm,
+  //                                     color: isDarkTheme
+  //                                         ? CColors.rBrown
+  //                                         : CColors.white,
+  //                                   ),
+  //                                   label: Text(
+  //                                     'Update',
+  //                                     style: Theme.of(context)
+  //                                         .textTheme
+  //                                         .labelMedium!
+  //                                         .apply(
+  //                                           color: isDarkTheme
+  //                                               ? CColors.rBrown
+  //                                               : CColors.white,
+  //                                         ),
+  //                                   ),
+  //                                   style: ElevatedButton.styleFrom(
+  //                                     foregroundColor: CColors
+  //                                         .white, // foreground (text) color
+  //                                     backgroundColor: isDarkTheme
+  //                                         ? CColors.white
+  //                                         : CColors.rBrown, // background color
+  //                                   ),
+  //                                   onPressed: () async {
+  //                                     // -- form validation
+  //                                     if (!addUpdateContactItemFormKey
+  //                                         .currentState!
+  //                                         .validate()) {
+  //                                       return;
+  //                                     }
 
-                                      // contactItem.contactCountryCode =
-                                      //     contactItem.contactCountryCode == ''
-                                      //     ? setCountryCodeFromDialCode(
-                                      //         contactItem,
-                                      //       )
-                                      //     : contactItem.contactCountryCode;
-                                      contactItem.contactDialCode =
-                                          contactItem.contactDialCode == ''
-                                          ? contactDialCode.value
-                                          : contactItem.contactDialCode;
-                                      contactItem.contactPhone =
-                                          txtPhoneController.text.trim();
-                                      contactItem.contactEmail =
-                                          txtEmailController.text.trim();
-                                      contactItem.contactName =
-                                          txtContactNameController.text
-                                                      .trim() !=
-                                                  '' &&
-                                              updateAction == 'edit'
-                                          ? txtContactNameController.text.trim()
-                                          : contactItem.contactName;
+  //                                     // contactItem.contactCountryCode =
+  //                                     //     contactItem.contactCountryCode == ''
+  //                                     //     ? setCountryCodeFromDialCode(
+  //                                     //         contactItem,
+  //                                     //       )
+  //                                     //     : contactItem.contactCountryCode;
+  //                                     contactItem.contactDialCode =
+  //                                         contactItem.contactDialCode == ''
+  //                                         ? contactDialCode.value
+  //                                         : contactItem.contactDialCode;
+  //                                     contactItem.contactPhone =
+  //                                         txtPhoneController.text.trim();
+  //                                     contactItem.contactEmail =
+  //                                         txtEmailController.text.trim();
+  //                                     contactItem.contactName =
+  //                                         txtContactNameController.text
+  //                                                     .trim() !=
+  //                                                 '' &&
+  //                                             updateAction == 'edit'
+  //                                         ? txtContactNameController.text.trim()
+  //                                         : contactItem.contactName;
 
-                                      contactItem.contactCategory =
-                                          selectedContactCategory.value;
+  //                                     contactItem.contactCategory =
+  //                                         selectedContactCategory.value;
 
-                                      contactItem.lastModified = DateFormat(
-                                        'yyyy-MM-dd kk:mm',
-                                      ).format(clock.now());
+  //                                     contactItem.lastModified = DateFormat(
+  //                                       'yyyy-MM-dd kk:mm',
+  //                                     ).format(clock.now());
 
-                                      await updateContact(contactItem);
-                                      if (await updateContact(contactItem)) {
-                                        Navigator.pop(
-                                          Get.overlayContext!,
-                                          true,
-                                        );
+  //                                     await updateContact(contactItem);
+  //                                     if (await updateContact(contactItem)) {
+  //                                       Navigator.pop(
+  //                                         Get.overlayContext!,
+  //                                         true,
+  //                                       );
 
-                                        resetFields();
-                                      }
-                                    },
-                                  ),
-                                ),
-                                const SizedBox(
-                                  width: CSizes.spaceBtnSections / 4,
-                                ),
-                                Expanded(
-                                  flex: 4,
-                                  child: TextButton.icon(
-                                    icon: const Icon(
-                                      Iconsax.undo,
-                                      size: CSizes.iconSm,
-                                      color: CColors.rBrown,
-                                    ),
-                                    label: Text(
-                                      'Back',
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .labelMedium!
-                                          .apply(color: CColors.rBrown),
-                                    ),
-                                    style: ElevatedButton.styleFrom(
-                                      foregroundColor: CColors
-                                          .rBrown, // foreground (text) color
-                                      backgroundColor:
-                                          CColors.white, // background color
-                                    ),
-                                    onPressed: () {
-                                      //Navigator.pop(context, true);
+  //                                       resetFields();
+  //                                     }
+  //                                   },
+  //                                 ),
+  //                               ),
+  //                               const SizedBox(
+  //                                 width: CSizes.spaceBtnSections / 4,
+  //                               ),
+  //                               Expanded(
+  //                                 flex: 4,
+  //                                 child: TextButton.icon(
+  //                                   icon: const Icon(
+  //                                     Iconsax.undo,
+  //                                     size: CSizes.iconSm,
+  //                                     color: CColors.rBrown,
+  //                                   ),
+  //                                   label: Text(
+  //                                     'Back',
+  //                                     style: Theme.of(context)
+  //                                         .textTheme
+  //                                         .labelMedium!
+  //                                         .apply(color: CColors.rBrown),
+  //                                   ),
+  //                                   style: ElevatedButton.styleFrom(
+  //                                     foregroundColor: CColors
+  //                                         .rBrown, // foreground (text) color
+  //                                     backgroundColor:
+  //                                         CColors.white, // background color
+  //                                   ),
+  //                                   onPressed: () {
+  //                                     //Navigator.pop(context, true);
 
-                                      resetFields();
-                                      Navigator.pop(Get.overlayContext!, true);
-                                    },
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          );
-        },
-      );
-    } catch (e) {
-      if (kDebugMode) {
-        print('error displaying bottom sheet modal: $e');
-        CPopupSnackBar.errorSnackBar(
-          message: 'error displaying bottom sheet modal: $e',
-          title: 'error popping bottom sheet modal!',
-        );
-      }
-      rethrow;
-    }
-  }
+  //                                     resetFields();
+  //                                     Navigator.pop(Get.overlayContext!, true);
+  //                                   },
+  //                                 ),
+  //                               ),
+  //                             ],
+  //                           ),
+  //                         ],
+  //                       ),
+  //                     ),
+  //                   ),
+  //                 ],
+  //               ),
+  //             ),
+  //           ),
+  //         );
+  //       },
+  //     );
+  //   } catch (e) {
+  //     if (kDebugMode) {
+  //       print('error displaying bottom sheet modal: $e');
+  //       CPopupSnackBar.errorSnackBar(
+  //         message: 'error displaying bottom sheet modal: $e',
+  //         title: 'error popping bottom sheet modal!',
+  //       );
+  //     }
+  //     rethrow;
+  //   }
+  // }
 
   /// -- add contact modal popup--
   Future<dynamic> addUpdateContactActionModal(
     BuildContext context,
-    String? presetCategory,
+    CContactsModel? contact,
+    String action,
+    presetCategory,
   ) async {
     final isDarkTheme = CHelperFunctions.isDarkMode(context);
 
@@ -795,7 +799,6 @@ class CContactsController extends GetxController {
               padding: MediaQuery.of(context).viewInsets,
               child: CRoundedContainer(
                 bgColor: CColors.transparent,
-                height: CHelperFunctions.screenHeight() * .59,
                 padding: const EdgeInsets.only(
                   left: CSizes.lg / 4,
                   right: CSizes.lg / 4,
@@ -818,21 +821,34 @@ class CContactsController extends GetxController {
                             backgroundColor:
                                 CHelperFunctions.randomAestheticColor(),
                             radius: 15.0,
-                            child: Icon(
-                              Iconsax.user,
-                              color: CColors.white,
-                              size: CSizes.iconSm,
-                            ),
+                            child: action == 'update'
+                                ? Text(
+                                    contact!.contactName[0].toUpperCase(),
+                                    style:
+                                        Theme.of(
+                                          context,
+                                        ).textTheme.bodyLarge!.apply(
+                                          color: CColors.white,
+                                        ),
+                                  )
+                                : Icon(
+                                    Iconsax.user,
+                                    color: CColors.white,
+                                    size: CSizes.iconSm,
+                                  ),
                           ),
                         ],
                       ),
                     ),
                     Text(
-                      'add contact',
+                      '$action contact',
                       style: Theme.of(context).textTheme.labelLarge!.apply(),
                     ),
 
-                    CAddUpdateContactForm(),
+                    CAddUpdateContactForm(
+                      contact: contact,
+                      formAction: action,
+                    ),
                   ],
                 ),
               ),
@@ -1489,192 +1505,6 @@ class CContactsController extends GetxController {
     }
   }
 
-  /// -- add unsynced contacts to cloud --
-  // Future<bool> addUnsyncedContactAppendsToCloud() async {
-  //   try {
-  //     // -- start loader --
-  //     isLoading.value = true;
-
-  //     await fetchMyContacts();
-
-  //     // -- check internet connectivity
-  //     final isConnectedToInternet = await CNetworkManager.instance
-  //         .isConnected();
-
-  //     if (isConnectedToInternet &&
-  //         CNetworkManager.instance.connectionIsStable.value) {
-  //       var cloudContactAppends = unsyncedContactAppends.map((element) {
-  //         return {
-  //           'contactId': element.contactId,
-  //           'addedBy': element.addedBy,
-  //           'contactName': element.contactName,
-  //           'contactCountryCode': element.contactCountryCode,
-  //           'contactDialCode': element.contactDialCode,
-  //           'contactPhone': element.contactPhone,
-  //           'contactEmail': element.contactEmail,
-  //           'contactCategory': element.contactCategory,
-  //           'lastModified': element.lastModified,
-  //           'createdAt': element.createdAt,
-  //           'isSynced': 1,
-  //           'syncAction': 'none',
-  //           'isStarred': element.isStarred,
-  //           'isTrashed': element.isTrashed,
-  //         };
-  //       }).toList();
-
-  //       if (cloudContactAppends.isNotEmpty ||
-  //           unsyncedContactAppends.isNotEmpty) {
-  //         await StoreSheetsApi.addLocalContactsToCloud(
-  //           cloudContactAppends,
-  //         ).then(
-  //           (_) async {
-  //             await updateSyncedContactsLocally();
-  //           },
-  //         );
-  //       } else {
-  //         CPopupSnackBar.customToast(
-  //           forInternetConnectivityStatus: false,
-  //           message: 'rada safi nani...',
-  //         );
-  //       }
-  //       // -- stop loader --
-  //       isLoading.value = false;
-  //       fetchMyContacts();
-  //       return true;
-  //     } else {
-  //       CPopupSnackBar.customToast(
-  //         forInternetConnectivityStatus: false,
-  //         message:
-  //             "Your internet connection is not stable enough for cloud sync!",
-  //       );
-  //       // -- stop loader --
-  //       isLoading.value = false;
-  //       return false;
-  //     }
-  //   } catch (e) {
-  //     // -- stop loader --
-  //     isLoading.value = false;
-  //     if (kDebugMode) {
-  //       CPopupSnackBar.errorSnackBar(
-  //         message: 'error adding contact to cloud: $e',
-  //         title: 'error adding contact to cloud',
-  //       );
-  //     } else {
-  //       CPopupSnackBar.errorSnackBar(
-  //         message:
-  //             'Unable to add unsynced contacts to cloud! Please try again later..',
-  //         title: 'error adding contact to cloud',
-  //       );
-  //     }
-  //     rethrow;
-  //   }
-  // }
-
-  /// -- update synced contacts locally --
-  // Future<void> updateSyncedContactsLocally() async {
-  //   try {
-  //     if (unsyncedContactAppends.isNotEmpty) {
-  //       for (var contactAppend in unsyncedContactAppends) {
-  //         var forSyncContact = CContactsModel(
-  //           contactAppend.contactId,
-  //           contactAppend.addedBy,
-  //           contactAppend.contactName,
-  //           contactAppend.contactCountryCode,
-  //           contactAppend.contactDialCode,
-  //           contactAppend.contactPhone,
-  //           contactAppend.contactEmail,
-  //           contactAppend.contactCategory,
-  //           contactAppend.lastModified,
-  //           contactAppend.createdAt,
-
-  //           contactAppend.isStarred,
-  //           contactAppend.isTrashed,
-  //         );
-
-  //         /// -- TODO: consider batch insert, updates, deletions for performance reasons --
-  //         await dbHelper.updateContact(forSyncContact);
-  //       }
-  //     }
-
-  //     fetchMyContacts();
-  //   } catch (e) {
-  //     if (kDebugMode) {
-  //       CPopupSnackBar.errorSnackBar(
-  //         message: 'error updating contacts\' sync status locally: $e',
-  //         title: 'error updating contacts\' sync status!',
-  //       );
-  //     } else {
-  //       CPopupSnackBar.errorSnackBar(
-  //         message:
-  //             'Unable to update contacts\' sync status on your devices! Please try again later...',
-  //         title: 'error updating contacts\' sync status!',
-  //       );
-  //     }
-  //     rethrow;
-  //   }
-  // }
-
-  // /// -- import contacts from cloud to local storage --
-  // Future<bool> importContactsFromCloud() async {
-  //   try {
-  //     // -- start loader --
-  //     processingContactsSync.value = true;
-
-  //     await fetchUserCloudContacts().then(
-  //       (result) async {
-  //         if (userCloudContacts.isNotEmpty &&
-  //             await CNetworkManager.instance.isConnected() &&
-  //             CNetworkManager.instance.connectionIsStable.value) {
-  //           for (var contact in userCloudContacts) {
-  //             var forImportContacts = CContactsModel(
-  //               contact.contactId,
-  //               contact.addedBy,
-  //               contact.contactName,
-  //               contact.contactCountryCode,
-  //               contact.contactDialCode,
-  //               contact.contactPhone,
-  //               contact.contactEmail,
-  //               contact.contactCategory,
-  //               contact.lastModified,
-  //               contact.createdAt,
-  //               contact.isStarred,
-  //               contact.isTrashed,
-  //             );
-
-  //             // -- save imported data to local sqflite database --
-  //             //dbHelper.addContact(forImportContacts);
-  //           }
-  //         }
-  //       },
-  //     );
-
-  //     // -- refresh myContacts list --
-  //     await fetchMyContacts();
-  //     myContacts.refresh();
-
-  //     // -- stop loader --
-  //     processingContactsSync.value = false;
-
-  //     return true;
-  //   } catch (e) {
-  //     // -- stop loader --
-  //     processingContactsSync.value = false;
-  //     if (kDebugMode) {
-  //       CPopupSnackBar.errorSnackBar(
-  //         message: 'error importing contacts from cloud: $e',
-  //         title: 'error importing contacts from cloud!',
-  //       );
-  //     } else {
-  //       CPopupSnackBar.errorSnackBar(
-  //         message:
-  //             'Unable to import your contacts from cloud! Please try again later...',
-  //         title: 'error importing contacts from cloud!',
-  //       );
-  //     }
-  //     rethrow;
-  //   }
-  // }
-
   /// -- fetch all contacts from cloud --
   Future<bool> fetchUserCloudContacts() async {
     try {
@@ -1842,8 +1672,7 @@ class CContactsController extends GetxController {
       //   forInternetConnectivityStatus: false,
       //   message: 'contact category ALREADY set',
       // );
-      selectedContactCategory.value =
-          presetCategory ?? selectedContactCategory.value;
+      selectedContactCategory.value = selectedContactCategory.value;
     }
 
     return selectedContactCategory.value;

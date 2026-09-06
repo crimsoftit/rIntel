@@ -76,7 +76,12 @@ class CSignupForm extends StatelessWidget {
               labelText: CTexts.email,
               prefixIcon: Icon(Iconsax.direct),
             ),
-            validator: (value) => CValidator.validateEmail(value),
+            validator: (value) {
+              return CValidator.validateEmail(
+                value,
+                true,
+              );
+            },
           ),
 
           const SizedBox(height: CSizes.spaceBtnInputFields),

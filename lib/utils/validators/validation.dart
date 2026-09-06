@@ -107,16 +107,16 @@ class CValidator {
   }
 
   /* ========== validate email ========== */
-  static String? validateEmail(String? value) {
-    if (value == null || value.isEmpty) {
-      return 'email is required!';
-    }
+  static String? validateEmail(String? value, bool validateEmptyField) {
+    if (validateEmptyField && (value == null || value.isEmpty)) {
+      return '*email is required!';
+    } else {
+      // -- regular expression for email validation --
+      final emailRegExp = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
 
-    // -- regular expression for email validation --
-    final emailRegExp = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
-
-    if (!emailRegExp.hasMatch(value.trim())) {
-      return 'invalid e-mail address!';
+      if (!emailRegExp.hasMatch(value!.trim()) && value != '') {
+        return '*invalid e-mail address!';
+      }
     }
 
     return null;

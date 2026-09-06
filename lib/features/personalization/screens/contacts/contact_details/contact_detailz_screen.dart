@@ -73,12 +73,13 @@ class CContactDetailsScreen extends StatelessWidget {
               ),
               IconButton(
                 onPressed: () async {
-                  await contactsController.updateContactActionModal(
+                  await contactsController.addUpdateContactActionModal(
                     context,
                     contactItem,
-                    'edit',
+                    'update',
+                    'Customer',
                   );
-                  await contactsController.fetchMyContacts();
+                  contactsController.myContacts.refresh();
                 },
                 icon: Icon(
                   Iconsax.edit,
@@ -284,12 +285,14 @@ class CContactDetailsScreen extends StatelessWidget {
                     ),
                     onTap: contactItem.contactPhone == ''
                         ? () async {
-                            await contactsController.updateContactActionModal(
-                              context,
-                              contactItem,
-                              'add phone',
-                            );
-                            await contactsController.fetchMyContacts();
+                            await contactsController
+                                .addUpdateContactActionModal(
+                                  context,
+                                  contactItem,
+                                  'update',
+                                  contactItem.contactCategory,
+                                );
+                            contactsController.myContacts.refresh();
                           }
                         : null,
                     subTitle: contactItem.contactPhone != '' ? 'Mobile' : '',
@@ -349,12 +352,13 @@ class CContactDetailsScreen extends StatelessWidget {
                             ? null
                             : () async {
                                 await contactsController
-                                    .updateContactActionModal(
+                                    .addUpdateContactActionModal(
                                       context,
                                       contactItem,
-                                      'add email',
+                                      'update',
+                                      contactItem.contactCategory,
                                     );
-                                await contactsController.fetchMyContacts();
+                                contactsController.myContacts.refresh();
                               },
                         child: Icon(
                           contactItem.contactEmail != ''
@@ -377,12 +381,14 @@ class CContactDetailsScreen extends StatelessWidget {
                     onTap: contactItem.contactEmail != ''
                         ? null
                         : () async {
-                            await contactsController.updateContactActionModal(
-                              context,
-                              contactItem,
-                              'add email',
-                            );
-                            await contactsController.fetchMyContacts();
+                            await contactsController
+                                .addUpdateContactActionModal(
+                                  context,
+                                  contactItem,
+                                  'update',
+                                  contactItem.contactCategory,
+                                );
+                            contactsController.myContacts.refresh();
                           },
                     subTitle: contactItem.contactEmail != '' ? 'Email' : '',
                     title: contactItem.contactEmail != ''
@@ -407,91 +413,99 @@ class CContactDetailsScreen extends StatelessWidget {
                     height: CSizes.spaceBtnItems / 3.0,
                   ),
 
-                  Padding(
-                    padding: const EdgeInsets.only(
-                      bottom: 5.0,
-                      left: 20.0,
-                      top: 20.0,
-                    ),
-                    child: const CSectionHeading(
-                      btnTitle: '',
-                      editFontSize: true,
-                      fSize: 12.0,
-                      showActionBtn: false,
-                      title: 'Txns',
-                    ),
-                  ),
-
                   // -- contact purchases display --
                   Visibility(
                     maintainState: false,
                     visible: contactsController.contactHasPurchases(
                       contactItem,
                     ),
-                    child: CMenuTile(
-                      bgColor: CColors.rBrown.withValues(
-                        alpha: .2,
-                      ),
-                      containerWidth: CHelperFunctions.screenWidth() * .855,
-                      displayTrailingWidget: true,
-                      icon: Iconsax.user_edit,
-                      leadingWidget: IconButton(
-                        icon: Icon(
-                          Icons.monetization_on,
-                          color: CColors.rBrown,
-                          //size: CSizes.iconMd,
-                        ),
-                        onPressed: () {
-                          Get.toNamed(
-                            '/my_contacts/contact_txns',
-                            arguments: contactItem.contactId,
-                          );
-                        },
-                      ),
-                      onTap: () {
-                        Get.toNamed(
-                          '/my_contacts/contact_txns',
-                          arguments: contactItem.contactId,
-                        );
-                      },
-                      subTitleWidget: CRoundedContainer(
-                        bgColor: CColors.transparent,
-                        padding: const EdgeInsets.only(
-                          top: 5.0,
-                          bottom: 10.0,
-                        ),
-                        child: Text(
-                          'credit: $userCurrency.${contactsController.contactInvoicedPurchasesValue.value}',
-                          style: Theme.of(context).textTheme.labelMedium!.apply(
-                            color: isDarkTheme ? CColors.white : CColors.rBrown,
-                            fontSizeFactor: .9,
-                            fontStyle: FontStyle.italic,
+                    child: Column(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(
+                            bottom: 5.0,
+                            left: 20.0,
+                            top: 20.0,
+                          ),
+                          child: const CSectionHeading(
+                            btnTitle: '',
+                            editFontSize: true,
+                            fSize: 12.0,
+                            showActionBtn: false,
+                            title: 'Txns',
                           ),
                         ),
-                      ),
-                      title:
-                          'Purchases - $userCurrency${contactsController.contactTotalPurchasesValue.value}',
-                      titleMaxLines: 1,
-                      titleStyle: Theme.of(context).textTheme.headlineMedium!
-                          .apply(
-                            color: CColors.rBrown,
-                            fontSizeFactor: .85,
+                        CMenuTile(
+                          bgColor: CColors.rBrown.withValues(
+                            alpha: .2,
                           ),
-                      titleTopPadding: 5.0,
+                          containerWidth: CHelperFunctions.screenWidth() * .855,
+                          displayTrailingWidget: true,
+                          icon: Iconsax.user_edit,
+                          leadingWidget: IconButton(
+                            icon: Icon(
+                              Icons.monetization_on,
+                              color: CColors.rBrown,
+                              //size: CSizes.iconMd,
+                            ),
+                            onPressed: () {
+                              Get.toNamed(
+                                '/my_contacts/contact_txns',
+                                arguments: contactItem.contactId,
+                              );
+                            },
+                          ),
+                          onTap: () {
+                            Get.toNamed(
+                              '/my_contacts/contact_txns',
+                              arguments: contactItem.contactId,
+                            );
+                          },
+                          subTitleWidget: CRoundedContainer(
+                            bgColor: CColors.transparent,
+                            padding: const EdgeInsets.only(
+                              top: 5.0,
+                              bottom: 10.0,
+                            ),
+                            child: Text(
+                              'credit: $userCurrency.${contactsController.contactInvoicedPurchasesValue.value}',
+                              style: Theme.of(context).textTheme.labelMedium!
+                                  .apply(
+                                    color: isDarkTheme
+                                        ? CColors.white
+                                        : CColors.rBrown,
+                                    fontSizeFactor: .9,
+                                    fontStyle: FontStyle.italic,
+                                  ),
+                            ),
+                          ),
+                          title:
+                              'Purchases - $userCurrency${contactsController.contactTotalPurchasesValue.value}',
+                          titleMaxLines: 1,
+                          titleStyle: Theme.of(context)
+                              .textTheme
+                              .headlineMedium!
+                              .apply(
+                                color: CColors.rBrown,
+                                fontSizeFactor: .85,
+                              ),
+                          titleTopPadding: 5.0,
 
-                      trailing: IconButton(
-                        onPressed: () {
-                          Get.toNamed(
-                            '/my_contacts/contact_txns',
-                            arguments: contactItem.contactId,
-                          );
-                        },
-                        icon: const Icon(
-                          Iconsax.arrow_right,
-                          color: CColors.rBrown,
+                          trailing: IconButton(
+                            onPressed: () {
+                              Get.toNamed(
+                                '/my_contacts/contact_txns',
+                                arguments: contactItem.contactId,
+                              );
+                            },
+                            icon: const Icon(
+                              Iconsax.arrow_right,
+                              color: CColors.rBrown,
+                            ),
+                          ),
+                          useCustomLeadingWiget: true,
                         ),
-                      ),
-                      useCustomLeadingWiget: true,
+                      ],
                     ),
                   ),
                   const SizedBox(
