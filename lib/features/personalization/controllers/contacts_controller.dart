@@ -4,10 +4,8 @@ import 'dart:io';
 import 'package:clock/clock.dart';
 import 'package:country_picker/country_picker.dart';
 import 'package:rintel/api/sheets/store_sheets_api.dart';
-import 'package:rintel/common/widgets/buttons/custom_dropdown_btn.dart';
 import 'package:rintel/common/widgets/custom_shapes/containers/rounded_container.dart';
 import 'package:rintel/common/widgets/flushbars/flushbars.dart';
-import 'package:rintel/common/widgets/txt_fields/custom_type_ahead_field.dart';
 import 'package:rintel/data/repos/user/contacts_repo.dart';
 import 'package:rintel/features/personalization/controllers/user_controller.dart';
 import 'package:rintel/features/personalization/models/contacts_del_model.dart';
@@ -346,9 +344,11 @@ class CContactsController extends GetxController {
       // --  start loader --
       isLoading.value = true;
 
-      await dbHelper.updateContact(contact).then((_) {
-        contactsRepo.updateCloudContact(contact);
-      },);
+      await dbHelper.updateContact(contact).then(
+        (_) {
+          contactsRepo.updateCloudContact(contact);
+        },
+      );
 
       fetchMyContacts();
 

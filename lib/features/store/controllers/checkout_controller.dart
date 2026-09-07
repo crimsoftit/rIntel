@@ -386,69 +386,95 @@ class CCheckoutController extends GetxController {
                   btnTitle: '',
                   editFontSize: true,
                 ),
-                const SizedBox(height: CSizes.spaceBtnSections / 4),
+                const SizedBox(
+                  height: CSizes.spaceBtnSections / 4,
+                ),
                 CPaymentMethodsTile(
                   paymentMethod: CPaymentMethodModel(
                     platformLogo: CImages.onTheHauz,
                     platformName: 'On the house',
                   ),
                 ),
-                const SizedBox(height: CSizes.spaceBtnSections / 4),
+                const SizedBox(
+                  height: CSizes.spaceBtnSections / 4,
+                ),
                 CPaymentMethodsTile(
                   paymentMethod: CPaymentMethodModel(
                     platformLogo: CImages.deferred,
                     platformName: 'credit',
                   ),
                 ),
-                const SizedBox(height: CSizes.spaceBtnSections / 4),
+                const SizedBox(
+                  height: CSizes.spaceBtnSections / 4,
+                ),
                 CPaymentMethodsTile(
                   paymentMethod: CPaymentMethodModel(
                     platformLogo: CImages.cash6,
                     platformName: 'cash',
                   ),
                 ),
-                const SizedBox(height: CSizes.spaceBtnSections / 4),
+                const SizedBox(
+                  height: CSizes.spaceBtnSections / 4,
+                ),
+                CPaymentMethodsTile(
+                  paymentMethod: CPaymentMethodModel(
+                    platformLogo: CImages.mPesaLogo,
+                    platformName: 'send money',
+                  ),
+                ),
+                const SizedBox(
+                  height: CSizes.spaceBtnSections / 4,
+                ),
+                CPaymentMethodsTile(
+                  paymentMethod: CPaymentMethodModel(
+                    platformLogo: CImages.mPesaLogo,
+                    platformName: 'pochi',
+                  ),
+                ),
+                const SizedBox(
+                  height: CSizes.spaceBtnSections / 4,
+                ),
                 CPaymentMethodsTile(
                   paymentMethod: CPaymentMethodModel(
                     platformLogo: CImages.mpesaExpressLogo,
                     platformName: 'mPesa online',
                   ),
                 ),
-                const SizedBox(height: CSizes.spaceBtnSections / 4),
-                CPaymentMethodsTile(
-                  paymentMethod: CPaymentMethodModel(
-                    platformLogo: CImages.mPesaLogo,
-                    platformName: 'mPesa (offline)',
-                  ),
+
+                const SizedBox(
+                  height: CSizes.spaceBtnSections / 4,
                 ),
-                const SizedBox(height: CSizes.spaceBtnSections / 4),
-                CPaymentMethodsTile(
-                  paymentMethod: CPaymentMethodModel(
-                    platformLogo: CImages.googlePayLogo,
-                    platformName: 'google pay',
-                  ),
-                ),
-                const SizedBox(height: CSizes.spaceBtnSections / 4),
+                // CPaymentMethodsTile(
+                //   paymentMethod: CPaymentMethodModel(
+                //     platformLogo: CImages.googlePayLogo,
+                //     platformName: 'google pay',
+                //   ),
+                // ),
+                // const SizedBox(
+                //   height: CSizes.spaceBtnSections / 4,
+                // ),
                 CPaymentMethodsTile(
                   paymentMethod: CPaymentMethodModel(
                     platformLogo: CImages.paypalLogo,
                     platformName: 'paypal',
                   ),
                 ),
-                const SizedBox(height: CSizes.spaceBtnSections / 4),
-                CPaymentMethodsTile(
-                  paymentMethod: CPaymentMethodModel(
-                    platformLogo: CImages.masterCardLogo,
-                    platformName: 'master card',
-                  ),
-                ),
-                const SizedBox(height: CSizes.spaceBtnSections / 4),
-                CPaymentMethodsTile(
-                  paymentMethod: CPaymentMethodModel(
-                    platformLogo: CImages.visaLogo,
-                    platformName: 'visa',
-                  ),
-                ),
+                // const SizedBox(
+                //   height: CSizes.spaceBtnSections / 4,
+                // ),
+                // CPaymentMethodsTile(
+                //   paymentMethod: CPaymentMethodModel(
+                //     platformLogo: CImages.masterCardLogo,
+                //     platformName: 'master card',
+                //   ),
+                // ),
+                // const SizedBox(height: CSizes.spaceBtnSections / 4),
+                // CPaymentMethodsTile(
+                //   paymentMethod: CPaymentMethodModel(
+                //     platformLogo: CImages.visaLogo,
+                //     platformName: 'visa',
+                //   ),
+                // ),
               ],
             ),
           ),
@@ -762,7 +788,9 @@ class CCheckoutController extends GetxController {
           return;
         }
       }
-      if ((selectedPaymentMethod.value.platformName == 'mPesa (offline)' ||
+      if ((selectedPaymentMethod.value.platformName.toLowerCase().contains(
+                'mpesa',
+              ) ||
               selectedPaymentMethod.value.platformName == 'credit') &&
           customerNameFieldController.text == '') {
         customerNameFocusNode.value.requestFocus();
