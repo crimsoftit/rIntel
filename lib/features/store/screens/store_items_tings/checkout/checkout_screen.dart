@@ -798,8 +798,13 @@ class CCheckoutScreen extends StatelessWidget {
                                                       .value
                                                       .platformName
                                                       .toLowerCase() ==
-                                                  'mPesa (offline)'
-                                                      .toLowerCase() ||
+                                                  'pochi'.toLowerCase() ||
+                                              checkoutController
+                                                      .selectedPaymentMethod
+                                                      .value
+                                                      .platformName
+                                                      .toLowerCase() ==
+                                                  'send money'.toLowerCase() ||
                                               checkoutController
                                                       .selectedPaymentMethod
                                                       .value

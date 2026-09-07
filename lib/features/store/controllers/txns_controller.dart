@@ -6,6 +6,7 @@ import 'package:rintel/common/widgets/txt_fields/custom_txtfield.dart';
 import 'package:rintel/data/repos/store/store_repo.dart';
 import 'package:rintel/features/personalization/controllers/notification_tings/flutter_local_notifications/local_notifications_controller.dart';
 import 'package:rintel/features/personalization/controllers/user_controller.dart';
+import 'package:rintel/features/store/controllers/checkout_controller.dart';
 import 'package:rintel/features/store/controllers/dashboard_controller.dart';
 import 'package:rintel/features/store/controllers/date_controller.dart';
 import 'package:rintel/features/store/controllers/inv_controller.dart';
@@ -1456,13 +1457,14 @@ class CTxnsController extends GetxController {
     BuildContext context,
     CTxn txn,
   ) async {
+    final checkoutController = Get.put(CCheckoutController());
     final isDarkTheme = CHelperFunctions.isDarkMode(context);
     final userCurrency = userController.user.value.currencyCode;
 
     try {
       return await showModalBottomSheet(
         backgroundColor: isDarkTheme
-            ? CColors.black.withValues(
+            ? CColors.rBrown.withValues(
                 alpha: .9,
               )
             : CColors.white,
@@ -1478,7 +1480,7 @@ class CTxnsController extends GetxController {
             padding: MediaQuery.of(context).viewInsets,
             child: CRoundedContainer(
               bgColor: CColors.transparent,
-              height: CHelperFunctions.screenHeight() * .3,
+              height: CHelperFunctions.screenHeight() * .36,
               padding: const EdgeInsets.only(
                 left: CSizes.lg,
                 right: CSizes.lg,
@@ -1492,10 +1494,16 @@ class CTxnsController extends GetxController {
                     children: [
                       Text(
                         'Partial/Full payment',
+                        style: Theme.of(context).textTheme.labelMedium!.apply(
+                          fontWeightDelta: 2,
+                        ),
                       ),
 
                       Text(
-                        'of $userCurrency.${txn.totalAmount - txn.amountPaid}',
+                        'of $userCurrency.${invoiceAmountOwed.value}',
+                        style: Theme.of(context).textTheme.labelMedium!.apply(
+                          fontWeightDelta: 2,
+                        ),
                       ),
                     ],
                   ),
@@ -1514,10 +1522,12 @@ class CTxnsController extends GetxController {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Text(
-                                  'total paid: $userCurrency.${txn.amountPaid}',
+                                  'Total paid: $userCurrency.${txn.amountPaid}',
                                   maxLines: 2,
                                   overflow: TextOverflow.ellipsis,
-                                  style: Theme.of(context).textTheme.labelLarge!
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .labelMedium!
                                       .apply(
                                         color: CColors.rBrown,
                                       ),
@@ -1528,7 +1538,9 @@ class CTxnsController extends GetxController {
                                       : 'credit: $userCurrency.${invoiceAmountOwed.value}',
                                   maxLines: 2,
                                   overflow: TextOverflow.ellipsis,
-                                  style: Theme.of(context).textTheme.labelLarge!
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .labelMedium!
                                       .apply(
                                         color: invoiceAmountOwed.value > 0
                                             ? CColors.error
@@ -1552,6 +1564,9 @@ class CTxnsController extends GetxController {
                             }
                             return null;
                           },
+                          fillColor: CColors.rBrown.withValues(
+                            alpha: .1,
+                          ),
                           keyboardType: const TextInputType.numberWithOptions(
                             decimal: true,
                             signed: false,
@@ -1566,7 +1581,84 @@ class CTxnsController extends GetxController {
                               );
                             }
                           },
+                          prefixIcon: Icon(
+                            Iconsax.money_recive,
+                            color: CColors.rBrown,
+                            size: CSizes.iconSm,
+                          ),
                           txtFieldController: txtAmountIssued,
+                        ),
+
+                        CRoundedContainer(
+                          bgColor: CColors.rBrown.withValues(
+                            alpha: .1,
+                          ),
+                          borderRadius: 10.0,
+                          margin: const EdgeInsets.only(
+                            bottom: 10.0,
+                          ),
+                          padding: const EdgeInsets.only(
+                            bottom: 5.0,
+                            left: 10.0,
+                            right: 10.0,
+                            top: 5.0,
+                          ),
+                          child: Obx(
+                            () {
+                              return Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    'Paid via...',
+                                    style: Theme.of(
+                                      context,
+                                    ).textTheme.labelMedium,
+                                  ),
+                                  Row(
+                                    children: [
+                                      CRoundedContainer(
+                                        width: 50.0,
+                                        height: 50.0,
+                                        //bgColor: isDarkTheme ? CColors.light : CColors.white,
+                                        bgColor: CColors.transparent,
+                                        padding: const EdgeInsets.all(
+                                          CSizes.sm / 4,
+                                        ),
+                                        child: Image(
+                                          image: AssetImage(
+                                            checkoutController
+                                                .selectedPaymentMethod
+                                                .value
+                                                .platformLogo,
+                                          ),
+                                          fit: BoxFit.contain,
+                                        ),
+                                      ),
+                                      Text(
+                                        checkoutController
+                                            .selectedPaymentMethod
+                                            .value
+                                            .platformName,
+                                      ),
+                                    ],
+                                  ),
+                                  IconButton(
+                                    onPressed: () {
+                                      checkoutController.selectPaymentMethod(
+                                        context,
+                                      );
+                                    },
+                                    icon: Icon(
+                                      Iconsax.edit,
+                                      color: CColors.rBrown,
+                                      size: CSizes.iconSm,
+                                    ),
+                                  ),
+                                ],
+                              );
+                            },
+                          ),
                         ),
 
                         Row(
@@ -1622,6 +1714,11 @@ class CTxnsController extends GetxController {
                                 txn.lastModified = DateFormat(
                                   'yyyy-MM-dd @ kk:mm',
                                 ).format(clock.now());
+
+                                txn.paymentMethod = checkoutController
+                                    .selectedPaymentMethod
+                                    .value
+                                    .platformName;
 
                                 // -- update txn on local db --
                                 await dbHelper

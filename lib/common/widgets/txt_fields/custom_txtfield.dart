@@ -9,19 +9,23 @@ class CCustomTxtField extends StatelessWidget {
     this.autoFocus,
     this.fieldHeight = 40.0,
     this.fieldValidator,
-    this.onFieldValueChanged,
+    this.fillColor,
     this.keyboardType,
+    this.onFieldValueChanged,
+    this.prefixIcon,
     required this.txtFieldController,
     required this.labelTxt,
   });
 
   final bool? autoFocus;
+  final Color? fillColor;
   final double fieldHeight;
   final FormFieldValidator<String>? fieldValidator;
   final String labelTxt;
   final TextEditingController txtFieldController;
   final TextInputType? keyboardType;
   final void Function(String)? onFieldValueChanged;
+  final Widget? prefixIcon;
 
   @override
   Widget build(BuildContext context) {
@@ -43,18 +47,35 @@ class CCustomTxtField extends StatelessWidget {
             horizontal: 7.0,
             vertical: 2.0,
           ),
-          focusColor: CColors.rBrown.withValues(alpha: 0.3),
           enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(CSizes.cardRadiusXs),
-            borderSide: BorderSide(color: CColors.grey),
+            borderRadius: BorderRadius.circular(
+              CSizes.cardRadiusXs,
+            ),
+            borderSide: BorderSide(
+              color: CColors.grey,
+            ),
           ),
+          fillColor:
+              fillColor ??
+              CColors.rBrown.withValues(
+                alpha: .1,
+              ),
+          focusColor: CColors.rBrown.withValues(
+            alpha: 0.3,
+          ),
+
           focusedBorder: OutlineInputBorder(
             borderSide: BorderSide(
-              color: CColors.rBrown.withValues(alpha: 0.3),
+              color: CColors.rBrown.withValues(
+                alpha: 0.3,
+              ),
             ),
-            borderRadius: BorderRadius.circular(CSizes.cardRadiusXs),
+            borderRadius: BorderRadius.circular(
+              CSizes.cardRadiusXs,
+            ),
           ),
           labelText: labelTxt,
+          prefixIcon: prefixIcon,
         ),
         onChanged: onFieldValueChanged,
         style: TextStyle(

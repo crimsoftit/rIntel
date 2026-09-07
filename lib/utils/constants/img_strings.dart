@@ -117,8 +117,7 @@ class CImages {
   static const String credit = "assets/icons/payment_methods/deferred.webp";
   static const String credit1 = "assets/icons/payment_methods/credit1.webp";
   static const String credit2 = "assets/icons/payment_methods/credit.jpeg";
-  static const String deferred =
-      "assets/icons/payment_methods/deferred.jpg";
+  static const String deferred = "assets/icons/payment_methods/deferred.png";
   //static const String deferred = "assets/icons/payment_methods/deferred.webp";
   static const String deferred1 = "assets/icons/payment_methods/deferred1.webp";
 
