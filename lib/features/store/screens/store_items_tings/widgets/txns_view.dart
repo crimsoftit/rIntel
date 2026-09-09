@@ -464,13 +464,16 @@ class _CTxnsViewState extends State<CTxnsView> {
                                       ),
                                       Flexible(
                                         child: CSquareIconBtn(
-                                          icon: widget.space == 'receipts'
-                                              ? isExpanded
-                                                    ? Iconsax.eye
-                                                    : Iconsax.eye_slash
-                                              : isExpanded
-                                              ? Iconsax.arrow_down
-                                              : Iconsax.arrow_up_3,
+                                          // icon: widget.space == 'receipts'
+                                          //     ? isExpanded
+                                          //           ? Iconsax.eye
+                                          //           : Iconsax.eye_slash
+                                          //     : isExpanded
+                                          //     ? Iconsax.arrow_down
+                                          //     : Iconsax.arrow_up_3,
+                                          icon: isExpanded
+                                              ? Iconsax.eye_slash
+                                              : Iconsax.eye,
                                           iconColor: CColors.rOrange,
                                           onBtnTap: () {
                                             setState(

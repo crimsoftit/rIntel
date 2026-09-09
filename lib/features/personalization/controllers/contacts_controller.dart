@@ -20,7 +20,6 @@ import 'package:rintel/utils/constants/sizes.dart';
 import 'package:rintel/utils/db/sqflite/db_helper.dart';
 import 'package:rintel/utils/helpers/formatter.dart';
 import 'package:rintel/utils/helpers/helper_functions.dart';
-import 'package:rintel/utils/helpers/network_manager.dart';
 import 'package:rintel/utils/popups/snackbars.dart';
 import 'package:rintel/utils/validators/validation.dart';
 import 'package:flutter/foundation.dart';
@@ -263,9 +262,6 @@ class CContactsController extends GetxController {
 
           break;
       }
-
-      await fetchContactsForCloudDeletion();
-
       // stop loader
       isLoading.value = false;
       return returnItems;
@@ -893,110 +889,22 @@ class CContactsController extends GetxController {
     }
   }
 
-  /// -- delete contact dialog --
-  Future<dynamic> onDeleteContactDialog(CContactsModel contact) async {
+  /// -- delete contact --
+  Future<void> deleteContact(CContactsModel contact) async {
     try {
-      await Get.defaultDialog(
-        content: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            CircleAvatar(
-              backgroundColor: CHelperFunctions.randomAestheticColor(),
-              radius: 30.0,
-              child: CValidator.isFirstCharacterALetter(contact.contactName)
-                  ? Text(
-                      contact.contactName[0].toUpperCase(),
-                      style: Theme.of(Get.overlayContext!).textTheme.bodyLarge!
-                          .apply(color: CColors.white, fontSizeFactor: 1.5),
-                    )
-                  : Icon(
-                      Iconsax.user,
-                      color: CHelperFunctions.randomAestheticColor(),
-                    ),
-            ),
-            const SizedBox(
-              height: CSizes.spaceBtnSections,
-            ),
-            Text(
-              contact.contactName,
-              style: Theme.of(Get.overlayContext!).textTheme.bodyMedium!.apply(
-                fontSizeFactor: 1.3,
-                fontWeightDelta: 2,
-              ),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: CSizes.spaceBtnItems),
-            Text.rich(
-              TextSpan(
-                children: [
-                  TextSpan(
-                    text:
-                        'Are you certain you want to permanently delete this contact?',
-                  ),
-                  TextSpan(
-                    text: '\n\nTHIS ACTION CAN\'T BE UNDONE!',
-                    style: Theme.of(Get.overlayContext!).textTheme.labelMedium!
-                        .apply(fontSizeFactor: 1.5, fontWeightDelta: 2),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-        contentPadding: const EdgeInsets.all(CSizes.md),
-
-        confirm: ElevatedButton(
-          onPressed: () async {
-            // if (contact.isSynced == 1) {
-            //   // -- check internet connectivity
-            //   //final isConnected = await CNetworkManager.instance.isConnected();
-            //   var forCloudDeleteItem = CContactsDelModel(
-            //     contact.contactId!,
-            //     contact.contactEmail,
-            //     contact.contactName,
-            //     contact.contactPhone,
-            //     userController.user.value.email,
-            //     DateFormat('yyyy-MM-dd kk:mm').format(clock.now()),
-
-            //   );
-
-            //   dbHelper.addUnsyncedContactDeletions(forCloudDeleteItem).then((
-            //     _,
-            //   ) async {
-            //     await dbHelper.deleteContact(contact);
-            //   });
-            // } else {
-            //   await dbHelper.deleteContact(contact);
-            // }
-
-            await fetchContactsForCloudDeletion();
-            await fetchMyContacts().then((_) {
-              Get.offAll(() {
-                final navController = Get.put(CNavMenuController());
-                navController.selectedIndex.value = 2;
-                return const NavMenu();
-              });
-            });
-          },
-          style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.red,
-            side: const BorderSide(color: Colors.red),
-          ),
-          child: const Padding(
-            padding: EdgeInsets.symmetric(horizontal: CSizes.lg),
-            child: Text('Delete anyway'),
-          ),
-        ),
-        cancel: OutlinedButton(
-          onPressed: () {
-            //fetchMyContacts();
-            Navigator.of(Get.overlayContext!).pop();
-          },
-          child: const Text('Cancel'),
-        ),
-
-        title: 'Delete contact?',
+      await dbHelper.deleteContact(contact).then(
+        (result) {
+          if (result >= 1) {
+            contactsRepo.deleteCloudContact(contact);
+          } else {
+            CPopupSnackBar.errorSnackBar(
+              message: 'An unknown error occurred while deleting contact ',
+              title: 'error deleting contact!',
+            );
+          }
+        },
       );
+      await fetchMyContacts();
     } catch (e) {
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
@@ -1014,27 +922,128 @@ class CContactsController extends GetxController {
     }
   }
 
-  /// -- fetch contact deletions that require cloud sync --
-  Future<List<CContactsDelModel>> fetchContactsForCloudDeletion() async {
+  /// -- delete contact dialog --
+  Future<dynamic> onDeleteContactDialog(
+    BuildContext context,
+    CContactsModel contact,
+  ) async {
     try {
-      final contactDels = await dbHelper.fetchContactDels();
-      cloudDelContacts.assignAll(contactDels);
+      await Get.defaultDialog(
+        backgroundColor: CColors.rBrown.withValues(
+          alpha: .5,
+        ),
+        content: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            CircleAvatar(
+              backgroundColor: CHelperFunctions.randomAestheticColor(),
+              radius: 30.0,
+              child: CValidator.isFirstCharacterALetter(contact.contactName)
+                  ? Text(
+                      contact.contactName[0].toUpperCase(),
+                      style: Theme.of(Get.overlayContext!).textTheme.bodyLarge!
+                          .apply(
+                            color: CColors.white,
+                            fontSizeFactor: 1.5,
+                          ),
+                    )
+                  : Icon(
+                      Iconsax.user,
+                      color: CHelperFunctions.randomAestheticColor(),
+                    ),
+            ),
+            const SizedBox(
+              height: CSizes.spaceBtnSections,
+            ),
+            Text(
+              contact.contactName,
+              style: Theme.of(Get.overlayContext!).textTheme.bodyMedium!.apply(
+                fontSizeFactor: 1.3,
+                fontWeightDelta: 2,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(
+              height: CSizes.spaceBtnItems,
+            ),
+            Text.rich(
+              TextSpan(
+                children: [
+                  TextSpan(
+                    text:
+                        'Are you certain you want to permanently delete this contact?',
+                  ),
+                  TextSpan(
+                    text: '\n\nTHIS ACTION CAN\'T BE UNDONE!',
+                    style: Theme.of(Get.overlayContext!).textTheme.labelMedium!
+                        .apply(
+                          fontSizeFactor: 1.5,
+                          fontWeightDelta: 2,
+                        ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+        contentPadding: const EdgeInsets.all(
+          CSizes.md,
+        ),
 
-      return cloudDelContacts.toList();
+        confirm: ElevatedButton(
+          onPressed: () async {
+            await deleteContact(contact).then(
+              (_) {
+                Get.offAll(
+                  () {
+                    final navController = Get.put(CNavMenuController());
+                    navController.selectedIndex.value = 2;
+                    return const NavMenu();
+                  },
+                );
+              },
+            );
+          },
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.red,
+            side: const BorderSide(
+              color: Colors.red,
+            ),
+          ),
+          child: const Padding(
+            padding: EdgeInsets.symmetric(
+              horizontal: CSizes.lg,
+            ),
+            child: Text(
+              'Delete anyway',
+            ),
+          ),
+        ),
+        cancel: OutlinedButton(
+          onPressed: () {
+            //fetchMyContacts();
+            Navigator.of(context).pop();
+          },
+          child: const Text(
+            'Cancel',
+          ),
+        ),
+
+        title: 'Delete contact?',
+      );
     } catch (e) {
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
-          message: e.toString(),
-          title: 'Error fetching contatcs for cloud deletion!',
+          message: 'An unknown error occurred while deleting contact: $e',
+          title: 'error deleting contact!',
         );
       } else {
-        CPopupSnackBar.customToast(
-          forInternetConnectivityStatus: false,
+        CPopupSnackBar.errorSnackBar(
           message:
-              'An unknown error occurred while fetching contatcs for cloud deletion!',
+              'An unknown error occurred while deleting contact! Please try again later...',
+          title: 'error deleting contact!',
         );
       }
-
       rethrow;
     }
   }
@@ -1537,141 +1546,10 @@ class CContactsController extends GetxController {
     }
   }
 
-  // /// -- update initially synced contacts that need updating now --
-  // Future updateInitiallySyncedContacts() async {
-  //   try {
-  //     // final isConnectedToInternet = await CNetworkManager.instance
-  //     //     .isConnected();
-
-  //     if (CNetworkManager.instance.hasConnection.value &&
-  //         CNetworkManager.instance.connectionIsStable.value) {
-  //       if (unsyncedContactUpdates.isNotEmpty) {
-  //         for (var contact in unsyncedContactUpdates) {
-  //           final forSyncContact = CContactsModel.withId(
-  //             contact.contactId,
-  //             contact.addedBy,
-  //             contact.contactName,
-  //             contact.contactCountryCode,
-  //             contact.contactDialCode,
-  //             contact.contactPhone,
-  //             contact.contactEmail,
-  //             contact.contactCategory,
-  //             contact.lastModified,
-  //             contact.createdAt,
-  //             1,
-  //             'none',
-  //             contact.isStarred,
-  //             contact.isTrashed,
-  //           );
-  //           await StoreSheetsApi.updateInitiallySyncedContacts(
-  //             contact.contactId!,
-  //             forSyncContact.toMap(),
-  //           ).then((_) async {
-  //             contact.isSynced = 1;
-  //             contact.syncAction = 'none';
-  //             await dbHelper.updateContact(contact);
-  //           });
-  //         }
-  //       } else {
-  //         CPopupSnackBar.customToast(
-  //           forInternetConnectivityStatus: false,
-  //           message: 'contact sync rada safi!',
-  //         );
-  //       }
-  //     } else {
-  //       CPopupSnackBar.warningSnackBar(
-  //         title: 'internet unavailable/unstable',
-  //         message: 'This action requires a stable internet connection!',
-  //       );
-  //       return;
-  //     }
-  //     await fetchMyContacts();
-  //   } catch (e) {
-  //     if (kDebugMode) {
-  //       CPopupSnackBar.errorSnackBar(
-  //         title: 'error updating contacts\'s cloud data',
-  //         message: e.toString(),
-  //       );
-  //     } else {
-  //       CPopupSnackBar.errorSnackBar(
-  //         title: 'Error updating contacts\'s cloud data',
-  //         message:
-  //             'An unknown error occurred while updating contacts\'s cloud data. Please try again later!',
-  //       );
-  //     }
-
-  //     rethrow;
-  //   }
-  // }
-
-  /// -- delete cloud-synced contacts --
-  Future<bool> deleteCloudSyncedContacts() async {
-    try {
-      var returnCmd = false;
-
-      // -- check internet connectivity
-      final isConnectedToInternet = await CNetworkManager.instance
-          .isConnected();
-      if (isConnectedToInternet &&
-          CNetworkManager.instance.connectionIsStable.value &&
-          CNetworkManager.instance.hasConnection.value) {
-        final contactDeletions = await fetchContactsForCloudDeletion();
-        cloudDelContacts.assignAll(contactDeletions);
-        if (cloudDelContacts.isNotEmpty) {
-          for (var contact in cloudDelContacts) {
-            await StoreSheetsApi.deleteContactFromCloudById(
-              contact.contactId,
-            ).then(
-              (result) async {
-                if (result) {
-                  await dbHelper.locallyDeleteSyncedContactDeletions(contact);
-                }
-              },
-            );
-          }
-        }
-        // if (kDebugMode) {
-        //   CPopupSnackBar.customToast(
-        //     forInternetConnectivityStatus: false,
-        //     message: 'cloud contact deletions rada clean...',
-        //   );
-        // }
-        await fetchContactsForCloudDeletion();
-        returnCmd = true;
-      } else {
-        returnCmd = false;
-        CPopupSnackBar.warningSnackBar(
-          message: 'Stable internet connection is required for cloud sync!',
-          title: 'internet unstable/unavailable',
-        );
-      }
-
-      fetchContactsForCloudDeletion();
-      return returnCmd;
-    } catch (e) {
-      if (kDebugMode) {
-        CPopupSnackBar.errorSnackBar(
-          title: 'error deleting inventory cloud data',
-          message: e.toString(),
-        );
-      }
-
-      rethrow;
-    }
-  }
-
   String setDefaultContactCategory(String? presetCategory) {
     if (selectedContactCategory.value == '') {
-      // CPopupSnackBar.customToast(
-      //   forInternetConnectivityStatus: false,
-      //   message: 'contact category has to be set',
-      // );
       selectedContactCategory.value = presetCategory ?? contactCategories[1];
     } else {
-      // CPopupSnackBar.customToast(
-      //   forInternetConnectivityStatus: false,
-      //   message: 'contact category ALREADY set',
-      // );
       selectedContactCategory.value = selectedContactCategory.value;
     }
 

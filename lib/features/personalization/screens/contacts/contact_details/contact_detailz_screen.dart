@@ -94,13 +94,18 @@ class CContactDetailsScreen extends StatelessWidget {
           ),
           body: SingleChildScrollView(
             child: Padding(
-              padding: const EdgeInsets.all(10.0),
+              padding: const EdgeInsets.all(
+                10.0,
+              ),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Center(
                     child: Padding(
-                      padding: const EdgeInsets.only(bottom: 10.0, top: 20.0),
+                      padding: const EdgeInsets.only(
+                        bottom: 10.0,
+                        top: 20.0,
+                      ),
                       child: CircleAvatar(
                         backgroundColor:
                             CHelperFunctions.randomAestheticColor(),
@@ -255,7 +260,9 @@ class CContactDetailsScreen extends StatelessWidget {
                       ],
                     ),
                   ),
-                  const SizedBox(height: CSizes.spaceBtnItems),
+                  const SizedBox(
+                    height: CSizes.spaceBtnItems,
+                  ),
 
                   /// -- phone number display --
                   CMenuTile(
@@ -651,11 +658,15 @@ class CContactDetailsScreen extends StatelessWidget {
                                   ),
                                 ),
                               ),
-                              const SizedBox(width: CSizes.spaceBtnItems),
+                              const SizedBox(
+                                width: CSizes.spaceBtnItems,
+                              ),
                               Expanded(
                                 flex: 4,
                                 child: Padding(
-                                  padding: EdgeInsets.only(top: 0.0),
+                                  padding: EdgeInsets.only(
+                                    top: 0.0,
+                                  ),
                                   child: Column(
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
@@ -664,10 +675,11 @@ class CContactDetailsScreen extends StatelessWidget {
                                         onPressed: () async {
                                           await contactsController
                                               .onDeleteContactDialog(
+                                                context,
                                                 contactItem,
                                               );
-                                          await contactsController
-                                              .fetchMyContacts();
+                                          // await contactsController
+                                          //     .fetchMyContacts();
                                         },
                                         child: Text(
                                           "Delete permanently",
@@ -695,29 +707,29 @@ class CContactDetailsScreen extends StatelessWidget {
                     height: CSizes.spaceBtnItems / 3.0,
                   ),
 
-                  Text(
-                    'country code (eg. KE): ${contactItem.contactCountryCode}',
-                    style:
-                        Theme.of(
-                          context,
-                        ).textTheme.labelLarge!.apply(
-                          fontSizeFactor: 1.0,
-                        ),
-                  ),
-                  Text(
-                    'dial code (eg. +254): ${contactItem.contactDialCode}',
-                    style: Theme.of(context).textTheme.labelLarge!.apply(
-                      fontSizeFactor: 1.0,
-                      color: CColors.white,
-                    ),
-                  ),
-                  Text(
-                    'last modified: ${contactItem.lastModified}',
-                    style: Theme.of(context).textTheme.labelLarge!.apply(
-                      fontSizeFactor: 1.0,
-                      color: CColors.white,
-                    ),
-                  ),
+                  // Text(
+                  //   'country code (eg. KE): ${contactItem.contactCountryCode}',
+                  //   style:
+                  //       Theme.of(
+                  //         context,
+                  //       ).textTheme.labelLarge!.apply(
+                  //         fontSizeFactor: 1.0,
+                  //       ),
+                  // ),
+                  // Text(
+                  //   'dial code (eg. +254): ${contactItem.contactDialCode}',
+                  //   style: Theme.of(context).textTheme.labelLarge!.apply(
+                  //     fontSizeFactor: 1.0,
+                  //     color: CColors.white,
+                  //   ),
+                  // ),
+                  // Text(
+                  //   'last modified: ${contactItem.lastModified}',
+                  //   style: Theme.of(context).textTheme.labelLarge!.apply(
+                  //     fontSizeFactor: 1.0,
+                  //     color: CColors.white,
+                  //   ),
+                  // ),
                 ],
               ),
             ),

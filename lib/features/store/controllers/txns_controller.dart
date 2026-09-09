@@ -1463,11 +1463,7 @@ class CTxnsController extends GetxController {
 
     try {
       return await showModalBottomSheet(
-        backgroundColor: isDarkTheme
-            ? CColors.rBrown.withValues(
-                alpha: .9,
-              )
-            : CColors.white,
+        backgroundColor: isDarkTheme ? CColors.black : CColors.lightGrey,
         context: context,
         isDismissible: false,
         isScrollControlled: true,
@@ -1479,7 +1475,13 @@ class CTxnsController extends GetxController {
           return Padding(
             padding: MediaQuery.of(context).viewInsets,
             child: CRoundedContainer(
-              bgColor: CColors.transparent,
+              bgColor: isDarkTheme
+                  ? CColors.black.withValues(
+                      alpha: .3,
+                    )
+                  : CColors.white.withValues(
+                      alpha: .3,
+                    ),
               height: CHelperFunctions.screenHeight() * .36,
               padding: const EdgeInsets.only(
                 left: CSizes.lg,
@@ -1495,6 +1497,7 @@ class CTxnsController extends GetxController {
                       Text(
                         'Partial/Full payment',
                         style: Theme.of(context).textTheme.labelMedium!.apply(
+                          fontSizeFactor: 1.3,
                           fontWeightDelta: 2,
                         ),
                       ),
@@ -1502,6 +1505,7 @@ class CTxnsController extends GetxController {
                       Text(
                         'of $userCurrency.${invoiceAmountOwed.value}',
                         style: Theme.of(context).textTheme.labelMedium!.apply(
+                          fontSizeFactor: 1.3,
                           fontWeightDelta: 2,
                         ),
                       ),
@@ -1529,7 +1533,7 @@ class CTxnsController extends GetxController {
                                       .textTheme
                                       .labelMedium!
                                       .apply(
-                                        color: CColors.rBrown,
+                                        //color: CColors.rBrown,
                                       ),
                                 ),
                                 Text(
@@ -1583,7 +1587,7 @@ class CTxnsController extends GetxController {
                           },
                           prefixIcon: Icon(
                             Iconsax.money_recive,
-                            color: CColors.rBrown,
+                            color: isDarkTheme ? CColors.white : CColors.rBrown,
                             size: CSizes.iconSm,
                           ),
                           txtFieldController: txtAmountIssued,
@@ -1639,7 +1643,8 @@ class CTxnsController extends GetxController {
                                         checkoutController
                                             .selectedPaymentMethod
                                             .value
-                                            .platformName,
+                                            .platformName
+                                            .toUpperCase(),
                                       ),
                                     ],
                                   ),
@@ -1651,7 +1656,9 @@ class CTxnsController extends GetxController {
                                     },
                                     icon: Icon(
                                       Iconsax.edit,
-                                      color: CColors.rBrown,
+                                      color: isDarkTheme
+                                          ? CColors.white
+                                          : CColors.rBrown,
                                       size: CSizes.iconSm,
                                     ),
                                   ),

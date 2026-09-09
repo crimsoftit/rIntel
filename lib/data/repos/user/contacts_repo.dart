@@ -237,4 +237,29 @@ class CContactsRepo extends GetxController {
       rethrow;
     }
   }
+
+  /// -- delete cloud contact --
+  Future<void> deleteCloudContact(CContactsModel contact) async {
+    try {
+      firestoreDb
+          .collection('myContacts')
+          .doc(contact.contactId.toString())
+          .delete();
+    } catch (e) {
+      if (kDebugMode) {
+        CPopupSnackBar.errorSnackBar(
+          message: e.toString(),
+          title: "error deleting contact on the cloud ",
+        );
+      } else {
+        CPopupSnackBar.errorSnackBar(
+          message:
+              'an unknown error occurred while deleting contact on the cloud! please try again later...',
+          title: "error deleting contact on the cloud!",
+        );
+      }
+
+      rethrow;
+    }
+  }
 }

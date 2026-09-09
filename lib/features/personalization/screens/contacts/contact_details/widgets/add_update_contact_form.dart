@@ -161,15 +161,29 @@ class CAddUpdateContactForm extends StatelessWidget {
                                 .value;
                             contact!.contactCountryCode =
                                 contactsController.contactCountryCode.value;
+                            contact!.contactName = contactsController
+                                .txtContactNameController
+                                .text
+                                .trim();
+                            contact!.contactPhone = contactsController
+                                .txtPhoneController
+                                .text
+                                .trim();
+                            contact!.contactEmail = contactsController
+                                .txtEmailController
+                                .text
+                                .trim();
+                            contact!.lastModified = DateFormat(
+                              'yyyy-MM-dd kk:mm',
+                            ).format(clock.now());
+                            contactsController.updateContact(contact!);
+                          } else {
+                            contactsController.addContact(
+                              contactDetails,
+                              0,
+                              true,
+                            );
                           }
-
-                          formAction == 'add'
-                              ? contactsController.addContact(
-                                  contactDetails,
-                                  0,
-                                  true,
-                                )
-                              : contactsController.updateContact(contact!);
 
                           Navigator.of(Get.overlayContext!).pop(true);
                           contactsController.resetFields();
