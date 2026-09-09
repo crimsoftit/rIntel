@@ -8,7 +8,6 @@ import 'package:rintel/features/store/controllers/search_bar_controller.dart';
 import 'package:rintel/features/store/controllers/txns_controller.dart';
 import 'package:rintel/features/store/screens/store_items_tings/widgets/inv_gridview_screen.dart';
 import 'package:rintel/features/store/screens/store_items_tings/widgets/store_screen_header.dart';
-import 'package:rintel/features/store/screens/store_items_tings/widgets/txn_items.dart';
 import 'package:rintel/features/store/screens/store_items_tings/widgets/txns_view.dart';
 import 'package:rintel/utils/constants/colors.dart';
 import 'package:rintel/utils/constants/sizes.dart';
@@ -157,7 +156,7 @@ class CStoreScreen extends StatelessWidget {
                           child: Obx(
                             () {
                               return Text(
-                                'Sales (all) - ${txnsController.sales.length}',
+                                'Refunds',
                               );
                             },
                           ),
@@ -205,9 +204,9 @@ class CStoreScreen extends StatelessWidget {
                     space: 'On the house',
                   ),
 
-                  CTxnItemsListView(
+                  CTxnsView(
                     forContactScreen: false,
-                    space: 'sales',
+                    space: 'refunds',
                   ),
                 ],
               ),

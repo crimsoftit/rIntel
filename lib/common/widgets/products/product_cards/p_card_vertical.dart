@@ -212,8 +212,22 @@ class CProductCardVertical extends StatelessWidget {
               maxLines: 1,
             ),
             SizedBox(
-              height: CHelperFunctions.screenHeight() * .017,
+              height: 5.0,
             ),
+            // SelectableText(
+            //   'sku: $pId',
+            // ),
+            // CProductTitleText(
+            //   //smallSize: true,
+            //   title: "# $pId",
+
+            //   txtAlign: TextAlign.left,
+            //   txtColor: avatarColor,
+            //   maxLines: 1,
+            // ),
+            // SizedBox(
+            //   height: CHelperFunctions.screenHeight() * .017,
+            // ),
 
             Text(
               '$qtyAvailable ${CFormatter.formatItemMetrics(itemMetrics!, double.parse(qtyAvailable!))} stocked',
@@ -240,7 +254,7 @@ class CProductCardVertical extends StatelessWidget {
               ),
             ),
             Text(
-              'Sku: $pCode; Lsn: ${CFormatter.formatItemQtyDisplays(lowStockNotifierLimit!, itemMetrics!)}',
+              'code: $pCode; Lsn: ${CFormatter.formatItemQtyDisplays(lowStockNotifierLimit!, itemMetrics!)}',
               maxLines: 1,
               style: Theme.of(context).textTheme.labelSmall!.apply(
                 color: isDarkTheme ? CColors.white : CColors.darkGrey,

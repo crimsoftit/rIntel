@@ -20,17 +20,19 @@ class CProductTitleText extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Flexible(
-      child: Text(
+      child: SelectableText(
         title,
         style: smallSize
-            ? Theme.of(context).textTheme.labelSmall!.apply(color: txtColor)
+            ? Theme.of(context).textTheme.labelSmall!.apply(
+                color: txtColor,
+              )
             : Theme.of(context).textTheme.titleSmall!.apply(
                 color: txtColor,
 
                 fontSizeFactor: 1.01,
                 fontWeightDelta: 2,
               ),
-        overflow: TextOverflow.ellipsis,
+        //overflow: TextOverflow.ellipsis,
         maxLines: maxLines,
         textAlign: txtAlign,
       ),

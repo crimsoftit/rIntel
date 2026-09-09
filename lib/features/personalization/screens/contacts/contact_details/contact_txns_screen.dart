@@ -3,7 +3,6 @@ import 'package:rintel/common/widgets/appbar/tab_bar.dart';
 import 'package:rintel/features/personalization/controllers/contacts_controller.dart';
 import 'package:rintel/features/personalization/controllers/user_controller.dart';
 import 'package:rintel/features/store/screens/store_items_tings/widgets/inv_gridview_screen.dart';
-import 'package:rintel/features/store/screens/store_items_tings/widgets/txn_items.dart';
 import 'package:rintel/features/store/screens/store_items_tings/widgets/txns_view.dart';
 import 'package:rintel/utils/constants/colors.dart';
 import 'package:rintel/utils/constants/sizes.dart';
@@ -303,7 +302,7 @@ class CContactTxnsScreen extends StatelessWidget {
                         space: 'contact receipts',
                       ),
 
-                      CTxnItemsListView(
+                      CTxnsView(
                         forContactScreen: true,
                         space: 'contact refunds',
                       ),
