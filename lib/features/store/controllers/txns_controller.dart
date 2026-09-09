@@ -168,7 +168,7 @@ class CTxnsController extends GetxController {
     }
     await fetchUserTxns();
     await fetchUserTxnItems();
-    await fetchTopSellersFromSales();
+
     super.onInit();
   }
 
@@ -290,7 +290,7 @@ class CTxnsController extends GetxController {
   }
 
   /// -- update receipt item name when inventory name is updated --
-  Future updateRelatedSoldItemsName(
+  Future updateRelatedSoldItemsNames(
     CInventoryModel invItem,
     String pName,
   ) async {
@@ -298,24 +298,26 @@ class CTxnsController extends GetxController {
       // -- start loader --
       isLoading.value = true;
 
+      userTxnItems.refresh();
+
       // -- update sold item name --
-      var relatedSoldItems = txns
+      var relatedSoldItems = userTxnItems
           .where((soldItem) => soldItem.productId == invItem.productId)
           .toList();
 
       if (relatedSoldItems.isNotEmpty) {
         for (var relatedItem in relatedSoldItems) {
-          relatedItem.lastModified = DateFormat(
-            'yyyy-MM-dd @ kk:mm',
-          ).format(clock.now());
           relatedItem.productName = pName.trim();
-          relatedItem.syncAction = relatedItem.isSynced == 1
-              ? 'update'
-              : relatedItem.syncAction;
 
-          //dbHelper.updateReceiptItem(relatedItem);
+          storeRepo.cloudUpdateSale(relatedItem);
         }
-        //await fetchTxns();
+        await dbHelper.bulkUpdateSoldItemsWithChunks(relatedSoldItems);
+      } else {
+        if (kDebugMode) {
+          CPopupSnackBar.warningSnackBar(
+            title: 'no related sold items with this name',
+          );
+        }
       }
 
       // -- stop loader --
@@ -2032,6 +2034,8 @@ class CTxnsController extends GetxController {
       );
       // assign sold items to sales list
       userTxnItems.assignAll(txnItems);
+
+      await fetchTopSellersFromSales();
 
       isLoading.value = false;
       return userTxnItems;

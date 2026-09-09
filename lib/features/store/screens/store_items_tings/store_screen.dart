@@ -153,12 +153,8 @@ class CStoreScreen extends StatelessWidget {
                           ),
                         ),
                         Tab(
-                          child: Obx(
-                            () {
-                              return Text(
-                                'Refunds',
-                              );
-                            },
+                          child: Text(
+                            'Refunds',
                           ),
                         ),
                       ],

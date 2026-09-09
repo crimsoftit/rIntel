@@ -1,3 +1,4 @@
+import 'package:darq/darq.dart';
 import 'package:rintel/features/personalization/controllers/user_controller.dart';
 import 'package:rintel/features/personalization/models/contacts_del_model.dart';
 import 'package:rintel/features/personalization/models/contacts_model.dart';
@@ -786,17 +787,18 @@ class DbHelper extends GetxController {
     );
   }
 
-  Future<void> bulkInsertTxnsWithChunks(
-    List<Map<String, dynamic>> items,
+  /// -- batch update sold items --
+  Future<void> bulkUpdateSoldItemsWithChunks(
+    List<CSoldItemModel> soldItems,
   ) async {
     final db = _db;
     final batch = db!.batch();
-    const int chunkSize = 1000;
+    const int chunkSize = 500;
 
-    for (int i = 0; i < items.length; i++) {
-      batch.insert(
-        'items',
-        items[i],
+    for (int i = 0; i < soldItems.length; i++) {
+      batch.update(
+        'txnItemsTable',
+        soldItems[i].toMap(),
         conflictAlgorithm: ConflictAlgorithm.replace,
       );
 
@@ -811,7 +813,7 @@ class DbHelper extends GetxController {
     }
 
     // Commit any remaining items
-    if (items.length % chunkSize != 0) {
+    if (soldItems.length % chunkSize != 0) {
       await batch.commit(noResult: true);
     }
   }

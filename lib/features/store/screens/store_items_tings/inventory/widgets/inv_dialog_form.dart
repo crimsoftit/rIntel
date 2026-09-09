@@ -10,6 +10,7 @@ import 'package:rintel/features/personalization/models/contacts_model.dart';
 import 'package:rintel/features/store/controllers/date_controller.dart';
 import 'package:rintel/features/store/controllers/inv_controller.dart';
 import 'package:rintel/features/store/controllers/nav_menu_controller.dart';
+import 'package:rintel/features/store/controllers/txns_controller.dart';
 import 'package:rintel/features/store/models/inv_model.dart';
 import 'package:rintel/nav_menu.dart' show NavMenu;
 import 'package:rintel/utils/constants/colors.dart';
@@ -43,6 +44,7 @@ class AddUpdateInventoryForm extends StatelessWidget {
     final isDarkTheme = CHelperFunctions.isDarkMode(context);
     final invController = Get.put(CInventoryController());
     final navController = Get.put(CNavMenuController());
+    final txnsController = Get.put(CTxnsController());
     final userController = Get.put(CUserController());
     final currency = userController.user.value.currencyCode;
 
@@ -892,6 +894,15 @@ class AddUpdateInventoryForm extends StatelessWidget {
                           if (await invController.invUpdateIsNecessary(
                             inventoryItem,
                           )) {
+                            // -- update sold items' names if necessary --
+                            if (invController.shouldUpdateSoldItemsNames(
+                              inventoryItem,
+                            )) {
+                              txnsController.updateRelatedSoldItemsNames(
+                                inventoryItem,
+                                invController.txtNameController.text.trim(),
+                              );
+                            }
                             if (await invController.addOrUpdateInventoryItem(
                               inventoryItem,
                             )) {

@@ -674,7 +674,16 @@ class CInventoryController extends GetxController {
     }
   }
 
-  /// -- check if update is really necessary --
+  /// -- check if it's necessary to update sold items' names --
+  bool shouldUpdateSoldItemsNames(CInventoryModel forUpdateItem) {
+    if (itemExists.value &&
+        forUpdateItem.name.trim() != txtNameController.text.trim()) {
+      return true;
+    }
+    return false;
+  }
+
+  /// -- check if inventory details update is really necessary --
   Future<bool> invUpdateIsNecessary(CInventoryModel forUpdateItem) async {
     try {
       if (itemExists.value) {
