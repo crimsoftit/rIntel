@@ -68,8 +68,12 @@ class CAddToCartBtn extends StatelessWidget {
                           ? CColors.rBrown
                           : CColors.darkerGrey),
             borderRadius: const BorderRadius.only(
-              topLeft: Radius.circular(CSizes.cardRadiusMd - 4),
-              bottomRight: Radius.circular(CSizes.pImgRadius - 4),
+              topLeft: Radius.circular(
+                CSizes.cardRadiusMd - 4,
+              ),
+              bottomRight: Radius.circular(
+                CSizes.cardRadiusMd - 4,
+              ),
             ),
           ),
           child: SizedBox(

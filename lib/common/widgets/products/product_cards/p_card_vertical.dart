@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:rintel/common/widgets/custom_shapes/containers/rounded_container.dart';
 import 'package:rintel/common/widgets/buttons/icon_buttons/circular_icon_btn.dart';
 import 'package:rintel/common/widgets/products/cart/add_to_cart_btn.dart';
@@ -85,17 +86,22 @@ class CProductCardVertical extends StatelessWidget {
       onTap: onTapAction,
       child: CRoundedContainer(
         bgColor: isDarkTheme
-            ? CColors.rBrown.withValues(alpha: 0.3)
+            ? CColors.rBrown.withValues(
+                alpha: 0.3,
+              )
             : CColors.lightGrey,
-
+        borderRadius: CSizes.cardRadiusMd - 4,
         height: double.infinity,
 
-        padding: EdgeInsets.all(1.0),
+        padding: EdgeInsets.all(
+          1.0,
+        ),
         // width: 170,
         width: CHelperFunctions.screenWidth() * .45,
 
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
           children: [
             SizedBox(
               height: CSizes.spaceBtnInputFields / 5,
@@ -179,7 +185,7 @@ class CProductCardVertical extends StatelessWidget {
                     ),
                   )
                 : Center(
-                    child: Text(
+                    child: AutoSizeText(
                       CFormatter.formatTimeRangeFromNow(
                             lastModified!.replaceAll(
                               '@ ',
@@ -194,7 +200,10 @@ class CProductCardVertical extends StatelessWidget {
                               ),
                             ),
                       //lastModified!,
+                      maxFontSize: 14,
                       maxLines: 1,
+                      minFontSize: 9,
+
                       overflow: TextOverflow.ellipsis,
                       style: Theme.of(context).textTheme.labelSmall!.apply(
                         color: isDarkTheme ? CColors.grey : CColors.darkGrey,
@@ -228,51 +237,51 @@ class CProductCardVertical extends StatelessWidget {
             // SizedBox(
             //   height: CHelperFunctions.screenHeight() * .017,
             // ),
-
-            Text(
+            AutoSizeText(
               '$qtyAvailable ${CFormatter.formatItemMetrics(itemMetrics!, double.parse(qtyAvailable!))} stocked',
+              maxFontSize: 14,
               maxLines: 1,
+              minFontSize: 9,
               style: Theme.of(context).textTheme.labelSmall!.apply(
                 color: isDarkTheme ? CColors.white : CColors.rBrown,
                 fontSizeFactor: 1.1,
               ),
             ),
-            Text(
+            AutoSizeText(
               '$qtySold ${CFormatter.formatItemMetrics(itemMetrics!, double.parse(qtySold!))} sold',
+              maxFontSize: 14,
               maxLines: 1,
+              minFontSize: 9,
               style: Theme.of(context).textTheme.labelSmall!.apply(
                 color: isDarkTheme ? CColors.white : CColors.rBrown,
                 fontSizeFactor: 1.1,
               ),
             ),
 
-            Text(
+            AutoSizeText(
               '$qtyRefunded ${CFormatter.formatItemMetrics(itemMetrics!, double.parse(qtyRefunded!))} refunded',
+              maxFontSize: 14,
               maxLines: 1,
+              minFontSize: 9,
               style: Theme.of(context).textTheme.labelSmall!.apply(
                 color: isDarkTheme ? CColors.white : CColors.darkGrey,
               ),
             ),
-            Text(
+            AutoSizeText(
               'code: $pCode; Lsn: ${CFormatter.formatItemQtyDisplays(lowStockNotifierLimit!, itemMetrics!)}',
+              maxFontSize: 14,
               maxLines: 1,
+              minFontSize: 9,
               style: Theme.of(context).textTheme.labelSmall!.apply(
                 color: isDarkTheme ? CColors.white : CColors.darkGrey,
               ),
             ),
-            Visibility(
-              visible: false,
-              child: Text(
-                'isSynced: $isSynced, syncAction: $syncAction',
-                maxLines: 1,
-                style: Theme.of(context).textTheme.labelSmall!.apply(
-                  color: isDarkTheme ? CColors.white : CColors.darkGrey,
-                ),
-              ),
-            ),
-            Text(
+
+            AutoSizeText(
               'Expiry date: $expiryDate',
+              maxFontSize: 14,
               maxLines: 1,
+              minFontSize: 9,
               style: Theme.of(context).textTheme.labelSmall!.apply(
                 color:
                     expiryColor ??
@@ -280,9 +289,11 @@ class CProductCardVertical extends StatelessWidget {
               ),
             ),
 
-            Text(
+            AutoSizeText(
               'Stock value: $stockValue',
+              maxFontSize: 14,
               maxLines: 1,
+              minFontSize: 9,
               style: Theme.of(context).textTheme.labelSmall!.apply(
                 color:
                     expiryColor ??

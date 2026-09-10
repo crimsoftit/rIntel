@@ -95,7 +95,9 @@ class CAddToCartBottomNavBar extends StatelessWidget {
                   },
                 ),
                 //const CFavoriteIcon(),
-                const SizedBox(width: CSizes.spaceBtnItems),
+                const SizedBox(
+                  width: CSizes.spaceBtnItems,
+                ),
                 Text(
                   inventoryItem.calibration == 'units'
                       ? '${cartController.itemQtyInCart.value.toStringAsFixed(0)} ${inventoryItem.calibration}'
@@ -105,7 +107,9 @@ class CAddToCartBottomNavBar extends StatelessWidget {
                   style: Theme.of(context).textTheme.titleSmall,
                 ),
 
-                const SizedBox(width: CSizes.spaceBtnItems),
+                const SizedBox(
+                  width: CSizes.spaceBtnItems,
+                ),
 
                 CCircularIconBtn(
                   iconBorderRadius: 100,
@@ -136,42 +140,46 @@ class CAddToCartBottomNavBar extends StatelessWidget {
               ],
             ),
             ElevatedButton.icon(
-              icon: Icon(Iconsax.shopping_cart, color: CColors.white),
-              label: Text(
-                cartController.itemQtyInCart.value > 0
-                    ? 'update cart'
-                    : 'add to cart'.toUpperCase(),
-                style: Theme.of(
-                  context,
-                ).textTheme.labelMedium?.apply(color: CColors.white),
+              icon: Icon(
+                Iconsax.shopping_cart,
+                color: CColors.white,
               ),
-              onPressed: cartController.itemQtyInCart.value < 0.1
-                  ? null
-                  : () {
-                      invController.fetchUserInventoryItems();
-                      cartController.fetchCartItems();
-
-                      /// -- check if item has expired before adding it to cart --
-                      if (inventoryItem.expiryDate != '') {
-                        var itemExpiry = CDateTimeComputations.timeRangeFromNow(
-                          inventoryItem.expiryDate.replaceAll('@ ', ''),
-                        );
-                        if (itemExpiry <= 0) {
-                          CPopupSnackBar.warningSnackBar(
-                            title: 'item is stale/expired',
-                            message: '${inventoryItem.name} has expired!',
-                          );
-                          return;
-                        }
-                      }
-                      cartController.addToCart(inventoryItem);
-                      cartController.fetchCartItems();
-                      if (fromCheckoutScreen) {
-                        Navigator.pop(context);
-                      }
-                    },
+              label: Text(
+                'add to cart'.toUpperCase(),
+                style:
+                    Theme.of(
+                      context,
+                    ).textTheme.labelMedium?.apply(
+                      color: CColors.white,
+                    ),
+              ),
+              onPressed: () {
+                cartController.fetchCartItems();
+                if (cartController.itemQtyInCart.value > 0) {
+                  // -- check if item has expired before adding it to cart --
+                  if (inventoryItem.expiryDate != '') {
+                    var itemExpiry = CDateTimeComputations.timeRangeFromNow(
+                      inventoryItem.expiryDate.replaceAll('@ ', ''),
+                    );
+                    if (itemExpiry <= 0) {
+                      CPopupSnackBar.warningSnackBar(
+                        title: 'item is stale/expired',
+                        message: '${inventoryItem.name} has expired!',
+                      );
+                      return;
+                    }
+                  }
+                  cartController.addToCart(inventoryItem);
+                  cartController.fetchCartItems();
+                  if (fromCheckoutScreen) {
+                    Navigator.pop(context);
+                  }
+                }
+              },
               style: ElevatedButton.styleFrom(
-                padding: const EdgeInsets.all(CSizes.md),
+                padding: const EdgeInsets.all(
+                  CSizes.md,
+                ),
                 backgroundColor: CNetworkManager.instance.hasConnection.value
                     ? CColors.rBrown
                     : CColors.black,

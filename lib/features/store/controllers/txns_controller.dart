@@ -177,7 +177,7 @@ class CTxnsController extends GetxController {
     if (localStorage.read('SyncTxnsDataWithCloud') == true) {
       if (await importTxnsFromCloudFirestore()) {
         await importTxnItemsFromCloudFirestore().then(
-          (result) {
+          (result) async {
             if (result) {
               localStorage.write(
                 'SyncTxnsDataWithCloud',
@@ -189,7 +189,7 @@ class CTxnsController extends GetxController {
                 true,
               );
             }
-            fetchUserTxnItems();
+            await fetchUserTxnItems();
           },
         );
       } else {

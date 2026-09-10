@@ -475,24 +475,21 @@ class _CTxnsViewState extends State<CTxnsView> {
                                               ? Iconsax.eye_slash
                                               : Iconsax.eye,
                                           iconColor: CColors.rOrange,
-                                          onBtnTap: () {
-                                            setState(
-                                              () {
-                                                if (_expandedIndex ==
-                                                    txnIndex) {
-                                                  _expandedIndex =
-                                                      null; // Collapse
-                                                } else {
-                                                  _expandedIndex =
-                                                      txnIndex; // Expand
+                                          onBtnTap: () async {
+                                            if (_expandedIndex == txnIndex) {
+                                              _expandedIndex = null; // Collapse
+                                            } else {
+                                              _expandedIndex =
+                                                  txnIndex; // Expand
 
-                                                  if (demItems.isNotEmpty &&
-                                                      txnItems.isEmpty) {
-                                                    txnsController
-                                                        .fetchUserTxnItems();
-                                                  }
-                                                }
-                                              },
+                                              if (demItems.isNotEmpty &&
+                                                  txnItems.isEmpty) {
+                                                await txnsController
+                                                    .fetchUserTxnItems();
+                                              }
+                                            }
+                                            setState(
+                                              () {},
                                             );
                                           },
                                         ),

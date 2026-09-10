@@ -696,7 +696,9 @@ class AddUpdateInventoryForm extends StatelessWidget {
                             dividerTxtColor: CColors.warning,
                             dividerTxtFontSizeFactor: .85,
                           ),
-                          SizedBox(height: CSizes.spaceBtnInputFields / 4.0),
+                          SizedBox(
+                            height: CSizes.spaceBtnInputFields / 4.0,
+                          ),
                           TextFormField(
                             //autovalidateMode: AutovalidateMode.onUserInteraction,
                             controller: invController.txtExpiryDatePicker,

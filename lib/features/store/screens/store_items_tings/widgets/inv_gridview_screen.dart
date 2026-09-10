@@ -119,7 +119,7 @@ class CInvGridviewScreen extends StatelessWidget {
           padding: const EdgeInsets.only(
             left: 5.0,
             right: 5.0,
-            top: 10.0,
+            top: 8.0,
           ),
           shrinkWrap: true,
           children: [
@@ -127,10 +127,10 @@ class CInvGridviewScreen extends StatelessWidget {
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 2,
                 mainAxisSpacing: CSizes.gridViewSpacing / 2,
-                crossAxisSpacing: CSizes.gridViewSpacing / 2,
-                mainAxisExtent: CHelperFunctions.screenHeight() * .2965,
+                crossAxisSpacing: CSizes.gridViewSpacing / 2.5,
+                mainAxisExtent: CHelperFunctions.screenHeight() * .289,
               ),
-              itemCount: demInventoryItems.length,
+
               itemBuilder: (context, index) {
                 return CProductCardVertical(
                   avatarColor: CHelperFunctions.generateInvItemsDisplayColor(
@@ -142,7 +142,7 @@ class CInvGridviewScreen extends StatelessWidget {
                   ),
                   bp: demInventoryItems[index].buyingPrice.toStringAsFixed(2),
 
-                  containerHeight: CHelperFunctions.screenHeight() * .2,
+                  containerHeight: CHelperFunctions.screenHeight() * .288,
                   deleteAction: syncController.processingSync.value
                       ? null
                       : () {
@@ -286,6 +286,7 @@ class CInvGridviewScreen extends StatelessWidget {
                   usp: demInventoryItems[index].unitSellingPrice.toString(),
                 );
               },
+              itemCount: demInventoryItems.length,
               padding: EdgeInsets.zero,
               physics: const NeverScrollableScrollPhysics(),
               shrinkWrap: true,

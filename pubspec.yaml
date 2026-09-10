@@ -137,7 +137,7 @@ dependencies:
   internet_speed_meter: ^1.0.2
   
   #csv: any
-  
+  auto_size_text: ^3.0.0
   intl: ^0.20.0
   jiffy: any
   logger: any

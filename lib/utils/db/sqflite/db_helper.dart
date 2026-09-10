@@ -1,4 +1,3 @@
-import 'package:darq/darq.dart';
 import 'package:rintel/features/personalization/controllers/user_controller.dart';
 import 'package:rintel/features/personalization/models/contacts_del_model.dart';
 import 'package:rintel/features/personalization/models/contacts_model.dart';
