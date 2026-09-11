@@ -7,6 +7,7 @@ import 'package:rintel/features/store/controllers/inv_controller.dart';
 import 'package:rintel/features/store/controllers/search_bar_controller.dart';
 import 'package:rintel/features/store/controllers/txns_controller.dart';
 import 'package:rintel/features/store/screens/store_items_tings/widgets/inv_gridview_screen.dart';
+import 'package:rintel/features/store/screens/store_items_tings/widgets/refunds_view.dart';
 import 'package:rintel/features/store/screens/store_items_tings/widgets/store_screen_header.dart';
 import 'package:rintel/features/store/screens/store_items_tings/widgets/txns_view.dart';
 import 'package:rintel/utils/constants/colors.dart';
@@ -149,12 +150,12 @@ class CStoreScreen extends StatelessWidget {
                         ),
                         Tab(
                           child: Text(
-                            'On the house',
+                            'Refunds',
                           ),
                         ),
                         Tab(
                           child: Text(
-                            'Refunds',
+                            'On the house',
                           ),
                         ),
                       ],
@@ -191,18 +192,13 @@ class CStoreScreen extends StatelessWidget {
                     space: 'invoices',
                   ),
 
-                  // CTxnItemsListView(
-                  //   forContactScreen: false,
-                  //   space: 'invoices',
-                  // ),
+                  CRefundsView(
+                    //forContactScreen: false,
+                    //space: 'refunds',
+                  ),
                   CTxnsView(
                     forContactScreen: false,
                     space: 'On the house',
-                  ),
-
-                  CTxnsView(
-                    forContactScreen: false,
-                    space: 'refunds',
                   ),
                 ],
               ),

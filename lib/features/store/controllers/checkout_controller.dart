@@ -743,7 +743,7 @@ class CCheckoutController extends GetxController {
     final cartController = Get.put(CCartController());
 
     selectedPaymentMethod.value.platformName == 'cash';
-    txnsController.fetchSoldItems();
+
     customerBal.value = 0.0;
 
     // clear cart

@@ -1,4 +1,4 @@
-import 'package:auto_size_text/auto_size_text.dart';
+//import 'package:auto_size_text/auto_size_text.dart';
 import 'package:rintel/utils/constants/colors.dart';
 import 'package:flutter/material.dart';
 
@@ -21,7 +21,7 @@ class CProductTitleText extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Flexible(
-      child: AutoSizeText(
+      child: SelectableText(
         title,
         style: smallSize
             ? Theme.of(context).textTheme.labelSmall!.apply(

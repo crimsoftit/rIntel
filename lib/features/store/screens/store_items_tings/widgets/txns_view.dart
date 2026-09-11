@@ -144,6 +144,7 @@ class _CTxnsViewState extends State<CTxnsView> {
                                       .contains(
                                         'invoiced',
                                       ) &&
+                                  contactInvoice.totalAmount > 0 &&
                                   contactInvoice.customerName
                                       .toLowerCase()
                                       .contains(
@@ -175,7 +176,8 @@ class _CTxnsViewState extends State<CTxnsView> {
                               (invoice) =>
                                   invoice.txnStatus.toLowerCase().contains(
                                     'invoiced',
-                                  ),
+                                  ) &&
+                                  invoice.totalAmount > 0,
                             )
                             .toList(),
                 );
@@ -192,6 +194,7 @@ class _CTxnsViewState extends State<CTxnsView> {
                                   receipt.txnStatus.toLowerCase().contains(
                                     'complete',
                                   ) &&
+                                  receipt.totalAmount > 0 &&
                                   receipt.paymentMethod != 'On the house',
                             )
                             .toList(),
@@ -705,10 +708,10 @@ class _CTxnsViewState extends State<CTxnsView> {
                                                                           inventoryItem,
                                                                         );
 
+                                                                        txnsController
+                                                                            .fetchUserTxnItems();
                                                                         setState(
-                                                                          () async {
-                                                                            await txnsController.fetchUserTxnItems();
-                                                                          },
+                                                                          () {},
                                                                         );
                                                                       },
                                                                       value: 1,

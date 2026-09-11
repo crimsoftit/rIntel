@@ -210,6 +210,31 @@ class CProductCardVertical extends StatelessWidget {
                         fontSizeFactor: 0.9,
                       ),
                     ),
+                    // AutoSizeText(
+                    //   CFormatter.formatTimeRangeFromNow(
+                    //         lastModified!.replaceAll(
+                    //           '@ ',
+                    //           '',
+                    //         ),
+                    //       ).contains('just now')
+                    //       ? 'modified: ${CFormatter.formatTimeRangeFromNow(lastModified!.replaceAll('@ ', ''))}'
+                    //       : CFormatter.formatTimeRangeFromNow(
+                    //           lastModified!.replaceAll(
+                    //             '@ ',
+                    //             '',
+                    //           ),
+                    //         ),
+                    //   //lastModified!,
+                    //   maxFontSize: 14,
+                    //   maxLines: 1,
+                    //   minFontSize: 9,
+
+                    //   overflow: TextOverflow.ellipsis,
+                    //   style: Theme.of(context).textTheme.labelSmall!.apply(
+                    //     color: isDarkTheme ? CColors.grey : CColors.darkGrey,
+                    //     fontSizeFactor: 0.9,
+                    //   ),
+                    // ),
                   ),
 
             CProductTitleText(

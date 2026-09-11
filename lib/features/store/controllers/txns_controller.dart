@@ -11,7 +11,6 @@ import 'package:rintel/features/store/controllers/dashboard_controller.dart';
 import 'package:rintel/features/store/controllers/date_controller.dart';
 import 'package:rintel/features/store/controllers/inv_controller.dart';
 import 'package:rintel/features/store/controllers/search_bar_controller.dart';
-import 'package:rintel/features/store/controllers/sync_controller.dart';
 import 'package:rintel/features/store/models/best_sellers_model.dart';
 import 'package:rintel/features/store/models/inv_model.dart';
 import 'package:rintel/features/store/models/txns/sold_item_model.dart';
@@ -32,8 +31,6 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:intl/intl.dart';
-import 'package:simple_barcode_scanner/enum.dart';
-import 'package:simple_barcode_scanner/flutter_barcode_scanner.dart';
 
 class CTxnsController extends GetxController {
   static CTxnsController get instance {
@@ -50,12 +47,10 @@ class CTxnsController extends GetxController {
 
   final RxList<CTxnsModel> sales = <CTxnsModel>[].obs;
 
-  final RxList<CTxnsModel> foundSales = <CTxnsModel>[].obs;
   final RxList<CTxnsModel> txns = <CTxnsModel>[].obs;
 
-  RxList<CTxnsModel> transactionItems = <CTxnsModel>[].obs;
-  final RxList<CTxnsModel> refunds = <CTxnsModel>[].obs;
-  final RxList<CTxnsModel> foundRefunds = <CTxnsModel>[].obs;
+  final RxList<CSoldItemModel> refunds = <CSoldItemModel>[].obs;
+  final RxList<CSoldItemModel> foundRefunds = <CSoldItemModel>[].obs;
 
   final RxList<CBestSellersModel> bestSellers = <CBestSellersModel>[].obs;
 
@@ -202,92 +197,92 @@ class CTxnsController extends GetxController {
   }
 
   /// -- fetch sold items from sqflite db --
-  Future<List<CTxnsModel>> fetchSoldItems() async {
-    try {
-      // start loader while txns are fetched
-      isLoading.value = true;
+  // Future<List<CTxnsModel>> fetchSoldItems() async {
+  //   try {
+  //     // start loader while txns are fetched
+  //     isLoading.value = true;
 
-      // fetch sales from local db
-      final soldItems = await dbHelper.fetchUserSoldItems(
-        userController.user.value.email,
-      );
+  //     // fetch sales from local db
+  //     final soldItems = await dbHelper.fetchUserSoldItems(
+  //       userController.user.value.email,
+  //     );
 
-      // assign sold items to sales list
-      // sales.assignAll(soldItems.where((sale) => sale.quantity > 0));
-      sales.assignAll(soldItems);
+  //     // assign sold items to sales list
+  //     // sales.assignAll(soldItems.where((sale) => sale.quantity > 0));
+  //     sales.assignAll(soldItems);
 
-      // assign values for unsynced txn appends
-      unsyncedTxnAppends.value = soldItems
-          .where(
-            (unAppendedTxn) =>
-                unAppendedTxn.syncAction.toLowerCase().contains('append'),
-          )
-          .toList();
+  //     // assign values for unsynced txn appends
+  //     unsyncedTxnAppends.value = soldItems
+  //         .where(
+  //           (unAppendedTxn) =>
+  //               unAppendedTxn.syncAction.toLowerCase().contains('append'),
+  //         )
+  //         .toList();
 
-      // assign values for unsynced txn updates
-      var txnsForUpdates = soldItems
-          .where(
-            (unUpdatedTxn) =>
-                unUpdatedTxn.syncAction.toLowerCase().contains('update') &&
-                unUpdatedTxn.isSynced == 1,
-          )
-          .toList();
-      unsyncedTxnUpdates.assignAll(txnsForUpdates);
+  //     // assign values for unsynced txn updates
+  //     var txnsForUpdates = soldItems
+  //         .where(
+  //           (unUpdatedTxn) =>
+  //               unUpdatedTxn.syncAction.toLowerCase().contains('update') &&
+  //               unUpdatedTxn.isSynced == 1,
+  //         )
+  //         .toList();
+  //     unsyncedTxnUpdates.assignAll(txnsForUpdates);
 
-      // assign complete txns to receipts list
-      final completeSales = sales
-          .where(
-            (sale) =>
-                sale.txnStatus.toLowerCase().contains(
-                  'complete'.toLowerCase(),
-                ) &&
-                sale.quantity > 0,
-          )
-          .toList();
-      receipts.assignAll(completeSales);
+  //     // assign complete txns to receipts list
+  //     final completeSales = sales
+  //         .where(
+  //           (sale) =>
+  //               sale.txnStatus.toLowerCase().contains(
+  //                 'complete'.toLowerCase(),
+  //               ) &&
+  //               sale.quantity > 0,
+  //         )
+  //         .toList();
+  //     receipts.assignAll(completeSales);
 
-      // assign credit sales to invoices list
-      final creditSales = sales
-          .where(
-            (sale) =>
-                sale.txnStatus.toLowerCase().contains('invoiced') &&
-                sale.quantity > 0,
-          )
-          .toList();
-      invoices.assignAll(creditSales);
+  //     // assign credit sales to invoices list
+  //     final creditSales = sales
+  //         .where(
+  //           (sale) =>
+  //               sale.txnStatus.toLowerCase().contains('invoiced') &&
+  //               sale.quantity > 0,
+  //         )
+  //         .toList();
+  //     invoices.assignAll(creditSales);
 
-      // assign values for refunded items
-      var refundedItems = soldItems
-          .where((refundedItem) => refundedItem.qtyRefunded > 0)
-          .toList();
-      refunds.assignAll(refundedItems);
+  //     // assign values for refunded items
+  //     var refundedItems = soldItems
+  //         .where((refundedItem) => refundedItem.qtyRefunded > 0)
+  //         .toList();
+  //     refunds.assignAll(refundedItems);
 
-      if (searchController.showSearchField.value &&
-          searchController.txtSearchField.text == '') {
-        // foundSales.assignAll(soldItems);
-        foundSales.assignAll(sales);
-        foundRefunds.assignAll(refundedItems);
-      }
+  //     if (searchController.showSearchField.value &&
+  //         searchController.txtSearchField.text == '') {
+  //       // foundSales.assignAll(soldItems);
+  //       foundSales.assignAll(sales);
+  //       foundRefunds.assignAll(refundedItems);
+  //     }
 
-      // stop loader
-      soldItemsFetched.value = true;
-      isLoading.value = false;
+  //     // stop loader
+  //     soldItemsFetched.value = true;
+  //     isLoading.value = false;
 
-      return sales;
-    } catch (e) {
-      isLoading.value = false;
-      soldItemsFetched.value = false;
+  //     return sales;
+  //   } catch (e) {
+  //     isLoading.value = false;
+  //     soldItemsFetched.value = false;
 
-      if (kDebugMode) {
-        CPopupSnackBar.errorSnackBar(
-          title: 'error fetching sold items!',
-          message: e.toString(),
-        );
-      }
-      //throw e.toString();
-      rethrow;
-    }
-  }
+  //     if (kDebugMode) {
+  //       CPopupSnackBar.errorSnackBar(
+  //         title: 'error fetching sold items!',
+  //         message: e.toString(),
+  //       );
+  //     }
+  //     //throw e.toString();
+  //     rethrow;
+  //   }
+  // }
 
   /// -- update receipt item name when inventory name is updated --
   Future updateRelatedSoldItemsNames(
@@ -341,93 +336,93 @@ class CTxnsController extends GetxController {
   }
 
   /// -- fetch txn items by txn id --
-  Future<List<CTxnsModel>> fetchTxnItems(int txnId) async {
-    try {
-      // start loader while txns are fetched
-      txnItemsLoading.value = true;
-      isLoading.value = true;
-      await fetchSoldItems().then(
-        (result) {
-          if (result.isNotEmpty) {
-            var listToSearchFrom = foundSales.isNotEmpty ? foundSales : sales;
+  // Future<List<CTxnsModel>> fetchTxnItems(int txnId) async {
+  //   try {
+  //     // start loader while txns are fetched
+  //     txnItemsLoading.value = true;
+  //     isLoading.value = true;
+  //     await fetchSoldItems().then(
+  //       (result) {
+  //         if (result.isNotEmpty) {
+  //           var listToSearchFrom = foundSales.isNotEmpty ? foundSales : sales;
 
-            var txnItems = listToSearchFrom.where(
-              (soldItem) {
-                return soldItem.txnId.toString().contains(txnId.toString()) &&
-                    soldItem.quantity > 0;
-              },
-            ).toList();
+  //           var txnItems = listToSearchFrom.where(
+  //             (soldItem) {
+  //               return soldItem.txnId.toString().contains(txnId.toString()) &&
+  //                   soldItem.quantity > 0;
+  //             },
+  //           ).toList();
 
-            transactionItems.assignAll(txnItems);
+  //           transactionItems.assignAll(txnItems);
 
-            txnItemsLoading.value = false;
-            isLoading.value = false;
-          }
-        },
-      );
-      return transactionItems;
-    } catch (e) {
-      txnItemsLoading.value = false;
-      isLoading.value = false;
-      transactionItems.clear();
-      if (kDebugMode) {
-        CPopupSnackBar.errorSnackBar(
-          title: 'Oh Snap! error fetching txn items',
-          message: e.toString(),
-        );
-      }
-      //throw e.toString();
-      rethrow;
-    }
-  }
+  //           txnItemsLoading.value = false;
+  //           isLoading.value = false;
+  //         }
+  //       },
+  //     );
+  //     return transactionItems;
+  //   } catch (e) {
+  //     txnItemsLoading.value = false;
+  //     isLoading.value = false;
+  //     transactionItems.clear();
+  //     if (kDebugMode) {
+  //       CPopupSnackBar.errorSnackBar(
+  //         title: 'Oh Snap! error fetching txn items',
+  //         message: e.toString(),
+  //       );
+  //     }
+  //     //throw e.toString();
+  //     rethrow;
+  //   }
+  // }
 
   /// -- barcode scanner using flutter_barcode_scanner package --
-  Future<void> scanItemForSale() async {
-    try {
-      String barcodeScanRes = await FlutterBarcodeScanner.scanBarcode(
-        '#ff6666',
-        'cancel',
-        true,
-        ScanMode.BARCODE,
-        3000,
-        CameraFace.back.toString(),
-        ScanFormat.ALL_FORMATS,
-      );
+  // Future<void> scanItemForSale() async {
+  //   try {
+  //     String barcodeScanRes = await FlutterBarcodeScanner.scanBarcode(
+  //       '#ff6666',
+  //       'cancel',
+  //       true,
+  //       ScanMode.BARCODE,
+  //       3000,
+  //       CameraFace.back.toString(),
+  //       ScanFormat.ALL_FORMATS,
+  //     );
 
-      sellItemScanResults.value = barcodeScanRes;
+  //     sellItemScanResults.value = barcodeScanRes;
 
-      // -- set inventory item details to fields --
-      if (sellItemScanResults.value != '' &&
-          sellItemScanResults.value != '-1') {
-        await fetchSoldItems();
-        await fetchForSaleItemByCode(barcodeScanRes);
-      }
+  //     // -- set inventory item details to fields --
+  //     if (sellItemScanResults.value != '' &&
+  //         sellItemScanResults.value != '-1') {
+  //       await fetchSoldItems();
+  //       await fetchForSaleItemByCode(barcodeScanRes);
+  //     }
 
-      if (itemExists.value && !isLoading.value) {
-        Get.toNamed('/sales/sell_item/');
-      } else {
-        CPopupSnackBar.customToast(
-          message: 'item not found! please scan again or search inventory',
-          forInternetConnectivityStatus: false,
-        );
-        await fetchSoldItems();
-      }
-    } on FormatException catch (formatException) {
-      CPopupSnackBar.errorSnackBar(
-        title: 'format exception error!!',
-        message: formatException.message,
-      );
-    } catch (e) {
-      if (kDebugMode) {
-        CPopupSnackBar.errorSnackBar(
-          title: 'sell item scan error!',
-          message: e.toString(),
-        );
-      }
-      //throw e.toString();
-      rethrow;
-    }
-  }
+  //     if (itemExists.value && !isLoading.value) {
+  //       Get.toNamed('/sales/sell_item/');
+  //     } else {
+  //       CPopupSnackBar.customToast(
+  //         message: 'item not found! please scan again or search inventory',
+  //         forInternetConnectivityStatus: false,
+  //       );
+  //       await fetchSoldItems();
+  //     }
+  //   } on FormatException catch (formatException) {
+  //     CPopupSnackBar.errorSnackBar(
+  //       title: 'format exception error!!',
+  //       message: formatException.message,
+  //     );
+  //   } catch (e) {
+  //     if (kDebugMode) {
+  //       CPopupSnackBar.errorSnackBar(
+  //         title: 'sell item scan error!',
+  //         message: e.toString(),
+  //       );
+  //     }
+  //     //throw e.toString();
+  //     rethrow;
+  //   }
+  // }
 
   /// -- fetch top sellers grouped by product id --
   Future<List<CBestSellersModel>> fetchTopSellersFromSales() async {
@@ -1165,47 +1160,47 @@ class CTxnsController extends GetxController {
   }
 
   /// -- reset refundQty to 0 when bottomSheetModal dismisses --
-  void onRefundBottomSheetClose() async {
-    try {
-      final syncController = Get.put(CSyncController());
+  // void onRefundBottomSheetClose() async {
+  //   try {
+  //     final syncController = Get.put(CSyncController());
 
-      final internetIsConnected = await CNetworkManager.instance.isConnected();
+  //     final internetIsConnected = await CNetworkManager.instance.isConnected();
 
-      if (refundDataUpdated.value ||
-          CNetworkManager.instance.hasConnection.value) {
-        if (internetIsConnected) {
-          //await syncController.processSync();
-          if (await syncController.processSync()) {
-            await fetchSoldItems();
-            await invController.fetchUserInventoryItems();
-            if (invController.unSyncedAppends.isNotEmpty ||
-                invController.unSyncedUpdates.isNotEmpty ||
-                unsyncedTxnAppends.isNotEmpty ||
-                unsyncedTxnUpdates.isNotEmpty) {
-              await syncController.processSync();
-            }
-          }
-        } else {
-          CPopupSnackBar.customToast(
-            message: 'internet connection required for txns cloud sync!',
-            forInternetConnectivityStatus: true,
-          );
-        }
-      }
+  //     if (refundDataUpdated.value ||
+  //         CNetworkManager.instance.hasConnection.value) {
+  //       if (internetIsConnected) {
+  //         //await syncController.processSync();
+  //         if (await syncController.processSync()) {
+  //           await fetchSoldItems();
+  //           await invController.fetchUserInventoryItems();
+  //           if (invController.unSyncedAppends.isNotEmpty ||
+  //               invController.unSyncedUpdates.isNotEmpty ||
+  //               unsyncedTxnAppends.isNotEmpty ||
+  //               unsyncedTxnUpdates.isNotEmpty) {
+  //             await syncController.processSync();
+  //           }
+  //         }
+  //       } else {
+  //         CPopupSnackBar.customToast(
+  //           message: 'internet connection required for txns cloud sync!',
+  //           forInternetConnectivityStatus: true,
+  //         );
+  //       }
+  //     }
 
-      resetSalesFields();
+  //     resetSalesFields();
 
-      CDashboardController.instance.onInit();
-    } catch (e) {
-      if (kDebugMode) {
-        CPopupSnackBar.errorSnackBar(
-          title: 'error syncing refund item!',
-          message: e.toString(),
-        );
-      }
-      rethrow;
-    }
-  }
+  //     CDashboardController.instance.onInit();
+  //   } catch (e) {
+  //     if (kDebugMode) {
+  //       CPopupSnackBar.errorSnackBar(
+  //         title: 'error syncing refund item!',
+  //         message: e.toString(),
+  //       );
+  //     }
+  //     rethrow;
+  //   }
+  // }
 
   Future updateReceiptItemCloudData(int itemId, CTxnsModel itemModel) async {
     try {
@@ -1958,7 +1953,9 @@ class CTxnsController extends GetxController {
         userController.user.value.email,
       );
       // assign sold items to sales list
-      userTxns.assignAll(txns);
+      userTxns.assignAll(
+        txns,
+      );
 
       userInvoices.assignAll(
         userTxns.where((txn) => txn.txnStatus == 'invoiced'),
@@ -1988,18 +1985,25 @@ class CTxnsController extends GetxController {
 
       if (searchController.showSearchField.value &&
           searchController.txtSearchField.text == '') {
-        foundReceipts.assignAll(userTxns);
+        foundReceipts.assignAll(
+          userTxns.where((match) => match.totalAmount > 0),
+        );
         foundInvoices.assignAll(
           userTxns.where(
             (txn) =>
-                txn.txnStatus.toLowerCase().contains('invoiced'.toLowerCase()),
+                txn.txnStatus.toLowerCase().contains(
+                  'invoiced'.toLowerCase(),
+                ) &&
+                txn.totalAmount > 0,
           ),
         );
         matchingOnDaHauzItems.assignAll(
           userTxns.where(
-            (txn) => txn.paymentMethod.toLowerCase().contains(
-              'On the house'.toLowerCase(),
-            ),
+            (txn) =>
+                txn.paymentMethod.toLowerCase().contains(
+                  'On the house'.toLowerCase(),
+                ) &&
+                txn.totalAmount > 0,
           ),
         );
       }
@@ -2026,7 +2030,7 @@ class CTxnsController extends GetxController {
   Future<List<CSoldItemModel>> fetchUserTxnItems() async {
     try {
       isLoading.value = true;
-      foundSales.clear();
+
       foundRefunds.clear();
 
       final txnItems = await dbHelper.fetchUserTxnItems(
@@ -2034,6 +2038,19 @@ class CTxnsController extends GetxController {
       );
       // assign sold items to sales list
       userTxnItems.assignAll(txnItems);
+
+      refunds.assignAll(
+        userTxnItems.where(
+          (soldItem) {
+            return soldItem.qtyRefunded > 0;
+          },
+        ),
+      );
+
+      if (searchController.showSearchField.value &&
+          searchController.txtSearchField.text == '') {
+        foundRefunds.assignAll(refunds);
+      }
 
       await fetchTopSellersFromSales();
 

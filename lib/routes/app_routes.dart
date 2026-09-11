@@ -12,9 +12,6 @@ import 'package:rintel/features/store/screens/home/home.dart';
 import 'package:rintel/features/store/screens/store_items_tings/checkout/checkout_screen.dart';
 import 'package:rintel/features/store/screens/store_items_tings/inventory/inventory_details/inv_details.dart';
 import 'package:rintel/features/store/screens/store_items_tings/store_screen.dart';
-import 'package:rintel/features/store/screens/txns/sales_screen.dart';
-import 'package:rintel/features/store/screens/txns/txn_details/sold_item_details.dart';
-import 'package:rintel/features/store/screens/txns/txns_screen.dart';
 import 'package:rintel/nav_menu.dart';
 import 'package:get/get.dart';
 
@@ -33,21 +30,6 @@ class CAppRoutes {
     //   page: () => const CInventoryScreen(),
     // ),
     GetPage(name: CRoutes.inventoryDetails, page: () => const CInvDetails()),
-
-    GetPage(
-      name: CRoutes.sales,
-      page: () => const CSalesScreen(),
-    ),
-
-    GetPage(
-      name: CRoutes.txns,
-      page: () => const CTxnsScreen(),
-    ),
-
-    GetPage(
-      name: CRoutes.soldItemDetailsScreen,
-      page: () => const CSoldItemDetails(),
-    ),
 
     GetPage(name: CRoutes.checkoutScreen, page: () => const CCheckoutScreen()),
 
