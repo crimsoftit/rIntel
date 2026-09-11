@@ -678,8 +678,6 @@ class CContactDetailsScreen extends StatelessWidget {
                                                 context,
                                                 contactItem,
                                               );
-                                          // await contactsController
-                                          //     .fetchMyContacts();
                                         },
                                         child: Text(
                                           "Delete permanently",

@@ -379,26 +379,15 @@ class AddUpdateInventoryForm extends StatelessWidget {
                         onChanged: (buyingPrice) {
                           if (invController.txtQty.text.isNotEmpty &&
                               buyingPrice.isNotEmpty) {
-                            // if (invController.itemExists.value) {
-                            //   invController.computeUnitBP(
-                            //     double.parse(buyingPrice) +
-                            //         (inventoryItem.unitBp *
-                            //             inventoryItem.quantity),
-                            //     double.parse(invController.txtQty.text),
-                            //   );
-                            // } else {
-                            //   invController.computeUnitBP(
-                            //     double.parse(buyingPrice),
-                            //     double.parse(invController.txtQty.text),
-                            //   );
-                            // }
                             invController.computeUnitBP(
                               double.parse(buyingPrice),
                               double.parse(invController.txtQty.text),
                             );
                           }
                         },
-                        style: const TextStyle(fontWeight: FontWeight.normal),
+                        style: const TextStyle(
+                          fontWeight: FontWeight.normal,
+                        ),
                         textAlign: TextAlign.center,
                         validator: (value) {
                           return CValidator.validateNumber(
@@ -409,7 +398,9 @@ class AddUpdateInventoryForm extends StatelessWidget {
                       ),
                     ),
 
-                    SizedBox(width: CSizes.spaceBtnInputFields / 4.0),
+                    SizedBox(
+                      width: CSizes.spaceBtnInputFields / 4.0,
+                    ),
 
                     // -- unit selling price field --
                     SizedBox(
@@ -419,7 +410,9 @@ class AddUpdateInventoryForm extends StatelessWidget {
                         autovalidateMode: AutovalidateMode.onUserInteraction,
                         controller: invController.txtUnitSP,
                         decoration: InputDecoration(
-                          constraints: BoxConstraints(minHeight: 60.0),
+                          constraints: BoxConstraints(
+                            minHeight: 60.0,
+                          ),
                           contentPadding: const EdgeInsets.symmetric(
                             horizontal: 0.0,
                           ),

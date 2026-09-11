@@ -927,11 +927,14 @@ class CContactsController extends GetxController {
     BuildContext context,
     CContactsModel contact,
   ) async {
+    final isDarkTheme = CHelperFunctions.isDarkMode(context);
     try {
       await Get.defaultDialog(
-        backgroundColor: CColors.rBrown.withValues(
-          alpha: .5,
-        ),
+        backgroundColor: isDarkTheme
+            ? CColors.rBrown.withValues(
+                alpha: .5,
+              )
+            : CColors.white,
         content: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [

@@ -1337,33 +1337,6 @@ class CInventoryController extends GetxController {
         child: Text(
           'Use Old BP',
         ),
-
-        // RichText(
-        //   textAlign: TextAlign.center,
-        //   text: TextSpan(
-        //     style: DefaultTextStyle.of(context).style,
-        //     text: 'use ',
-        //     children: <TextSpan>[
-        //       TextSpan(
-        //         style: Theme.of(context).textTheme.labelSmall!.apply(
-        //           fontFeatures: [
-        //             FontFeature.superscripts(),
-        //           ],
-        //           fontSizeFactor: .75,
-        //         ),
-        //         text: currency,
-        //       ),
-        //       TextSpan(
-        //         style: Theme.of(context).textTheme.labelMedium,
-        //         text: '${invItem.buyingPrice} as BP',
-        //       ),
-        //     ],
-        //   ),
-        // ),
-
-        // const Text(
-        //   'Use ${invItem.buyingPrice} as BP',
-        // ),
       ),
     );
   }
