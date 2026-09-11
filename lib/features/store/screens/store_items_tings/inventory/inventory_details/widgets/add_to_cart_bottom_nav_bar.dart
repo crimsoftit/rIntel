@@ -1,6 +1,5 @@
 import 'package:rintel/common/widgets/buttons/icon_buttons/circular_icon_btn.dart';
 import 'package:rintel/features/store/controllers/cart_controller.dart';
-import 'package:rintel/features/store/controllers/inv_controller.dart';
 import 'package:rintel/features/store/models/inv_model.dart';
 import 'package:rintel/utils/computations/date_time_computations.dart'
     show CDateTimeComputations;
@@ -37,7 +36,6 @@ class CAddToCartBottomNavBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final cartController = Get.put(CCartController());
-    final invController = Get.put(CInventoryController());
     final isDarkTheme = CHelperFunctions.isDarkMode(context);
     //final txnsController = Get.put(CTxnsController());
 

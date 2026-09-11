@@ -128,7 +128,12 @@ class CInvGridviewScreen extends StatelessWidget {
                 crossAxisCount: 2,
                 mainAxisSpacing: CSizes.gridViewSpacing / 2,
                 crossAxisSpacing: CSizes.gridViewSpacing / 2.5,
-                mainAxisExtent: CHelperFunctions.screenHeight() * .289,
+                mainAxisExtent:
+                    mainAxisExtent ??
+                    180 * MediaQuery.textScalerOf(context).scale(1.2),
+                //mainAxisExtent: CHelperFunctions.screenHeight() * .289,
+                // Calculate aspect ratio: Width / (Base Height * Text Scale Factor)
+                //childAspectRatio: 1.0 / (1.5 * MediaQuery.of(context).textScaleFactor),
               ),
 
               itemBuilder: (context, index) {
@@ -142,7 +147,9 @@ class CInvGridviewScreen extends StatelessWidget {
                   ),
                   bp: demInventoryItems[index].buyingPrice.toStringAsFixed(2),
 
-                  containerHeight: CHelperFunctions.screenHeight() * .288,
+                  containerHeight:
+                      mainAxisExtent ??
+                      180 * MediaQuery.textScalerOf(context).scale(1.2),
                   deleteAction: syncController.processingSync.value
                       ? null
                       : () {

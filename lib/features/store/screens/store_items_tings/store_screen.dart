@@ -167,7 +167,7 @@ class CStoreScreen extends StatelessWidget {
                 children: [
                   /// -- inventory list items --
                   CInvGridviewScreen(
-                    mainAxisExtent: 185.20,
+                    //mainAxisExtent: 185.20,
                     screen: 'store',
                   ),
 
