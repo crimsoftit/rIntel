@@ -193,8 +193,8 @@ class CStoreScreen extends StatelessWidget {
                   ),
 
                   CRefundsView(
-                    //forContactScreen: false,
-                    //space: 'refunds',
+                    forContactScreen: false,
+                    space: 'refunds',
                   ),
                   CTxnsView(
                     forContactScreen: false,

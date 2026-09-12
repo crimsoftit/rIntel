@@ -200,6 +200,31 @@ class _CTxnsViewState extends State<CTxnsView> {
                             .toList(),
                 );
                 break;
+              case 'contact receipts':
+                demItems.assignAll(
+                  snapshot.data!
+                      .where(
+                        (contactReceipt) =>
+                            contactReceipt.txnStatus.toLowerCase().contains(
+                              'complete',
+                            ) &&
+                            contactReceipt.totalAmount > 0 &&
+                            contactReceipt.paymentMethod != 'On the house' &&
+                            contactReceipt.customerName.toLowerCase().contains(
+                              contactItem.contactName,
+                            ) &&
+                            (contactReceipt.customerContacts
+                                    .toLowerCase()
+                                    .contains(contactItem.contactPhone) ||
+                                (contactReceipt.customerContacts
+                                    .toLowerCase()
+                                    .contains(
+                                      contactItem.contactEmail.toLowerCase(),
+                                    ))),
+                      )
+                      .toList(),
+                );
+                break;
               case 'On the house':
                 demItems.assignAll(
                   searchController.showSearchField.value &&

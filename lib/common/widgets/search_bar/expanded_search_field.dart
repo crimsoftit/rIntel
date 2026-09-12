@@ -40,10 +40,12 @@ class CExpandedSearchField extends StatelessWidget {
               onChanged: (value) {
                 invController.searchInventory(value);
                 txnsController.searchSales(value);
+                txnsController.searchThroughRefunds(value);
               },
               onFieldSubmitted: (value) {
                 invController.searchInventory(value);
                 txnsController.searchSales(value);
+                txnsController.searchThroughRefunds(value);
               },
               style: TextStyle(
                 color: txtColor,

@@ -508,12 +508,11 @@ class CTxnsController extends GetxController {
     }
   }
 
-  // -- search store --
+  /// -- search through store sales --
   Future<void> searchSales(String value) async {
     try {
       userTxns.refresh();
 
-      /// -- search all sold items --
       var txnsFound = userTxns.where((foundTxn) {
         var foundTxnItems = userTxnItems.where(
           (txnItem) {
@@ -551,16 +550,22 @@ class CTxnsController extends GetxController {
                   return child.productCode.toLowerCase().contains(
                         value.toLowerCase(),
                       ) ||
-                      child.productName.toLowerCase().contains(
+                      child.productId.toString().toLowerCase().contains(
                         value.toLowerCase(),
                       ) ||
-                      child.productId.toString().toLowerCase().contains(
+                      child.txnId.toString().toLowerCase().contains(
+                        value.toLowerCase(),
+                      ) ||
+                      child.productName.toLowerCase().contains(
                         value.toLowerCase(),
                       ) ||
                       child.itemMetrics.toLowerCase().contains(
                         value.toLowerCase(),
                       ) ||
                       child.quantity.toString().toLowerCase().contains(
+                        value.toLowerCase(),
+                      ) ||
+                      child.qtyRefunded.toString().toLowerCase().contains(
                         value.toLowerCase(),
                       ) ||
                       child.unitBP.toString().toLowerCase().contains(
@@ -573,6 +578,13 @@ class CTxnsController extends GetxController {
               ),
             );
       }).toList();
+
+      foundInvoices.assignAll(
+        txnsFound.where(
+          (invoice) => invoice.txnStatus == 'invoiced',
+        ),
+      );
+
       foundReceipts.assignAll(
         txnsFound.where(
           (receipt) =>
@@ -583,11 +595,6 @@ class CTxnsController extends GetxController {
         ),
       );
 
-      foundInvoices.assignAll(
-        txnsFound.where(
-          (invoice) => invoice.txnStatus == 'invoiced',
-        ),
-      );
       matchingOnDaHauzItems.assignAll(
         txnsFound.where(
           (txn) => txn.paymentMethod.toLowerCase().contains(
@@ -603,6 +610,30 @@ class CTxnsController extends GetxController {
       //throw e.toString();
       rethrow;
     }
+  }
+
+  /// -- search through refunds --
+  void searchThroughRefunds(String query) {
+    refunds.refresh();
+
+    var refundsFound = refunds.where(
+      (refund) {
+        return refund.productCode.toLowerCase().contains(
+              query.toLowerCase(),
+            ) ||
+            refund.productId.toString().toLowerCase().contains(
+              query.toLowerCase(),
+            ) ||
+            refund.txnId.toString().toLowerCase().contains(
+              query.toLowerCase(),
+            ) ||
+            refund.productName.toLowerCase().contains(
+              query.toLowerCase(),
+            );
+      },
+    ).toList();
+
+    foundRefunds.assignAll(refundsFound);
   }
 
   /// -- when search result item is selected --

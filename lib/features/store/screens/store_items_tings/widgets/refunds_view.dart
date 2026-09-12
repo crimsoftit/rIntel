@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:rintel/common/widgets/buttons/icon_buttons/square_icon_btn.dart';
+import 'package:rintel/common/widgets/buttons/txt_buttons/custom_txt_btn.dart';
 import 'package:rintel/common/widgets/custom_shapes/containers/rounded_container.dart';
 import 'package:rintel/features/personalization/controllers/contacts_controller.dart';
 import 'package:rintel/features/personalization/controllers/user_controller.dart';
@@ -14,12 +15,18 @@ import 'package:rintel/features/store/screens/search/widgets/no_results_screen.d
 import 'package:rintel/utils/constants/colors.dart';
 import 'package:rintel/utils/constants/img_strings.dart';
 import 'package:rintel/utils/constants/sizes.dart';
+import 'package:rintel/utils/helpers/formatter.dart';
 import 'package:rintel/utils/helpers/helper_functions.dart';
 
 class CRefundsView extends StatelessWidget {
   const CRefundsView({
     super.key,
+    required this.forContactScreen,
+    required this.space,
   });
+
+  final bool forContactScreen;
+  final String space;
 
   @override
   Widget build(BuildContext context) {
@@ -36,7 +43,46 @@ class CRefundsView extends StatelessWidget {
     return Obx(
       () {
         CContactsModel contactItem = CContactsModel.empty();
-        demRefunds.assignAll(txnsController.refunds);
+        if (forContactScreen) {
+          contactItem = contactsController.myContacts.firstWhere(
+            (contact) => contact.contactId == Get.arguments,
+          );
+        }
+
+        switch (space) {
+          case 'refunds':
+            demRefunds.assignAll(
+              searchController.showSearchField.value &&
+                      searchController.txtSearchField.text != ''
+                  ? txnsController.foundRefunds
+                  : txnsController.refunds,
+            );
+            break;
+          case 'contact refunds':
+            demRefunds.assignAll(
+              txnsController.refunds.where(
+                (contactRefund) {
+                  var parent = txnsController.userTxns.firstWhereOrNull(
+                    (txn) => txn.txnId == contactRefund.txnId,
+                  );
+                  return parent!.customerName.toLowerCase().contains(
+                        contactItem.contactName,
+                      ) &&
+                      (parent.customerContacts.toLowerCase().contains(
+                            contactItem.contactPhone,
+                          ) ||
+                          parent.customerContacts.toLowerCase().contains(
+                            contactItem.contactEmail.toLowerCase(),
+                          ));
+                },
+              ),
+            );
+            break;
+          default:
+            demRefunds.clear();
+            break;
+        }
+
         if (searchController.showSearchField.value &&
             !txnsController.isLoading.value &&
             demRefunds.isEmpty) {
@@ -47,7 +93,7 @@ class CRefundsView extends StatelessWidget {
           return Center(
             child: NoDataScreen(
               lottieImage: CImages.noDataLottie,
-              txt: 'refunded items will be displayed here...',
+              txt: 'refunds will appear here...',
             ),
           );
         }
@@ -100,7 +146,7 @@ class CRefundsView extends StatelessWidget {
                 Card(
                   color: isDarkTheme
                       ? CColors.rBrown.withValues(
-                          alpha: .3,
+                          alpha: .1,
                         )
                       : CColors.white,
                   elevation: 0,
@@ -219,7 +265,50 @@ class CRefundsView extends StatelessWidget {
                             ],
                           ),
                           const SizedBox(
-                            height: CSizes.spaceBtnItems / 6.0,
+                            height: CSizes.spaceBtnInputFields,
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(
+                              bottom: CSizes.spaceBtnInputFields,
+                              right: 5.0,
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Expanded(
+                                  flex: 6,
+                                  child: SelectableText(
+                                    refund.productName.toUpperCase(),
+                                    style: Theme.of(
+                                      context,
+                                    ).textTheme.labelMedium!.apply(),
+                                  ),
+                                ),
+                                Expanded(
+                                  child: SelectableText(
+                                    '${CFormatter.formatItemQtyDisplays(refund.qtyRefunded, refund.itemMetrics)} ${CFormatter.formatItemMetrics(refund.itemMetrics, refund.qtyRefunded)}',
+                                    style: Theme.of(
+                                      context,
+                                    ).textTheme.labelMedium!.apply(),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+
+                          Align(
+                            alignment: Alignment.bottomRight,
+                            child: CCustomTxtBtn(
+                              btnWidth: 170.0,
+                              icon: Iconsax.eye,
+                              labelTxt: 'product details',
+                              onPressed: () {
+                                Get.toNamed(
+                                  '/inventory/item_details/',
+                                  arguments: refund.productId,
+                                );
+                              },
+                            ),
                           ),
                         ],
                       ),
