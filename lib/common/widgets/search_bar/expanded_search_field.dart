@@ -1,3 +1,4 @@
+import 'package:rintel/common/widgets/custom_shapes/containers/rounded_container.dart';
 import 'package:rintel/features/store/controllers/inv_controller.dart';
 import 'package:rintel/features/store/controllers/txns_controller.dart';
 import 'package:rintel/features/store/controllers/search_bar_controller.dart';
@@ -29,14 +30,45 @@ class CExpandedSearchField extends StatelessWidget {
     return Row(
       children: [
         Expanded(
-          child: Padding(
+          child: CRoundedContainer(
+            bgColor: CColors.transparent,
+            height: 45.0,
             padding: const EdgeInsets.only(
-              bottom: 6.0,
-              left: 0.0,
+              top: 1.0,
             ),
             child: TextFormField(
-              controller: controller,
               autofocus: true,
+
+              controller: controller,
+
+              decoration: InputDecoration(
+                prefixIcon: Padding(
+                  padding: const EdgeInsets.only(
+                    top: 3.0,
+                  ),
+                  child: Icon(
+                    Iconsax.search_normal,
+                    color: CColors.rBrown.withValues(
+                      alpha: 0.6,
+                    ),
+                    size: CSizes.iconSm,
+                  ),
+                ),
+
+                // hintText: 'search $hintTxt',
+                hintText: hintTxt ?? 'Search store',
+                hintStyle:
+                    Theme.of(
+                      context,
+                    ).textTheme.labelMedium!.apply(
+                      color: CColors.rBrown,
+                    ),
+                border: InputBorder.none,
+                focusedBorder: InputBorder.none,
+                enabledBorder: InputBorder.none,
+                disabledBorder: InputBorder.none,
+                errorBorder: InputBorder.none,
+              ),
               onChanged: (value) {
                 invController.searchInventory(value);
                 txnsController.searchSales(value);
@@ -52,29 +84,7 @@ class CExpandedSearchField extends StatelessWidget {
                 fontSize: 14.0,
                 fontWeight: FontWeight.normal,
               ),
-              decoration: InputDecoration(
-                prefixIcon: Padding(
-                  padding: const EdgeInsets.only(top: 9.0),
-                  child: Icon(
-                    Iconsax.search_normal,
-                    color: CColors.rBrown.withValues(alpha: 0.6),
-                    size: CSizes.iconSm,
-                  ),
-                ),
-
-                // hintText: 'search $hintTxt',
-                hintText:
-                    hintTxt ?? 'search store (inventory, txns, dates, etc.)',
-                hintStyle: TextStyle(
-                  color: CColors.rBrown.withValues(alpha: 0.6),
-                  //fontSize: 12.0,
-                ),
-                border: InputBorder.none,
-                focusedBorder: InputBorder.none,
-                enabledBorder: InputBorder.none,
-                disabledBorder: InputBorder.none,
-                errorBorder: InputBorder.none,
-              ),
+              textAlign: TextAlign.center,
             ),
           ),
         ),
@@ -93,8 +103,10 @@ class CExpandedSearchField extends StatelessWidget {
               await txnsController.fetchUserTxns();
             },
             child: Padding(
-              padding: const EdgeInsets.all(
-                10.0,
+              padding: const EdgeInsets.only(
+                bottom: 10.0,
+                right: 15.0,
+                top: 10.0,
               ),
               child: Icon(
                 Icons.close,

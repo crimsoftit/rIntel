@@ -75,11 +75,16 @@ class CStoreScreen extends StatelessWidget {
                           Expanded(
                             child: searchController.showSearchField.value
                                 ? CAnimatedSearchBar(
+                                    boxColor: CColors.rBrown.withValues(
+                                      alpha: .2,
+                                    ),
                                     hintTxt: 'inventory, transactions',
-                                    boxColor:
-                                        searchController.showSearchField.value
-                                        ? CColors.white
-                                        : Colors.transparent,
+                                    // boxColor:
+                                    //     searchController.showSearchField.value
+                                    //     ? CColors.rBrown.withValues(
+                                    //         alpha: .2,
+                                    //       )
+                                    //     : Colors.transparent,
                                     controller: searchController.txtSearchField,
                                   )
                                 : SizedBox.shrink(),

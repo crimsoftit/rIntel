@@ -22,7 +22,9 @@ class CContactsScreen extends StatelessWidget {
     final isDarkTheme = CHelperFunctions.isDarkMode(context);
 
     return DefaultTabController(
-      animationDuration: Duration(milliseconds: 300),
+      animationDuration: Duration(
+        milliseconds: 300,
+      ),
       length: 5,
       child: Container(
         color: isDarkTheme ? CColors.transparent : CColors.white,

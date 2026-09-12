@@ -28,23 +28,31 @@ class CAnimedSearchfield extends StatelessWidget {
   Widget build(BuildContext context) {
     return AnimatedContainer(
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(32.0),
+        borderRadius: BorderRadius.circular(
+          32.0,
+        ),
         //boxShadow: fieldExpanded ? kElevationToShadow[2] : null,
         color: fieldExpanded
-            ? CColors.rBrown.withValues(alpha: .2)
+            ? CColors.rBrown.withValues(
+                alpha: .2,
+              )
             : CColors.transparent,
       ),
-      duration: const Duration(milliseconds: 500),
+      duration: const Duration(
+        milliseconds: 500,
+      ),
       height: 45.0,
-      width: fieldExpanded ? CHelperFunctions.screenWidth() * .94 : 45,
+      width: fieldExpanded ? CHelperFunctions.screenWidth() * .98 : 45,
       child: fieldExpanded
           ? CRoundedContainer(
               bgColor: CColors.transparent,
               height: 45.0,
-              width: CHelperFunctions.screenWidth() * .93,
+              width: CHelperFunctions.screenWidth() * .98,
               showBorder: false,
               child: Padding(
-                padding: const EdgeInsets.only(bottom: 6.0, left: 0.0),
+                padding: const EdgeInsets.only(
+                  bottom: 6.0,
+                ),
                 child: TextFormField(
                   autofocus: true,
                   controller: searchFieldController,
@@ -55,12 +63,18 @@ class CAnimedSearchfield extends StatelessWidget {
                     errorBorder: InputBorder.none,
                     focusedBorder: InputBorder.none,
 
-                    hintStyle: Theme.of(
-                      context,
-                    ).textTheme.labelMedium!.apply(color: CColors.rBrown),
+                    hintStyle:
+                        Theme.of(
+                          context,
+                        ).textTheme.labelMedium!.apply(
+                          color: CColors.rBrown,
+                        ),
                     hintText: hintTxt,
                     prefixIcon: Padding(
-                      padding: const EdgeInsets.only(left: 5.0, top: 6.0),
+                      padding: const EdgeInsets.only(
+                        left: 5.0,
+                        top: 6.0,
+                      ),
                       child: const Icon(
                         Iconsax.search_normal,
                         color: CColors.rBrown,
@@ -68,7 +82,10 @@ class CAnimedSearchfield extends StatelessWidget {
                       ),
                     ),
                     suffixIcon: Padding(
-                      padding: const EdgeInsets.only(right: 5.0, top: 6.0),
+                      padding: const EdgeInsets.only(
+                        right: 5.0,
+                        top: 6.0,
+                      ),
                       child: InkWell(
                         onTap: onIconTap,
                         child: const Icon(

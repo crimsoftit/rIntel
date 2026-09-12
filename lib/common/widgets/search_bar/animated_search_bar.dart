@@ -30,27 +30,38 @@ class CAnimatedSearchBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final dashboardController = Get.put(CDashboardController());
-    // final invController = Get.put(CInventoryController());
-    // final txnsController = Get.put(CTxnsController());
     final searchController = Get.put(CSearchBarController());
 
     return Obx(() {
       return AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
+        duration: const Duration(
+          milliseconds: 500,
+        ),
+        height: 43.0,
+        padding: const EdgeInsets.only(
+          right: 0.1,
+        ),
         width:
             searchController.showSearchField.value ||
                 dashboardController.showSummaryFilterField.value
             ? double.maxFinite
             : forStoreSearch!
-            ? 40.0
+            ? 45.0
             : 70.0,
-        height: 40.0,
-        padding: const EdgeInsets.only(right: 0.1),
+
         decoration: BoxDecoration(
           borderRadius: searchController.showSearchField.value
-              ? BorderRadius.circular(10.0)
-              : BorderRadius.circular(20.0),
-          color: boxColor,
+              ? BorderRadius.circular(
+                  25.0,
+                )
+              : BorderRadius.circular(
+                  20.0,
+                ),
+          color: searchController.showSearchField.value
+              ? CColors.rBrown.withValues(
+                  alpha: .2,
+                )
+              : boxColor,
           //boxShadow: kElevationToShadow[2],
         ),
         child:
@@ -71,7 +82,10 @@ class CAnimatedSearchBar extends StatelessWidget {
 }
 
 class DefaultSearchWidget extends StatelessWidget {
-  const DefaultSearchWidget({super.key, required this.forStoreSearch});
+  const DefaultSearchWidget({
+    super.key,
+    required this.forStoreSearch,
+  });
 
   final bool? forStoreSearch;
 
@@ -82,12 +96,17 @@ class DefaultSearchWidget extends StatelessWidget {
     // final txnsController = Get.put(CTxnsController());
     final searchController = Get.put(CSearchBarController());
 
-    Future.delayed(Duration(milliseconds: 200), () {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        dashboardController.showSummaryFilterField.value = false;
-        searchController.showSearchField.value = false;
-      });
-    });
+    Future.delayed(
+      Duration.zero,
+      () {
+        WidgetsBinding.instance.addPostFrameCallback(
+          (_) {
+            dashboardController.showSummaryFilterField.value = false;
+            searchController.showSearchField.value = false;
+          },
+        );
+      },
+    );
 
     return Material(
       type: MaterialType.transparency,
@@ -117,7 +136,7 @@ class DefaultSearchWidget extends StatelessWidget {
         },
         child: forStoreSearch!
             ? const Icon(
-                Iconsax.search_normal,
+                Iconsax.search_favorite,
                 color: CColors.rBrown,
                 size: CSizes.iconMd,
               )
