@@ -249,16 +249,12 @@ class CRefundsView extends StatelessWidget {
                                       child: CSquareIconBtn(
                                         icon: Iconsax.add,
                                         iconColor: CColors.rOrange,
-                                        onBtnTap: () async {
-                                          await contactsController
-                                              .addUpdateContactActionModal(
+                                        onBtnTap: () {
+                                          contactsController
+                                              .updateTxnCustomerDetails(
                                                 context,
-                                                null,
-                                                'add',
-                                                'Customer',
+                                                parentTxn,
                                               );
-                                          contactsController.myContacts
-                                              .refresh();
                                         },
                                       ),
                                     ),

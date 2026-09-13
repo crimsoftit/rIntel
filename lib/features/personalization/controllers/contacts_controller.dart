@@ -3,7 +3,9 @@ import 'dart:io';
 
 import 'package:clock/clock.dart';
 import 'package:country_picker/country_picker.dart';
+import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:rintel/api/sheets/store_sheets_api.dart';
+import 'package:rintel/common/widgets/buttons/txt_buttons/custom_txt_btn.dart';
 import 'package:rintel/common/widgets/custom_shapes/containers/rounded_container.dart';
 import 'package:rintel/common/widgets/flushbars/flushbars.dart';
 import 'package:rintel/common/widgets/txt_fields/custom_type_ahead_field.dart';
@@ -1026,6 +1028,11 @@ class CContactsController extends GetxController {
           ),
         );
       },
+    ).then(
+      (_) async {
+        await fetchMyContacts();
+        resetFields();
+      },
     );
   }
 
@@ -1604,46 +1611,176 @@ class CContactsController extends GetxController {
     BuildContext context,
     CTxn parentTxn,
   ) {
+    final isDarkTheme = CHelperFunctions.isDarkMode(context);
+    CContactsModel contactForUpdate = CContactsModel.empty();
+
+    final suggestionsBoxController = SuggestionsController<CContactsModel>();
+
     return showModalBottomSheet(
       context: context,
+      backgroundColor: isDarkTheme
+          ? CColors.rBrown.withValues(
+              alpha: .85,
+            )
+          : CColors.white.withValues(
+              alpha: .85,
+            ),
       isDismissible: true,
       isScrollControlled: true,
       useSafeArea: true,
       builder: (context) {
-        final isDarkTheme = CHelperFunctions.isDarkMode(context);
-        txtSearchCustomerDetails.clear();
         return Padding(
           padding: MediaQuery.of(context).viewInsets,
           child: CRoundedContainer(
-            bgColor: isDarkTheme ? CColors.rBrown : CColors.white,
-            height: CHelperFunctions.screenHeight() * 0.38,
+            bgColor: isDarkTheme
+                ? CColors.black.withValues(
+                    alpha: .5,
+                  )
+                : CColors.white.withValues(
+                    alpha: .5,
+                  ),
+            height:
+                contactForUpdate.contactName != '' ||
+                    contactForUpdate.contactPhone != ''
+                ? CHelperFunctions.screenHeight() * .32
+                : CHelperFunctions.screenHeight() * .25,
             padding: const EdgeInsets.all(
-              CSizes.lg / 3,
+              CSizes.xl,
             ),
             child: Column(
               children: [
                 CCustomTypeaheadField(
+                  boxRadius: 15,
+                  fieldRadius: 25,
                   focusedBorderColor: isDarkTheme
                       ? CColors.grey
                       : CColors.rBrown,
                   includeAvatarOnSuggestion: true,
                   includePrefixIcon: true,
-                  labelTxt: 'Customer\'s name or contacts:',
-                  onItemSelected: (suggestion) {},
+                  labelTxt: 'search contacts:',
+                  onItemSelected: (suggestion) {
+                    contactForUpdate = suggestion;
+                    txtSearchCustomerDetails.text =
+                        contactForUpdate.contactName;
+                    txtPhoneController.text =
+                        contactForUpdate.contactPhone != ''
+                        ? contactForUpdate.contactPhone
+                        : contactForUpdate.contactEmail;
+                  },
                   prefixIcon: Icon(
                     Iconsax.search_normal,
                     color: CColors.darkGrey,
-                    size: CSizes.iconXs,
+                    size: CSizes.iconMd,
                   ),
+
+                  suffixIcon: GestureDetector(
+                    onTap: () {
+                      suggestionsBoxController.close();
+                    },
+                    child: Icon(
+                      Icons.close,
+                      color: CColors.darkGrey,
+                      size: CSizes.iconMd,
+                    ),
+                  ),
+                  suggestionsController: suggestionsBoxController,
                   typeAheadFieldController: txtSearchCustomerDetails,
+                  verticalDirection: VerticalDirection.down,
                   // fieldValidator: (value) {
                   //   return fieldValidator(value);
                   // },
+                ),
+
+                Visibility(
+                  visible:
+                      contactForUpdate.contactName != '' ||
+                      contactForUpdate.contactPhone != '',
+                  child: Column(
+                    children: [
+                      const SizedBox(
+                        height: CSizes.spaceBtnInputFields,
+                      ),
+                      CCustomTypeaheadField(
+                        boxRadius: 20,
+                        fieldRadius: 20,
+                        focusedBorderColor: isDarkTheme
+                            ? CColors.grey
+                            : CColors.rBrown,
+                        includeAvatarOnSuggestion: true,
+                        includePrefixIcon: true,
+                        labelTxt: 'Contacts:',
+                        onItemSelected: (suggestion) {},
+                        prefixIcon: Icon(
+                          Iconsax.card,
+                          color: CColors.darkGrey,
+                          size: CSizes.iconMd,
+                        ),
+
+                        // suffixIcon: Icon(
+                        //   Icons.close,
+                        //   color: CColors.darkGrey,
+                        //   size: CSizes.iconMd,
+                        // ),
+                        typeAheadFieldController: txtPhoneController,
+                        verticalDirection: VerticalDirection.down,
+                        // fieldValidator: (value) {
+                        //   return fieldValidator(value);
+                        // },
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(
+                  height: CSizes.spaceBtnSections * .25,
+                ),
+                Expanded(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Visibility(
+                        visible:
+                            contactForUpdate.contactName != '' ||
+                            contactForUpdate.contactPhone != '',
+                        child: CCustomTxtBtn(
+                          btnWidth: 130.0,
+                          icon: Iconsax.save_2,
+                          labelTxt: 'Update',
+                          onPressed: () {},
+                        ),
+                      ),
+
+                      Visibility(
+                        visible:
+                            contactForUpdate.contactName == '' ||
+                            contactForUpdate.contactPhone == '',
+                        child: CCustomTxtBtn(
+                          btnHeight: 40.0,
+                          btnWidth: 170.0,
+                          icon: Iconsax.add,
+                          labelTxt: 'New contact',
+                          onPressed: () {
+                            addUpdateContactActionModal(
+                              context,
+                              null,
+                              'add',
+                              'Customer',
+                            );
+                            myContacts.refresh();
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ],
             ),
           ),
         );
+      },
+    ).then(
+      (_) async {
+        await fetchMyContacts();
+        resetFields();
       },
     );
   }
@@ -1653,7 +1790,7 @@ class CContactsController extends GetxController {
     contactCountryCode.value = 'KE';
 
     contactDialCode.value = '+254';
-
+    txtSearchCustomerDetails.clear();
     txtContactNameController.clear();
     txtEmailController.clear();
     txtPhoneController.clear();
@@ -1665,7 +1802,7 @@ class CContactsController extends GetxController {
   @override
   void dispose() {
     contactsSearchFieldController.dispose();
-
+    txtSearchCustomerDetails.dispose();
     txtContactNameController.dispose();
     txtSearchCustomerDetails.dispose();
     txtEmailController.dispose();

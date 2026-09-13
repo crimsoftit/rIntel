@@ -15,34 +15,43 @@ class CCustomTypeaheadField extends StatelessWidget {
   const CCustomTypeaheadField({
     super.key,
     this.contentPadding,
+    this.boxRadius,
     this.fieldHeight,
     this.fieldLabelStyle,
+    this.fieldRadius,
     this.fieldValidator,
     this.fillColor,
     this.focusedBorderColor,
     this.minHeight,
     this.onFieldValueChanged,
     this.prefixIcon,
+
+    this.suffixIcon,
+    this.suggestionsController,
     this.verticalDirection = VerticalDirection.up,
+
     required this.includeAvatarOnSuggestion,
     required this.includePrefixIcon,
     required this.labelTxt,
     required this.onItemSelected,
+
     required this.typeAheadFieldController,
   });
 
   final bool includePrefixIcon, includeAvatarOnSuggestion;
   final Color? fillColor, focusedBorderColor;
-  final double? fieldHeight, minHeight;
+  final double? boxRadius, fieldHeight, fieldRadius, minHeight;
   final EdgeInsetsGeometry? contentPadding;
   final FormFieldValidator<String>? fieldValidator;
   final String labelTxt;
+  final SuggestionsController<CContactsModel>? suggestionsController;
   final TextEditingController typeAheadFieldController;
   final TextStyle? fieldLabelStyle;
   final Widget? prefixIcon;
   final VerticalDirection? verticalDirection;
   final void Function(CContactsModel) onItemSelected;
   final void Function(String)? onFieldValueChanged;
+  final Widget? suffixIcon;
 
   // @override
   @override
@@ -52,8 +61,6 @@ class CCustomTypeaheadField extends StatelessWidget {
     final screenWidth = CHelperFunctions.screenWidth();
 
     return TypeAheadField<CContactsModel>(
-      controller: typeAheadFieldController,
-      direction: verticalDirection,
       builder: (context, controller, focusNode) {
         return TextFormField(
           autofocus: false,
@@ -70,7 +77,7 @@ class CCustomTypeaheadField extends StatelessWidget {
             focusColor: CColors.rBrown,
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(
-                CSizes.cardRadiusXs,
+                fieldRadius ?? CSizes.cardRadiusXs,
               ),
               borderSide: BorderSide(
                 color: CColors.grey,
@@ -85,7 +92,7 @@ class CCustomTypeaheadField extends StatelessWidget {
                     ),
               ),
               borderRadius: BorderRadius.circular(
-                CSizes.cardRadiusSm,
+                fieldRadius ?? CSizes.cardRadiusSm,
               ),
             ),
             labelStyle: Theme.of(context).textTheme.labelSmall,
@@ -98,6 +105,7 @@ class CCustomTypeaheadField extends StatelessWidget {
                         size: CSizes.iconXs,
                       )
                 : null,
+            suffixIcon: suffixIcon,
           ),
           focusNode: focusNode,
           onChanged: onFieldValueChanged,
@@ -110,12 +118,18 @@ class CCustomTypeaheadField extends StatelessWidget {
           validator: fieldValidator,
         );
       },
+
       constraints: BoxConstraints(
         minHeight: 0.0,
         maxHeight: 310,
-        maxWidth: screenWidth,
+        maxWidth: screenWidth * .9,
       ),
+      controller: typeAheadFieldController,
+      direction: verticalDirection,
       hideOnEmpty: true,
+      hideOnSelect: true,
+      hideOnUnfocus: true,
+      //hideWithKeyboard: true,
       offset: Offset(
         0,
         0.0,
@@ -123,7 +137,7 @@ class CCustomTypeaheadField extends StatelessWidget {
       decorationBuilder: (context, child) => Material(
         animateColor: true,
         borderRadius: BorderRadius.circular(
-          CSizes.cardRadiusXs,
+          boxRadius ?? CSizes.cardRadiusXs,
         ),
         clipBehavior: Clip.antiAlias,
         color: CColors.rBrown.withValues(
@@ -134,12 +148,6 @@ class CCustomTypeaheadField extends StatelessWidget {
         child: child,
       ),
       listBuilder: (context, children) {
-        // return SingleChildScrollView(
-        //   child: Column(
-        //     mainAxisSize: MainAxisSize.min,
-        //     children: children,
-        //   ),
-        // );
         return Obx(
           () {
             return CRoundedContainer(
@@ -179,10 +187,19 @@ class CCustomTypeaheadField extends StatelessWidget {
           },
         );
       },
-
+      transitionBuilder: (context, animation, child) {
+        return FadeTransition(
+          opacity: CurvedAnimation(
+            parent: animation,
+            curve: Curves.fastOutSlowIn,
+          ),
+          child: child,
+        );
+      },
       suggestionsCallback: (pattern) {
         return contactsController.contactSuggestionsCallBackAction(pattern);
       },
+      suggestionsController: suggestionsController,
       itemBuilder: (context, suggestion) {
         if (contactsController.foundMatches.isEmpty) {
           return SizedBox.shrink();

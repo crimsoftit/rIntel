@@ -9,9 +9,10 @@ class CAnimedSearchfield extends StatelessWidget {
   const CAnimedSearchfield({
     super.key,
     required this.fieldExpanded,
+    required this.onSearchValueChanged,
     required this.searchFieldController,
     this.hintTxt,
-    required this.onSearchValueChanged,
+
     this.onFieldSubmitted,
 
     this.onIconTap,
@@ -21,8 +22,8 @@ class CAnimedSearchfield extends StatelessWidget {
   final String? hintTxt;
   final TextEditingController searchFieldController;
   final void Function(String)? onFieldSubmitted;
-  final void Function(String)? onSearchValueChanged;
   final void Function()? onIconTap;
+  final void Function(String)? onSearchValueChanged;
 
   @override
   Widget build(BuildContext context) {
