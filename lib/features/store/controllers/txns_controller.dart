@@ -94,6 +94,7 @@ class CTxnsController extends GetxController {
   final txtRefundReason = TextEditingController();
   final txtRefundQty = TextEditingController();
   final txtSaleItemQty = TextEditingController();
+
   final txtTxnAddress = TextEditingController();
 
   final RxInt sellItemId = 0.obs;
@@ -618,7 +619,16 @@ class CTxnsController extends GetxController {
 
     var refundsFound = refunds.where(
       (refund) {
-        return refund.productCode.toLowerCase().contains(
+        final parentTxn = userTxns.firstWhereOrNull(
+          (txn) => txn.txnId == refund.txnId,
+        );
+        return parentTxn!.customerName.toLowerCase().contains(
+              query.toLowerCase(),
+            ) ||
+            parentTxn.customerContacts.toLowerCase().contains(
+              query.toLowerCase(),
+            ) ||
+            refund.productCode.toLowerCase().contains(
               query.toLowerCase(),
             ) ||
             refund.productId.toString().toLowerCase().contains(

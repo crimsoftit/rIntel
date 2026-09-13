@@ -1,7 +1,7 @@
 import 'package:rintel/common/widgets/appbar/app_bar.dart';
 import 'package:rintel/common/widgets/appbar/tab_bar.dart';
 import 'package:rintel/common/widgets/products/cart/positioned_cart_counter_widget.dart';
-import 'package:rintel/common/widgets/search_bar/animated_search_bar.dart';
+import 'package:rintel/common/widgets/search_bar/animed_searchfield.dart';
 import 'package:rintel/features/store/controllers/checkout_controller.dart';
 import 'package:rintel/features/store/controllers/inv_controller.dart';
 import 'package:rintel/features/store/controllers/search_bar_controller.dart';
@@ -58,53 +58,131 @@ class CStoreScreen extends StatelessWidget {
               horizontalPadding: 0,
               leadingWidget: searchController.showSearchField.value
                   ? null
-                  : Padding(
-                      padding: const EdgeInsets.only(
-                        top: 5.0,
-                        left: 10.0,
-                        right: 10.0,
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Icon(
-                            Iconsax.menu,
-                            size: 25.0,
-                            color: CColors.rBrown,
-                          ),
-                          Expanded(
-                            child: searchController.showSearchField.value
-                                ? CAnimatedSearchBar(
-                                    boxColor: CColors.rBrown.withValues(
-                                      alpha: .2,
-                                    ),
-                                    hintTxt: 'inventory, transactions',
-                                    // boxColor:
-                                    //     searchController.showSearchField.value
-                                    //     ? CColors.rBrown.withValues(
-                                    //         alpha: .2,
-                                    //       )
-                                    //     : Colors.transparent,
-                                    controller: searchController.txtSearchField,
-                                  )
-                                : SizedBox.shrink(),
-                          ),
-                        ],
+                  : Align(
+                      alignment: Alignment.centerLeft,
+                      child: Padding(
+                        padding: const EdgeInsets.only(
+                          top: 5.0,
+                          left: 10.0,
+                        ),
+                        child: Icon(
+                          Iconsax.menu,
+                          size: CSizes.iconMd,
+                          color: CColors.rBrown,
+                        ),
                       ),
                     ),
               showBackArrow: false,
               backIconColor: isDarkTheme ? CColors.white : CColors.rBrown,
-              title: CAnimatedSearchBar(
-                hintTxt: 'inventory, transactions',
-                boxColor: searchController.showSearchField.value
-                    ? CColors.white
-                    : Colors.transparent,
-                controller: searchController.txtSearchField,
-              ),
+              title: Obx(() {
+                return Center(
+                  child: CAnimedSearchfield(
+                    fieldExpanded: searchController.showSearchField.value,
+                    hintTxt: 'search store...',
+                    onFieldSubmitted: (value) {
+                      invController.searchInventory(value);
+                      txnsController.searchSales(value);
+                      txnsController.searchThroughRefunds(
+                        value,
+                      );
+                    },
+
+                    onIconTap: () {
+                      searchController.toggleSearchFieldVisibility();
+                    },
+                    onSearchValueChanged: (query) {
+                      invController.searchInventory(query);
+                      txnsController.searchSales(query);
+                      txnsController.searchThroughRefunds(
+                        query,
+                      );
+                    },
+                    searchFieldController: searchController.txtSearchField,
+                  ),
+                );
+              }),
               backIconAction: () {
                 // Navigator.pop(context, true);
               },
             ),
+
+            // CAppBar(
+            //   horizontalPadding: 0,
+            //   leadingWidget: searchController.showSearchField.value
+            //       ? null
+            //       : Padding(
+            //           padding: const EdgeInsets.only(
+            //             top: 5.0,
+            //             left: 10.0,
+            //             right: 10.0,
+            //           ),
+            //           child: Row(
+            //             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            //             children: [
+            //               Icon(
+            //                 Iconsax.menu,
+            //                 size: 25.0,
+            //                 color: CColors.rBrown,
+            //               ),
+            //               Expanded(
+            //                 child: CAnimedSearchfield(
+            //                   fieldExpanded:
+            //                       searchController.showSearchField.value,
+            //                   hintTxt: 'search store...',
+            //                   onSearchValueChanged: (value) {
+            //                     invController.searchInventory(value);
+            //                     txnsController.searchSales(value);
+            //                     txnsController.searchThroughRefunds(
+            //                       value,
+            //                     );
+            //                   },
+            //                   searchFieldController:
+            //                       searchController.txtSearchField,
+            //                 ),
+            //                 // CAnimatedSearchBar(
+            //                 //     boxColor: CColors.rBrown.withValues(
+            //                 //       alpha: .2,
+            //                 //     ),
+            //                 //     hintTxt: 'inventory, transactions',
+            //                 //     // boxColor:
+            //                 //     //     searchController.showSearchField.value
+            //                 //     //     ? CColors.rBrown.withValues(
+            //                 //     //         alpha: .2,
+            //                 //     //       )
+            //                 //     //     : Colors.transparent,
+            //                 //     controller: searchController.txtSearchField,
+            //                 //   )
+            //                 //: SizedBox.shrink(),
+            //               ),
+            //             ],
+            //           ),
+            //         ),
+            //   showBackArrow: false,
+            //   backIconColor: isDarkTheme ? CColors.white : CColors.rBrown,
+            //   title: CAnimedSearchfield(
+            //     fieldExpanded: searchController.showSearchField.value,
+            //     hintTxt: 'search store...',
+            //     onSearchValueChanged: (value) {
+            //       invController.searchInventory(value);
+            //       txnsController.searchSales(value);
+            //       txnsController.searchThroughRefunds(
+            //         value,
+            //       );
+            //     },
+            //     searchFieldController: searchController.txtSearchField,
+            //   ),
+
+            //   // CAnimatedSearchBar(
+            //   //   hintTxt: 'inventory, transactions',
+            //   //   boxColor: searchController.showSearchField.value
+            //   //       ? CColors.white
+            //   //       : Colors.transparent,
+            //   //   controller: searchController.txtSearchField,
+            //   // ),
+            //   backIconAction: () {
+            //     // Navigator.pop(context, true);
+            //   },
+            // ),
             body: NestedScrollView(
               headerSliverBuilder: (context, innerBoxIsScrollable) {
                 return [

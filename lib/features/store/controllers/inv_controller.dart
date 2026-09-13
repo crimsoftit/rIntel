@@ -540,7 +540,7 @@ class CInventoryController extends GetxController {
   }
 
   void searchInventory(String value) {
-    fetchUserInventoryItems();
+    inventoryItems.refresh();
     //foundInventoryItems.clear();
 
     var invSearchItems = inventoryItems

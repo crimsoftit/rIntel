@@ -2,7 +2,7 @@ import 'package:rintel/common/widgets/appbar/app_bar.dart';
 import 'package:rintel/common/widgets/appbar/tab_bar.dart';
 import 'package:rintel/common/widgets/shimmers/shimmer_effects.dart';
 import 'package:rintel/features/personalization/controllers/contacts_controller.dart';
-import 'package:rintel/features/personalization/screens/contacts/widgets/animed_searchfield.dart';
+import 'package:rintel/common/widgets/search_bar/animed_searchfield.dart';
 import 'package:rintel/features/personalization/screens/contacts/widgets/contacts_listview.dart';
 import 'package:rintel/utils/constants/colors.dart';
 import 'package:rintel/utils/constants/sizes.dart';

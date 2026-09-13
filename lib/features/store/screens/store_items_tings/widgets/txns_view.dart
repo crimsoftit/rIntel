@@ -55,6 +55,7 @@ class _CTxnsViewState extends State<CTxnsView> {
       () {
         WidgetsBinding.instance.addPostFrameCallback(
           (_) {
+            if (!mounted) return;
             setState(
               () {
                 txnsController.fetchUserTxnItems();
@@ -457,11 +458,9 @@ class _CTxnsViewState extends State<CTxnsView> {
                                               iconColor: CColors.rOrange,
                                               onBtnTap: () async {
                                                 await contactsController
-                                                    .addUpdateContactActionModal(
+                                                    .updateTxnCustomerDetails(
                                                       context,
-                                                      null,
-                                                      'add',
-                                                      'Customer',
+                                                      txn,
                                                     );
                                                 contactsController.myContacts
                                                     .refresh();
@@ -516,6 +515,7 @@ class _CTxnsViewState extends State<CTxnsView> {
                                                     .fetchUserTxnItems();
                                               }
                                             }
+                                            if (!mounted) return;
                                             setState(
                                               () {},
                                             );
@@ -735,9 +735,11 @@ class _CTxnsViewState extends State<CTxnsView> {
 
                                                                         txnsController
                                                                             .fetchUserTxnItems();
-                                                                        setState(
-                                                                          () {},
-                                                                        );
+                                                                        if (mounted) {
+                                                                          setState(
+                                                                            () {},
+                                                                          );
+                                                                        }
                                                                       },
                                                                       value: 1,
                                                                       child: Text(
@@ -800,6 +802,7 @@ class _CTxnsViewState extends State<CTxnsView> {
                                                         context,
                                                         txn,
                                                       );
+                                                  if (!mounted) return;
                                                   setState(
                                                     () {
                                                       txnsController.userTxns

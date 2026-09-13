@@ -31,7 +31,7 @@ class CAnimedSearchfield extends StatelessWidget {
         borderRadius: BorderRadius.circular(
           32.0,
         ),
-        //boxShadow: fieldExpanded ? kElevationToShadow[2] : null,
+        boxShadow: fieldExpanded ? kElevationToShadow[2] : null,
         color: fieldExpanded
             ? CColors.rBrown.withValues(
                 alpha: .2,
@@ -42,12 +42,12 @@ class CAnimedSearchfield extends StatelessWidget {
         milliseconds: 500,
       ),
       height: 45.0,
-      width: fieldExpanded ? CHelperFunctions.screenWidth() * .98 : 45,
+      width: fieldExpanded ? CHelperFunctions.screenWidth() : 45,
       child: fieldExpanded
           ? CRoundedContainer(
               bgColor: CColors.transparent,
               height: 45.0,
-              width: CHelperFunctions.screenWidth() * .98,
+              width: CHelperFunctions.screenWidth(),
               showBorder: false,
               child: Padding(
                 padding: const EdgeInsets.only(
