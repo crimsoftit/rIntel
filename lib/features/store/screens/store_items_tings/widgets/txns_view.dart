@@ -592,189 +592,244 @@ class _CTxnsViewState extends State<CTxnsView> {
                                                         MainAxisAlignment
                                                             .spaceBetween,
                                                     children: [
-                                                      CRoundedContainer(
-                                                        bgColor:
-                                                            CColors.transparent,
-                                                        width:
-                                                            CHelperFunctions.screenWidth() *
-                                                            .45,
-                                                        child: SelectableText(
-                                                          childItem.productName
-                                                              .toUpperCase(),
-                                                          style:
-                                                              Theme.of(
-                                                                    context,
-                                                                  )
-                                                                  .textTheme
-                                                                  .labelMedium!
-                                                                  .apply(
-                                                                    color: CColors
-                                                                        .darkGrey,
-                                                                    fontStyle:
-                                                                        FontStyle
-                                                                            .italic,
-                                                                  ),
+                                                      Expanded(
+                                                        flex: 5,
+                                                        child: CRoundedContainer(
+                                                          bgColor: CColors
+                                                              .transparent,
+                                                          width:
+                                                              CHelperFunctions.screenWidth() *
+                                                              .49,
+                                                          child: SelectableText(
+                                                            childItem
+                                                                .productName
+                                                                .toUpperCase(),
+                                                            style:
+                                                                Theme.of(
+                                                                  context,
+                                                                ).textTheme.labelMedium!.apply(
+                                                                  color: CColors
+                                                                      .darkGrey,
+                                                                  fontStyle:
+                                                                      FontStyle
+                                                                          .italic,
+                                                                ),
+                                                          ),
                                                         ),
                                                       ),
-                                                      CRoundedContainer(
-                                                        bgColor:
-                                                            CColors.transparent,
-                                                        width:
-                                                            CHelperFunctions.screenWidth() *
-                                                            .3,
-                                                        child: Column(
-                                                          crossAxisAlignment:
-                                                              CrossAxisAlignment
-                                                                  .start,
-                                                          children: [
-                                                            if (childItem
-                                                                    .quantity >
-                                                                0)
-                                                              Row(
-                                                                children: [
-                                                                  Expanded(
-                                                                    child: Text(
-                                                                      '${CFormatter.formatItemQtyDisplays(childItem.quantity, childItem.itemMetrics)} ${CFormatter.formatItemMetrics(childItem.itemMetrics, childItem.quantity)} - ',
-                                                                      maxLines:
-                                                                          3,
-                                                                      overflow:
-                                                                          TextOverflow
-                                                                              .ellipsis,
-                                                                      style:
-                                                                          Theme.of(
-                                                                            context,
-                                                                          ).textTheme.labelMedium!.apply(
-                                                                            color:
-                                                                                CColors.darkGrey,
-                                                                            fontStyle:
-                                                                                FontStyle.italic,
-                                                                          ),
-                                                                    ),
+                                                      Expanded(
+                                                        flex: 4,
+                                                        child: CRoundedContainer(
+                                                          bgColor: CColors
+                                                              .transparent,
+                                                          width:
+                                                              CHelperFunctions.screenWidth() *
+                                                              .38,
+                                                          child: Column(
+                                                            crossAxisAlignment:
+                                                                CrossAxisAlignment
+                                                                    .start,
+                                                            children: [
+                                                              if (childItem
+                                                                      .quantity >
+                                                                  0)
+                                                                RichText(
+                                                                  text: TextSpan(
+                                                                    text:
+                                                                        '${CFormatter.formatItemQtyDisplays(childItem.quantity, childItem.itemMetrics)}${CFormatter.formatItemMetrics(childItem.itemMetrics, childItem.quantity)} - ',
+                                                                    style:
+                                                                        Theme.of(
+                                                                          context,
+                                                                        ).textTheme.labelMedium!.apply(
+                                                                          color:
+                                                                              CColors.darkGrey,
+                                                                          fontStyle:
+                                                                              FontStyle.italic,
+                                                                        ),
+                                                                    children: [
+                                                                      TextSpan(
+                                                                        text:
+                                                                            userCurrency,
+                                                                        style:
+                                                                            Theme.of(
+                                                                              context,
+                                                                            ).textTheme.labelSmall!.apply(
+                                                                              color: CColors.darkGrey,
+                                                                              fontFeatures: [
+                                                                                FontFeature.superscripts(),
+                                                                              ],
+                                                                              fontSizeFactor: .7,
+                                                                              fontStyle: FontStyle.italic,
+                                                                            ),
+                                                                      ),
+                                                                      TextSpan(
+                                                                        text:
+                                                                            '${childItem.unitSellingPrice * childItem.quantity}',
+                                                                        style:
+                                                                            Theme.of(
+                                                                              context,
+                                                                            ).textTheme.labelMedium!.apply(
+                                                                              color: CColors.darkGrey,
+                                                                              fontStyle: FontStyle.italic,
+                                                                            ),
+                                                                      ),
+                                                                    ],
                                                                   ),
-                                                                  Expanded(
-                                                                    child: Text(
-                                                                      '$userCurrency.',
-                                                                      style: Theme.of(context).textTheme.labelSmall!.apply(
+                                                                ),
+                                                              // Row(
+                                                              //   children: [
+                                                              //     Expanded(
+                                                              //       child: Text(
+                                                              //         '${CFormatter.formatItemQtyDisplays(childItem.quantity, childItem.itemMetrics)} ${CFormatter.formatItemMetrics(childItem.itemMetrics, childItem.quantity)} - ',
+                                                              //         maxLines:
+                                                              //             3,
+                                                              //         overflow:
+                                                              //             TextOverflow
+                                                              //                 .ellipsis,
+                                                              //         style:
+                                                              //             Theme.of(
+                                                              //               context,
+                                                              //             ).textTheme.labelMedium!.apply(
+                                                              //               color:
+                                                              //                   CColors.darkGrey,
+                                                              //               fontStyle:
+                                                              //                   FontStyle.italic,
+                                                              //             ),
+                                                              //       ),
+                                                              //     ),
+                                                              //     Expanded(
+                                                              //       child: Text(
+                                                              //         '$userCurrency.',
+                                                              //         style: Theme.of(context).textTheme.labelSmall!.apply(
+                                                              //           color: CColors
+                                                              //               .darkGrey,
+                                                              //           fontFeatures: [
+                                                              //             FontFeature.superscripts(),
+                                                              //           ],
+                                                              //           fontSizeFactor:
+                                                              //               .8,
+                                                              //           fontStyle:
+                                                              //               FontStyle.italic,
+                                                              //         ),
+                                                              //       ),
+                                                              //     ),
+                                                              //     Expanded(
+                                                              //       child: Text(
+                                                              //         '${childItem.unitSellingPrice * childItem.quantity}',
+                                                              //         style:
+                                                              //             Theme.of(
+                                                              //               context,
+                                                              //             ).textTheme.labelMedium!.apply(
+                                                              //               color:
+                                                              //                   CColors.darkGrey,
+                                                              //               fontStyle:
+                                                              //                   FontStyle.italic,
+                                                              //             ),
+                                                              //       ),
+                                                              //     ),
+                                                              //   ],
+                                                              // ),
+                                                              if (childItem
+                                                                      .qtyRefunded >
+                                                                  0)
+                                                                Text(
+                                                                  '${CFormatter.formatItemQtyDisplays(childItem.qtyRefunded, childItem.itemMetrics)} ${CFormatter.formatItemMetrics(childItem.itemMetrics, childItem.qtyRefunded)} refunded',
+                                                                  style:
+                                                                      Theme.of(
+                                                                        context,
+                                                                      ).textTheme.labelSmall!.apply(
                                                                         color: CColors
-                                                                            .darkGrey,
-                                                                        fontFeatures: [
-                                                                          FontFeature.superscripts(),
-                                                                        ],
-                                                                        fontSizeFactor:
-                                                                            .8,
+                                                                            .rOrange,
                                                                         fontStyle:
                                                                             FontStyle.italic,
                                                                       ),
-                                                                    ),
-                                                                  ),
-                                                                  Expanded(
-                                                                    child: Text(
-                                                                      '${childItem.unitSellingPrice * childItem.quantity}',
-                                                                      style:
-                                                                          Theme.of(
-                                                                            context,
-                                                                          ).textTheme.labelMedium!.apply(
-                                                                            color:
-                                                                                CColors.darkGrey,
-                                                                            fontStyle:
-                                                                                FontStyle.italic,
-                                                                          ),
-                                                                    ),
-                                                                  ),
-                                                                ],
-                                                              ),
-                                                            if (childItem
-                                                                    .qtyRefunded >
-                                                                0)
-                                                              Text(
-                                                                '${CFormatter.formatItemQtyDisplays(childItem.qtyRefunded, childItem.itemMetrics)} ${CFormatter.formatItemMetrics(childItem.itemMetrics, childItem.qtyRefunded)} refunded',
-                                                                style:
-                                                                    Theme.of(
-                                                                      context,
-                                                                    ).textTheme.labelSmall!.apply(
-                                                                      color: CColors
-                                                                          .rOrange,
-                                                                      fontStyle:
-                                                                          FontStyle
-                                                                              .italic,
-                                                                    ),
-                                                              ),
-                                                          ],
+                                                                ),
+                                                            ],
+                                                          ),
                                                         ),
                                                       ),
-                                                      CRoundedContainer(
-                                                        bgColor:
-                                                            CColors.transparent,
-                                                        child: GestureDetector(
-                                                          onTapDown:
-                                                              (
-                                                                TapDownDetails
-                                                                details,
-                                                              ) {
-                                                                showMenu<int>(
-                                                                  context:
-                                                                      context,
-                                                                  position: RelativeRect.fromLTRB(
-                                                                    details
-                                                                        .globalPosition
-                                                                        .dx,
-                                                                    details
-                                                                        .globalPosition
-                                                                        .dy,
-                                                                    details
-                                                                        .globalPosition
-                                                                        .dx,
-                                                                    details
-                                                                        .globalPosition
-                                                                        .dy,
-                                                                  ),
-                                                                  items: [
-                                                                    PopupMenuItem(
-                                                                      onTap: () async {
-                                                                        var inventoryItem = invController.inventoryItems.firstWhere(
-                                                                          (
-                                                                            item,
-                                                                          ) =>
-                                                                              item.productId ==
-                                                                              childItem.productId,
-                                                                        );
-                                                                        await txnsController.refundItemActionModal(
-                                                                          context,
-                                                                          txn,
-                                                                          childItem,
-                                                                          inventoryItem,
-                                                                        );
-
-                                                                        txnsController
-                                                                            .fetchUserTxnItems();
-                                                                        if (mounted) {
-                                                                          setState(
-                                                                            () {},
+                                                      Expanded(
+                                                        flex: 1,
+                                                        child: CRoundedContainer(
+                                                          bgColor: CColors
+                                                              .transparent,
+                                                          width:
+                                                              CHelperFunctions.screenWidth() *
+                                                              .11,
+                                                          child: GestureDetector(
+                                                            onTapDown:
+                                                                (
+                                                                  TapDownDetails
+                                                                  details,
+                                                                ) {
+                                                                  showMenu<int>(
+                                                                    context:
+                                                                        context,
+                                                                    position: RelativeRect.fromLTRB(
+                                                                      details
+                                                                          .globalPosition
+                                                                          .dx,
+                                                                      details
+                                                                          .globalPosition
+                                                                          .dy,
+                                                                      details
+                                                                          .globalPosition
+                                                                          .dx,
+                                                                      details
+                                                                          .globalPosition
+                                                                          .dy,
+                                                                    ),
+                                                                    items: [
+                                                                      PopupMenuItem(
+                                                                        onTap: () async {
+                                                                          var inventoryItem = invController.inventoryItems.firstWhereOrNull(
+                                                                            (
+                                                                              item,
+                                                                            ) =>
+                                                                                item.productId ==
+                                                                                childItem.productId,
                                                                           );
-                                                                        }
-                                                                      },
-                                                                      value: 1,
-                                                                      child: Text(
-                                                                        'Refund',
+                                                                          await txnsController.refundItemActionModal(
+                                                                            context,
+                                                                            txn,
+                                                                            childItem,
+                                                                            inventoryItem!,
+                                                                          );
+
+                                                                          txnsController
+                                                                              .fetchUserTxnItems();
+                                                                          if (mounted) {
+                                                                            setState(
+                                                                              () {},
+                                                                            );
+                                                                          }
+                                                                        },
+                                                                        value:
+                                                                            1,
+                                                                        child: Text(
+                                                                          'Refund',
+                                                                        ),
                                                                       ),
-                                                                    ),
-                                                                    PopupMenuItem(
-                                                                      value: 2,
-                                                                      child: Text(
-                                                                        'Option 2',
+                                                                      PopupMenuItem(
+                                                                        value:
+                                                                            2,
+                                                                        child: Text(
+                                                                          'Option 2',
+                                                                        ),
                                                                       ),
-                                                                    ),
-                                                                  ],
-                                                                );
-                                                              },
-                                                          child: Icon(
-                                                            Icons.more_vert,
-                                                            color: isDarkTheme
-                                                                ? CColors
-                                                                      .darkGrey
-                                                                : CColors
-                                                                      .rBrown,
-                                                            size: CSizes.iconSm,
+                                                                    ],
+                                                                  );
+                                                                },
+                                                            child: Icon(
+                                                              Icons.more_vert,
+                                                              color: isDarkTheme
+                                                                  ? CColors
+                                                                        .darkGrey
+                                                                  : CColors
+                                                                        .rBrown,
+                                                              size:
+                                                                  CSizes.iconSm,
+                                                            ),
                                                           ),
                                                         ),
                                                       ),
