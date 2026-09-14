@@ -2,8 +2,8 @@ import 'package:clock/clock.dart';
 import 'package:rintel/common/widgets/buttons/custom_dropdown_btn.dart';
 import 'package:rintel/common/widgets/custom_shapes/containers/rounded_container.dart';
 import 'package:rintel/common/widgets/login_signup/form_divider.dart';
-import 'package:rintel/common/widgets/txt_fields/custom_type_ahead_field.dart'
-    show CCustomTypeaheadField;
+import 'package:rintel/common/widgets/txt_fields/contacts_search_type_ahead.dart'
+    show ContactsSearchTypeaheadField;
 import 'package:rintel/features/personalization/controllers/contacts_controller.dart';
 import 'package:rintel/features/personalization/controllers/user_controller.dart';
 import 'package:rintel/features/personalization/models/contacts_model.dart';
@@ -549,7 +549,7 @@ class AddUpdateInventoryForm extends StatelessWidget {
                                   bgColor: CColors.transparent,
                                   height: 65.0,
                                   width: CHelperFunctions.screenWidth() * .7,
-                                  child: CCustomTypeaheadField(
+                                  child: ContactsSearchTypeaheadField(
                                     focusedBorderColor: isDarkTheme
                                         ? CColors.grey
                                         : CColors.rBrown,
@@ -633,7 +633,7 @@ class AddUpdateInventoryForm extends StatelessWidget {
                             height: CSizes.spaceBtnInputFields / 4.0,
                           ),
 
-                          CCustomTypeaheadField(
+                          ContactsSearchTypeaheadField(
                             focusedBorderColor: isDarkTheme
                                 ? CColors.grey
                                 : CColors.rBrown,
@@ -670,7 +670,9 @@ class AddUpdateInventoryForm extends StatelessWidget {
                             },
                           ),
 
-                          SizedBox(height: CSizes.spaceBtnInputFields / 2.0),
+                          SizedBox(
+                            height: CSizes.spaceBtnInputFields / 2.0,
+                          ),
                         ],
                       ),
                     ),

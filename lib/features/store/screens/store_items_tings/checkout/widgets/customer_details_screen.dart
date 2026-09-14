@@ -1,5 +1,5 @@
 import 'package:rintel/common/widgets/custom_shapes/containers/rounded_container.dart';
-import 'package:rintel/common/widgets/txt_fields/custom_type_ahead_field.dart';
+import 'package:rintel/common/widgets/txt_fields/contacts_search_type_ahead.dart';
 import 'package:rintel/features/store/controllers/checkout_controller.dart';
 import 'package:rintel/features/store/controllers/inv_controller.dart';
 import 'package:rintel/utils/constants/colors.dart';
@@ -23,7 +23,7 @@ class CustomerDetailsScreen extends StatelessWidget {
           CRoundedContainer(
             bgColor: CColors.transparent,
             width: CHelperFunctions.screenWidth() * .69,
-            child: CCustomTypeaheadField(
+            child: ContactsSearchTypeaheadField(
               contentPadding: const EdgeInsets.all(
                 5.0,
               ),
@@ -84,7 +84,7 @@ class CustomerDetailsScreen extends StatelessWidget {
           CRoundedContainer(
             bgColor: CColors.transparent,
             width: CHelperFunctions.screenWidth() * .69,
-            child: CCustomTypeaheadField(
+            child: ContactsSearchTypeaheadField(
               fieldHeight:
                   checkoutController.customerContactsFieldController.text == ''
                   ? 55.0

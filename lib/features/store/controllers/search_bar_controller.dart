@@ -42,7 +42,7 @@ class CSearchBarController extends GetxController {
     }
   }
 
-  void onTypeAheadSearchIconTap() {
+  void toggleTypeAheadSearchFieldVisbility() {
     showAnimatedTypeAheadField.value = !showAnimatedTypeAheadField.value;
     cartController.itemQtyInCart.value = 0;
   }

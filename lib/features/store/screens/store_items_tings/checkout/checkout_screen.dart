@@ -53,7 +53,9 @@ class CCheckoutScreen extends StatelessWidget {
         /// -- app bar --
         appBar: AppBar(
           automaticallyImplyLeading: true,
-          iconTheme: IconThemeData(color: CColors.rBrown),
+          iconTheme: IconThemeData(
+            color: CColors.rBrown,
+          ),
           leading: IconButton(
             icon: Icon(
               Iconsax.arrow_left,
@@ -66,26 +68,27 @@ class CCheckoutScreen extends StatelessWidget {
           ),
           leadingWidth: 20.0,
           title: Padding(
-            padding: const EdgeInsets.only(top: 1.0, left: 0),
-            child: Obx(() {
-              return searchBarController.showAnimatedTypeAheadField.value
-                  ? CAnimatedTypeaheadField(
-                      boxColor: CColors.white,
-                      searchBarWidth: CHelperFunctions.screenWidth() * .87,
-                    )
-                  : Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        SizedBox(
-                          width: CHelperFunctions.screenWidth() * 0.72,
-                        ),
-                        CAnimatedTypeaheadField(
+            padding: const EdgeInsets.only(
+              top: 1.0,
+            ),
+            child: Obx(
+              () {
+                return searchBarController.showAnimatedTypeAheadField.value
+                    ? CAnimatedTypeaheadField(
+                        boxColor: CColors.white,
+                        searchBarWidth: CHelperFunctions.screenWidth() * .87,
+                        searchItemModel: 'inventory',
+                      )
+                    : Align(
+                        alignment: Alignment.topRight,
+                        child: CAnimatedTypeaheadField(
                           boxColor: CColors.transparent,
                           searchBarWidth: 30.0,
+                          searchItemModel: 'inventory',
                         ),
-                      ],
-                    );
-            }),
+                      );
+              },
+            ),
           ),
         ),
         backgroundColor: CColors.rBrown.withValues(alpha: 0.2),

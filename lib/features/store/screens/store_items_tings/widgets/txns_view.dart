@@ -458,9 +458,11 @@ class _CTxnsViewState extends State<CTxnsView> {
                                               iconColor: CColors.rOrange,
                                               onBtnTap: () async {
                                                 await contactsController
-                                                    .updateTxnCustomerDetails(
+                                                    .addUpdateContactActionModal(
                                                       context,
-                                                      txn,
+                                                      null,
+                                                      'add',
+                                                      'Customer',
                                                     );
                                                 contactsController.myContacts
                                                     .refresh();

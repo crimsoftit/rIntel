@@ -250,11 +250,20 @@ class CRefundsView extends StatelessWidget {
                                         icon: Iconsax.add,
                                         iconColor: CColors.rOrange,
                                         onBtnTap: () {
+                                          // contactsController
+                                          //     .updateTxnCustomerDetails(
+                                          //       context,
+                                          //       parentTxn,
+                                          //     );
                                           contactsController
-                                              .updateTxnCustomerDetails(
+                                              .addUpdateContactActionModal(
                                                 context,
-                                                parentTxn,
+                                                null,
+                                                'add',
+                                                'Customer',
                                               );
+                                          contactsController.myContacts
+                                              .refresh();
                                         },
                                       ),
                                     ),

@@ -11,8 +11,8 @@ import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:get/get.dart';
 import 'package:iconsax/iconsax.dart';
 
-class CCustomTypeaheadField extends StatelessWidget {
-  const CCustomTypeaheadField({
+class ContactsSearchTypeaheadField extends StatelessWidget {
+  const ContactsSearchTypeaheadField({
     super.key,
     this.contentPadding,
     this.boxRadius,
@@ -115,6 +115,7 @@ class CCustomTypeaheadField extends StatelessWidget {
           style: const TextStyle(
             fontWeight: FontWeight.normal,
           ),
+          textAlign: TextAlign.center,
           validator: fieldValidator,
         );
       },

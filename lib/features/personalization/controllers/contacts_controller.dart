@@ -3,12 +3,10 @@ import 'dart:io';
 
 import 'package:clock/clock.dart';
 import 'package:country_picker/country_picker.dart';
-import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:rintel/api/sheets/store_sheets_api.dart';
-import 'package:rintel/common/widgets/buttons/txt_buttons/custom_txt_btn.dart';
 import 'package:rintel/common/widgets/custom_shapes/containers/rounded_container.dart';
 import 'package:rintel/common/widgets/flushbars/flushbars.dart';
-import 'package:rintel/common/widgets/txt_fields/custom_type_ahead_field.dart';
+import 'package:rintel/common/widgets/search_bar/animated_typeahead_field.dart';
 import 'package:rintel/data/repos/user/contacts_repo.dart';
 import 'package:rintel/features/personalization/controllers/user_controller.dart';
 import 'package:rintel/features/personalization/models/contacts_del_model.dart';
@@ -16,8 +14,8 @@ import 'package:rintel/features/personalization/models/contacts_model.dart';
 import 'package:rintel/features/personalization/screens/contacts/contact_details/widgets/add_update_contact_form.dart';
 import 'package:rintel/features/store/controllers/inv_controller.dart';
 import 'package:rintel/features/store/controllers/nav_menu_controller.dart';
+import 'package:rintel/features/store/controllers/search_bar_controller.dart';
 import 'package:rintel/features/store/controllers/txns_controller.dart';
-import 'package:rintel/features/store/models/txns/txn_model.dart';
 import 'package:rintel/nav_menu.dart';
 import 'package:rintel/utils/constants/colors.dart';
 import 'package:rintel/utils/constants/sizes.dart';
@@ -383,9 +381,10 @@ class CContactsController extends GetxController {
     presetCategory,
   ) async {
     final isDarkTheme = CHelperFunctions.isDarkMode(context);
+    final searchBarController = Get.put(CSearchBarController());
 
     try {
-      return await showModalBottomSheet(
+      showModalBottomSheet(
         backgroundColor: isDarkTheme
             ? CColors.rBrown.withValues(
                 alpha: .85,
@@ -394,7 +393,7 @@ class CContactsController extends GetxController {
                 alpha: .85,
               ),
         context: context,
-        isDismissible: true,
+        isDismissible: false,
         isScrollControlled: true,
         //sheetAnimationStyle: AnimationStyle(),
         useSafeArea: true,
@@ -403,27 +402,48 @@ class CContactsController extends GetxController {
           return SingleChildScrollView(
             child: Padding(
               padding: MediaQuery.of(context).viewInsets,
-              child: CRoundedContainer(
-                bgColor: CColors.transparent,
-                padding: const EdgeInsets.only(
-                  left: CSizes.lg / 4,
-                  right: CSizes.lg / 4,
-                  top: CSizes.lg / 4,
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  //mainAxisSize: MainAxisSize.max,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.only(
-                        bottom: CSizes.spaceBtnItems,
-                        left: CSizes.defaultSpace / 4.0,
-                        right: CSizes.defaultSpace / 4.0,
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          CircleAvatar(
+              child: Obx(
+                () {
+                  return CRoundedContainer(
+                    bgColor: CColors.transparent,
+                    padding: const EdgeInsets.only(
+                      left: CSizes.lg / 4,
+                      right: CSizes.lg / 4,
+                      top: CSizes.lg / 4,
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      //mainAxisSize: MainAxisSize.max,
+                      children: [
+                        searchBarController.showAnimatedTypeAheadField.value
+                            ? CAnimatedTypeaheadField(
+                                boxColor: CColors.transparent,
+                                radius: 25.0,
+                                searchBarWidth:
+                                    CHelperFunctions.screenWidth() * .8,
+                                searchItemModel: 'contacts',
+                              )
+                            : Padding(
+                                padding: const EdgeInsets.only(
+                                  right: 35.0,
+                                ),
+                                child: Align(
+                                  alignment: Alignment.centerRight,
+                                  child: CAnimatedTypeaheadField(
+                                    boxColor: CColors.transparent,
+                                    searchBarWidth: 30.0,
+                                    searchItemModel: 'contacts',
+                                  ),
+                                ),
+                              ),
+                        Padding(
+                          padding: const EdgeInsets.only(
+                            bottom: CSizes.spaceBtnItems,
+                            left: CSizes.defaultSpace / 4.0,
+                            right: CSizes.defaultSpace / 4.0,
+                            top: CSizes.spaceBtnItems / 2.5,
+                          ),
+                          child: CircleAvatar(
                             backgroundColor:
                                 CHelperFunctions.randomAestheticColor(),
                             radius: 15.0,
@@ -443,20 +463,22 @@ class CContactsController extends GetxController {
                                     size: CSizes.iconSm,
                                   ),
                           ),
-                        ],
-                      ),
-                    ),
-                    Text(
-                      '$action contact',
-                      style: Theme.of(context).textTheme.labelLarge!.apply(),
-                    ),
+                        ),
+                        Text(
+                          '$action contact',
+                          style: Theme.of(
+                            context,
+                          ).textTheme.labelLarge!.apply(),
+                        ),
 
-                    CAddUpdateContactForm(
-                      contact: contact,
-                      formAction: action,
+                        CAddUpdateContactForm(
+                          contact: contact,
+                          formAction: action,
+                        ),
+                      ],
                     ),
-                  ],
-                ),
+                  );
+                },
               ),
             ),
           );
@@ -1106,10 +1128,6 @@ class CContactsController extends GetxController {
   Future<void> processContactsSync() async {
     try {
       processingContactsSync.value = true;
-      // await addUnsyncedContactAppendsToCloud().then((_) async {
-      //   await updateInitiallySyncedContacts();
-      //   await deleteCloudSyncedContacts();
-      // });
 
       // -- stop loader --
       processingContactsSync.value = false;
@@ -1605,185 +1623,6 @@ class CContactsController extends GetxController {
   //     appContact.isTrashed,
   //   );
   // }
-
-  /// -- update txn's customer details modal --
-  Future<dynamic> updateTxnCustomerDetails(
-    BuildContext context,
-    CTxn parentTxn,
-  ) {
-    final isDarkTheme = CHelperFunctions.isDarkMode(context);
-    CContactsModel contactForUpdate = CContactsModel.empty();
-
-    final suggestionsBoxController = SuggestionsController<CContactsModel>();
-
-    return showModalBottomSheet(
-      context: context,
-      backgroundColor: isDarkTheme
-          ? CColors.rBrown.withValues(
-              alpha: .85,
-            )
-          : CColors.white.withValues(
-              alpha: .85,
-            ),
-      isDismissible: true,
-      isScrollControlled: true,
-      useSafeArea: true,
-      builder: (context) {
-        return Padding(
-          padding: MediaQuery.of(context).viewInsets,
-          child: CRoundedContainer(
-            bgColor: isDarkTheme
-                ? CColors.black.withValues(
-                    alpha: .5,
-                  )
-                : CColors.white.withValues(
-                    alpha: .5,
-                  ),
-            height:
-                contactForUpdate.contactName != '' ||
-                    contactForUpdate.contactPhone != ''
-                ? CHelperFunctions.screenHeight() * .32
-                : CHelperFunctions.screenHeight() * .25,
-            padding: const EdgeInsets.all(
-              CSizes.xl,
-            ),
-            child: Column(
-              children: [
-                CCustomTypeaheadField(
-                  boxRadius: 15,
-                  fieldRadius: 25,
-                  focusedBorderColor: isDarkTheme
-                      ? CColors.grey
-                      : CColors.rBrown,
-                  includeAvatarOnSuggestion: true,
-                  includePrefixIcon: true,
-                  labelTxt: 'search contacts:',
-                  onItemSelected: (suggestion) {
-                    contactForUpdate = suggestion;
-                    txtSearchCustomerDetails.text =
-                        contactForUpdate.contactName;
-                    txtPhoneController.text =
-                        contactForUpdate.contactPhone != ''
-                        ? contactForUpdate.contactPhone
-                        : contactForUpdate.contactEmail;
-                  },
-                  prefixIcon: Icon(
-                    Iconsax.search_normal,
-                    color: CColors.darkGrey,
-                    size: CSizes.iconMd,
-                  ),
-
-                  suffixIcon: GestureDetector(
-                    onTap: () {
-                      suggestionsBoxController.close();
-                    },
-                    child: Icon(
-                      Icons.close,
-                      color: CColors.darkGrey,
-                      size: CSizes.iconMd,
-                    ),
-                  ),
-                  suggestionsController: suggestionsBoxController,
-                  typeAheadFieldController: txtSearchCustomerDetails,
-                  verticalDirection: VerticalDirection.down,
-                  // fieldValidator: (value) {
-                  //   return fieldValidator(value);
-                  // },
-                ),
-
-                Visibility(
-                  visible:
-                      contactForUpdate.contactName != '' ||
-                      contactForUpdate.contactPhone != '',
-                  child: Column(
-                    children: [
-                      const SizedBox(
-                        height: CSizes.spaceBtnInputFields,
-                      ),
-                      CCustomTypeaheadField(
-                        boxRadius: 20,
-                        fieldRadius: 20,
-                        focusedBorderColor: isDarkTheme
-                            ? CColors.grey
-                            : CColors.rBrown,
-                        includeAvatarOnSuggestion: true,
-                        includePrefixIcon: true,
-                        labelTxt: 'Contacts:',
-                        onItemSelected: (suggestion) {},
-                        prefixIcon: Icon(
-                          Iconsax.card,
-                          color: CColors.darkGrey,
-                          size: CSizes.iconMd,
-                        ),
-
-                        // suffixIcon: Icon(
-                        //   Icons.close,
-                        //   color: CColors.darkGrey,
-                        //   size: CSizes.iconMd,
-                        // ),
-                        typeAheadFieldController: txtPhoneController,
-                        verticalDirection: VerticalDirection.down,
-                        // fieldValidator: (value) {
-                        //   return fieldValidator(value);
-                        // },
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(
-                  height: CSizes.spaceBtnSections * .25,
-                ),
-                Expanded(
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Visibility(
-                        visible:
-                            contactForUpdate.contactName != '' ||
-                            contactForUpdate.contactPhone != '',
-                        child: CCustomTxtBtn(
-                          btnWidth: 130.0,
-                          icon: Iconsax.save_2,
-                          labelTxt: 'Update',
-                          onPressed: () {},
-                        ),
-                      ),
-
-                      Visibility(
-                        visible:
-                            contactForUpdate.contactName == '' ||
-                            contactForUpdate.contactPhone == '',
-                        child: CCustomTxtBtn(
-                          btnHeight: 40.0,
-                          btnWidth: 170.0,
-                          icon: Iconsax.add,
-                          labelTxt: 'New contact',
-                          onPressed: () {
-                            addUpdateContactActionModal(
-                              context,
-                              null,
-                              'add',
-                              'Customer',
-                            );
-                            myContacts.refresh();
-                          },
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-        );
-      },
-    ).then(
-      (_) async {
-        await fetchMyContacts();
-        resetFields();
-      },
-    );
-  }
 
   /// -- reset contact form fields --
   void resetFields() {

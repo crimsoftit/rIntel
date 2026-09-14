@@ -62,6 +62,7 @@ class CItemQtyWithAddRemoveBtns extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
+          // -- btn to remove item from cart --
           CCircularIconBtn(
             icon: Iconsax.minus,
             width: iconWidth,
@@ -72,7 +73,9 @@ class CItemQtyWithAddRemoveBtns extends StatelessWidget {
             bgColor: isDarkTheme ? CColors.darkerGrey : CColors.light,
             onPressed: removeItemBtnAction,
           ),
-          SizedBox(width: horizontalSpacing ?? CSizes.spaceBtnItems),
+          SizedBox(
+            width: horizontalSpacing ?? CSizes.spaceBtnItems,
+          ),
 
           // -- field to set quantity --
           useTxtFieldForQty ? qtyField! : qtyWidget!,
@@ -84,6 +87,8 @@ class CItemQtyWithAddRemoveBtns extends StatelessWidget {
                 ? 0
                 : horizontalSpacing ?? CSizes.spaceBtnItems,
           ),
+
+          // -- btn to add item to cart --
           CCircularIconBtn(
             icon: Iconsax.add,
             iconBorderRadius: useSmallIcons ? 60 : 100,
@@ -104,9 +109,12 @@ class CItemQtyWithAddRemoveBtns extends StatelessWidget {
                   onPressed: addToCartBtnAction,
                   label: Text(
                     add2CartActionBtnTxt!,
-                    style: Theme.of(
-                      context,
-                    ).textTheme.labelMedium!.apply(color: add2CartBtnTxtColor),
+                    style:
+                        Theme.of(
+                          context,
+                        ).textTheme.labelMedium!.apply(
+                          color: add2CartBtnTxtColor,
+                        ),
                   ),
                   icon: Icon(
                     Iconsax.shopping_cart,

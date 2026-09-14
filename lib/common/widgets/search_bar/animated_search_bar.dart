@@ -92,8 +92,6 @@ class DefaultSearchWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final dashboardController = Get.put(CDashboardController());
-    // final invController = Get.put(CInventoryController());
-    // final txnsController = Get.put(CTxnsController());
     final searchController = Get.put(CSearchBarController());
 
     Future.delayed(

@@ -32,7 +32,7 @@ class CAnimedSearchfield extends StatelessWidget {
         borderRadius: BorderRadius.circular(
           32.0,
         ),
-        boxShadow: fieldExpanded ? kElevationToShadow[2] : null,
+
         color: fieldExpanded
             ? CColors.rBrown.withValues(
                 alpha: .2,
