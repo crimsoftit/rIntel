@@ -418,6 +418,15 @@ class CContactsController extends GetxController {
                         searchBarController.showAnimatedTypeAheadField.value
                             ? CAnimatedTypeaheadField(
                                 boxColor: CColors.transparent,
+                                onContactItemSelected: (suggestion) {
+                                  contact = suggestion;
+                                  txtEmailController.text =
+                                      contact!.contactEmail;
+                                  txtContactNameController.text =
+                                      contact!.contactName;
+                                  txtPhoneController.text =
+                                      contact!.contactPhone;
+                                },
                                 radius: 25.0,
                                 searchBarWidth:
                                     CHelperFunctions.screenWidth() * .8,
@@ -431,6 +440,10 @@ class CContactsController extends GetxController {
                                   alignment: Alignment.centerRight,
                                   child: CAnimatedTypeaheadField(
                                     boxColor: CColors.transparent,
+                                    collapsedIconColor: isDarkTheme
+                                        ? CColors.white
+                                        : CColors.rBrown,
+                                    onContactItemSelected: (suggestion) {},
                                     searchBarWidth: 30.0,
                                     searchItemModel: 'contacts',
                                   ),
@@ -1387,7 +1400,7 @@ class CContactsController extends GetxController {
 
       contactInvoicedPurchasesValue.value = contactInvoicedTxns.fold(
         0.0,
-        (sum, credit) => sum + credit.totalAmount,
+        (sum, credit) => sum + (credit.totalAmount - credit.amountPaid),
       );
 
       var contactSupplies = invController.inventoryItems.where(

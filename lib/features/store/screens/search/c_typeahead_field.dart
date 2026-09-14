@@ -18,11 +18,13 @@ class CTypeAheadSearchField extends StatelessWidget {
   const CTypeAheadSearchField({
     super.key,
     this.containerHeight,
+    required this.onContactItemSelected,
     required this.searchItemModel,
   });
 
   final double? containerHeight;
   final String searchItemModel;
+  final void Function(CContactsModel) onContactItemSelected;
 
   @override
   Widget build(BuildContext context) {
@@ -58,7 +60,7 @@ class CTypeAheadSearchField extends StatelessWidget {
               includeAvatarOnSuggestion: true,
               includePrefixIcon: true,
               labelTxt: 'Search contacts',
-              onItemSelected: (suggestion) {},
+              onItemSelected: onContactItemSelected,
               prefixIcon: Icon(
                 Iconsax.search_normal,
                 color: CColors.darkGrey,

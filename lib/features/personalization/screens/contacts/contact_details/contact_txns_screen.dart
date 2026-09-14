@@ -66,14 +66,14 @@ class CContactTxnsScreen extends StatelessWidget {
                 ),
               ),
               IconButton(
-                onPressed: () async {
+                onPressed: () {
                   // await contactsController.updateContactActionModal(
                   //   context,
                   //   thisContact,
                   //   'edit',
                   // );
                   // await contactsController.fetchMyContacts();
-                  await contactsController.addUpdateContactActionModal(
+                  contactsController.addUpdateContactActionModal(
                     context,
                     thisContact,
                     'update',
@@ -277,8 +277,8 @@ class CContactTxnsScreen extends StatelessWidget {
                 body: Padding(
                   padding: const EdgeInsets.only(
                     bottom: 5.0,
-                    left: 10.0,
-                    right: 10.0,
+                    // left: 2.0,
+                    // right: 2.0,
                     top: 5.0,
                   ),
                   child: TabBarView(

@@ -76,6 +76,7 @@ class CCheckoutScreen extends StatelessWidget {
                 return searchBarController.showAnimatedTypeAheadField.value
                     ? CAnimatedTypeaheadField(
                         boxColor: CColors.white,
+                        onContactItemSelected: (p0) {},
                         searchBarWidth: CHelperFunctions.screenWidth() * .87,
                         searchItemModel: 'inventory',
                       )
@@ -83,6 +84,7 @@ class CCheckoutScreen extends StatelessWidget {
                         alignment: Alignment.topRight,
                         child: CAnimatedTypeaheadField(
                           boxColor: CColors.transparent,
+                          onContactItemSelected: (p0) {},
                           searchBarWidth: 30.0,
                           searchItemModel: 'inventory',
                         ),

@@ -1,3 +1,4 @@
+import 'package:rintel/features/personalization/models/contacts_model.dart';
 import 'package:rintel/features/store/controllers/search_bar_controller.dart';
 import 'package:rintel/features/store/screens/search/c_typeahead_field.dart';
 import 'package:rintel/utils/constants/colors.dart';
@@ -11,15 +12,18 @@ class CAnimatedTypeaheadField extends StatelessWidget {
   const CAnimatedTypeaheadField({
     super.key,
     this.boxColor,
+    this.collapsedIconColor,
     this.searchBarHeight,
     this.radius,
     this.searchBarWidth,
     required this.searchItemModel,
+    required this.onContactItemSelected,
   });
 
-  final Color? boxColor;
+  final Color? boxColor, collapsedIconColor;
   final double? searchBarHeight, radius, searchBarWidth;
   final String searchItemModel;
+  final void Function(CContactsModel) onContactItemSelected;
 
   @override
   Widget build(BuildContext context) {
@@ -61,6 +65,7 @@ class CAnimatedTypeaheadField extends StatelessWidget {
               ? SizedBox(
                   child: CTypeAheadSearchField(
                     searchItemModel: searchItemModel,
+                    onContactItemSelected: onContactItemSelected,
                   ),
                 )
               : Material(
@@ -75,9 +80,9 @@ class CAnimatedTypeaheadField extends StatelessWidget {
                     onTap: () {
                       searchBarController.toggleTypeAheadSearchFieldVisbility();
                     },
-                    child: const Icon(
+                    child: Icon(
                       Iconsax.search_normal,
-                      color: CColors.rBrown,
+                      color: collapsedIconColor ?? CColors.rBrown,
                       size: CSizes.iconMd,
                     ),
                   ),

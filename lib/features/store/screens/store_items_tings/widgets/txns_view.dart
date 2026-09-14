@@ -456,8 +456,8 @@ class _CTxnsViewState extends State<CTxnsView> {
                                             child: CSquareIconBtn(
                                               icon: Iconsax.add,
                                               iconColor: CColors.rOrange,
-                                              onBtnTap: () async {
-                                                await contactsController
+                                              onBtnTap: () {
+                                                contactsController
                                                     .addUpdateContactActionModal(
                                                       context,
                                                       null,
@@ -632,44 +632,54 @@ class _CTxnsViewState extends State<CTxnsView> {
                                                                 0)
                                                               Row(
                                                                 children: [
-                                                                  Text(
-                                                                    '${CFormatter.formatItemQtyDisplays(childItem.quantity, childItem.itemMetrics)} ${CFormatter.formatItemMetrics(childItem.itemMetrics, childItem.quantity)} - ',
-                                                                    style:
-                                                                        Theme.of(
-                                                                          context,
-                                                                        ).textTheme.labelMedium!.apply(
-                                                                          color:
-                                                                              CColors.darkGrey,
-                                                                          fontStyle:
-                                                                              FontStyle.italic,
-                                                                        ),
-                                                                  ),
-                                                                  Text(
-                                                                    '$userCurrency.',
-                                                                    style: Theme.of(context).textTheme.labelSmall!.apply(
-                                                                      color: CColors
-                                                                          .darkGrey,
-                                                                      fontFeatures: [
-                                                                        FontFeature.superscripts(),
-                                                                      ],
-                                                                      fontSizeFactor:
-                                                                          .8,
-                                                                      fontStyle:
-                                                                          FontStyle
-                                                                              .italic,
+                                                                  Expanded(
+                                                                    child: Text(
+                                                                      '${CFormatter.formatItemQtyDisplays(childItem.quantity, childItem.itemMetrics)} ${CFormatter.formatItemMetrics(childItem.itemMetrics, childItem.quantity)} - ',
+                                                                      maxLines:
+                                                                          3,
+                                                                      overflow:
+                                                                          TextOverflow
+                                                                              .ellipsis,
+                                                                      style:
+                                                                          Theme.of(
+                                                                            context,
+                                                                          ).textTheme.labelMedium!.apply(
+                                                                            color:
+                                                                                CColors.darkGrey,
+                                                                            fontStyle:
+                                                                                FontStyle.italic,
+                                                                          ),
                                                                     ),
                                                                   ),
-                                                                  Text(
-                                                                    '${childItem.unitSellingPrice * childItem.quantity}',
-                                                                    style:
-                                                                        Theme.of(
-                                                                          context,
-                                                                        ).textTheme.labelMedium!.apply(
-                                                                          color:
-                                                                              CColors.darkGrey,
-                                                                          fontStyle:
-                                                                              FontStyle.italic,
-                                                                        ),
+                                                                  Expanded(
+                                                                    child: Text(
+                                                                      '$userCurrency.',
+                                                                      style: Theme.of(context).textTheme.labelSmall!.apply(
+                                                                        color: CColors
+                                                                            .darkGrey,
+                                                                        fontFeatures: [
+                                                                          FontFeature.superscripts(),
+                                                                        ],
+                                                                        fontSizeFactor:
+                                                                            .8,
+                                                                        fontStyle:
+                                                                            FontStyle.italic,
+                                                                      ),
+                                                                    ),
+                                                                  ),
+                                                                  Expanded(
+                                                                    child: Text(
+                                                                      '${childItem.unitSellingPrice * childItem.quantity}',
+                                                                      style:
+                                                                          Theme.of(
+                                                                            context,
+                                                                          ).textTheme.labelMedium!.apply(
+                                                                            color:
+                                                                                CColors.darkGrey,
+                                                                            fontStyle:
+                                                                                FontStyle.italic,
+                                                                          ),
+                                                                    ),
                                                                   ),
                                                                 ],
                                                               ),
