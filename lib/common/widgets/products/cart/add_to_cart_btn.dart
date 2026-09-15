@@ -26,11 +26,11 @@ class CAddToCartBtn extends StatelessWidget {
     return Obx(() {
       final cartController = CCartController.instance;
       final pQtyInCart = cartController.getItemQtyInCart(pId);
-      var invItem = invController.inventoryItems.firstWhere(
+      var invItem = invController.inventoryItems.firstWhereOrNull(
         (item) => item.productId.toString() == pId.toString().toLowerCase(),
       );
 
-      var itemExpiry = invItem.expiryDate != ''
+      var itemExpiry = invItem != null && invItem.expiryDate != ''
           ? CDateTimeComputations.timeRangeFromNow(
               invItem.expiryDate.replaceAll('@ ', ''),
             )
@@ -42,11 +42,11 @@ class CAddToCartBtn extends StatelessWidget {
           if (itemExpiry != null && itemExpiry <= 0) {
             CPopupSnackBar.warningSnackBar(
               title: 'item is stale/expired',
-              message: '${invItem.name} has expired',
+              message: '${invItem!.name} has expired',
             );
           } else {
             final cartItem = cartController.convertInvToCartItem(
-              invItem,
+              invItem!,
               invItem.calibration == 'units' ? 1 : .1,
             );
             cartController.addSingleItemToCart(cartItem, false, null);
@@ -59,8 +59,11 @@ class CAddToCartBtn extends StatelessWidget {
                 : boxColor ??
                       (pQtyInCart > 0
                           ? CColors.success
-                          : invItem.quantity <= invItem.lowStockNotifierLimit ||
-                                (invItem.expiryDate != '' &&
+                          : invItem != null &&
+                                    invItem.quantity <=
+                                        invItem.lowStockNotifierLimit ||
+                                (invItem != null &&
+                                    invItem.expiryDate != '' &&
                                     itemExpiry != null &&
                                     itemExpiry <= 0)
                           ? Colors.red
@@ -82,7 +85,7 @@ class CAddToCartBtn extends StatelessWidget {
             child: Center(
               child: pQtyInCart > 0
                   ? Text(
-                      invItem.calibration == 'units'
+                      invItem != null && invItem.calibration == 'units'
                           ? pQtyInCart.toStringAsFixed(0)
                           : pQtyInCart.toStringAsFixed(2),
                       style: Theme.of(

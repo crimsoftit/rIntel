@@ -26,7 +26,7 @@ class CStoreItemWidget extends StatelessWidget {
     final invController = Get.put(CInventoryController());
     //final txnsController = Get.put(CTxnsController());
 
-    var invItem = invController.inventoryItems.firstWhere(
+    var invItem = invController.inventoryItems.firstWhereOrNull(
       (item) => item.productId == cartItem.productId,
     );
 
@@ -34,7 +34,9 @@ class CStoreItemWidget extends StatelessWidget {
       children: [
         CCircleAvatar(
           avatarInitial: cartItem.pName[0],
-          txtColor: invItem.quantity < invItem.lowStockNotifierLimit
+          txtColor:
+              invItem != null &&
+                  invItem.quantity < invItem.lowStockNotifierLimit
               ? Colors.red
               : isDarkTheme
               ? CColors.rBrown
@@ -50,7 +52,7 @@ class CStoreItemWidget extends StatelessWidget {
               // -- item title, price, and stock count --
               includeDate
                   ? CProductTitleText(
-                      title: invItem.lastModified,
+                      title: invItem!.lastModified,
                       smallSize: true,
                       txtColor: isDarkTheme ? CColors.white : CColors.rBrown,
                     )
@@ -60,7 +62,9 @@ class CStoreItemWidget extends StatelessWidget {
                 title: cartItem.pName.toUpperCase(),
                 maxLines: 2,
                 smallSize: false,
-                txtColor: invItem.quantity < invItem.lowStockNotifierLimit
+                txtColor:
+                    invItem != null &&
+                        invItem.quantity < invItem.lowStockNotifierLimit
                     ? Colors.red
                     : isDarkTheme
                     ? CColors.white

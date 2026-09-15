@@ -262,8 +262,6 @@ class CRefundsView extends StatelessWidget {
                                                 'add',
                                                 'Customer',
                                               );
-                                          contactsController.myContacts
-                                              .refresh();
                                         },
                                       ),
                                     ),

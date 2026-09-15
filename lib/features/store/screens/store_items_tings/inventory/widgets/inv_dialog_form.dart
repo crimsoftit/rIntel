@@ -131,7 +131,10 @@ class AddUpdateInventoryForm extends StatelessWidget {
                             ),
                           ),
                     suffixIcon: IconButton(
-                      icon: const Icon(Iconsax.scan, size: CSizes.iconSm),
+                      icon: const Icon(
+                        Iconsax.scan,
+                        size: CSizes.iconSm,
+                      ),
                       color: isDarkTheme ? CColors.darkGrey : CColors.rBrown,
                       onPressed: () {
                         invController.scanBarcodeNormal();
@@ -139,21 +142,27 @@ class AddUpdateInventoryForm extends StatelessWidget {
                     ),
                   ),
                   onChanged: (barcodeValue) {
-                    invController.fetchItemByCodeAndEmail(barcodeValue);
+                    invController.fetchItemByCodeAndEmail(
+                      barcodeValue,
+                    );
                   },
                   style: const TextStyle(fontWeight: FontWeight.normal),
                   validator: (value) {
                     return CValidator.validateBarcode('Barcode value', value);
                   },
                 ),
-                const SizedBox(height: CSizes.spaceBtnInputFields / 1.5),
+                const SizedBox(
+                  height: CSizes.spaceBtnInputFields / 1.5,
+                ),
 
                 // -- product name field --
                 TextFormField(
                   autovalidateMode: AutovalidateMode.onUserInteraction,
                   controller: invController.txtNameController,
                   decoration: InputDecoration(
-                    constraints: BoxConstraints(maxHeight: 60.0),
+                    constraints: BoxConstraints(
+                      maxHeight: 60.0,
+                    ),
                     filled: true,
                     fillColor: isDarkTheme
                         ? CColors.transparent

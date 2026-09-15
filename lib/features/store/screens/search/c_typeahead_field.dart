@@ -54,38 +54,39 @@ class CTypeAheadSearchField extends StatelessWidget {
               cartController: cartController,
             )
           : ContactsSearchTypeaheadField(
-              boxRadius: 15,
-              fieldRadius: 25,
-              focusedBorderColor: CColors.transparent,
-              includeAvatarOnSuggestion: true,
-              includePrefixIcon: true,
-              labelTxt: 'Search contacts',
-              onItemSelected: onContactItemSelected,
-              prefixIcon: Icon(
-                Iconsax.search_normal,
-                color: CColors.darkGrey,
-                size: CSizes.iconMd,
-              ),
-
-              suffixIcon: GestureDetector(
-                onTap: () {
-                  suggestionsBoxController.close();
-                  searchBarController.toggleTypeAheadSearchFieldVisbility();
-                },
-                child: Icon(
-                  Icons.close,
+                boxRadius: 15,
+                fieldRadius: 25,
+                focusedBorderColor: CColors.transparent,
+                includeAvatarOnSuggestion: true,
+                includePrefixIcon: true,
+                labelTxt: 'Search contacts',
+                onItemSelected: onContactItemSelected,
+                prefixIcon: Icon(
+                  Iconsax.search_normal,
                   color: CColors.darkGrey,
                   size: CSizes.iconMd,
                 ),
+
+                suffixIcon: GestureDetector(
+                  onTap: () {
+                    suggestionsBoxController.close();
+                    searchBarController.toggleTypeAheadSearchFieldVisbility();
+                  },
+                  child: Icon(
+                    Icons.close,
+                    color: CColors.darkGrey,
+                    size: CSizes.iconMd,
+                  ),
+                ),
+                suggestionsController: suggestionsBoxController,
+                typeAheadFieldController:
+                    contactsController.txtSearchCustomerDetails,
+                verticalDirection: VerticalDirection.down,
+                // fieldValidator: (value) {
+                //   return fieldValidator(value);
+                // },
               ),
-              suggestionsController: suggestionsBoxController,
-              typeAheadFieldController:
-                  contactsController.txtSearchCustomerDetails,
-              verticalDirection: VerticalDirection.down,
-              // fieldValidator: (value) {
-              //   return fieldValidator(value);
-              // },
-            ),
+            
     );
   }
 }

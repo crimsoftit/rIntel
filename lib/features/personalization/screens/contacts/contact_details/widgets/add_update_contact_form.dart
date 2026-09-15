@@ -42,7 +42,7 @@ class CAddUpdateContactForm extends StatelessWidget {
           ? '+254'
           : contactsController.contactDialCode.value;
 
-      if (formAction == 'update') {
+      if (formAction == 'update' || contact != null) {
         contactsController.txtContactNameController.text =
             contactsController.txtContactNameController.text.isEmpty
             ? contact!.contactName
@@ -57,12 +57,16 @@ class CAddUpdateContactForm extends StatelessWidget {
             contactsController.txtPhoneController.text.isEmpty
             ? contact!.contactPhone
             : contactsController.txtPhoneController.text;
+        contactsController.contactDialCode.value =
+            contactsController.contactDialCode.value == ''
+            ? '+254'
+            : contactsController.contactDialCode.value;
       }
       return SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.only(
-            left: CSizes.defaultSpace / 4,
-            right: CSizes.defaultSpace / 4,
+            // left: CSizes.defaultSpace / 4,
+            // right: CSizes.defaultSpace / 4,
             top: CSizes.defaultSpace,
           ),
           child: Form(
@@ -72,8 +76,8 @@ class CAddUpdateContactForm extends StatelessWidget {
               borderColor: CColors.rBrown,
               padding: const EdgeInsets.only(
                 bottom: CSizes.defaultSpace,
-                left: CSizes.defaultSpace,
-                right: CSizes.defaultSpace,
+                //left: CSizes.defaultSpace,
+                //right: CSizes.defaultSpace,
                 top: CSizes.defaultSpace / 3,
               ),
               showBorder: false,
@@ -103,14 +107,16 @@ class CAddUpdateContactForm extends StatelessWidget {
                       ),
                       TextButton.icon(
                         icon: Icon(
-                          formAction == 'add'
+                          formAction == 'update' || contact != null
                               ? Iconsax.save_add
                               : Iconsax.edit_2,
                           size: CSizes.iconSm,
                           color: isDarkTheme ? CColors.rBrown : CColors.white,
                         ),
                         label: Text(
-                          formAction,
+                          formAction == 'update' || contact != null
+                              ? 'update'
+                              : formAction,
                           style: Theme.of(context).textTheme.labelMedium!.apply(
                             color: isDarkTheme ? CColors.rBrown : CColors.white,
                           ),
@@ -155,7 +161,7 @@ class CAddUpdateContactForm extends StatelessWidget {
                             0,
                           );
 
-                          if (formAction == 'update') {
+                          if (formAction == 'update' || contact != null) {
                             contact!.contactCategory = contactsController
                                 .selectedContactCategory
                                 .value;
@@ -312,7 +318,7 @@ class CAddUpdateContactForm extends StatelessWidget {
                       contactsController.contactDialCode.value =
                           country.dialCode;
 
-                      if (formAction == 'update') {
+                      if (formAction == 'update' || contact != null) {
                         contact!.contactCountryCode =
                             contactsController.contactCountryCode.value;
                       }

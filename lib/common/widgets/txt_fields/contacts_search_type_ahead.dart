@@ -22,6 +22,7 @@ class ContactsSearchTypeaheadField extends StatelessWidget {
     this.fieldValidator,
     this.fillColor,
     this.focusedBorderColor,
+    this.hintTxt = 'Search',
     this.minHeight,
     this.onFieldValueChanged,
     this.prefixIcon,
@@ -44,6 +45,7 @@ class ContactsSearchTypeaheadField extends StatelessWidget {
   final EdgeInsetsGeometry? contentPadding;
   final FormFieldValidator<String>? fieldValidator;
   final String labelTxt;
+  final String? hintTxt;
   final SuggestionsController<CContactsModel>? suggestionsController;
   final TextEditingController typeAheadFieldController;
   final TextStyle? fieldLabelStyle;
@@ -63,7 +65,7 @@ class ContactsSearchTypeaheadField extends StatelessWidget {
     return TypeAheadField<CContactsModel>(
       builder: (context, controller, focusNode) {
         return TextFormField(
-          autofocus: false,
+          autofocus: true,
           autovalidateMode: AutovalidateMode.onUserInteraction,
           controller: controller,
           decoration: InputDecoration(
@@ -74,7 +76,7 @@ class ContactsSearchTypeaheadField extends StatelessWidget {
             fillColor:
                 fillColor ??
                 (isDarkTheme ? CColors.transparent : CColors.white),
-            focusColor: CColors.rBrown,
+            focusColor: isDarkTheme ? CColors.white : CColors.rBrown,
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(
                 fieldRadius ?? CSizes.cardRadiusXs,
@@ -95,6 +97,7 @@ class ContactsSearchTypeaheadField extends StatelessWidget {
                 fieldRadius ?? CSizes.cardRadiusSm,
               ),
             ),
+            hintText: hintTxt,
             labelStyle: Theme.of(context).textTheme.labelSmall,
             labelText: labelTxt,
             prefixIcon: includePrefixIcon
@@ -107,6 +110,7 @@ class ContactsSearchTypeaheadField extends StatelessWidget {
                 : null,
             suffixIcon: suffixIcon,
           ),
+          //isScrollControlled: true,
           focusNode: focusNode,
           onChanged: onFieldValueChanged,
           // scrollPadding: const EdgeInsets.only(
@@ -122,7 +126,7 @@ class ContactsSearchTypeaheadField extends StatelessWidget {
 
       constraints: BoxConstraints(
         minHeight: 0.0,
-        maxHeight: 310,
+        maxHeight: 200,
         maxWidth: screenWidth * .9,
       ),
       controller: typeAheadFieldController,
@@ -133,7 +137,7 @@ class ContactsSearchTypeaheadField extends StatelessWidget {
       //hideWithKeyboard: true,
       offset: Offset(
         0,
-        0.0,
+        5.0,
       ),
       decorationBuilder: (context, child) => Material(
         animateColor: true,

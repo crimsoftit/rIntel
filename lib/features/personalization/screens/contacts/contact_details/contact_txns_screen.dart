@@ -79,7 +79,6 @@ class CContactTxnsScreen extends StatelessWidget {
                     'update',
                     thisContact.contactCategory,
                   );
-                  contactsController.myContacts.refresh();
                 },
                 icon: Icon(
                   Iconsax.edit,

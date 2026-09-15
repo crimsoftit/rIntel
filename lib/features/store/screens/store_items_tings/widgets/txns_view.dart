@@ -464,8 +464,11 @@ class _CTxnsViewState extends State<CTxnsView> {
                                                       'add',
                                                       'Customer',
                                                     );
-                                                contactsController.myContacts
-                                                    .refresh();
+
+                                                // contactsController
+                                                //     .showTypeAheadDialog(
+                                                //       context,
+                                                //     );
                                               },
                                             ),
                                           ),

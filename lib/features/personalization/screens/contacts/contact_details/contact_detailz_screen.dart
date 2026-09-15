@@ -72,8 +72,8 @@ class CContactDetailsScreen extends StatelessWidget {
                 ),
               ),
               IconButton(
-                onPressed: () async {
-                  await contactsController.addUpdateContactActionModal(
+                onPressed: () {
+                  contactsController.addUpdateContactActionModal(
                     context,
                     contactItem,
                     'update',
@@ -291,15 +291,13 @@ class CContactDetailsScreen extends StatelessWidget {
                             },
                     ),
                     onTap: contactItem.contactPhone == ''
-                        ? () async {
-                            await contactsController
-                                .addUpdateContactActionModal(
-                                  context,
-                                  contactItem,
-                                  'update',
-                                  contactItem.contactCategory,
-                                );
-                            contactsController.myContacts.refresh();
+                        ? () {
+                            contactsController.addUpdateContactActionModal(
+                              context,
+                              contactItem,
+                              'update',
+                              contactItem.contactCategory,
+                            );
                           }
                         : null,
                     subTitle: contactItem.contactPhone != '' ? 'Mobile' : '',

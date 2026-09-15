@@ -157,10 +157,7 @@ class CContactsScreen extends StatelessWidget {
                                                           .cloudDelContacts
                                                           .isEmpty
                                                   ? null
-                                                  : () async {
-                                                      contactsController
-                                                          .processContactsSync();
-                                                    },
+                                                  : () async {},
                                               icon: Icon(
                                                 contactsController
                                                             .unsyncedContactAppends
@@ -296,14 +293,13 @@ class CContactsScreen extends StatelessWidget {
                             height: CSizes.spaceBtnItems,
                           ),
                           InkWell(
-                            onTap: () async {
-                              await contactsController
-                                  .addUpdateContactActionModal(
-                                    context,
-                                    null,
-                                    'add',
-                                    'Friend',
-                                  );
+                            onTap: () {
+                              contactsController.addUpdateContactActionModal(
+                                context,
+                                null,
+                                'add',
+                                'Friend',
+                              );
                             },
                             child: Icon(
                               Icons.add,
