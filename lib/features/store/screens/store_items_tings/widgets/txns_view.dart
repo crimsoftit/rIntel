@@ -456,19 +456,20 @@ class _CTxnsViewState extends State<CTxnsView> {
                                             child: CSquareIconBtn(
                                               icon: Iconsax.add,
                                               iconColor: CColors.rOrange,
-                                              onBtnTap: () {
-                                                contactsController
+                                              onBtnTap: () async {
+                                                await contactsController
                                                     .addUpdateContactActionModal(
                                                       context,
                                                       null,
-                                                      'add',
+                                                      txn,
+                                                      'update txn',
                                                       'Customer',
                                                     );
 
-                                                // contactsController
-                                                //     .showTypeAheadDialog(
-                                                //       context,
-                                                //     );
+                                                txnsController.userTxns
+                                                    .refresh();
+                                                txnsController.userTxnItems
+                                                    .refresh();
                                               },
                                             ),
                                           ),

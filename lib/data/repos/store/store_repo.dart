@@ -608,4 +608,30 @@ class CStoreRepo extends GetxController {
       rethrow;
     }
   }
+
+  /// -- add/update customer details on a txn --
+  Future<void> cloudUpdateTxnCustomerDetails(CTxn cloudTxn) async {
+    try {
+      firestoreDb.collection('txns').doc(cloudTxn.txnId.toString()).update(
+        {
+          'customerName': cloudTxn.customerName,
+          'customerContacts': cloudTxn.customerContacts,
+        },
+      );
+    } catch (e) {
+      if (kDebugMode) {
+        CPopupSnackBar.errorSnackBar(
+          message: e.toString(),
+          title: "error updating txn's cloud customer details",
+        );
+      } else {
+        CPopupSnackBar.errorSnackBar(
+          message:
+              "an unknown error occurred while updating txn's customer details on the cloud! please try again later...",
+          title: "error updating txn's customer details",
+        );
+      }
+      rethrow;
+    }
+  }
 }

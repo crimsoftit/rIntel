@@ -76,6 +76,7 @@ class CContactTxnsScreen extends StatelessWidget {
                   contactsController.addUpdateContactActionModal(
                     context,
                     thisContact,
+                    null,
                     'update',
                     thisContact.contactCategory,
                   );

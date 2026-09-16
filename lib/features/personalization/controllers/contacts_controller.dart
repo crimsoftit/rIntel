@@ -16,6 +16,7 @@ import 'package:rintel/features/personalization/screens/contacts/contact_details
 import 'package:rintel/features/store/controllers/inv_controller.dart';
 import 'package:rintel/features/store/controllers/nav_menu_controller.dart';
 import 'package:rintel/features/store/controllers/txns_controller.dart';
+import 'package:rintel/features/store/models/txns/txn_model.dart';
 import 'package:rintel/nav_menu.dart';
 import 'package:rintel/utils/constants/colors.dart';
 import 'package:rintel/utils/constants/sizes.dart';
@@ -380,6 +381,7 @@ class CContactsController extends GetxController {
   Future<dynamic> addUpdateContactActionModal(
     BuildContext context,
     CContactsModel? contact,
+    CTxn? txn,
     String action,
     presetCategory,
   ) async {
@@ -536,9 +538,7 @@ class CContactsController extends GetxController {
                                       ),
                               ),
                               Text(
-                                action == 'update' || contact != null
-                                    ? 'update txn'
-                                    : 'add contact',
+                                action,
                                 style: Theme.of(
                                   context,
                                 ).textTheme.labelLarge!.apply(),
@@ -551,6 +551,7 @@ class CContactsController extends GetxController {
                       CAddUpdateContactForm(
                         contact: contact,
                         formAction: action,
+                        txn: txn,
                       ),
                     ],
                   ),
@@ -558,6 +559,17 @@ class CContactsController extends GetxController {
               },
             ),
           );
+        },
+      ).then(
+        (_) async {
+          
+          await fetchMyContacts();
+          if (txn != null) {
+            await txnsController.fetchUserTxns();
+          }
+          contact = CContactsModel.empty();
+          txn = CTxn.empty();
+          resetFields();
         },
       );
     } catch (e) {
@@ -1036,7 +1048,9 @@ class CContactsController extends GetxController {
                             }
                           },
                         ),
-                        const SizedBox(height: CSizes.spaceBtnSections * .5),
+                        const SizedBox(
+                          height: CSizes.spaceBtnSections * .5,
+                        ),
 
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -1177,22 +1191,25 @@ class CContactsController extends GetxController {
   /// -- restore contact from trash --
   void delayedTrashAction(CContactsModel trashItem) async {
     // Wait for 7 seconds
-    await Future.delayed(const Duration(seconds: 7), () {
-      if (undoTrashBtnPressed.value == false || !undoTrashBtnPressed.value) {
-        trashItem.isTrashed = 1;
-        trashItem.lastModified = DateFormat(
-          'yyyy-MM-dd kk:mm',
-        ).format(clock.now());
+    await Future.delayed(
+      const Duration(seconds: 7),
+      () {
+        if (undoTrashBtnPressed.value == false || !undoTrashBtnPressed.value) {
+          trashItem.isTrashed = 1;
+          trashItem.lastModified = DateFormat(
+            'yyyy-MM-dd kk:mm',
+          ).format(clock.now());
 
-        updateContact(trashItem);
-        Get.offAll(() {
-          final navController = Get.put(CNavMenuController());
-          navController.selectedIndex.value = 2;
-          undoTrashBtnPressed.value = false;
-          return const NavMenu();
-        });
-      }
-    });
+          updateContact(trashItem);
+          Get.offAll(() {
+            final navController = Get.put(CNavMenuController());
+            navController.selectedIndex.value = 2;
+            undoTrashBtnPressed.value = false;
+            return const NavMenu();
+          });
+        }
+      },
+    );
 
     // Perform action after delay
     if (kDebugMode) {
@@ -1685,6 +1702,7 @@ class CContactsController extends GetxController {
     contactCountryCode.value = 'KE';
 
     contactDialCode.value = '+254';
+    showContactsSearchField.value = false;
     txtSearchCustomerDetails.clear();
     txtContactNameController.clear();
     txtEmailController.clear();

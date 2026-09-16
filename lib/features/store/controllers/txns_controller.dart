@@ -377,54 +377,6 @@ class CTxnsController extends GetxController {
   //   }
   // }
 
-  /// -- barcode scanner using flutter_barcode_scanner package --
-  // Future<void> scanItemForSale() async {
-  //   try {
-  //     String barcodeScanRes = await FlutterBarcodeScanner.scanBarcode(
-  //       '#ff6666',
-  //       'cancel',
-  //       true,
-  //       ScanMode.BARCODE,
-  //       3000,
-  //       CameraFace.back.toString(),
-  //       ScanFormat.ALL_FORMATS,
-  //     );
-
-  //     sellItemScanResults.value = barcodeScanRes;
-
-  //     // -- set inventory item details to fields --
-  //     if (sellItemScanResults.value != '' &&
-  //         sellItemScanResults.value != '-1') {
-  //       await fetchSoldItems();
-  //       await fetchForSaleItemByCode(barcodeScanRes);
-  //     }
-
-  //     if (itemExists.value && !isLoading.value) {
-  //       Get.toNamed('/sales/sell_item/');
-  //     } else {
-  //       CPopupSnackBar.customToast(
-  //         message: 'item not found! please scan again or search inventory',
-  //         forInternetConnectivityStatus: false,
-  //       );
-  //       await fetchSoldItems();
-  //     }
-  //   } on FormatException catch (formatException) {
-  //     CPopupSnackBar.errorSnackBar(
-  //       title: 'format exception error!!',
-  //       message: formatException.message,
-  //     );
-  //   } catch (e) {
-  //     if (kDebugMode) {
-  //       CPopupSnackBar.errorSnackBar(
-  //         title: 'sell item scan error!',
-  //         message: e.toString(),
-  //       );
-  //     }
-  //     //throw e.toString();
-  //     rethrow;
-  //   }
-  // }
-
   /// -- fetch top sellers grouped by product id --
   Future<List<CBestSellersModel>> fetchTopSellersFromSales() async {
     try {
@@ -512,7 +464,9 @@ class CTxnsController extends GetxController {
   /// -- search through store sales --
   Future<void> searchSales(String value) async {
     try {
-      userTxns.refresh();
+      await fetchUserTxns();
+
+      userTxnItems.refresh();
 
       var txnsFound = userTxns.where((foundTxn) {
         var foundTxnItems = userTxnItems.where(
@@ -2010,7 +1964,7 @@ class CTxnsController extends GetxController {
         },
       );
 
-      fetchUserTxnItems();
+      await fetchUserTxnItems();
 
       /// -- initialize sales summary values --
 
@@ -2110,6 +2064,37 @@ class CTxnsController extends GetxController {
       rethrow;
     } finally {
       isLoading.value = false;
+    }
+  }
+
+  /// -- add/update customer details on a txn --
+  Future<void> updateTxnCustomerDetails(
+    CTxn txn,
+  ) async {
+    try {
+      await dbHelper
+          .updateParentTxnDetails(
+            txn,
+          )
+          .then(
+            (result) {
+              storeRepo.cloudUpdateTxnCustomerDetails(txn);
+            },
+          );
+    } catch (e) {
+      if (kDebugMode) {
+        CPopupSnackBar.errorSnackBar(
+          message: e.toString(),
+          title: "error updating txn's customer details on device",
+        );
+      } else {
+        CPopupSnackBar.errorSnackBar(
+          message:
+              "an unknown error occurred while updating txn's customer details on the device! please try again later...",
+          title: "error updating txn's customer details on device",
+        );
+      }
+      rethrow;
     }
   }
 

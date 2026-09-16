@@ -1080,28 +1080,7 @@ class DbHelper extends GetxController {
     }
   }
 
-  /// -- defines a function to update a transaction's details --
-  Future<int> updateTxnDetails(CTxnsModel txn, int txnId) async {
-    try {
-      var txnUpdateResult = await _db!.update(
-        txnsTable,
-        txn.toMap(),
-        where: 'txnId = ?',
-        whereArgs: [txnId],
-      );
-
-      return txnUpdateResult;
-    } catch (e) {
-      if (kDebugMode) {
-        CPopupSnackBar.errorSnackBar(
-          title: 'Oh Snap! error updating txn details!',
-          message: e.toString(),
-        );
-      }
-
-      return 0;
-    }
-  }
+ 
 
   Future<int> updateTxnItemsSyncStatus(
     int syncStatus,

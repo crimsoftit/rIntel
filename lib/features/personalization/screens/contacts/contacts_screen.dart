@@ -297,6 +297,7 @@ class CContactsScreen extends StatelessWidget {
                               contactsController.addUpdateContactActionModal(
                                 context,
                                 null,
+                                null,
                                 'add',
                                 'Friend',
                               );

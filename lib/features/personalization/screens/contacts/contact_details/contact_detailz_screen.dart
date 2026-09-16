@@ -76,6 +76,7 @@ class CContactDetailsScreen extends StatelessWidget {
                   contactsController.addUpdateContactActionModal(
                     context,
                     contactItem,
+                    null,
                     'update',
                     'Customer',
                   );
@@ -295,6 +296,7 @@ class CContactDetailsScreen extends StatelessWidget {
                             contactsController.addUpdateContactActionModal(
                               context,
                               contactItem,
+                              null,
                               'update',
                               contactItem.contactCategory,
                             );
@@ -360,6 +362,7 @@ class CContactDetailsScreen extends StatelessWidget {
                                     .addUpdateContactActionModal(
                                       context,
                                       contactItem,
+                                      null,
                                       'update',
                                       contactItem.contactCategory,
                                     );
@@ -390,6 +393,7 @@ class CContactDetailsScreen extends StatelessWidget {
                                 .addUpdateContactActionModal(
                                   context,
                                   contactItem,
+                                  null,
                                   'update',
                                   contactItem.contactCategory,
                                 );

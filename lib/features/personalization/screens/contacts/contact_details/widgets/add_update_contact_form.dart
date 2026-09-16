@@ -5,6 +5,8 @@ import 'package:rintel/common/widgets/custom_shapes/containers/rounded_container
 import 'package:rintel/features/personalization/controllers/contacts_controller.dart';
 import 'package:rintel/features/personalization/controllers/user_controller.dart';
 import 'package:rintel/features/personalization/models/contacts_model.dart';
+import 'package:rintel/features/store/controllers/txns_controller.dart';
+import 'package:rintel/features/store/models/txns/txn_model.dart';
 import 'package:rintel/utils/constants/colors.dart';
 import 'package:rintel/utils/constants/sizes.dart';
 import 'package:rintel/utils/helpers/helper_functions.dart';
@@ -23,9 +25,11 @@ class CAddUpdateContactForm extends StatelessWidget {
     this.contact,
     this.onActionBtnPressed,
     this.presetContactCategory = 'Customer',
+    this.txn,
   });
 
   final CContactsModel? contact;
+  final CTxn? txn;
   final String formAction;
   final String? presetContactCategory;
   final VoidCallback? onActionBtnPressed;
@@ -34,6 +38,7 @@ class CAddUpdateContactForm extends StatelessWidget {
   Widget build(BuildContext context) {
     final contactsController = Get.put(CContactsController());
     final isDarkTheme = CHelperFunctions.isDarkMode(context);
+    final txnsController = Get.put(CTxnsController());
     final userController = Get.put(CUserController());
 
     return Obx(() {
@@ -141,54 +146,72 @@ class CAddUpdateContactForm extends StatelessWidget {
                             return;
                           }
 
-                          var contactDetails = CContactsModel(
-                            userController.user.value.email,
-                            contactsController.txtContactNameController.text
-                                .trim(),
-                            contactsController.contactCountryCode.value.trim(),
-                            contactsController.contactDialCode.value.trim(),
-                            contactsController.txtPhoneController.text.trim(),
-                            contactsController.txtEmailController.text.trim(),
-                            contactsController.selectedContactCategory.value,
-                            DateFormat(
-                              'yyyy-MM-dd kk:mm',
-                            ).format(clock.now()),
-                            DateFormat(
-                              'yyyy-MM-dd kk:mm',
-                            ).format(clock.now()),
-
-                            0,
-                            0,
-                          );
-
-                          if (formAction == 'update' || contact != null) {
-                            contact!.contactCategory = contactsController
-                                .selectedContactCategory
-                                .value;
-                            contact!.contactCountryCode =
-                                contactsController.contactCountryCode.value;
-                            contact!.contactName = contactsController
+                          if (txn != null) {
+                            txn!.customerName = contactsController
                                 .txtContactNameController
                                 .text
                                 .trim();
-                            contact!.contactPhone = contactsController
-                                .txtPhoneController
-                                .text
-                                .trim();
-                            contact!.contactEmail = contactsController
-                                .txtEmailController
-                                .text
-                                .trim();
-                            contact!.lastModified = DateFormat(
-                              'yyyy-MM-dd kk:mm',
-                            ).format(clock.now());
-                            contactsController.updateContact(contact!);
+                            txn!.customerContacts =
+                                contactsController.txtPhoneController.text
+                                        .trim() !=
+                                    ''
+                                ? contactsController.txtPhoneController.text
+                                      .trim()
+                                : contactsController.txtEmailController.text
+                                      .trim();
+
+                            txnsController.updateTxnCustomerDetails(txn!);
                           } else {
-                            contactsController.addContact(
-                              contactDetails,
+                            var contactDetails = CContactsModel(
+                              userController.user.value.email,
+                              contactsController.txtContactNameController.text
+                                  .trim(),
+                              contactsController.contactCountryCode.value
+                                  .trim(),
+                              contactsController.contactDialCode.value.trim(),
+                              contactsController.txtPhoneController.text.trim(),
+                              contactsController.txtEmailController.text.trim(),
+                              contactsController.selectedContactCategory.value,
+                              DateFormat(
+                                'yyyy-MM-dd kk:mm',
+                              ).format(clock.now()),
+                              DateFormat(
+                                'yyyy-MM-dd kk:mm',
+                              ).format(clock.now()),
+
                               0,
-                              true,
+                              0,
                             );
+
+                            if (formAction == 'update' || contact != null) {
+                              contact!.contactCategory = contactsController
+                                  .selectedContactCategory
+                                  .value;
+                              contact!.contactCountryCode =
+                                  contactsController.contactCountryCode.value;
+                              contact!.contactName = contactsController
+                                  .txtContactNameController
+                                  .text
+                                  .trim();
+                              contact!.contactPhone = contactsController
+                                  .txtPhoneController
+                                  .text
+                                  .trim();
+                              contact!.contactEmail = contactsController
+                                  .txtEmailController
+                                  .text
+                                  .trim();
+                              contact!.lastModified = DateFormat(
+                                'yyyy-MM-dd kk:mm',
+                              ).format(clock.now());
+                              contactsController.updateContact(contact!);
+                            } else {
+                              contactsController.addContact(
+                                contactDetails,
+                                0,
+                                true,
+                              );
+                            }
                           }
 
                           Navigator.of(Get.overlayContext!).pop(true);
