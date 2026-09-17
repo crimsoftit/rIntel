@@ -1254,7 +1254,7 @@ class CTxnsController extends GetxController {
       // -- compute value of goods sold on credit --
       invoicesValue.value = userInvoices.fold(
         0.0,
-        (sum, invoice) => sum + invoice.totalAmount,
+        (sum, invoice) => sum + (invoice.totalAmount - invoice.amountPaid),
       );
 
       // -- compute on the house sales --
@@ -1403,7 +1403,7 @@ class CTxnsController extends GetxController {
 
       invoicesValue.value = filteredInvoices.fold(
         0.0,
-        (sum, credit) => sum + credit.totalAmount,
+        (sum, credit) => sum + (credit.totalAmount - credit.amountPaid),
       );
 
       // -- compute gross revenue --

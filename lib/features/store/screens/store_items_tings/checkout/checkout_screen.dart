@@ -93,7 +93,9 @@ class CCheckoutScreen extends StatelessWidget {
             ),
           ),
         ),
-        backgroundColor: CColors.rBrown.withValues(alpha: 0.2),
+        backgroundColor: CColors.rBrown.withValues(
+          alpha: 0.2,
+        ),
         body: SingleChildScrollView(
           physics: AlwaysScrollableScrollPhysics(),
           child: Padding(
@@ -105,31 +107,33 @@ class CCheckoutScreen extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Obx(() {
-                  return Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        'Checkout',
-                        style: Theme.of(context).textTheme.labelLarge!.apply(
-                          color: CNetworkManager.instance.hasConnection.value
+                Obx(
+                  () {
+                    return Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          'Checkout',
+                          style: Theme.of(context).textTheme.labelLarge!.apply(
+                            color: CNetworkManager.instance.hasConnection.value
+                                ? CColors.rBrown
+                                : CColors.darkGrey,
+                            fontSizeFactor: 2.5,
+                            fontWeightDelta: -7,
+                          ),
+                        ),
+                        CCheckoutScanFAB(
+                          bgColor: CColors.transparent,
+                          elevation: 0, // -- remove shadow --
+                          foregroundColor:
+                              CNetworkManager.instance.hasConnection.value
                               ? CColors.rBrown
                               : CColors.darkGrey,
-                          fontSizeFactor: 2.5,
-                          fontWeightDelta: -7,
                         ),
-                      ),
-                      CCheckoutScanFAB(
-                        bgColor: CColors.transparent,
-                        elevation: 0, // -- remove shadow --
-                        foregroundColor:
-                            CNetworkManager.instance.hasConnection.value
-                            ? CColors.rBrown
-                            : CColors.darkGrey,
-                      ),
-                    ],
-                  );
-                }),
+                      ],
+                    );
+                  },
+                ),
 
                 /// -- custom divider --
                 CCustomDivider(
@@ -174,8 +178,8 @@ class CCheckoutScreen extends StatelessWidget {
                             // -- list of items in the cart --
                             SizedBox(
                               height: cartController.cartItems.length <= 2
-                                  ? CHelperFunctions.screenHeight() * 0.30
-                                  : CHelperFunctions.screenHeight() * 0.38,
+                                  ? CHelperFunctions.screenHeight() * .30
+                                  : CHelperFunctions.screenHeight() * .35,
                               child: CRoundedContainer(
                                 padding: EdgeInsets.all(
                                   CSizes.defaultSpace / 12.0,

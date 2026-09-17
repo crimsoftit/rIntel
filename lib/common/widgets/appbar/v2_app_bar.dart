@@ -1,5 +1,6 @@
 import 'package:rintel/common/widgets/img_widgets/c_circular_img.dart';
 import 'package:rintel/features/personalization/controllers/user_controller.dart';
+import 'package:rintel/features/personalization/screens/navigation/menu_btn.dart';
 import 'package:rintel/features/personalization/screens/profile/profile.dart';
 import 'package:rintel/utils/constants/colors.dart';
 import 'package:rintel/utils/constants/img_strings.dart';
@@ -8,21 +9,28 @@ import 'package:rintel/utils/helpers/helper_functions.dart';
 import 'package:rintel/utils/helpers/network_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:iconsax/iconsax.dart';
 
 class CVersion2AppBar extends StatelessWidget implements PreferredSizeWidget {
   const CVersion2AppBar({
     super.key,
+    this.actions,
     required this.autoImplyLeading,
     this.displayMenuIcon = true,
-    this.menuIconReplacementWidget = const SizedBox.shrink(),
     this.leftPadding,
+    this.onMenuBtnPressed,
+    this.menuIconReplacementWidget = const SizedBox.shrink(),
+
     this.rightPadding,
+    this.scaffoldKey,
   });
 
   final bool autoImplyLeading;
   final bool? displayMenuIcon;
   final double? leftPadding, rightPadding;
+  // 1. Create a global key
+  final GlobalKey<ScaffoldState>? scaffoldKey;
+  final List<Widget>? actions;
+  final void Function()? onMenuBtnPressed;
   final Widget menuIconReplacementWidget;
 
   @override
@@ -33,9 +41,12 @@ class CVersion2AppBar extends StatelessWidget implements PreferredSizeWidget {
     final userController = Get.put(CUserController());
 
     return AppBar(
+      actions: actions,
       automaticallyImplyLeading: autoImplyLeading,
-      iconTheme: IconThemeData(color: CColors.rBrown),
-
+      iconTheme: IconThemeData(
+        color: CColors.rBrown,
+      ),
+      //drawer:
       leading: Padding(
         padding: EdgeInsets.only(
           left: leftPadding ?? 0.5,
@@ -44,9 +55,7 @@ class CVersion2AppBar extends StatelessWidget implements PreferredSizeWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            displayMenuIcon == true
-                ? Icon(Iconsax.menu, size: 25.0, color: CColors.rBrown)
-                : menuIconReplacementWidget,
+            displayMenuIcon == true ? CMenuBtn() : menuIconReplacementWidget,
             Obx(() {
               final networkImg = userController.user.value.profPic;
 

@@ -13,6 +13,7 @@ list(APPEND FLUTTER_PLUGIN_LIST
   geolocator_windows
   location
   permission_handler_windows
+  rive_native
   url_launcher_windows
   webview_windows
 )

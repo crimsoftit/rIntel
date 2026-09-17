@@ -32,13 +32,18 @@ class _CNotificationsScreenState extends State<CNotificationsScreen> {
     //);
     CLocalNotificationsController.requestNotificationPermissionsIfNeeded();
 
-    Future.delayed(Duration.zero, () {
-      WidgetsBinding.instance.addPostFrameCallback((_) async {
-        final notsController = Get.put(CLocalNotificationsController());
+    Future.delayed(
+      Duration.zero,
+      () {
+        WidgetsBinding.instance.addPostFrameCallback(
+          (_) async {
+            final notsController = Get.put(CLocalNotificationsController());
 
-        await notsController.updateNotificationsReadStatus();
-      });
-    });
+            await notsController.updateNotificationsReadStatus();
+          },
+        );
+      },
+    );
 
     super.initState();
   }
@@ -50,6 +55,9 @@ class _CNotificationsScreenState extends State<CNotificationsScreen> {
     // final notServices = Get.put(CNotificationServices());
     final userController = Get.put(CUserController());
 
+    // 1. Create a global key
+    //final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey();
+
     return Container(
       color: isDarkTheme ? CColors.transparent : CColors.white,
       child: Scaffold(
@@ -59,7 +67,10 @@ class _CNotificationsScreenState extends State<CNotificationsScreen> {
           leftPadding: 10.0,
           rightPadding: 10.0,
         ),
-        backgroundColor: CColors.rBrown.withValues(alpha: 0.2),
+
+        backgroundColor: CColors.rBrown.withValues(
+          alpha: 0.2,
+        ),
 
         /// -- body --
         body: CustomScrollView(
@@ -70,7 +81,10 @@ class _CNotificationsScreenState extends State<CNotificationsScreen> {
               flexibleSpace: CRoundedContainer(
                 bgColor: CColors.transparent,
                 height: 80.0,
-                padding: const EdgeInsets.only(left: 10.0, right: 10.0),
+                padding: const EdgeInsets.only(
+                  left: 10.0,
+                  right: 10.0,
+                ),
                 showBorder: false,
                 child: Stack(
                   //crossAxisAlignment: CrossAxisAlignment.start,
@@ -104,7 +118,9 @@ class _CNotificationsScreenState extends State<CNotificationsScreen> {
                     /// -- custom divider --
                     Positioned(
                       top: 55.0,
-                      child: CCustomDivider(leftPadding: 0.0),
+                      child: CCustomDivider(
+                        leftPadding: 0.0,
+                      ),
                     ),
                   ],
                 ),

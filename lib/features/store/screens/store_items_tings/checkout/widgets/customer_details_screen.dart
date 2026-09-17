@@ -61,22 +61,7 @@ class CustomerDetailsScreen extends StatelessWidget {
                   checkoutController.customerNameFieldController,
             ),
           ),
-          // CCustomTxtField(
-          //   labelTxt: 'Customer name',
-          //   // checkoutController
-          //   //             .selectedPaymentMethod
-          //   //             .value
-          //   //             .platformName.toLowerCase() ==
-          //   //         'mPesa (offline)'.toLowerCase() ||
-          //   //     checkoutController
-          //   //             .selectedPaymentMethod
-          //   //             .value
-          //   //             .platformName.toLowerCase() ==
-          //   //         'credit'.toLowerCase()
-          //   // ? 'customer name'
-          //   // : 'customer name(optional)',
-          //   txtFieldController: checkoutController.customerNameFieldController,
-          // ),
+
           const SizedBox(
             height: 2.0,
           ),

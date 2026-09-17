@@ -152,6 +152,9 @@ dependencies:
   flutter_slidable: any
   draggable_expandable_fab: any
   flutter_layout_grid: any
+  rive: ^0.14.11
+  hidden_drawer_menu: ^3.0.1
+  flutter_zoom_drawer: ^3.2.0
   
   number_flow: any
   flutter_number_flow: any

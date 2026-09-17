@@ -161,6 +161,30 @@ class CContactsListview extends StatelessWidget {
             }
 
             break;
+
+          case 'trash':
+            demContacts.clear();
+            if (contactsController.showContactsSearchField.value &&
+                contactsController.contactsSearchFieldController.text.trim() !=
+                    '') {
+              demContacts.assignAll(
+                contactsController.allContactMatches.where(
+                  (contact) {
+                    return contact.isTrashed == 1;
+                  },
+                ),
+              );
+            } else {
+              demContacts.assignAll(
+                contactsController.myContacts.where(
+                  (contact) {
+                    return contact.isTrashed == 1;
+                  },
+                ),
+              );
+            }
+
+            break;
           default:
             demContacts.clear();
 

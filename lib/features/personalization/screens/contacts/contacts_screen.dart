@@ -234,6 +234,12 @@ class CContactsScreen extends StatelessWidget {
                               'Device',
                             ),
                           ),
+
+                          Tab(
+                            child: Text(
+                              'Trash',
+                            ),
+                          ),
                         ],
                       ),
                       floating: false,
@@ -258,6 +264,9 @@ class CContactsScreen extends StatelessWidget {
                     ),
                     CContactsListview(
                       space: 'device',
+                    ),
+                    CContactsListview(
+                      space: 'trash',
                     ),
                   ],
                 ),

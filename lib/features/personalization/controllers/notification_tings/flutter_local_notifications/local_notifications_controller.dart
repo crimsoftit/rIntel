@@ -133,15 +133,17 @@ class CLocalNotificationsController extends GetxController {
   static Future<void> requestNotificationPermissionsIfNeeded() async {
     final PermissionStatus status = await Permission.notification.request();
 
-    if (status.isGranted) {
-      // Notifications are allowed
-      if (kDebugMode) {
-        CPopupSnackBar.customToast(
-          message: 'notification permissions granted!',
-          forInternetConnectivityStatus: false,
-        );
-      }
-    } else if (status.isDenied) {
+    // if (status.isGranted) {
+    //   // Notifications are allowed
+    //   if (kDebugMode) {
+    //     CPopupSnackBar.customToast(
+    //       message: 'notification permissions granted!',
+    //       forInternetConnectivityStatus: false,
+    //     );
+    //   }
+    // }
+
+    if (status.isDenied || !status.isGranted) {
       // Notifications are denied
       if (kDebugMode) {
         CPopupSnackBar.customToast(

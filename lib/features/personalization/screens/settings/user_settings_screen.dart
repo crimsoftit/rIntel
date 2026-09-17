@@ -31,8 +31,8 @@ class CUserSettingsScreen extends StatelessWidget {
       child: Scaffold(
         appBar: CVersion2AppBar(
           autoImplyLeading: false,
-          leftPadding: 18.0,
-          rightPadding: 30.0,
+          leftPadding: 10.0,
+          rightPadding: 10.0,
         ),
         backgroundColor: CColors.rBrown.withValues(alpha: 0.2),
         body: SingleChildScrollView(
