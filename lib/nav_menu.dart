@@ -92,13 +92,23 @@ class NavMenu extends StatelessWidget {
                     ? CColors.rBrown
                     : CColors.black
               : CNetworkManager.instance.hasConnection.value
-              ? CColors.rBrown.withValues(alpha: 0.1)
-              : CColors.black.withValues(alpha: 0.1),
+              ? CColors.rBrown.withValues(
+                  alpha: 0.1,
+                )
+              : CColors.black.withValues(
+                  alpha: 0.1,
+                ),
           indicatorColor: isDark
-              ? CColors.white.withValues(alpha: 0.3)
+              ? CColors.white.withValues(
+                  alpha: 0.3,
+                )
               : CNetworkManager.instance.hasConnection.value
-              ? CColors.rBrown.withValues(alpha: 0.3)
-              : CColors.black.withValues(alpha: 0.3),
+              ? CColors.rBrown.withValues(
+                  alpha: 0.3,
+                )
+              : CColors.black.withValues(
+                  alpha: 0.3,
+                ),
           destinations: [
             NavigationDestination(
               icon: Icon(
@@ -113,7 +123,9 @@ class NavMenu extends StatelessWidget {
             //   label: 'homeRaw',
             // ),
             NavigationDestination(
-              icon: Icon(Iconsax.shop),
+              icon: Icon(
+                Iconsax.shop,
+              ),
               label: 'Store',
             ),
 
@@ -126,11 +138,15 @@ class NavMenu extends StatelessWidget {
             //   label: 'txns',
             // ),
             NavigationDestination(
-              icon: Icon(Iconsax.user_octagon),
+              icon: Icon(
+                Iconsax.user_octagon,
+              ),
               label: 'Contacts',
             ),
             NavigationDestination(
-              icon: Icon(Iconsax.setting),
+              icon: Icon(
+                Iconsax.setting,
+              ),
               label: 'Account',
             ),
             SizedBox(

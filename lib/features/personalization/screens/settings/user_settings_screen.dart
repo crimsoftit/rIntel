@@ -34,19 +34,23 @@ class CUserSettingsScreen extends StatelessWidget {
           leftPadding: 10.0,
           rightPadding: 10.0,
         ),
-        backgroundColor: CColors.rBrown.withValues(alpha: 0.2),
+        backgroundColor: CColors.rBrown.withValues(
+          alpha: 0.2,
+        ),
         body: SingleChildScrollView(
           child: Padding(
-            padding: const EdgeInsets.only(left: 20.0, right: 10.0, top: 10.0),
+            padding: const EdgeInsets.only(
+              left: 10.0,
+              right: 10.0,
+              top: 10.0,
+            ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   userController.user.value.email,
                   style: Theme.of(context).textTheme.labelSmall!.apply(
-                    color: isDarkTheme
-                        ? CColors.darkGrey
-                        : CNetworkManager.instance.hasConnection.value
+                    color: CNetworkManager.instance.hasConnection.value
                         ? CColors.rBrown
                         : CColors.darkGrey,
                   ),

@@ -4,39 +4,56 @@ import 'package:rintel/features/personalization/screens/navigation/menu_items.da
 import 'package:rintel/utils/constants/colors.dart';
 
 class CSideMenu extends StatelessWidget {
-  const CSideMenu({super.key});
+  const CSideMenu({
+    super.key,
+    required this.currentItem,
+    required this.onItemSelected,
+  });
+
+  /// -- variables --
+  final CMenuItemModel currentItem;
+  final ValueChanged<CMenuItemModel> onItemSelected;
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: CColors.rOrange.withValues(
-        alpha: .7,
-      ),
-      body: SafeArea(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Spacer(),
-            ...CMenuItems.menuItems.map(buildMenuItem),
-            Spacer(
-              flex: 2,
-            ),
-          ],
+    return Theme(
+      data: ThemeData.dark(),
+      child: Scaffold(
+        backgroundColor: CColors.rBrown.withValues(
+          alpha: .7,
+        ),
+        body: SafeArea(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Spacer(),
+              ...CMenuItems.menuItems.map(buildMenuItem),
+              Spacer(
+                flex: 2,
+              ),
+            ],
+          ),
         ),
       ),
     );
   }
-}
 
-Widget buildMenuItem(CMenuItemModel menuItem) {
-  return ListTile(
-    leading: Icon(
-      menuItem.icon,
-    ),
-    minLeadingWidth: 20.0,
-    onTap: () {},
-    title: Text(
-      menuItem.title,
-    ),
-  );
+  Widget buildMenuItem(CMenuItemModel menuItem) {
+    return ListTile(
+      leading: Icon(
+        menuItem.icon,
+      ),
+      minLeadingWidth: 20.0,
+      onTap: () {
+        onItemSelected(menuItem);
+      },
+      selected: currentItem == menuItem,
+      selectedTileColor: CColors.rBrown.withValues(
+        alpha: .2,
+      ),
+      title: Text(
+        menuItem.title,
+      ),
+    );
+  }
 }

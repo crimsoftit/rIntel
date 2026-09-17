@@ -20,16 +20,6 @@ class CNotificationsScreen extends StatefulWidget {
 class _CNotificationsScreenState extends State<CNotificationsScreen> {
   @override
   void initState() {
-    //AwesomeNotifications().isNotificationAllowed().then(
-    //(isAllowed) {
-    //if (!isAllowed) {
-    // This is just a basic example. For real apps, you must show some
-    // friendly dialog box before call the request method.
-    // This is very important to not harm the user experience
-    //AwesomeNotifications().requestPermissionToSendNotifications();
-    //}
-    //},
-    //);
     CLocalNotificationsController.requestNotificationPermissionsIfNeeded();
 
     Future.delayed(
@@ -64,8 +54,8 @@ class _CNotificationsScreenState extends State<CNotificationsScreen> {
         /// -- app bar --
         appBar: CVersion2AppBar(
           autoImplyLeading: false,
-          leftPadding: 10.0,
-          rightPadding: 10.0,
+          leftPadding: 8.0,
+          rightPadding: 8.0,
         ),
 
         backgroundColor: CColors.rBrown.withValues(
@@ -90,7 +80,7 @@ class _CNotificationsScreenState extends State<CNotificationsScreen> {
                   //crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Positioned(
-                      top: 0,
+                      top: 5,
                       child: Text(
                         userController.user.value.email,
                         style: Theme.of(context).textTheme.labelSmall!.apply(
@@ -102,7 +92,7 @@ class _CNotificationsScreenState extends State<CNotificationsScreen> {
                     ),
 
                     Positioned(
-                      top: 8.0,
+                      top: 15.0,
                       child: Text(
                         'Alerts',
                         style: Theme.of(context).textTheme.labelLarge!.apply(
@@ -117,7 +107,7 @@ class _CNotificationsScreenState extends State<CNotificationsScreen> {
 
                     /// -- custom divider --
                     Positioned(
-                      top: 55.0,
+                      top: 60.0,
                       child: CCustomDivider(
                         leftPadding: 0.0,
                       ),
