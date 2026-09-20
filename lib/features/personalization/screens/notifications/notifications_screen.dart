@@ -54,7 +54,6 @@ class _CNotificationsScreenState extends State<CNotificationsScreen> {
         /// -- app bar --
         appBar: CVersion2AppBar(
           autoImplyLeading: false,
-          leftPadding: 8.0,
           rightPadding: 8.0,
         ),
 
@@ -72,7 +71,7 @@ class _CNotificationsScreenState extends State<CNotificationsScreen> {
                 bgColor: CColors.transparent,
                 height: 80.0,
                 padding: const EdgeInsets.only(
-                  left: 10.0,
+                  left: 15.0,
                   right: 10.0,
                 ),
                 showBorder: false,

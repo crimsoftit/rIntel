@@ -65,7 +65,7 @@ class ContactsSearchTypeaheadField extends StatelessWidget {
     return TypeAheadField<CContactsModel>(
       builder: (context, controller, focusNode) {
         return TextFormField(
-          autofocus: true,
+          autofocus: false,
           autovalidateMode: AutovalidateMode.onUserInteraction,
           controller: controller,
           decoration: InputDecoration(

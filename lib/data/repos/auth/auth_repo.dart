@@ -12,7 +12,7 @@ import 'package:rintel/features/store/controllers/checkout_controller.dart';
 import 'package:rintel/features/store/controllers/inv_controller.dart';
 import 'package:rintel/features/store/controllers/nav_menu_controller.dart';
 import 'package:rintel/features/store/controllers/txns_controller.dart';
-import 'package:rintel/nav_menu.dart';
+import 'package:rintel/main_nav.dart';
 import 'package:rintel/utils/constants/colors.dart';
 import 'package:rintel/utils/constants/img_strings.dart';
 import 'package:rintel/utils/exceptions/firebase_auth_exceptions.dart';
@@ -133,7 +133,8 @@ class AuthRepo extends GetxController {
               () {
                 WidgetsBinding.instance.addPostFrameCallback(
                   (_) {
-                    Get.offAll(() => const NavMenu());
+                    // Get.offAll(() => const NavMenu());
+                    Get.offAll(() => const CMainNav());
                   },
                 );
               },

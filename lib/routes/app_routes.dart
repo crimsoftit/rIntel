@@ -12,24 +12,36 @@ import 'package:rintel/features/store/screens/home/home.dart';
 import 'package:rintel/features/store/screens/store_items_tings/checkout/checkout_screen.dart';
 import 'package:rintel/features/store/screens/store_items_tings/inventory/inventory_details/inv_details.dart';
 import 'package:rintel/features/store/screens/store_items_tings/store_screen.dart';
-import 'package:rintel/nav_menu.dart';
+import 'package:rintel/main_nav.dart';
 import 'package:get/get.dart';
 
 import 'routes.dart';
 
 class CAppRoutes {
   static final pages = [
-    GetPage(name: CRoutes.landingScreen, page: () => const NavMenu()),
+    GetPage(
+      name: CRoutes.landingScreen,
+      page: () => const CMainNav(),
+    ),
 
-    GetPage(name: CRoutes.home, page: () => const HomeScreen()),
+    GetPage(
+      name: CRoutes.home,
+      page: () => const HomeScreen(),
+    ),
 
-    GetPage(name: CRoutes.store, page: () => const CStoreScreen()),
+    GetPage(
+      name: CRoutes.store,
+      page: () => const CStoreScreen(),
+    ),
 
     // GetPage(
     //   name: CRoutes.inventory,
     //   page: () => const CInventoryScreen(),
     // ),
-    GetPage(name: CRoutes.inventoryDetails, page: () => const CInvDetails()),
+    GetPage(
+      name: CRoutes.inventoryDetails,
+      page: () => const CInvDetails(),
+    ),
 
     GetPage(name: CRoutes.checkoutScreen, page: () => const CCheckoutScreen()),
 

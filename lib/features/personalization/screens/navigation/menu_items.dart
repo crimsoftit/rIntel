@@ -3,43 +3,33 @@ import 'package:iconsax/iconsax.dart';
 import 'package:rintel/features/personalization/models/menu_item_model.dart';
 
 class CMenuItems {
-  // static const chat = CMenuItemModel(
-  //   title: "Chat",
-  //   icon: Icons.chat,
-  // );
-  // static const search = CMenuItemModel(
-  //   title: "Search",
-  //   icon: Icons.search,
-  // );
-  // static const timer = CMenuItemModel(
-  //   title: "Timer",
-  //   icon: Icons.timer,
-  // );
-  // static const bell = CMenuItemModel(
-  //   title: "Bell",
-  //   icon: Iconsax.clock,
-  // );
-  // static const rateUs = CMenuItemModel(
-  //   title: "Rate us",
-  //   icon: Iconsax.user,
-  // );
+  static const dashboard = CMenuItemModel(
+    title: "Dashboard",
+    icon: Icons.dashboard,
+  );
+  static const expenses = CMenuItemModel(
+    title: "Expenses",
+    icon: Iconsax.money_send,
+  );
+  static const store = CMenuItemModel(
+    title: "Store",
+    icon: Icons.store,
+  );
+
+  static const alerts = CMenuItemModel(
+    title: "Notifications",
+    icon: Icons.notifications,
+  );
+  static const rateUs = CMenuItemModel(
+    title: "Rate us",
+    icon: Icons.star,
+  );
 
   static const List<CMenuItemModel> menuItems = [
-    CMenuItemModel(
-      title: "Search",
-      icon: Icons.search,
-    ),
-    CMenuItemModel(
-      title: "Timer",
-      icon: Icons.timer,
-    ),
-    CMenuItemModel(
-      title: "Bell",
-      icon: Iconsax.clock,
-    ),
-    CMenuItemModel(
-      title: "Rate us",
-      icon: Iconsax.user,
-    ),
+    dashboard,
+    expenses,
+    store,
+    alerts,
+    rateUs,
   ];
 }

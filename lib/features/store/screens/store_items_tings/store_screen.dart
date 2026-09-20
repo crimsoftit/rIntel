@@ -2,6 +2,7 @@ import 'package:rintel/common/widgets/appbar/app_bar.dart';
 import 'package:rintel/common/widgets/appbar/tab_bar.dart';
 import 'package:rintel/common/widgets/products/cart/positioned_cart_counter_widget.dart';
 import 'package:rintel/common/widgets/search_bar/animed_searchfield.dart';
+import 'package:rintel/features/personalization/screens/navigation/menu_btn.dart';
 import 'package:rintel/features/store/controllers/checkout_controller.dart';
 import 'package:rintel/features/store/controllers/inv_controller.dart';
 import 'package:rintel/features/store/controllers/search_bar_controller.dart';
@@ -59,17 +60,13 @@ class CStoreScreen extends StatelessWidget {
               leadingWidget: searchController.showSearchField.value
                   ? null
                   : Align(
-                      alignment: Alignment.centerLeft,
+                      alignment: Alignment.topLeft,
                       child: Padding(
                         padding: const EdgeInsets.only(
                           top: 5.0,
-                          left: 10.0,
+                          //left: 10.0,
                         ),
-                        child: Icon(
-                          Iconsax.menu,
-                          size: CSizes.iconMd,
-                          color: CColors.rBrown,
-                        ),
+                        child: CMenuBtn(),
                       ),
                     ),
               showBackArrow: false,

@@ -21,9 +21,7 @@ class CUserSettingsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final appSettingsController = Get.put(CAppSettingsController());
-    //final isConnectedToInternet = CNetworkManager.instance.hasConnection.value;
     final isDarkTheme = CHelperFunctions.isDarkMode(context);
-    //final navController = Get.put(CNavMenuController());
     final userController = Get.put(CUserController());
 
     return Container(
@@ -31,7 +29,7 @@ class CUserSettingsScreen extends StatelessWidget {
       child: Scaffold(
         appBar: CVersion2AppBar(
           autoImplyLeading: false,
-          leftPadding: 10.0,
+          //leftPadding: 10.0,
           rightPadding: 10.0,
         ),
         backgroundColor: CColors.rBrown.withValues(
@@ -69,10 +67,14 @@ class CUserSettingsScreen extends StatelessWidget {
                 ),
 
                 /// -- custom divider --
-                CCustomDivider(leftPadding: 5.0),
+                CCustomDivider(
+                  leftPadding: 5.0,
+                ),
 
                 // -- app settings
-                const SizedBox(height: CSizes.spaceBtnItems),
+                const SizedBox(
+                  height: CSizes.spaceBtnItems,
+                ),
 
                 CMenuTile(
                   icon: Iconsax.user_edit,

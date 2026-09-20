@@ -12,7 +12,7 @@ import 'package:rintel/features/store/controllers/inv_controller.dart';
 import 'package:rintel/features/store/controllers/nav_menu_controller.dart';
 import 'package:rintel/features/store/controllers/txns_controller.dart';
 import 'package:rintel/features/store/models/inv_model.dart';
-import 'package:rintel/nav_menu.dart' show NavMenu;
+import 'package:rintel/main_nav.dart';
 import 'package:rintel/utils/constants/colors.dart';
 import 'package:rintel/utils/constants/sizes.dart';
 import 'package:rintel/utils/db/sqflite/db_helper.dart';
@@ -919,7 +919,8 @@ class AddUpdateInventoryForm extends StatelessWidget {
                                   navController.selectedIndex.value = 1;
                                   Navigator.pop(Get.overlayContext!, true);
 
-                                  Get.to(const NavMenu());
+                                  //Get.to(const NavMenu());
+                                  Get.to(const CMainNav());
 
                                   break;
                                 default:

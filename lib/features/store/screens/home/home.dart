@@ -17,7 +17,7 @@ import 'package:rintel/features/store/screens/home/widgets/charts/line_charts/cu
 import 'package:rintel/features/store/screens/home/widgets/dashboard_header.dart';
 import 'package:rintel/features/store/screens/home/widgets/store_summary.dart';
 import 'package:rintel/features/store/screens/home/widgets/top_sellers.dart';
-import 'package:rintel/nav_menu.dart';
+import 'package:rintel/main_nav.dart';
 import 'package:rintel/utils/constants/colors.dart';
 import 'package:rintel/utils/constants/sizes.dart';
 import 'package:rintel/utils/constants/txt_strings.dart';
@@ -41,9 +41,12 @@ class HomeScreen extends StatelessWidget {
     final navController = Get.put(CNavMenuController());
     final txnsController = Get.put(CTxnsController());
 
-    var salesCount = txnsController.userTxns.fold(0.0, (sum, sale) {
-      return sum + sale.totalAmount;
-    });
+    var salesCount = txnsController.userTxns.fold(
+      0.0,
+      (sum, sale) {
+        return sum + sale.totalAmount;
+      },
+    );
 
     if (invController.inventoryItems.isEmpty ||
         txnsController.userTxnItems.isEmpty ||
@@ -180,7 +183,7 @@ class HomeScreen extends StatelessWidget {
                               fWeight: FontWeight.w400,
                               onPressed: () {
                                 navController.selectedIndex.value = 1;
-                                Get.to(() => const NavMenu());
+                                Get.to(() => const CMainNav());
                               },
                             ),
                             CTopSellers(),

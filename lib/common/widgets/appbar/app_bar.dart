@@ -50,10 +50,15 @@ class CAppBar extends StatelessWidget implements PreferredSizeWidget {
 
         leading: showBackArrow
             ? Padding(
-                padding: EdgeInsets.symmetric(horizontal: CSizes.md),
+                padding: EdgeInsets.symmetric(
+                  horizontal: CSizes.md,
+                ),
                 child: IconButton(
                   onPressed: backIconAction,
-                  icon: Icon(Iconsax.arrow_left, color: backIconColor),
+                  icon: Icon(
+                    Iconsax.arrow_left,
+                    color: backIconColor,
+                  ),
                 ),
               )
             : leadingIcon != null

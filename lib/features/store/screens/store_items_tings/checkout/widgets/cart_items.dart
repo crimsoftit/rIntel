@@ -46,7 +46,7 @@ class CCartItems extends StatelessWidget {
         animation: CImages.noDataLottie,
         onActionBtnPressed: () {
           navController.selectedIndex.value = 1;
-          //Get.to(() => const NavMenu());
+
           Get.back();
         },
       );

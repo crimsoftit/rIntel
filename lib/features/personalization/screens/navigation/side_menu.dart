@@ -12,47 +12,48 @@ class CSideMenu extends StatelessWidget {
 
   /// -- variables --
   final CMenuItemModel currentItem;
+
   final ValueChanged<CMenuItemModel> onItemSelected;
 
   @override
   Widget build(BuildContext context) {
-    return Theme(
-      data: ThemeData.dark(),
-      child: Scaffold(
-        backgroundColor: CColors.rBrown.withValues(
-          alpha: .7,
-        ),
-        body: SafeArea(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Spacer(),
-              ...CMenuItems.menuItems.map(buildMenuItem),
-              Spacer(
-                flex: 2,
-              ),
-            ],
-          ),
+    return Scaffold(
+      backgroundColor: CColors.rBrown.withValues(
+        alpha: .7,
+      ),
+      body: SafeArea(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Spacer(),
+            ...CMenuItems.menuItems.map(buildMenuItem),
+            Spacer(
+              flex: 2,
+            ),
+          ],
         ),
       ),
     );
   }
 
   Widget buildMenuItem(CMenuItemModel menuItem) {
-    return ListTile(
-      leading: Icon(
-        menuItem.icon,
-      ),
-      minLeadingWidth: 20.0,
-      onTap: () {
-        onItemSelected(menuItem);
-      },
-      selected: currentItem == menuItem,
-      selectedTileColor: CColors.rBrown.withValues(
-        alpha: .2,
-      ),
-      title: Text(
-        menuItem.title,
+    return ListTileTheme(
+      selectedColor: CColors.white,
+      child: ListTile(
+        leading: Icon(
+          menuItem.icon,
+        ),
+        minLeadingWidth: 20.0,
+        onTap: () {
+          onItemSelected(menuItem);
+        },
+        selected: currentItem == menuItem,
+        selectedTileColor: CColors.rBrown.withValues(
+          alpha: .2,
+        ),
+        title: Text(
+          menuItem.title,
+        ),
       ),
     );
   }

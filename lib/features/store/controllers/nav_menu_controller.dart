@@ -1,5 +1,5 @@
 import 'package:rintel/features/personalization/screens/contacts/contacts_screen.dart';
-import 'package:rintel/features/personalization/screens/notifications/alerts_screen.dart';
+import 'package:rintel/features/personalization/screens/notifications/notifications_screen.dart';
 import 'package:rintel/features/personalization/screens/settings/user_settings_screen.dart';
 import 'package:rintel/features/store/screens/home/home.dart';
 import 'package:rintel/features/store/screens/store_items_tings/store_screen.dart';
@@ -23,7 +23,6 @@ class CNavMenuController extends GetxController {
     const CUserSettingsScreen(),
 
     //const SettingsScreenRaw(),
-    const CAlertsScreen(),
-    //const CNotificationsScreen(),
+    const CNotificationsScreen(),
   ];
 }

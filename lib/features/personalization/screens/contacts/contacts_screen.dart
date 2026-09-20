@@ -25,7 +25,7 @@ class CContactsScreen extends StatelessWidget {
       animationDuration: Duration(
         milliseconds: 300,
       ),
-      length: 5,
+      length: 6,
       child: Container(
         color: isDarkTheme ? CColors.transparent : CColors.white,
         child: Obx(

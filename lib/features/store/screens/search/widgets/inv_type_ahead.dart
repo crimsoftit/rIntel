@@ -33,7 +33,7 @@ class InventorySearchTypeAhead extends StatelessWidget {
     return TypeAheadField<CInventoryModel>(
       builder: (context, controller, focusNode) {
         return TextFormField(
-          autofocus: true,
+          autofocus: false,
           controller: controller,
           decoration: InputDecoration(
             border: InputBorder.none,

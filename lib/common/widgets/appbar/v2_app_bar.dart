@@ -36,8 +36,7 @@ class CVersion2AppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     final isConnectedToInternet = CNetworkManager.instance.hasConnection.value;
-    //final isDarkTheme = CHelperFunctions.isDarkMode(context);
-    //final navController = Get.put(CNavMenuController());
+
     final userController = Get.put(CUserController());
 
     return AppBar(
