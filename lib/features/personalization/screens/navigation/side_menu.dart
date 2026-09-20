@@ -42,17 +42,20 @@ class CSideMenu extends StatelessWidget {
       child: ListTile(
         leading: Icon(
           menuItem.icon,
+          color: currentItem == menuItem ? CColors.white : CColors.rOrange,
         ),
         minLeadingWidth: 20.0,
         onTap: () {
           onItemSelected(menuItem);
         },
         selected: currentItem == menuItem,
-        selectedTileColor: CColors.rBrown.withValues(
-          alpha: .2,
-        ),
+        selectedTileColor: CColors.rBrown,
         title: Text(
           menuItem.title,
+          style: TextStyle(
+            color: currentItem == menuItem ? CColors.white : CColors.rOrange,
+            fontFamily: 'Signika',
+          ),
         ),
       ),
     );

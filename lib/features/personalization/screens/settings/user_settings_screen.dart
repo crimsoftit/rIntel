@@ -38,7 +38,7 @@ class CUserSettingsScreen extends StatelessWidget {
         body: SingleChildScrollView(
           child: Padding(
             padding: const EdgeInsets.only(
-              left: 10.0,
+              left: 15.0,
               right: 10.0,
               top: 10.0,
             ),

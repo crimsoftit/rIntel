@@ -6,6 +6,7 @@ import 'package:rintel/common/widgets/products/cart/cart_counter_icon.dart';
 import 'package:rintel/common/widgets/search_bar/animated_search_bar.dart';
 import 'package:rintel/common/widgets/shimmers/horizontal_items_shimmer.dart';
 import 'package:rintel/common/widgets/txt_widgets/c_section_headings.dart';
+import 'package:rintel/features/personalization/screens/navigation/menu_btn.dart';
 import 'package:rintel/features/store/controllers/dashboard_controller.dart';
 import 'package:rintel/features/store/controllers/inv_controller.dart';
 import 'package:rintel/features/store/controllers/nav_menu_controller.dart';
@@ -26,7 +27,6 @@ import 'package:rintel/utils/helpers/network_manager.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:iconsax/iconsax.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -67,11 +67,7 @@ class HomeScreen extends StatelessWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Icon(
-                  Iconsax.menu,
-                  size: 25.0,
-                  color: CColors.rBrown,
-                ),
+                CMenuBtn(),
                 CCartCounterIcon(
                   iconColor: CColors.rBrown,
                   showCounterWidget: true,

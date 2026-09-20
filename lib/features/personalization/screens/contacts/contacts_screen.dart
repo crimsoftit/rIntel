@@ -4,6 +4,7 @@ import 'package:rintel/common/widgets/shimmers/shimmer_effects.dart';
 import 'package:rintel/features/personalization/controllers/contacts_controller.dart';
 import 'package:rintel/common/widgets/search_bar/animed_searchfield.dart';
 import 'package:rintel/features/personalization/screens/contacts/widgets/contacts_listview.dart';
+import 'package:rintel/features/personalization/screens/navigation/menu_btn.dart';
 import 'package:rintel/utils/constants/colors.dart';
 import 'package:rintel/utils/constants/sizes.dart';
 import 'package:rintel/utils/helpers/helper_functions.dart';
@@ -50,11 +51,7 @@ class CContactsScreen extends StatelessWidget {
                             top: 5.0,
                             left: 10.0,
                           ),
-                          child: Icon(
-                            Iconsax.menu,
-                            size: CSizes.iconMd,
-                            color: CColors.rBrown,
-                          ),
+                          child: CMenuBtn(),
                         ),
                       ),
                 showBackArrow: false,

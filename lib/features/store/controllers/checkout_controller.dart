@@ -26,7 +26,7 @@ import 'package:rintel/features/store/screens/store_items_tings/checkout/checkou
 import 'package:rintel/features/store/screens/store_items_tings/checkout/widgets/payment_methods/payment_methods_tile.dart';
 import 'package:rintel/features/store/screens/store_items_tings/inventory/inventory_details/widgets/add_to_cart_bottom_nav_bar.dart';
 import 'package:rintel/features/store/screens/store_items_tings/inventory/widgets/inv_dialog.dart';
-import 'package:rintel/nav_menu.dart';
+import 'package:rintel/main_nav.dart';
 import 'package:rintel/services/location_services.dart';
 import 'package:rintel/services/pdf_services.dart';
 import 'package:rintel/utils/constants/colors.dart';
@@ -758,7 +758,7 @@ class CCheckoutController extends GetxController {
     }
     navController.selectedIndex.value = 1;
 
-    Get.offAll(() => NavMenu());
+    Get.offAll(() => CMainNav());
   }
 
   Future<void> onCheckoutBtnPressed() async {
