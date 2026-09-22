@@ -49,7 +49,7 @@ class CContactsScreen extends StatelessWidget {
                         child: Padding(
                           padding: const EdgeInsets.only(
                             top: 5.0,
-                            left: 10.0,
+                            //left: 10.0,
                           ),
                           child: CMenuBtn(),
                         ),
@@ -77,7 +77,7 @@ class CContactsScreen extends StatelessWidget {
                           contactsController.contactsSearchFieldController,
                     ),
                   );
-                }),
+                },),
                 backIconAction: () {
                   // Navigator.pop(context, true);
                 },

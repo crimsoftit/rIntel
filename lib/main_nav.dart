@@ -19,8 +19,13 @@ class _CMainNavState extends State<CMainNav> {
   CMenuItemModel currentScreen = CMenuItems.store;
   @override
   Widget build(BuildContext context) {
+    //final isDarkTheme = CHelperFunctions.isDarkMode(context);
+
     return ZoomDrawer(
       angle: -20.5,
+      // menuBackgroundColor: isDarkTheme && currentScreen == CMenuItems.expenses
+      //     ? CColors.transparent
+      //     : Colors.deepOrangeAccent,
       menuBackgroundColor: Colors.deepOrangeAccent,
       borderRadius: 15.0,
       mainScreen: getScreen(),
@@ -58,7 +63,7 @@ class _CMainNavState extends State<CMainNav> {
         return NavMenu();
 
       case CMenuItems.expenses:
-        return CExpensesSCreen();
+        return CExpensesScreen();
 
       case CMenuItems.store:
         navController.selectedIndex.value = 1;

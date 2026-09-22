@@ -17,20 +17,26 @@ class CSideMenu extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: CColors.rBrown.withValues(
-        alpha: .7,
-      ),
-      body: SafeArea(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Spacer(),
-            ...CMenuItems.menuItems.map(buildMenuItem),
-            Spacer(
-              flex: 2,
-            ),
-          ],
+    return Theme(
+      data: ThemeData.dark(),
+      child: Scaffold(
+        backgroundColor: CColors.rBrown.withValues(
+          alpha: .7,
+        ),
+        body: SafeArea(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Text(
+                'header',
+              ),
+              Spacer(),
+              ...CMenuItems.menuItems.map(buildMenuItem),
+              Spacer(
+                flex: 2,
+              ),
+            ],
+          ),
         ),
       ),
     );

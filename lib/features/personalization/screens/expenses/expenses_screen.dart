@@ -1,33 +1,40 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_floaty/flutter_floaty.dart';
 import 'package:get/get.dart';
+import 'package:iconsax/iconsax.dart';
 import 'package:rintel/common/widgets/appbar/v2_app_bar.dart';
 import 'package:rintel/common/widgets/custom_shapes/containers/rounded_container.dart';
 import 'package:rintel/common/widgets/dividers/custom_divider.dart';
 import 'package:rintel/features/personalization/controllers/user_controller.dart';
-import 'package:rintel/features/personalization/screens/expenses/widgets/inv_expenses_view.dart';
+import 'package:rintel/features/personalization/screens/expenses/widgets/expenses_view.dart';
 import 'package:rintel/utils/constants/colors.dart';
 import 'package:rintel/utils/helpers/helper_functions.dart';
 import 'package:rintel/utils/helpers/network_manager.dart';
 
-class CExpensesSCreen extends StatelessWidget {
-  const CExpensesSCreen({super.key});
+class CExpensesScreen extends StatelessWidget {
+  const CExpensesScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final isDarkTheme = CHelperFunctions.isDarkMode(context);
-
     final userController = Get.put(CUserController());
 
-    // 1. Create a global key
-    //final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey();
-    return CRoundedContainer(
-      bgColor: isDarkTheme ? CColors.transparent : CColors.white,
+    // Define boundaries for the draggable area
+    final boundaries = Rect.fromLTWH(
+      0,
+      0,
+      MediaQuery.of(context).size.width,
+      MediaQuery.of(context).size.height * 0.9,
+    );
+
+    return Container(
+      color: CColors.rBrown.withValues(
+        alpha: 0.2,
+      ),
+
       child: Scaffold(
         appBar: CVersion2AppBar(
           autoImplyLeading: true,
-        ),
-        backgroundColor: CColors.rBrown.withValues(
-          alpha: 0.2,
+          rightPadding: 10.0,
         ),
         body: CustomScrollView(
           slivers: [
@@ -86,7 +93,73 @@ class CExpensesSCreen extends StatelessWidget {
               snap: true,
             ),
 
-            CInvExpensesView(),
+            CExpensesView(
+              isInventoryRelated: true,
+            ),
+            // CExpensesView(
+            //   isInventoryRelated: false,
+            // ),
+          ],
+        ),
+
+        floatingActionButton: Stack(
+          children: [
+            FlutterFloaty(
+              // backgroundColor:
+              //     CNetworkManager.instance.hasConnection.value
+              //     ? CColors.rBrown
+              //     : CColors.darkerGrey,
+              backgroundColor: CColors.transparent,
+              borderRadius: 15.0,
+
+              builder: (context) {
+                return Align(
+                  alignment: AlignmentGeometry.bottomRight,
+                  child: FloatingActionButton(
+                    elevation: 1, // -- removes shadow
+                    onPressed: () {},
+                    backgroundColor:
+                        CNetworkManager.instance.hasConnection.value
+                        ? CColors.rBrown
+                        : CColors.black,
+
+                    foregroundColor: CColors.white,
+                    heroTag: 'add',
+                    child: Icon(
+                      // Iconsax.scan_barcode,
+                      Iconsax.add,
+                    ),
+                  ),
+                );
+              },
+              growingFactor: 1.1,
+              height: 50.0,
+              initialX: CHelperFunctions.screenWidth() * .8,
+              initialY: CHelperFunctions.screenHeight() * .8,
+              intrinsicBoundaries: boundaries,
+
+              onDragBackgroundColor:
+                  CNetworkManager.instance.hasConnection.value
+                  ? CColors.rBrown.withValues(
+                      alpha: .4,
+                    )
+                  : CColors.darkerGrey.withValues(
+                      alpha: .4,
+                    ),
+              shadow: BoxShadow(
+                blurRadius: 3.0,
+                color: CColors.grey.withValues(
+                  alpha: .1,
+                ),
+                offset: const Offset(
+                  0.0,
+                  1.0,
+                ),
+                spreadRadius: 1.0,
+              ),
+              shape: BoxShape.rectangle,
+              width: 50.0,
+            ),
           ],
         ),
       ),

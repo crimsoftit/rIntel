@@ -71,115 +71,40 @@ class CStoreScreen extends StatelessWidget {
                     ),
               showBackArrow: false,
               backIconColor: isDarkTheme ? CColors.white : CColors.rBrown,
-              title: Obx(() {
-                return Center(
-                  child: CAnimedSearchfield(
-                    fieldExpanded: searchController.showSearchField.value,
-                    hintTxt: 'search store...',
-                    onFieldSubmitted: (value) {
-                      invController.searchInventory(value);
-                      txnsController.searchSales(value);
-                      txnsController.searchThroughRefunds(
-                        value,
-                      );
-                    },
+              title: Obx(
+                () {
+                  return Center(
+                    child: CAnimedSearchfield(
+                      fieldExpanded: searchController.showSearchField.value,
+                      hintTxt: 'search store...',
+                      onFieldSubmitted: (value) {
+                        invController.searchInventory(value);
+                        txnsController.searchSales(value);
+                        txnsController.searchThroughRefunds(
+                          value,
+                        );
+                      },
 
-                    onIconTap: () {
-                      searchController.toggleSearchFieldVisibility();
-                    },
-                    onSearchValueChanged: (query) {
-                      invController.searchInventory(query);
-                      txnsController.searchSales(query);
-                      txnsController.searchThroughRefunds(
-                        query,
-                      );
-                    },
-                    searchFieldController: searchController.txtSearchField,
-                  ),
-                );
-              }),
+                      onIconTap: () {
+                        searchController.toggleSearchFieldVisibility();
+                      },
+                      onSearchValueChanged: (query) {
+                        invController.searchInventory(query);
+                        txnsController.searchSales(query);
+                        txnsController.searchThroughRefunds(
+                          query,
+                        );
+                      },
+                      searchFieldController: searchController.txtSearchField,
+                    ),
+                  );
+                },
+              ),
               backIconAction: () {
                 // Navigator.pop(context, true);
               },
             ),
 
-            // CAppBar(
-            //   horizontalPadding: 0,
-            //   leadingWidget: searchController.showSearchField.value
-            //       ? null
-            //       : Padding(
-            //           padding: const EdgeInsets.only(
-            //             top: 5.0,
-            //             left: 10.0,
-            //             right: 10.0,
-            //           ),
-            //           child: Row(
-            //             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            //             children: [
-            //               Icon(
-            //                 Iconsax.menu,
-            //                 size: 25.0,
-            //                 color: CColors.rBrown,
-            //               ),
-            //               Expanded(
-            //                 child: CAnimedSearchfield(
-            //                   fieldExpanded:
-            //                       searchController.showSearchField.value,
-            //                   hintTxt: 'search store...',
-            //                   onSearchValueChanged: (value) {
-            //                     invController.searchInventory(value);
-            //                     txnsController.searchSales(value);
-            //                     txnsController.searchThroughRefunds(
-            //                       value,
-            //                     );
-            //                   },
-            //                   searchFieldController:
-            //                       searchController.txtSearchField,
-            //                 ),
-            //                 // CAnimatedSearchBar(
-            //                 //     boxColor: CColors.rBrown.withValues(
-            //                 //       alpha: .2,
-            //                 //     ),
-            //                 //     hintTxt: 'inventory, transactions',
-            //                 //     // boxColor:
-            //                 //     //     searchController.showSearchField.value
-            //                 //     //     ? CColors.rBrown.withValues(
-            //                 //     //         alpha: .2,
-            //                 //     //       )
-            //                 //     //     : Colors.transparent,
-            //                 //     controller: searchController.txtSearchField,
-            //                 //   )
-            //                 //: SizedBox.shrink(),
-            //               ),
-            //             ],
-            //           ),
-            //         ),
-            //   showBackArrow: false,
-            //   backIconColor: isDarkTheme ? CColors.white : CColors.rBrown,
-            //   title: CAnimedSearchfield(
-            //     fieldExpanded: searchController.showSearchField.value,
-            //     hintTxt: 'search store...',
-            //     onSearchValueChanged: (value) {
-            //       invController.searchInventory(value);
-            //       txnsController.searchSales(value);
-            //       txnsController.searchThroughRefunds(
-            //         value,
-            //       );
-            //     },
-            //     searchFieldController: searchController.txtSearchField,
-            //   ),
-
-            //   // CAnimatedSearchBar(
-            //   //   hintTxt: 'inventory, transactions',
-            //   //   boxColor: searchController.showSearchField.value
-            //   //       ? CColors.white
-            //   //       : Colors.transparent,
-            //   //   controller: searchController.txtSearchField,
-            //   // ),
-            //   backIconAction: () {
-            //     // Navigator.pop(context, true);
-            //   },
-            // ),
             body: NestedScrollView(
               headerSliverBuilder: (context, innerBoxIsScrollable) {
                 return [

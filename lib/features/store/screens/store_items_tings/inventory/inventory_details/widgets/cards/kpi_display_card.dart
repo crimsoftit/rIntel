@@ -11,6 +11,7 @@ class CKPIDisplayCard extends StatelessWidget {
     required this.animeDigit,
     this.anotherTitleWidget,
     this.bgColor,
+    this.borderRadius,
     this.fractionDigits,
     this.leadingWidget,
     this.onCardTap,
@@ -18,10 +19,12 @@ class CKPIDisplayCard extends StatelessWidget {
     this.subTitle,
     this.trailingWidget,
     this.titleWidget,
+    this.width,
   });
 
   final Color? bgColor;
   final double animeDigit;
+  final double? borderRadius, width;
   final int? fractionDigits;
   final String? prefixLabel, subTitle;
   final void Function()? onCardTap;
@@ -33,10 +36,11 @@ class CKPIDisplayCard extends StatelessWidget {
       onTap: onCardTap,
       child: CRoundedContainer(
         bgColor: bgColor ?? CColors.transparent,
-        width: CHelperFunctions.screenWidth() * .88,
+        borderRadius: borderRadius ?? 20.0,
+        width: width ?? CHelperFunctions.screenWidth() * .88,
         child: ListTile(
           leading:
-              leadingWidget ?? Icon(Icons.attach_money, color: CColors.rBrown),
+              leadingWidget ?? Icon(Icons.attach_money, color: CColors.rBrown,),
 
           title: Row(
             children: [
