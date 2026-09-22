@@ -6,7 +6,6 @@ import 'package:rintel/features/personalization/controllers/user_controller.dart
 import 'package:rintel/features/store/controllers/cart_controller.dart';
 import 'package:rintel/features/store/controllers/search_bar_controller.dart';
 import 'package:rintel/features/store/controllers/txns_controller.dart';
-import 'package:rintel/features/store/models/inv_dels_model.dart';
 import 'package:rintel/features/store/models/inv_model.dart';
 import 'package:rintel/features/store/screens/store_items_tings/inventory/widgets/inv_dialog.dart';
 import 'package:rintel/utils/constants/colors.dart';
@@ -66,12 +65,9 @@ class CInventoryController extends GetxController {
 
   // -- lists --
   final RxList<CInventoryModel> allGSheetData = <CInventoryModel>[].obs;
-  final RxList<CInvDelsModel> dItems = <CInvDelsModel>[].obs;
   final RxList<CInventoryModel> foundInventoryItems = <CInventoryModel>[].obs;
   final RxList<CInventoryModel> inventoryItems = <CInventoryModel>[].obs;
   final RxList<CInventoryModel> lowStockItems = <CInventoryModel>[].obs;
-
-  final RxList<CInvDelsModel> pendingUpdates = <CInvDelsModel>[].obs;
 
   // final RxList<CInventoryModel> invTopSellers = <CInventoryModel>[].obs;
   final RxList<CInventoryModel> unSyncedAppends = <CInventoryModel>[].obs;
@@ -1110,86 +1106,6 @@ class CInventoryController extends GetxController {
     }
   }
 
-  /// -- fetch items with pending deletions --
-  Future<List<CInvDelsModel>> fetchInvDels() async {
-    try {
-      final dels = await dbHelper.fetchAllInvDels();
-      dItems.assignAll(dels);
-
-      return dItems.toList();
-    } catch (e) {
-      if (kDebugMode) {
-        CPopupSnackBar.errorSnackBar(
-          title: 'DELS ERROR',
-          message: e.toString(),
-        );
-      }
-
-      rethrow;
-    }
-  }
-
-  Future<bool> syncInvDelsAndNotForUpdates() async {
-    try {
-      // -- start loader --
-      syncingInvDeletions.value = true;
-
-      // -- check internet connectivity
-      final isConnectedToInternet = await CNetworkManager.instance
-          .isConnected();
-      if (isConnectedToInternet) {
-        final dels = await dbHelper.fetchAllInvDels();
-        dItems.assignAll(dels);
-
-        if (dItems.isNotEmpty) {
-          for (var element in dItems) {
-            await deleteInvSheetItemNotForUpdates(element.itemId!);
-
-            final delItem = CInvDelsModel(
-              element.itemId,
-              element.itemName,
-              'inventory',
-              1,
-              'none',
-            );
-
-            await dbHelper.updateInvDeletion(delItem);
-          }
-        }
-      }
-      syncingInvDeletions.value = false;
-      return true;
-    } catch (e) {
-      syncingInvDeletions.value = false;
-      if (kDebugMode) {
-        CPopupSnackBar.errorSnackBar(
-          title: 'error syncing local inventory deletions!!',
-          message: e.toString(),
-        );
-      }
-      rethrow;
-    }
-  }
-
-  /// -- fetch items with pending updates --
-  Future<List<CInvDelsModel>> fetchInvUpdates() async {
-    try {
-      final pUpdates = await dbHelper.fetchAllInvUpdates();
-      pendingUpdates.assignAll(pUpdates);
-
-      return pendingUpdates;
-    } catch (e) {
-      if (kDebugMode) {
-        CPopupSnackBar.errorSnackBar(
-          title: 'DELS ERROR',
-          message: e.toString(),
-        );
-      }
-
-      rethrow;
-    }
-  }
-
   Future syncInvUpdatesToCloud() async {
     await fetchUserInventoryItems();
 
@@ -1243,12 +1159,10 @@ class CInventoryController extends GetxController {
       // start loader
       syncIsLoading.value = true;
       await fetchUserInventoryItems();
-      await fetchInvDels();
 
       // -- check internet connectivity
 
       if (await CNetworkManager.instance.isConnected()) {
-        await syncInvDelsAndNotForUpdates();
         await addUnsyncedInvToCloud();
         await syncInvUpdatesToCloud();
         // stop loader

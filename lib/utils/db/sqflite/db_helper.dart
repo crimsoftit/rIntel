@@ -3,7 +3,6 @@ import 'package:rintel/features/personalization/models/contacts_del_model.dart';
 import 'package:rintel/features/personalization/models/contacts_model.dart';
 import 'package:rintel/features/personalization/models/notification_model.dart';
 import 'package:rintel/features/store/models/best_sellers_model.dart';
-import 'package:rintel/features/store/models/inv_dels_model.dart';
 import 'package:rintel/features/store/models/inv_model.dart';
 import 'package:rintel/features/store/models/txns/sold_item_model.dart';
 import 'package:rintel/features/store/models/txns/txn_model.dart';
@@ -31,9 +30,8 @@ class DbHelper extends GetxController {
   final userController = Get.put(CUserController());
 
   final contactsTable = 'contactsTable';
-  final contactDelsForSyncTable = 'contactDelsForSyncTable';
-  final invDelsForSyncTable = 'invDelsForSyncTable';
-  final salesTable = 'sales';
+  final expensesTable = 'expenses';
+
   final invTable = 'inventory';
   final notificationsTable = 'notifications';
   final salesDelsForSyncTable = 'salesDelsForSyncTable';
@@ -177,22 +175,6 @@ class DbHelper extends GetxController {
         ''');
 
         database.execute('''
-          CREATE TABLE IF NOT EXISTS $contactDelsForSyncTable(
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            contactId INTEGER NOT NULL,
-            contactEmail TEXT NOT NULL,
-            contactName TEXT NOT NULL,
-            contactPhone TEXT NOT NULL,
-            deletedBy TEXT NOT NULL,
-            deleteDate TEXT NOT NULL,
-            isSynced INTEGER NOT NULL,
-            syncAction TEXT NOT NULL,
-
-            FOREIGN KEY(contactId) REFERENCES contactsTable(contactId)
-          )
-        ''');
-
-        database.execute('''
           CREATE TABLE IF NOT EXISTS $notificationsTable (
             notificationId INTEGER PRIMARY KEY AUTOINCREMENT,
             alertCreated INTEGER NOT NULL,
@@ -203,6 +185,20 @@ class DbHelper extends GetxController {
             userEmail TEXT NOT NULL,
             date TEXT NOT NULL,
             FOREIGN KEY(productId) REFERENCES inventory(productId)
+          )
+        ''');
+
+        database.execute('''
+          CREATE TABLE IF NOT EXISTS $expensesTable (
+            expenseId INTEGER PRIMARY KEY,
+            userId TEXT NOT NULL,
+            userEmail TEXT NOT NULL,
+            userName TEXT NOT NULL,
+            expenseTitle TEXT NOT NULL,
+            expenseDescription LONGTEXT,
+            amount REAL NOT NULL,
+            dateAdded CHAR(30) NOT NULL,
+            lastModified CHAR(30) NOT NULL,
           )
         ''');
       },
@@ -532,92 +528,6 @@ class DbHelper extends GetxController {
       }
       rethrow;
     }
-  }
-
-  /// -- fetch all deletionForSyncItems --
-  Future<List<CInvDelsModel>> fetchAllInvDels() async {
-    final db = _db;
-    // raw query
-    final dels = await db!.rawQuery(
-      'SELECT * FROM $invDelsForSyncTable where syncAction = ? and itemCategory = ?',
-      ['delete', 'inventory'],
-    );
-
-    if (dels.isEmpty) {
-      //CPopupSnackBar.customToast(message: 'IS EMPTY');
-      return [];
-    } else {
-      final result = dels
-          .map((json) => CInvDelsModel.fromMapObject(json))
-          .toList();
-
-      return result;
-    }
-  }
-
-  /// -- fetch all updatesForSyncItems --
-  Future<List<CInvDelsModel>> fetchAllInvUpdates() async {
-    try {
-      final db = _db;
-      // raw query
-      final forUpdates = await db!.rawQuery(
-        'SELECT * FROM $invDelsForSyncTable where syncAction = ? and itemCategory = ?',
-        ['update', 'inventory'],
-      );
-
-      final result = forUpdates
-          .map((json) => CInvDelsModel.fromMapObject(json))
-          .toList();
-
-      if (result.isEmpty) {
-        return [];
-      } else {
-        return result;
-      }
-    } on DatabaseException catch (e) {
-      if (kDebugMode) {
-        CPopupSnackBar.errorSnackBar(
-          title: 'database error fetching inventory updates for sync items',
-          message: e.toString(),
-        );
-      } else {
-        CPopupSnackBar.errorSnackBar(
-          title: 'database error fetching inventory updates for sync items',
-          message:
-              'An unknown database error occurred while fetching inventory updates for sync items!',
-        );
-      }
-      return [];
-    } catch (e) {
-      if (kDebugMode) {
-        CPopupSnackBar.errorSnackBar(
-          message: e.toString(),
-          title: 'unknown error fetching inventory updates for sync items',
-        );
-      } else {
-        CPopupSnackBar.errorSnackBar(
-          message:
-              'An unknown database error occurred while fetching inventory updates for sync items!',
-          title: 'unknown error fetching inventory updates for sync items',
-        );
-      }
-      rethrow;
-    } finally {
-      // Close the database if necessary
-      //await _db?.close();
-    }
-  }
-
-  Future<int> updateInvDeletion(CInvDelsModel delItem) async {
-    final db = _db;
-    int delRes = await db!.update(
-      invDelsForSyncTable,
-      delItem.toMap(),
-      where: 'itemId = ?',
-      whereArgs: [delItem.itemId],
-    );
-
-    return delRes;
   }
 
   /// -- fetch top sellers from inventory table --
@@ -1080,8 +990,6 @@ class DbHelper extends GetxController {
     }
   }
 
- 
-
   Future<int> updateTxnItemsSyncStatus(
     int syncStatus,
     String sAction,
@@ -1393,34 +1301,6 @@ class DbHelper extends GetxController {
     }
   }
 
-  /// -- add unsynced contact deletions to a temporary table --
-  Future<void> addUnsyncedContactDeletions(
-    CContactsDelModel deletedContact,
-  ) async {
-    try {
-      // In this case, replace any previous data.
-      await _db?.insert(
-        contactDelsForSyncTable,
-        deletedContact.toMap(),
-        conflictAlgorithm: ConflictAlgorithm.replace,
-      );
-    } catch (e) {
-      if (kDebugMode) {
-        CPopupSnackBar.errorSnackBar(
-          message: 'error adding deleted contact for sync: $e',
-          title: 'error adding deleted contact for sync!',
-        );
-      } else {
-        CPopupSnackBar.errorSnackBar(
-          message:
-              'an unknown error occurred while adding deleted contact for sync!',
-          title: 'error adding deleted contact for sync!',
-        );
-      }
-      rethrow;
-    }
-  }
-
   /// -- delete contact --
   Future<int> deleteContact(CContactsModel contact) async {
     try {
@@ -1440,37 +1320,6 @@ class DbHelper extends GetxController {
         CPopupSnackBar.errorSnackBar(
           title: 'delete error',
           message: 'error deleting contact!',
-        );
-      }
-      rethrow;
-    }
-  }
-
-  Future<List<CContactsDelModel>> fetchContactDels() async {
-    try {
-      final contactDels = await _db!.rawQuery(
-        'SELECT * FROM $contactDelsForSyncTable',
-      );
-
-      if (contactDels.isEmpty) {
-        return [];
-      } else {
-        final result = contactDels
-            .map((json) => CContactsDelModel.fromMapObject(json))
-            .toList();
-        return result;
-      }
-    } catch (e) {
-      if (kDebugMode) {
-        CPopupSnackBar.errorSnackBar(
-          message: 'error fetching cloud deletion contacts: $e',
-          title: 'error fetching cloud deletion contacts! ',
-        );
-      } else {
-        CPopupSnackBar.errorSnackBar(
-          message:
-              'An unknown error occurred while fetching cloud deletion contacts! Please try again later...',
-          title: 'error fetching cloud deletion contacts!',
         );
       }
       rethrow;
