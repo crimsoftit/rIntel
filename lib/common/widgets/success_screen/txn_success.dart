@@ -1,6 +1,5 @@
 import 'package:rintel/common/styles/spacing_styles.dart';
 import 'package:rintel/features/personalization/controllers/user_controller.dart';
-import 'package:rintel/features/store/controllers/sync_controller.dart';
 import 'package:rintel/utils/constants/colors.dart';
 import 'package:rintel/utils/constants/sizes.dart';
 import 'package:rintel/utils/helpers/helper_functions.dart';
@@ -24,11 +23,9 @@ class CTxnSuccessScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final syncController = Get.put(CSyncController());
     final userController = Get.put(CUserController());
 
-    return Obx(() {
-      return Scaffold(
+    return Scaffold(
         // appBar: CVersion2AppBar(
         //   autoImplyLeading: false,
         // ),
@@ -44,7 +41,7 @@ class CTxnSuccessScreen extends StatelessWidget {
                   width: MediaQuery.of(context).size.width * 0.8,
                 ),
 
-                const SizedBox(height: CSizes.spaceBtnSections),
+                const SizedBox(height: CSizes.spaceBtnSections,),
 
                 // -- title & subtitle --
                 Text(
@@ -52,7 +49,7 @@ class CTxnSuccessScreen extends StatelessWidget {
                   style: Theme.of(context).textTheme.headlineSmall,
                   textAlign: TextAlign.center,
                 ),
-                const SizedBox(height: CSizes.spaceBtnItems),
+                const SizedBox(height: CSizes.spaceBtnItems,),
                 Obx(
                   () => Text(
                     userController.user.value.email,
@@ -72,7 +69,7 @@ class CTxnSuccessScreen extends StatelessWidget {
                   subTitle,
                   style: Theme.of(
                     context,
-                  ).textTheme.labelMedium!.apply(color: CColors.darkGrey),
+                  ).textTheme.labelMedium!.apply(color: CColors.darkGrey,),
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(
@@ -88,51 +85,28 @@ class CTxnSuccessScreen extends StatelessWidget {
                     curve: Curves.easeIn,
                     duration: const Duration(milliseconds: 3000),
                     //height: 60.0,
-                    width: syncController.processingSync.value
-                        ? 60.0
-                        : CHelperFunctions.screenWidth() * 0.8,
-                    child: syncController.processingSync.value
-                        ? buildLoadingBtn()
-                        : SizedBox(
-                            width: double.infinity,
-                            child: ElevatedButton(
-                              onPressed: onContinueBtnPressed,
-                              child: FittedBox(
-                                child: Text(
-                                  syncController.processingSync.value
-                                      ? 'syncing...'
-                                      : 'CONTINUE',
-                                  style: Theme.of(context).textTheme.labelMedium
-                                      ?.apply(color: CColors.white),
-                                ),
-                              ),
-                            ),
+                    width: CHelperFunctions.screenWidth() * 0.8,
+                    child: SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        onPressed: onContinueBtnPressed,
+                        child: FittedBox(
+                          child: Text(
+                            'CONTINUE',
+                            style: Theme.of(context).textTheme.labelMedium
+                                ?.apply(color: CColors.white),
                           ),
+                        ),
+                      ),
+                    ),
                   ),
-                  // child: syncController.processingSync.value
-                  //     ? buildLoadingBtn()
-                  //     : SizedBox(
-                  //         width: double.infinity,
-                  //         child: ElevatedButton(
-                  //           onPressed: onContinueBtnPressed,
-                  //           child: Text(
-                  //             'CONTINUE',
-                  //             style: Theme.of(context)
-                  //                 .textTheme
-                  //                 .labelMedium
-                  //                 ?.apply(
-                  //                   color: CColors.white,
-                  //                 ),
-                  //           ),
-                  //         ),
-                  //       ),
+                  
                 ),
               ],
             ),
           ),
         ),
       );
-    });
   }
 
   Widget buildLoadingBtn() {

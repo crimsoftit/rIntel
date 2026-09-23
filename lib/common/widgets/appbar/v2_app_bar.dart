@@ -22,6 +22,7 @@ class CVersion2AppBar extends StatelessWidget implements PreferredSizeWidget {
 
     this.rightPadding,
     this.scaffoldKey,
+    this.trailingWidget,
   });
 
   final bool autoImplyLeading;
@@ -32,6 +33,7 @@ class CVersion2AppBar extends StatelessWidget implements PreferredSizeWidget {
   final List<Widget>? actions;
   final void Function()? onMenuBtnPressed;
   final Widget menuIconReplacementWidget;
+  final Widget? trailingWidget;
 
   @override
   Widget build(BuildContext context) {
@@ -55,27 +57,29 @@ class CVersion2AppBar extends StatelessWidget implements PreferredSizeWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             displayMenuIcon == true ? CMenuBtn() : menuIconReplacementWidget,
-            Obx(() {
-              final networkImg = userController.user.value.profPic;
+            trailingWidget ??
+                Obx(() {
+                  final networkImg = userController.user.value.profPic;
 
-              final dpImg = networkImg.isNotEmpty && isConnectedToInternet
-                  ? networkImg
-                  : CImages.user;
+                  final dpImg = networkImg.isNotEmpty && isConnectedToInternet
+                      ? networkImg
+                      : CImages.user;
 
-              return InkWell(
-                onTap: () {
-                  //navController.selectedIndex.value = 3;
-                  Get.to(() => const CProfileScreen());
-                },
-                child: CCircularImg(
-                  isNetworkImg: networkImg.isNotEmpty && isConnectedToInternet,
-                  img: dpImg,
-                  width: 47.0,
-                  height: 47.0,
-                  padding: 1.0,
-                ),
-              );
-            }),
+                  return InkWell(
+                    onTap: () {
+                      //navController.selectedIndex.value = 3;
+                      Get.to(() => const CProfileScreen());
+                    },
+                    child: CCircularImg(
+                      isNetworkImg:
+                          networkImg.isNotEmpty && isConnectedToInternet,
+                      img: dpImg,
+                      width: 47.0,
+                      height: 47.0,
+                      padding: 1.0,
+                    ),
+                  );
+                }),
           ],
         ),
       ),

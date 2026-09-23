@@ -5,6 +5,7 @@ import 'package:iconsax/iconsax.dart';
 import 'package:rintel/common/widgets/appbar/v2_app_bar.dart';
 import 'package:rintel/common/widgets/custom_shapes/containers/rounded_container.dart';
 import 'package:rintel/common/widgets/dividers/custom_divider.dart';
+import 'package:rintel/features/personalization/controllers/expenses_controller.dart';
 import 'package:rintel/features/personalization/controllers/user_controller.dart';
 import 'package:rintel/features/personalization/screens/expenses/widgets/expenses_view.dart';
 import 'package:rintel/utils/constants/colors.dart';
@@ -16,8 +17,6 @@ class CExpensesScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final userController = Get.put(CUserController());
-
     // Define boundaries for the draggable area
     final boundaries = Rect.fromLTWH(
       0,
@@ -25,6 +24,9 @@ class CExpensesScreen extends StatelessWidget {
       MediaQuery.of(context).size.width,
       MediaQuery.of(context).size.height * 0.9,
     );
+
+    final expensesController = Get.put(CExpensesController());
+    final userController = Get.put(CUserController());
 
     return Container(
       color: CColors.rBrown.withValues(
@@ -114,7 +116,12 @@ class CExpensesScreen extends StatelessWidget {
                   alignment: AlignmentGeometry.bottomRight,
                   child: FloatingActionButton(
                     elevation: 1, // -- removes shadow
-                    onPressed: () {},
+                    onPressed: () async {
+                      await expensesController.addUpdateExpenseDialog(
+                        context,
+                        'add',
+                      );
+                    },
                     backgroundColor:
                         CNetworkManager.instance.hasConnection.value
                         ? CColors.rBrown

@@ -69,6 +69,10 @@ class _CMainNavState extends State<CMainNav> {
         navController.selectedIndex.value = 1;
         return NavMenu();
 
+      case CMenuItems.contacts:
+        navController.selectedIndex.value = 2;
+        return NavMenu();
+
       default:
         navController.selectedIndex.value = 1;
         return NavMenu();

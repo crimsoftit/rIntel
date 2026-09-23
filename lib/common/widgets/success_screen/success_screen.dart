@@ -1,5 +1,4 @@
 import 'package:rintel/common/styles/spacing_styles.dart';
-import 'package:rintel/features/store/controllers/sync_controller.dart';
 import 'package:rintel/utils/constants/colors.dart';
 import 'package:rintel/utils/constants/sizes.dart';
 import 'package:flutter/material.dart';
@@ -25,9 +24,6 @@ class CSuccessScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final syncController = Get.put(CSyncController());
-    //final userController = Get.put(CUserController());
-
     return Scaffold(
       body: SingleChildScrollView(
         child: Padding(
@@ -83,9 +79,7 @@ class CSuccessScreen extends StatelessWidget {
                         onPressed: onContinueBtnPressed,
                         child: Obx(() {
                           return Text(
-                            syncController.processingSync.value
-                                ? 'processing cloud sync'
-                                : 'CONTINUE',
+                            'CONTINUE',
                             style: Theme.of(context).textTheme.labelMedium
                                 ?.apply(color: CColors.white),
                           );

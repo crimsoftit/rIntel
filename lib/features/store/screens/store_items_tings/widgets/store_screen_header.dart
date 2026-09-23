@@ -1,6 +1,5 @@
 import 'package:rintel/common/widgets/shimmers/shimmer_effects.dart';
 import 'package:rintel/features/store/controllers/inv_controller.dart';
-import 'package:rintel/features/store/controllers/sync_controller.dart';
 import 'package:rintel/features/store/controllers/txns_controller.dart';
 import 'package:rintel/features/store/screens/store_items_tings/checkout/widgets/checkout_scan_fab.dart';
 import 'package:rintel/utils/constants/colors.dart';
@@ -24,7 +23,6 @@ class CStoreScreenHeader extends StatelessWidget {
     //final cartController = Get.put(CCartController());
     final invController = Get.put(CInventoryController());
     final isConnectedToInternet = CNetworkManager.instance.hasConnection.value;
-    final syncController = Get.put(CSyncController());
     final txnsController = Get.put(CTxnsController());
 
     return Obx(() {
@@ -80,7 +78,7 @@ class CStoreScreenHeader extends StatelessWidget {
                                   ? CColors.rBrown
                                   : CColors.darkGrey,
                             )
-                          : syncController.processingSync.value
+                          : invController.isLoading.value
                           ? CShimmerEffect(
                               width: 40.0,
                               height: 40.0,
@@ -97,7 +95,6 @@ class CStoreScreenHeader extends StatelessWidget {
                                       txnsController
                                           .unsyncedTxnUpdates
                                           .isEmpty &&
-                                      syncController.processingSync.value &&
                                       invController.isLoading.value &&
                                       txnsController.isLoading.value
                                   ? null
@@ -109,7 +106,7 @@ class CStoreScreenHeader extends StatelessWidget {
                               heroTag: 'sync',
                               child: Icon(Iconsax.cloud_change),
                             )
-                    : SizedBox.shrink(), // TODO: add logic for synchronizing cotacts --
+                    : SizedBox.shrink(),
                 // -- scan item for checkout btn --
                 if (forStoreScreen)
                   CCheckoutScanFAB(

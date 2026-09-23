@@ -15,7 +15,6 @@ import 'package:rintel/features/personalization/models/notification_model.dart';
 import 'package:rintel/features/store/controllers/cart_controller.dart';
 import 'package:rintel/features/store/controllers/inv_controller.dart';
 import 'package:rintel/features/store/controllers/nav_menu_controller.dart';
-import 'package:rintel/features/store/controllers/sync_controller.dart';
 import 'package:rintel/features/store/controllers/txns_controller.dart';
 import 'package:rintel/features/store/models/cart_item_model.dart';
 import 'package:rintel/features/store/models/inv_model.dart';
@@ -324,15 +323,10 @@ class CCheckoutController extends GetxController {
 
               Get.offAll(
                 () {
-                  final syncController = Get.put(CSyncController());
                   return CTxnSuccessScreen(
-                    lottieImage: syncController.processingSync.value
-                        ? CImages.loadingAnime
-                        : CImages.paymentSuccessfulAnimation,
+                    lottieImage: CImages.paymentSuccessfulAnimation,
                     title: 'Txn success',
-                    subTitle: syncController.processingSync.value
-                        ? 'Processing cloud sync...'
-                        : 'Transaction successful',
+                    subTitle: 'Transaction successful',
                     onContinueBtnPressed: () async {
                       txnsController.fetchUserTxns();
 

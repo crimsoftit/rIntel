@@ -20,6 +20,12 @@ class CMenuItems {
     title: "Notifications",
     icon: Icons.notifications,
   );
+
+  static const contacts = CMenuItemModel(
+    title: "Contacts",
+    icon: Icons.notifications,
+  );
+
   static const rateUs = CMenuItemModel(
     title: "Rate us",
     icon: Icons.star,
@@ -30,6 +36,7 @@ class CMenuItems {
     expenses,
     store,
     alerts,
+    contacts,
     rateUs,
   ];
 }

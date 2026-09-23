@@ -1,3 +1,4 @@
+import 'package:rintel/common/widgets/appbar/v2_app_bar.dart';
 import 'package:rintel/common/widgets/buttons/custom_dropdown_btn.dart';
 import 'package:rintel/common/widgets/custom_shapes/containers/rounded_container.dart';
 import 'package:rintel/common/widgets/dates/date_range_picker_widget.dart';
@@ -6,7 +7,6 @@ import 'package:rintel/common/widgets/products/cart/cart_counter_icon.dart';
 import 'package:rintel/common/widgets/search_bar/animated_search_bar.dart';
 import 'package:rintel/common/widgets/shimmers/horizontal_items_shimmer.dart';
 import 'package:rintel/common/widgets/txt_widgets/c_section_headings.dart';
-import 'package:rintel/features/personalization/screens/navigation/menu_btn.dart';
 import 'package:rintel/features/store/controllers/dashboard_controller.dart';
 import 'package:rintel/features/store/controllers/inv_controller.dart';
 import 'package:rintel/features/store/controllers/nav_menu_controller.dart';
@@ -57,26 +57,16 @@ class HomeScreen extends StatelessWidget {
     return Container(
       color: isDarkTheme ? CColors.transparent : CColors.white,
       child: Scaffold(
-        appBar: AppBar(
-          automaticallyImplyLeading: false,
-          leadingWidth: 2.0,
-          title: Padding(
-            padding: const EdgeInsets.only(
-              left: 0.5,
-              right: 0.5,
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                CMenuBtn(),
-                CCartCounterIcon(
-                  iconColor: CColors.rBrown,
-                  showCounterWidget: true,
-                ),
-              ],
-            ),
+        appBar: CVersion2AppBar(
+          autoImplyLeading: false,
+          leftPadding: 5.0,
+          rightPadding: 12.0,
+          trailingWidget: CCartCounterIcon(
+            iconColor: CColors.rBrown,
+            showCounterWidget: true,
           ),
         ),
+
         backgroundColor: CColors.rBrown.withValues(
           alpha: 0.2,
         ),

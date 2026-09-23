@@ -3,7 +3,6 @@ import 'package:rintel/common/widgets/products/product_cards/p_card_vertical.dar
 import 'package:rintel/features/personalization/controllers/user_controller.dart';
 import 'package:rintel/features/store/controllers/inv_controller.dart';
 import 'package:rintel/features/store/controllers/search_bar_controller.dart';
-import 'package:rintel/features/store/controllers/sync_controller.dart';
 import 'package:rintel/features/store/models/inv_model.dart';
 import 'package:rintel/features/store/screens/search/widgets/no_results_screen.dart';
 import 'package:rintel/features/store/screens/store_items_tings/inventory/widgets/inv_dialog.dart';
@@ -38,7 +37,6 @@ class CInvGridviewScreen extends StatelessWidget {
     final isDarkTheme = CHelperFunctions.isDarkMode(context);
     final invController = Get.put(CInventoryController());
     final searchController = Get.put(CSearchBarController());
-    final syncController = Get.put(CSyncController());
     final userController = Get.put(CUserController());
 
     if (screen == 'store') {
@@ -150,7 +148,7 @@ class CInvGridviewScreen extends StatelessWidget {
                   containerHeight:
                       mainAxisExtent ??
                       180 * MediaQuery.textScalerOf(context).scale(1.2),
-                  deleteAction: syncController.processingSync.value
+                  deleteAction: invController.isLoading.value
                       ? null
                       : () {
                           CInventoryModel itemIndex = demInventoryItems[index];
@@ -193,62 +191,59 @@ class CInvGridviewScreen extends StatelessWidget {
                   lastModified: demInventoryItems[index].lastModified,
                   lowStockNotifierLimit:
                       demInventoryItems[index].lowStockNotifierLimit,
-                  onAvatarIconTap: syncController.processingSync.value
-                      ? null
-                      : () {
-                          invController.resetInvFields().then((_) {
-                            invController.itemExists.value = true;
-                            invController.txtSupplierName.text =
-                                demInventoryItems[index].supplierName;
-                            invController.txtSupplierContacts.text =
-                                demInventoryItems[index].supplierContacts;
+                  onAvatarIconTap: () {
+                    invController.resetInvFields().then((_) {
+                      invController.itemExists.value = true;
+                      invController.txtSupplierName.text =
+                          demInventoryItems[index].supplierName;
+                      invController.txtSupplierContacts.text =
+                          demInventoryItems[index].supplierContacts;
 
-                            invController.includeSupplierDetails.value =
-                                demInventoryItems[index].supplierName != '' ||
-                                demInventoryItems[index].supplierContacts != '';
-                            invController.includeExpiryDate.value =
-                                demInventoryItems[index].expiryDate != '';
-                            showDialog(
-                              context: Get.overlayContext!,
-                              useRootNavigator: true,
-                              builder: (BuildContext context) {
-                                invController.currentItemId.value =
-                                    demInventoryItems[index].productId!;
+                      invController.includeSupplierDetails.value =
+                          demInventoryItems[index].supplierName != '' ||
+                          demInventoryItems[index].supplierContacts != '';
+                      invController.includeExpiryDate.value =
+                          demInventoryItems[index].expiryDate != '';
+                      showDialog(
+                        context: Get.overlayContext!,
+                        useRootNavigator: true,
+                        builder: (BuildContext context) {
+                          invController.currentItemId.value =
+                              demInventoryItems[index].productId!;
 
-                                return dialog.buildDialog(
-                                  context,
-                                  CInventoryModel.withID(
-                                    invController.currentItemId.value,
-                                    userController.user.value.id,
-                                    userController.user.value.email,
-                                    userController.user.value.fullName,
-                                    demInventoryItems[index].pCode,
-                                    demInventoryItems[index].name,
-                                    demInventoryItems[index].markedAsFavorite,
-                                    demInventoryItems[index].calibration,
-                                    demInventoryItems[index].quantity,
-                                    demInventoryItems[index].qtySold,
-                                    demInventoryItems[index].qtyRefunded,
-                                    demInventoryItems[index].buyingPrice,
-                                    demInventoryItems[index].unitBp,
-                                    demInventoryItems[index].unitSellingPrice,
-                                    demInventoryItems[index]
-                                        .lowStockNotifierLimit,
-                                    demInventoryItems[index].supplierName,
-                                    demInventoryItems[index].supplierContacts,
-                                    demInventoryItems[index].dateAdded,
-                                    demInventoryItems[index].lastModified,
-                                    demInventoryItems[index].expiryDate,
-                                    demInventoryItems[index].isSynced,
-                                    demInventoryItems[index].syncAction,
-                                  ),
-                                  false,
-                                  false,
-                                );
-                              },
-                            );
-                          });
+                          return dialog.buildDialog(
+                            context,
+                            CInventoryModel.withID(
+                              invController.currentItemId.value,
+                              userController.user.value.id,
+                              userController.user.value.email,
+                              userController.user.value.fullName,
+                              demInventoryItems[index].pCode,
+                              demInventoryItems[index].name,
+                              demInventoryItems[index].markedAsFavorite,
+                              demInventoryItems[index].calibration,
+                              demInventoryItems[index].quantity,
+                              demInventoryItems[index].qtySold,
+                              demInventoryItems[index].qtyRefunded,
+                              demInventoryItems[index].buyingPrice,
+                              demInventoryItems[index].unitBp,
+                              demInventoryItems[index].unitSellingPrice,
+                              demInventoryItems[index].lowStockNotifierLimit,
+                              demInventoryItems[index].supplierName,
+                              demInventoryItems[index].supplierContacts,
+                              demInventoryItems[index].dateAdded,
+                              demInventoryItems[index].lastModified,
+                              demInventoryItems[index].expiryDate,
+                              demInventoryItems[index].isSynced,
+                              demInventoryItems[index].syncAction,
+                            ),
+                            false,
+                            false,
+                          );
                         },
+                      );
+                    });
+                  },
                   onDoubleTapAction: () {
                     Get.toNamed(
                       '/inventory/item_details/',
