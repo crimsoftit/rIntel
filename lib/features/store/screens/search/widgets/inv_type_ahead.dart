@@ -43,7 +43,7 @@ class InventorySearchTypeAhead extends StatelessWidget {
               ),
               child: Icon(
                 Iconsax.search_favorite,
-                size: CSizes.iconMd,
+                size: CSizes.iconSm,
               ),
             ),
             prefixIconColor: CColors.rBrown.withValues(
@@ -59,7 +59,7 @@ class InventorySearchTypeAhead extends StatelessWidget {
                 },
                 child: Icon(
                   Iconsax.close_circle,
-                  size: CSizes.iconMd,
+                  size: CSizes.iconSm,
                 ),
               ),
             ),
@@ -332,6 +332,7 @@ class InventorySearchTypeAhead extends StatelessWidget {
                                 );
                               } else {
                                 CPopupSnackBar.warningSnackBar(
+                                  context,
                                   title: 'item is out of stock',
                                   message:
                                       '${suggestion.name} is out of stock!!',

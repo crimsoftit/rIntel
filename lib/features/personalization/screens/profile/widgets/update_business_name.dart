@@ -104,6 +104,7 @@ class CUpdateBusinessNameScreen extends StatelessWidget {
                             bizNameController.updateBizName();
                           } else {
                             CPopupSnackBar.warningSnackBar(
+                              context,
                               title: 'offline',
                               message: 'internet connection required',
                             );

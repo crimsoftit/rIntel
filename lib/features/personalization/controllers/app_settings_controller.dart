@@ -26,6 +26,7 @@ class CAppSettingsController extends GetxController {
       dataSyncIsOn.value = result;
     } catch (e) {
       CPopupSnackBar.errorSnackBar(
+        Get.overlayContext!,
         title: 'error loading sync settings',
         message: e.toString(),
       );
@@ -42,6 +43,7 @@ class CAppSettingsController extends GetxController {
       return result;
     } catch (e) {
       CPopupSnackBar.errorSnackBar(
+        Get.overlayContext!,
         title: 'error loading sync settings',
         message: e.toString(),
       );

@@ -3,6 +3,7 @@
 import 'dart:convert';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:get/get.dart';
 import 'package:rintel/features/store/models/gsheet_models/txns_sheet_fields.dart';
 import 'package:rintel/utils/popups/snackbars.dart';
 import 'package:flutter/foundation.dart';
@@ -210,6 +211,7 @@ class CTxnsModel {
     } else {
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
+          Get.overlayContext!,
           title: 'invalid value',
           message: 'invalid value for txn ID!!!',
         );

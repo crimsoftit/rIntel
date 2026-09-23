@@ -32,7 +32,9 @@ class CSocialButtons extends StatelessWidget {
               //     message: 'login requires an internet connection',
               //   );
               // }
+
               CPopupSnackBar.warningSnackBar(
+                context,
                 title: 'option not available at the moment!',
                 message:
                     'WOOPS... sorry for the inconvenience, this option is '

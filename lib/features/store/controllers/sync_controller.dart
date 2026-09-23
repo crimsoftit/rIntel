@@ -17,33 +17,4 @@ class CSyncController extends GetxController {
     processingSync.value = false;
     super.onInit();
   }
-
-  Future<bool> processSync() async {
-    try {
-      processingSync.value = true;
-
-      // await invController.fetchUserInventoryItems();
-      // await txnsController.fetchSoldItems();
-
-      if (await invController.cloudSyncInventory()) {
-        // await txnsController.addUpdateSalesDataToCloud().then((result) {
-        //   if (result) {
-        //     processingSync.value = false;
-        //   } else {
-        //     processingSync.value = true;
-        //   }
-        // });
-      }
-
-      return processingSync.value;
-    } catch (e) {
-      if (kDebugMode) {
-        CPopupSnackBar.errorSnackBar(
-          title: 'error processing store cloud sync (syncController)',
-          message: e.toString(),
-        );
-      }
-      rethrow;
-    }
-  }
 }

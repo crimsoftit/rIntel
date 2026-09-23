@@ -250,6 +250,7 @@ class CCheckoutController extends GetxController {
                     } else {
                       if (kDebugMode) {
                         CPopupSnackBar.warningSnackBar(
+                          Get.overlayContext!,
                           message:
                               'an unknown error occurred while updating inventory item locally!',
                           title: 'error updating inventory item locally!',
@@ -346,6 +347,7 @@ class CCheckoutController extends GetxController {
               );
             } else {
               CPopupSnackBar.errorSnackBar(
+                Get.overlayContext!,
                 title: 'BADO NEW TXN MODEL HAIWEZI... BUT TUNAKAM MAZE',
               );
             }
@@ -353,6 +355,7 @@ class CCheckoutController extends GetxController {
         );
       } else {
         CPopupSnackBar.errorSnackBar(
+          Get.overlayContext!,
           title: 'empty cart...',
           message: 'your cart is empty',
         );
@@ -360,6 +363,7 @@ class CCheckoutController extends GetxController {
     } catch (e) {
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
+          Get.overlayContext!,
           title: 'error processing txn..',
           message: '$e',
         );
@@ -544,17 +548,20 @@ class CCheckoutController extends GetxController {
       }
     } on FormatException catch (formatException) {
       CPopupSnackBar.errorSnackBar(
+        Get.overlayContext!,
         title: 'format exception error!!',
         message: formatException.message,
       );
     } catch (e) {
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
+          Get.overlayContext!,
           title: 'scan error!',
           message: e.toString(),
         );
       } else {
         CPopupSnackBar.errorSnackBar(
+          Get.overlayContext!,
           title: 'scan error!',
           message: 'an unknown error occurred while scanning barcode',
         );
@@ -675,6 +682,7 @@ class CCheckoutController extends GetxController {
       itemExists.value = false;
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
+          Get.overlayContext!,
           title: 'Oh Snap! error fetching for sale item by code!',
           message: e.toString(),
         );
@@ -782,6 +790,7 @@ class CCheckoutController extends GetxController {
                 (cartController.totalCartPrice.value -
                     cartController.totalDiscount.value)) {
           CPopupSnackBar.errorSnackBar(
+            Get.overlayContext!,
             title: 'Customer still owes you!!',
             message: 'The amount issued is not enough',
           );
@@ -795,6 +804,7 @@ class CCheckoutController extends GetxController {
           customerNameFieldController.text == '') {
         customerNameFocusNode.value.requestFocus();
         CPopupSnackBar.warningSnackBar(
+          Get.overlayContext!,
           title: 'customer details required!',
           message:
               'please provide customer\'s name for ${selectedPaymentMethod.value.platformName} payment verification',
@@ -807,6 +817,7 @@ class CCheckoutController extends GetxController {
             customerContactsFieldController.text == '') {
           customerNameFocusNode.value.requestFocus();
           CPopupSnackBar.warningSnackBar(
+            Get.overlayContext!,
             title: 'Customer details required!',
             message:
                 'Please provide customer\'s name and contacts for ${selectedPaymentMethod.value.platformName} payment verification!',
@@ -821,6 +832,7 @@ class CCheckoutController extends GetxController {
               customerContactsFieldController.text.trim(),
             )) {
           CPopupSnackBar.warningSnackBar(
+            Get.overlayContext!,
             title: 'Invalid value for customer contacts!',
             message:
                 'Please provide a valid phone no. or email for customer\'s ${selectedPaymentMethod.value.platformName} payment verification!',
@@ -844,6 +856,7 @@ class CCheckoutController extends GetxController {
     } catch (e) {
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
+          Get.overlayContext!,
           message: 'an error occurred while checking out: $e',
           title: 'checkout error!',
         );
@@ -908,11 +921,13 @@ class CCheckoutController extends GetxController {
     } catch (e) {
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
+          Get.overlayContext!,
           message: '$e',
           title: 'error adding customer details!',
         );
       } else {
         CPopupSnackBar.errorSnackBar(
+          Get.overlayContext!,
           message: 'an unknown error occurred while saving customer details!',
           title: 'error adding customer details!',
         );
@@ -928,11 +943,13 @@ class CCheckoutController extends GetxController {
     } catch (e) {
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
+          Get.overlayContext!,
           title: 'error updating txn #$txnId\'s cloud data',
           message: e.toString(),
         );
       } else {
         CPopupSnackBar.errorSnackBar(
+          Get.overlayContext!,
           title: 'error updating txn #$txnId\'s cloud data',
           message:
               'an unknown error occurred while updating txn #$txnId\'s cloud data',
@@ -954,6 +971,7 @@ class CCheckoutController extends GetxController {
       } else {
         if (kDebugMode) {
           CPopupSnackBar.errorSnackBar(
+            Get.overlayContext!,
             message:
                 'null value for device\'s location address! it\'s probably because device is offline',
             title: 'error updating device location!',
@@ -966,7 +984,8 @@ class CCheckoutController extends GetxController {
     } catch (e) {
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
-          message: e,
+          Get.overlayContext!,
+          message: e.toString(),
           title: 'error updating device location!',
         );
       } else {

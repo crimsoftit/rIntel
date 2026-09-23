@@ -32,7 +32,11 @@ class CVerifyEmailController extends GetxController {
             'Please check your inbox or spam to verify your e-mail address',
       );
     } catch (e) {
-      CPopupSnackBar.errorSnackBar(title: 'Oh Snap!', message: e.toString());
+      CPopupSnackBar.errorSnackBar(
+        Get.overlayContext!,
+        message: e.toString(),
+        title: 'Oh Snap!',
+      );
     }
   }
 

@@ -11,6 +11,7 @@ class CExpense extends Equatable {
   String _userName = "";
 
   String _expenseTitle = "";
+  String _category = '';
   String _expenseDescription = '';
 
   double _amount = 0.0;
@@ -24,6 +25,7 @@ class CExpense extends Equatable {
     this._userEmail,
     this._userName,
     this._expenseTitle,
+    this._category,
     this._expenseDescription,
     this._amount,
     this._dateAdded,
@@ -33,6 +35,7 @@ class CExpense extends Equatable {
   static CExpense empty() {
     return CExpense(
       0,
+      '',
       '',
       '',
       '',
@@ -49,6 +52,7 @@ class CExpense extends Equatable {
   String get userEmail => _userEmail;
   String get userName => _userName;
   String get expenseTitle => _expenseTitle;
+  String get category => _category;
   String get expenseDescription => _expenseDescription;
   double get amount => _amount;
   String get dateAdded => _dateAdded;
@@ -72,6 +76,10 @@ class CExpense extends Equatable {
 
   set expenseTitle(String newExpenseTitle) {
     _expenseTitle = newExpenseTitle;
+  }
+
+  set category(String newCategory) {
+    _category = newCategory;
   }
 
   set expenseDescription(String newDesc) {
@@ -99,6 +107,7 @@ class CExpense extends Equatable {
     map['userEmail'] = _userEmail;
     map['userName'] = _userName;
     map['expenseTitle'] = _expenseTitle;
+    map['category'] = _category;
     map['expenseDescription'] = _expenseDescription;
     map['amount'] = _amount;
     map['dateAdded'] = _dateAdded;
@@ -114,6 +123,7 @@ class CExpense extends Equatable {
     _userEmail = map['userEmail'];
     _userName = map['userName'];
     _expenseTitle = map['expenseTitle'];
+    _category = map['category'];
     _expenseDescription = map['expenseDescription'];
     _amount = map['amount'];
     _dateAdded = map['dateAdded'];
@@ -132,6 +142,7 @@ class CExpense extends Equatable {
       expenditure['userEmail'],
       expenditure['userName'],
       expenditure['expenseTitle'],
+      expenditure['category'],
       expenditure['expenseDescription'],
       expenditure['amount'],
       expenditure['dateAdded'],
@@ -146,6 +157,7 @@ class CExpense extends Equatable {
     userEmail,
     userName,
     expenseTitle,
+    category,
     expenseDescription,
     amount,
     dateAdded,

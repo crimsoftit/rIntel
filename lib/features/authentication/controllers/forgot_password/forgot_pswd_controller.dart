@@ -60,7 +60,11 @@ class ForgotPasswordController extends GetxController {
     } catch (e) {
       // stop loader
       CFullScreenLoader.stopLoading();
-      CPopupSnackBar.errorSnackBar(title: 'Oh Snap!', message: e.toString());
+      CPopupSnackBar.errorSnackBar(
+        Get.overlayContext!,
+        title: 'Oh Snap!',
+        message: e.toString(),
+      );
     }
   }
 
@@ -100,7 +104,11 @@ class ForgotPasswordController extends GetxController {
     } catch (e) {
       // stop loader
       CFullScreenLoader.stopLoading();
-      CPopupSnackBar.errorSnackBar(title: 'Oh Snap!', message: e.toString());
+      CPopupSnackBar.errorSnackBar(
+        Get.overlayContext!,
+        title: 'Oh Snap!',
+        message: e.toString(),
+      );
     }
   }
 

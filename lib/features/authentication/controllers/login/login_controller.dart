@@ -80,9 +80,14 @@ class CLoginController extends GetxController {
     } catch (e) {
       CFullScreenLoader.stopLoading();
       if (kDebugMode) {
-        CPopupSnackBar.errorSnackBar(title: 'Oh Snap!', message: e.toString());
+        CPopupSnackBar.errorSnackBar(
+          Get.overlayContext!,
+          title: 'Oh Snap!',
+          message: e.toString(),
+        );
       } else {
         CPopupSnackBar.errorSnackBar(
+          Get.overlayContext!,
           title: 'Oh Snap! Signin error!',
           message:
               'An unknown error occurred while signing you in! please try again later',

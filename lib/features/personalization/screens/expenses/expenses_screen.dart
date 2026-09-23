@@ -94,8 +94,8 @@ class CExpensesScreen extends StatelessWidget {
             ),
 
             CExpensesView(
-                isInventoryRelated: true,
-              ),
+              isInventoryRelated: true,
+            ),
           ],
         ),
 

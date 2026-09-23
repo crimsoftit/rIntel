@@ -104,11 +104,13 @@ class CLocationController extends GetxController {
       updateLoading.value = false;
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
+          Get.overlayContext!,
           title: "error updating user currency & location details",
           message: e.toString(),
         );
       } else {
         CPopupSnackBar.errorSnackBar(
+          Get.overlayContext!,
           title: "error updating your details",
           message:
               'an unknown error occurred while updating user currency & location details',

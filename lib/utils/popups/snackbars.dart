@@ -118,45 +118,156 @@ class CPopupSnackBar extends GetxController {
     );
   }
 
-  static void warningSnackBar({required String title, String message = ''}) {
-    Get.snackbar(
-      title,
-      titleText: Text(
-        title,
-        style: Theme.of(
-          Get.context!,
-        ).textTheme.titleMedium!.apply(color: CColors.white),
+  // static void warningSnackBar({required String title, String message = ''}) {
+  //   Get.snackbar(
+  //     title,
+  //     titleText: Text(
+  //       title,
+  //       style: Theme.of(
+  //         Get.context!,
+  //       ).textTheme.titleMedium!.apply(color: CColors.white),
+  //     ),
+  //     message,
+  //     messageText: Text(
+  //       message,
+  //       style: Theme.of(
+  //         Get.context!,
+  //       ).textTheme.bodyMedium!.apply(color: CColors.white),
+  //     ),
+  //     isDismissible: true,
+  //     shouldIconPulse: true,
+  //     colorText: CColors.white,
+  //     backgroundColor: Colors.orange,
+  //     snackPosition: SnackPosition.BOTTOM,
+  //     duration: const Duration(seconds: 10),
+  //     margin: const EdgeInsets.all(20.0),
+  //     icon: const Icon(Iconsax.warning_2, color: CColors.white),
+  //   );
+  // }
+  static void warningSnackBar(
+    BuildContext context, {
+    required String title,
+    String message = '',
+  }) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Row(
+          children: [
+            const Icon(
+              Iconsax.warning_2,
+              color: CColors.white,
+            ),
+            const SizedBox(
+              width: 8.0,
+            ),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    title,
+                    style: Theme.of(
+                      context,
+                    ).textTheme.titleMedium!.apply(color: CColors.white),
+                  ),
+                  if (message.isNotEmpty)
+                    Text(
+                      message,
+                      style: Theme.of(
+                        context,
+                      ).textTheme.bodyMedium!.apply(color: CColors.white),
+                    ),
+                ],
+              ),
+            ),
+          ],
+        ),
+        backgroundColor: Colors.orange,
+        duration: const Duration(
+          seconds: 4,
+        ),
+        behavior: SnackBarBehavior.floating,
+        margin: const EdgeInsets.all(
+          20.0,
+        ),
       ),
-      message,
-      messageText: Text(
-        message,
-        style: Theme.of(
-          Get.context!,
-        ).textTheme.bodyMedium!.apply(color: CColors.white),
-      ),
-      isDismissible: true,
-      shouldIconPulse: true,
-      colorText: CColors.white,
-      backgroundColor: Colors.orange,
-      snackPosition: SnackPosition.BOTTOM,
-      duration: const Duration(seconds: 10),
-      margin: const EdgeInsets.all(20.0),
-      icon: const Icon(Iconsax.warning_2, color: CColors.white),
     );
+    // Get.snackbar(
+    //   title,
+    //   message,
+    //   isDismissible: true,
+    //   shouldIconPulse: true,
+    //   colorText: CColors.white,
+    //   backgroundColor: Colors.orange,
+    //   snackPosition: SnackPosition.BOTTOM,
+    //   duration: const Duration(seconds: 10),
+    //   margin: const EdgeInsets.all(20.0),
+    //   icon: const Icon(Iconsax.warning_2, color: CColors.white),
+    // );
   }
 
-  static void errorSnackBar({required String title, message = ''}) {
-    Get.snackbar(
-      title,
-      message,
-      isDismissible: true,
-      shouldIconPulse: true,
-      colorText: CColors.white,
-      backgroundColor: Colors.red.shade600,
-      snackPosition: SnackPosition.BOTTOM,
-      duration: const Duration(seconds: 4),
-      margin: const EdgeInsets.all(20.0),
-      icon: const Icon(Iconsax.warning_2, color: CColors.white),
+  static void errorSnackBar(
+    BuildContext context, {
+    required String title,
+    String message = '',
+  }) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Row(
+          children: [
+            const Icon(
+              Iconsax.warning_2,
+              color: CColors.white,
+            ),
+            const SizedBox(
+              width: 8.0,
+            ),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    title,
+                    style: Theme.of(
+                      context,
+                    ).textTheme.titleMedium!.apply(color: CColors.white),
+                  ),
+                  if (message.isNotEmpty)
+                    Text(
+                      message,
+                      style: Theme.of(
+                        context,
+                      ).textTheme.bodyMedium!.apply(color: CColors.white),
+                    ),
+                ],
+              ),
+            ),
+          ],
+        ),
+        backgroundColor: Colors.red.shade600,
+        duration: const Duration(
+          seconds: 4,
+        ),
+        behavior: SnackBarBehavior.floating,
+        margin: const EdgeInsets.all(
+          20.0,
+        ),
+      ),
     );
+
+    // Get.snackbar(
+    //   title,
+    //   message,
+    //   isDismissible: true,
+    //   shouldIconPulse: true,
+    //   colorText: CColors.white,
+    //   backgroundColor: Colors.red.shade600,
+    //   snackPosition: SnackPosition.BOTTOM,
+    //   duration: const Duration(seconds: 4),
+    //   margin: const EdgeInsets.all(20.0),
+    //   icon: const Icon(Iconsax.warning_2, color: CColors.white),
+    // );
   }
 }

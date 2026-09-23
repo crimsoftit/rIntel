@@ -5,8 +5,6 @@ import 'package:rintel/features/store/controllers/txns_controller.dart';
 import 'package:rintel/features/store/screens/store_items_tings/checkout/widgets/checkout_scan_fab.dart';
 import 'package:rintel/utils/constants/colors.dart';
 import 'package:rintel/utils/helpers/network_manager.dart';
-import 'package:rintel/utils/popups/snackbars.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:iconsax/iconsax.dart';
@@ -103,49 +101,7 @@ class CStoreScreenHeader extends StatelessWidget {
                                       invController.isLoading.value &&
                                       txnsController.isLoading.value
                                   ? null
-                                  : () async {
-                                      // -- check internet connectivity --
-                                      final internetIsConnected =
-                                          await CNetworkManager.instance
-                                              .isConnected();
-
-                                      if (internetIsConnected) {
-                                        // -- check if sync is really necessary --
-                                        // await invController
-                                        //     .fetchUserInventoryItems();
-                                        // await txnsController.fetchSoldItems();
-
-                                        if (invController
-                                                .unSyncedAppends
-                                                .isNotEmpty ||
-                                            invController
-                                                .unSyncedUpdates
-                                                .isNotEmpty ||
-                                            txnsController
-                                                .unsyncedTxnAppends
-                                                .isNotEmpty ||
-                                            txnsController
-                                                .unsyncedTxnUpdates
-                                                .isNotEmpty) {
-                                          await syncController.processSync();
-                                        } else {
-                                          if (kDebugMode) {
-                                            print('rada safi mkuu!!');
-                                            CPopupSnackBar.customToast(
-                                              message: 'rada safi nani',
-                                              forInternetConnectivityStatus:
-                                                  false,
-                                            );
-                                          }
-                                        }
-                                      } else {
-                                        CPopupSnackBar.customToast(
-                                          message:
-                                              'internet connection required for cloud sync!',
-                                          forInternetConnectivityStatus: true,
-                                        );
-                                      }
-                                    },
+                                  : () async {},
                               backgroundColor: CColors.transparent,
                               foregroundColor: isConnectedToInternet
                                   ? CColors.rBrown

@@ -79,11 +79,13 @@ class CSetBiznameController extends GetxController {
       CFullScreenLoader.stopLoading();
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
+          Get.overlayContext!,
           title: 'Oh Snap!',
           message: 'error updating business name $e',
         );
       }
       CPopupSnackBar.errorSnackBar(
+        Get.overlayContext!,
         title: 'Oh Snap!',
         message: 'error updating business name',
       );

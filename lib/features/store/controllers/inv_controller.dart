@@ -277,6 +277,7 @@ class CInventoryController extends GetxController {
       isLoading.value = false;
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
+          Get.overlayContext!,
           title: 'error fetching inventory items!',
           message: e.toString(),
         );
@@ -317,6 +318,7 @@ class CInventoryController extends GetxController {
       isLoading.value = false;
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
+          Get.overlayContext!,
           title: 'error adding inventory item!',
           message: e.toString(),
         );
@@ -427,6 +429,7 @@ class CInventoryController extends GetxController {
 
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
+          Get.overlayContext!,
           title: 'error updating inventory appends!',
           message: e.toString(),
         );
@@ -509,6 +512,7 @@ class CInventoryController extends GetxController {
       isLoading.value = false;
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
+          Get.overlayContext!,
           title: 'error fetching item by code and email!',
           message: e.toString(),
         );
@@ -592,11 +596,13 @@ class CInventoryController extends GetxController {
       isLoading.value = false;
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
+          Get.overlayContext!,
           title: 'error updating inventory item!',
           message: 'error updating inventory item: $e',
         );
       }
       CPopupSnackBar.errorSnackBar(
+        Get.overlayContext!,
         title: 'error updating inventory item!',
         message: 'an unknown error occurred while updating inventory item!',
       );
@@ -656,11 +662,13 @@ class CInventoryController extends GetxController {
 
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
+          Get.overlayContext!,
           title: 'error deleting data',
           message: e.toString(),
         );
       } else {
         CPopupSnackBar.errorSnackBar(
+          Get.overlayContext!,
           title: 'error deleting data',
           message: 'unable to delete this item... please try again later!',
         );
@@ -752,11 +760,13 @@ class CInventoryController extends GetxController {
     } catch (e) {
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
+          Get.overlayContext!,
           title: 'error updating inventory item',
           message: e.toString(),
         );
       } else {
         CPopupSnackBar.errorSnackBar(
+          Get.overlayContext!,
           message:
               'An unknown error occurred while adding/updating inventory item! please try again later.',
           title: 'error adding/updating inventory item',
@@ -830,11 +840,13 @@ class CInventoryController extends GetxController {
     } catch (e) {
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
+          Get.overlayContext!,
           title: 'error adding/updating inventory item',
           message: e.toString(),
         );
       } else {
         CPopupSnackBar.errorSnackBar(
+          Get.overlayContext!,
           message:
               'an unknown error occurred while adding/updating inventory item! please try again later.',
           title: 'error adding/updating inventory item',
@@ -863,6 +875,7 @@ class CInventoryController extends GetxController {
     } catch (e) {
       scanResults.value = "ERROR!! failed to get platform version";
       CPopupSnackBar.errorSnackBar(
+        Get.overlayContext!,
         title: 'scan error',
         message: e.toString(),
       );
@@ -917,6 +930,7 @@ class CInventoryController extends GetxController {
       isLoading.value = false;
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
+          Get.overlayContext!,
           title: 'error fetching all inventory sheet items!',
           message: e.toString(),
         );
@@ -933,11 +947,13 @@ class CInventoryController extends GetxController {
     } catch (e) {
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
+          Get.overlayContext!,
           title: 'error updating inventory cloud data',
           message: e.toString(),
         );
       } else {
         CPopupSnackBar.errorSnackBar(
+          Get.overlayContext!,
           title: 'Error updating inventory cloud data',
           message:
               'An unknown error occurred while updating inventory cloud data. Please try again later!',
@@ -955,6 +971,7 @@ class CInventoryController extends GetxController {
     } catch (e) {
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
+          Get.overlayContext!,
           title: 'error deleting inventory cloud data',
           message: e.toString(),
         );
@@ -985,11 +1002,13 @@ class CInventoryController extends GetxController {
       isLoading.value = false;
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
+          Get.overlayContext!,
           title: 'Oh Snap! ERROR FETCHING USER GSHEET INV DATA',
           message: e.toString(),
         );
       } else {
         CPopupSnackBar.errorSnackBar(
+          Get.overlayContext!,
           title: 'Oh Snap! ',
           message:
               'An unknown error occurred while importing inventory data from cloud!',
@@ -1024,11 +1043,13 @@ class CInventoryController extends GetxController {
       isImportingInvCloudData.value = false;
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
+          Get.overlayContext!,
           title: 'ERROR fetching inventory data from cloud firestore!',
           message: e.toString(),
         );
       } else {
         CPopupSnackBar.errorSnackBar(
+          Get.overlayContext!,
           message:
               'an unknown error occurred while fetching inventory data from cloud firestore',
           title: 'ERROR IMPORTING inventory DATA FROM CLOUD!',
@@ -1093,11 +1114,13 @@ class CInventoryController extends GetxController {
       isImportingInvCloudData.value = false;
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
+          Get.overlayContext!,
           title: 'ERROR IMPORTING inventory DATA FROM CLOUD!',
           message: e.toString(),
         );
       } else {
         CPopupSnackBar.errorSnackBar(
+          Get.overlayContext!,
           title: 'ERROR IMPORTING inventory DATA FROM CLOUD!',
           message: e.toString(),
         );
@@ -1152,46 +1175,6 @@ class CInventoryController extends GetxController {
         }
       }
     }
-  }
-
-  Future<bool> cloudSyncInventory() async {
-    try {
-      // start loader
-      syncIsLoading.value = true;
-      await fetchUserInventoryItems();
-
-      // -- check internet connectivity
-
-      if (await CNetworkManager.instance.isConnected()) {
-        await addUnsyncedInvToCloud();
-        await syncInvUpdatesToCloud();
-        // stop loader
-        syncIsLoading.value = false;
-        return true;
-      } else {
-        // stop loader
-        syncIsLoading.value = false;
-        CPopupSnackBar.warningSnackBar(
-          title: 'cloud sync requires internet',
-          message: 'an internet connection is required for cloud sync...',
-        );
-        return false;
-      }
-    } catch (e) {
-      // stop loader
-      syncIsLoading.value = false;
-      if (kDebugMode) {
-        CPopupSnackBar.errorSnackBar(
-          title: 'inventory cloud sync ERROR!',
-          message: 'inventory sync error: $e',
-        );
-      }
-      rethrow;
-    }
-    // finally {
-    //   // stop loader
-    //   syncIsLoading.value = false;
-    // }
   }
 
   /// -- compute low stock threshold for alerts --
@@ -1501,6 +1484,7 @@ class CInventoryController extends GetxController {
               } else {
                 if (kDebugMode) {
                   CPopupSnackBar.warningSnackBar(
+                    Get.overlayContext!,
                     message:
                         "an error occurred while updating ${inventoryItem.name.toUpperCase()}'s favorite status",
                     title: 'update failed',
@@ -1520,11 +1504,13 @@ class CInventoryController extends GetxController {
       isLoading.value = false;
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
+          Get.overlayContext!,
           title: 'error toggling favorite status',
           message: e.toString(),
         );
       }
       CPopupSnackBar.errorSnackBar(
+        Get.overlayContext!,
         title: 'error toggling favorite status',
         message: 'unable to toggle favorite status, please try again later!',
       );
@@ -1552,6 +1538,7 @@ class CInventoryController extends GetxController {
     } catch (e) {
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
+          Get.overlayContext!,
           message: 'error initializing inventory summary: $e',
           title: 'inventory summary init error!',
         );
@@ -1576,6 +1563,7 @@ class CInventoryController extends GetxController {
     } catch (e) {
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
+          Get.overlayContext!,
           title: 'scheduling notifications!',
           message: 'error scheduling notifications: $e',
         );
@@ -1636,6 +1624,7 @@ class CInventoryController extends GetxController {
     } catch (e) {
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
+          Get.overlayContext!,
           title: 'scheduling notifications!',
           message: 'error scheduling notifications: $e',
         );

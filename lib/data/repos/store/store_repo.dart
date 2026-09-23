@@ -23,11 +23,13 @@ class CStoreRepo extends GetxController {
     } on FormatException catch (e) {
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
+          Get.overlayContext!,
           title: 'inventory datails format error!',
           message: e.message,
         );
       } else {
         CPopupSnackBar.errorSnackBar(
+          Get.overlayContext!,
           title: 'Oh Snap!',
           message:
               'an unknown error occurred while uploading inventory details! please try again later',
@@ -37,11 +39,13 @@ class CStoreRepo extends GetxController {
     } on FirebaseException catch (e) {
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
+          Get.overlayContext!,
           title: 'firebase cloud error!',
           message: 'unable to save your details: ${e.code}',
         );
       } else {
         CPopupSnackBar.errorSnackBar(
+          Get.overlayContext!,
           title: 'Oh Snap!',
           message:
               'an unknown error occurred while saving your details! please try again later',
@@ -50,6 +54,7 @@ class CStoreRepo extends GetxController {
       rethrow;
     } on PlatformException catch (e) {
       CPopupSnackBar.errorSnackBar(
+        Get.overlayContext!,
         message: CPlatformExceptions(e.code).message,
         title: "inventory data platform exception error",
       );
@@ -58,11 +63,13 @@ class CStoreRepo extends GetxController {
     } catch (e) {
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
+          Get.overlayContext!,
           message: e.toString(),
           title: "error uploading inventory details",
         );
       } else {
         CPopupSnackBar.errorSnackBar(
+          Get.overlayContext!,
           message:
               'an unknown error occurred while uploading inventory details to cloud! please try again later...',
           title: "error uploading inventory details",
@@ -92,12 +99,14 @@ class CStoreRepo extends GetxController {
     } on FirebaseException catch (e) {
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
+          Get.overlayContext!,
           title: 'firebase cloud error!',
           message:
               'unable to fetch cloud inventory data from firestore: ${e.code}',
         );
       } else {
         CPopupSnackBar.errorSnackBar(
+          Get.overlayContext!,
           title: 'Oh Snap! Error fetching inventory cloud data!',
           message:
               'an unknown error occurred while fetching inventory data from cloud firestore!! please try again later',
@@ -107,11 +116,13 @@ class CStoreRepo extends GetxController {
     } on FormatException catch (e) {
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
+          Get.overlayContext!,
           title: 'inventory cloud data fetch format error!',
           message: e.message,
         );
       } else {
         CPopupSnackBar.errorSnackBar(
+          Get.overlayContext!,
           title: 'Oh Snap!',
           message:
               'an unknown error occurred while fetching inventory data from cloud firestore!! please try again later',
@@ -120,6 +131,7 @@ class CStoreRepo extends GetxController {
       rethrow;
     } on PlatformException catch (e) {
       CPopupSnackBar.errorSnackBar(
+        Get.overlayContext!,
         message: CPlatformExceptions(e.code).message,
         title: "inventory cloud data fetch platform exception error",
       );
@@ -128,11 +140,13 @@ class CStoreRepo extends GetxController {
     } catch (e) {
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
+          Get.overlayContext!,
           message: e.toString(),
           title: "error fetching inventory details",
         );
       } else {
         CPopupSnackBar.errorSnackBar(
+          Get.overlayContext!,
           message:
               'an unknown error occurred while fetching inventory data from cloud firestore! please try again later...',
           title: "error fetching inventory data from cloud firestore!",
@@ -153,11 +167,13 @@ class CStoreRepo extends GetxController {
     } on FirebaseException catch (e) {
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
+          Get.overlayContext!,
           title: 'firebase cloud error!',
           message: 'unable to update cloud inventory details: ${e.code}',
         );
       } else {
         CPopupSnackBar.errorSnackBar(
+          Get.overlayContext!,
           title: 'Oh Snap!',
           message:
               'an unknown error occurred while updating cloud inventory details! please try again later',
@@ -167,11 +183,13 @@ class CStoreRepo extends GetxController {
     } on FormatException catch (e) {
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
+          Get.overlayContext!,
           title: 'inventory datails format error!',
           message: e.message,
         );
       } else {
         CPopupSnackBar.errorSnackBar(
+          Get.overlayContext!,
           title: 'Oh Snap!',
           message:
               'an unknown error occurred while updating cloud inventory details! please try again later',
@@ -180,6 +198,7 @@ class CStoreRepo extends GetxController {
       rethrow;
     } on PlatformException catch (e) {
       CPopupSnackBar.errorSnackBar(
+        Get.overlayContext!,
         message: CPlatformExceptions(e.code).message,
         title: "inventory cloud data update threw a platform exception error",
       );
@@ -188,11 +207,13 @@ class CStoreRepo extends GetxController {
     } catch (e) {
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
+          Get.overlayContext!,
           message: e.toString(),
           title: "error updating inventory details",
         );
       } else {
         CPopupSnackBar.errorSnackBar(
+          Get.overlayContext!,
           message:
               'an unknown error occurred while updating inventory details to cloud! please try again later...',
           title: "error updating inventory details",
@@ -211,12 +232,14 @@ class CStoreRepo extends GetxController {
       firestoreDb.collection('inventory').doc(productId).delete();
     } on FormatException catch (e) {
       CPopupSnackBar.errorSnackBar(
+        Get.overlayContext!,
         title: "platform exception error",
         message: e.message,
       );
       rethrow;
     } on PlatformException catch (e) {
       CPopupSnackBar.errorSnackBar(
+        Get.overlayContext!,
         message: CPlatformExceptions(e.code).message,
         title: "platform exception error while deleting inventory cloud data!",
       );
@@ -224,11 +247,13 @@ class CStoreRepo extends GetxController {
     } catch (e) {
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
+          Get.overlayContext!,
           title: "inventory item delete error!",
           message: e.toString(),
         );
       } else {
         CPopupSnackBar.errorSnackBar(
+          Get.overlayContext!,
           title: "inventory item delete error!",
           message:
               'An unknown error occurred while deleting cloud inventory data! Please try again later...',
@@ -246,11 +271,13 @@ class CStoreRepo extends GetxController {
     } on FirebaseException catch (e) {
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
+          Get.overlayContext!,
           title: 'txn cloud append threw firebase exception error!',
           message: 'unable to save txn details to cloud firestore: ${e.code}',
         );
       } else {
         CPopupSnackBar.errorSnackBar(
+          Get.overlayContext!,
           title: 'Oh Snap! error saving txn details to cloud!',
           message:
               'an unknown error occurred while saving txn details to cloud! please try again later',
@@ -260,11 +287,13 @@ class CStoreRepo extends GetxController {
     } on FormatException catch (e) {
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
+          Get.overlayContext!,
           title: 'transaction details format error!',
           message: e.message,
         );
       } else {
         CPopupSnackBar.errorSnackBar(
+          Get.overlayContext!,
           title: 'Oh Snap!',
           message:
               'A format error occurred while saving txn details to cloud! please try again later',
@@ -273,6 +302,7 @@ class CStoreRepo extends GetxController {
       rethrow;
     } on PlatformException catch (e) {
       CPopupSnackBar.errorSnackBar(
+        Get.overlayContext!,
         message: CPlatformExceptions(e.code).message,
         title: "Transaction data cloud data platform exception error",
       );
@@ -281,11 +311,13 @@ class CStoreRepo extends GetxController {
     } catch (e) {
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
+          Get.overlayContext!,
           message: e.toString(),
           title: "error saving txn details to cloud",
         );
       } else {
         CPopupSnackBar.errorSnackBar(
+          Get.overlayContext!,
           message:
               'an unknown error occurred while saving txn details to cloud! please try again later...',
           title: "error saving txn details to cloud",
@@ -308,11 +340,13 @@ class CStoreRepo extends GetxController {
     } on FirebaseException catch (e) {
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
+          Get.overlayContext!,
           title: 'sale cloud append threw firebase exception error!',
           message: 'unable to save sales details to cloud firestore: ${e.code}',
         );
       } else {
         CPopupSnackBar.errorSnackBar(
+          Get.overlayContext!,
           title: 'Oh Snap! error saving sales to cloud!',
           message:
               'an unknown error occurred while saving sales to cloud! please try again later',
@@ -322,11 +356,13 @@ class CStoreRepo extends GetxController {
     } on FormatException catch (e) {
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
+          Get.overlayContext!,
           title: 'transaction details format error!',
           message: e.message,
         );
       } else {
         CPopupSnackBar.errorSnackBar(
+          Get.overlayContext!,
           title: 'Oh Snap!',
           message:
               'A format error occurred while saving txn details to cloud! please try again later',
@@ -335,6 +371,7 @@ class CStoreRepo extends GetxController {
       rethrow;
     } on PlatformException catch (e) {
       CPopupSnackBar.errorSnackBar(
+        Get.overlayContext!,
         message: CPlatformExceptions(e.code).message,
         title: "Transaction data cloud data platform exception error",
       );
@@ -343,11 +380,13 @@ class CStoreRepo extends GetxController {
     } catch (e) {
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
+          Get.overlayContext!,
           message: e.toString(),
           title: "error saving txn details to cloud",
         );
       } else {
         CPopupSnackBar.errorSnackBar(
+          Get.overlayContext!,
           message:
               'an unknown error occurred while saving txn details to cloud! please try again later...',
           title: "error saving txn details to cloud",
@@ -373,11 +412,13 @@ class CStoreRepo extends GetxController {
     } on FirebaseException catch (e) {
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
+          Get.overlayContext!,
           title: 'firebase cloud error!',
           message: 'unable to fetch cloud txns data from firestore: ${e.code}',
         );
       } else {
         CPopupSnackBar.errorSnackBar(
+          Get.overlayContext!,
           title: 'Oh Snap! Error fetching txns cloud data!',
           message:
               'an unknown error occurred while fetching txns data from cloud firestore!! please try again later',
@@ -387,11 +428,13 @@ class CStoreRepo extends GetxController {
     } on FormatException catch (e) {
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
+          Get.overlayContext!,
           title: 'txns cloud data fetch format error!',
           message: e.message,
         );
       } else {
         CPopupSnackBar.errorSnackBar(
+          Get.overlayContext!,
           title: 'Oh Snap!',
           message:
               'an unknown error occurred while fetching txns data from cloud firestore!! please try again later',
@@ -400,6 +443,7 @@ class CStoreRepo extends GetxController {
       rethrow;
     } on PlatformException catch (e) {
       CPopupSnackBar.errorSnackBar(
+        Get.overlayContext!,
         message: CPlatformExceptions(e.code).message,
         title: "txns cloud data fetch platform exception error",
       );
@@ -408,11 +452,13 @@ class CStoreRepo extends GetxController {
     } catch (e) {
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
+          Get.overlayContext!,
           message: e.toString(),
           title: "error fetching txns details from cloud firestore!",
         );
       } else {
         CPopupSnackBar.errorSnackBar(
+          Get.overlayContext!,
           message:
               'an unknown error occurred while fetching txns data from cloud firestore! please try again later...',
           title: "error fetching txns data from cloud firestore!",
@@ -441,11 +487,13 @@ class CStoreRepo extends GetxController {
     } on FirebaseException catch (e) {
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
+          Get.overlayContext!,
           title: 'firebase cloud error!',
           message: 'unable to fetch cloud sales data from firestore: ${e.code}',
         );
       } else {
         CPopupSnackBar.errorSnackBar(
+          Get.overlayContext!,
           title: 'Oh Snap! Error fetching sales cloud data!',
           message:
               'an unknown error occurred while fetching sales data from cloud firestore!! please try again later',
@@ -455,11 +503,13 @@ class CStoreRepo extends GetxController {
     } on FormatException catch (e) {
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
+          Get.overlayContext!,
           title: 'sales cloud data fetch format error!',
           message: e.message,
         );
       } else {
         CPopupSnackBar.errorSnackBar(
+          Get.overlayContext!,
           title: 'Oh Snap!',
           message:
               'an unknown error occurred while fetching sales data from cloud firestore!! please try again later',
@@ -468,6 +518,7 @@ class CStoreRepo extends GetxController {
       rethrow;
     } on PlatformException catch (e) {
       CPopupSnackBar.errorSnackBar(
+        Get.overlayContext!,
         message: CPlatformExceptions(e.code).message,
         title: "sales cloud data fetch platform exception error",
       );
@@ -476,11 +527,13 @@ class CStoreRepo extends GetxController {
     } catch (e) {
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
+          Get.overlayContext!,
           message: e.toString(),
           title: "error fetching sales details from cloud firestore!",
         );
       } else {
         CPopupSnackBar.errorSnackBar(
+          Get.overlayContext!,
           message:
               'an unknown error occurred while fetching sales data from cloud firestore! please try again later...',
           title: "error fetching txns data from cloud firestore!",
@@ -501,11 +554,13 @@ class CStoreRepo extends GetxController {
     } on FirebaseException catch (e) {
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
+          Get.overlayContext!,
           title: 'firebase cloud error!',
           message: 'unable to update cloud txn details: ${e.code}',
         );
       } else {
         CPopupSnackBar.errorSnackBar(
+          Get.overlayContext!,
           title: 'Oh Snap!',
           message:
               'an unknown error occurred while updating cloud txn details! please try again later',
@@ -515,11 +570,13 @@ class CStoreRepo extends GetxController {
     } on FormatException catch (e) {
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
+          Get.overlayContext!,
           title: 'cloud txn details threw a format error!',
           message: e.message,
         );
       } else {
         CPopupSnackBar.errorSnackBar(
+          Get.overlayContext!,
           title: 'Oh Snap!',
           message:
               'an unknown error occurred while updating cloud txn details! please try again later',
@@ -528,6 +585,7 @@ class CStoreRepo extends GetxController {
       rethrow;
     } on PlatformException catch (e) {
       CPopupSnackBar.errorSnackBar(
+        Get.overlayContext!,
         message: CPlatformExceptions(e.code).message,
         title: "txn cloud data update threw a platform exception error",
       );
@@ -536,11 +594,13 @@ class CStoreRepo extends GetxController {
     } catch (e) {
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
+          Get.overlayContext!,
           message: e.toString(),
           title: "error updating txn details",
         );
       } else {
         CPopupSnackBar.errorSnackBar(
+          Get.overlayContext!,
           message:
               'an unknown error occurred while updating txn details on the cloud! please try again later...',
           title: "error updating txn details",
@@ -560,11 +620,13 @@ class CStoreRepo extends GetxController {
     } on FirebaseException catch (e) {
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
+          Get.overlayContext!,
           title: 'firebase cloud error!',
           message: 'unable to update cloud sale details: ${e.code}',
         );
       } else {
         CPopupSnackBar.errorSnackBar(
+          Get.overlayContext!,
           title: 'Oh Snap!',
           message:
               'an unknown error occurred while updating cloud sale details! please try again later',
@@ -574,11 +636,13 @@ class CStoreRepo extends GetxController {
     } on FormatException catch (e) {
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
+          Get.overlayContext!,
           title: 'cloud sale details threw a format error!',
           message: e.message,
         );
       } else {
         CPopupSnackBar.errorSnackBar(
+          Get.overlayContext!,
           title: 'Oh Snap!',
           message:
               'an unknown error occurred while updating cloud sale details! please try again later',
@@ -587,6 +651,7 @@ class CStoreRepo extends GetxController {
       rethrow;
     } on PlatformException catch (e) {
       CPopupSnackBar.errorSnackBar(
+        Get.overlayContext!,
         message: CPlatformExceptions(e.code).message,
         title: "sale cloud data update threw a platform exception error",
       );
@@ -595,11 +660,13 @@ class CStoreRepo extends GetxController {
     } catch (e) {
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
+          Get.overlayContext!,
           message: e.toString(),
           title: "error updating sale details",
         );
       } else {
         CPopupSnackBar.errorSnackBar(
+          Get.overlayContext!,
           message:
               'an unknown error occurred while updating sale details on the cloud! please try again later...',
           title: "error updating sale details",
@@ -621,11 +688,13 @@ class CStoreRepo extends GetxController {
     } catch (e) {
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
+          Get.overlayContext!,
           message: e.toString(),
           title: "error updating txn's cloud customer details",
         );
       } else {
         CPopupSnackBar.errorSnackBar(
+          Get.overlayContext!,
           message:
               "an unknown error occurred while updating txn's customer details on the cloud! please try again later...",
           title: "error updating txn's customer details",

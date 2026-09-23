@@ -140,24 +140,28 @@ class CLocationServices {
           );
     } on FirebaseAuthException catch (e) {
       CPopupSnackBar.errorSnackBar(
+        Get.overlayContext!,
         message: CFirebaseAuthExceptions(e.code).message,
         title: "firebaseAuth exception error",
       );
       rethrow;
     } on FirebaseException catch (e) {
       CPopupSnackBar.errorSnackBar(
+        Get.overlayContext!,
         title: "firebase exception error",
         message: CFirebaseAuthExceptions(e.code).message,
       );
       rethrow;
     } on FormatException catch (e) {
       CPopupSnackBar.errorSnackBar(
-        message: CFormatExceptions(e.message),
+        Get.overlayContext!,
+        message: CFormatExceptions(e.message).toString(),
         title: "platform exception error",
       );
       rethrow;
     } on PlatformException catch (e) {
       CPopupSnackBar.errorSnackBar(
+        Get.overlayContext!,
         message: CPlatformExceptions(e.code).message,
         title: "platform exception error",
       );
@@ -165,11 +169,13 @@ class CLocationServices {
     } catch (e) {
       if (kDebugMode) {
         CPopupSnackBar.warningSnackBar(
+          Get.overlayContext!,
           message: e.toString(),
           title: 'error updating user address!',
         );
       } else {
         CPopupSnackBar.warningSnackBar(
+          Get.overlayContext!,
           message: 'An unknown error occurred while updating user address!',
           title: 'error updating user address!',
         );

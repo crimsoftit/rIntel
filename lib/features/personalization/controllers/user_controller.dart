@@ -51,11 +51,13 @@ class CUserController extends GetxController {
     } catch (e) {
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
+          Get.overlayContext!,
           message: '$e',
           title: 'unable to fetch user details!',
         );
       } else {
         CPopupSnackBar.errorSnackBar(
+          Get.overlayContext!,
           message:
               'an unknown error occurred while fetching your details! please try again later',
           title: 'unable to fetch user details!',
@@ -95,6 +97,7 @@ class CUserController extends GetxController {
           await userRepo.saveUserDetails(user);
         } else {
           CPopupSnackBar.warningSnackBar(
+            Get.overlayContext!,
             title: 'userCredentials NULL',
             message: 'userCredentials NULL',
           );
@@ -102,6 +105,7 @@ class CUserController extends GetxController {
       }
     } catch (e) {
       CPopupSnackBar.warningSnackBar(
+        Get.overlayContext!,
         title: 'login details not saved!',
         message:
             'something went wrong while saving your login info! you can re-save your info in your profile.',
@@ -174,7 +178,11 @@ class CUserController extends GetxController {
       Get.offAll(() => const LoginScreen());
     } catch (e) {
       CFullScreenLoader.stopLoading();
-      CPopupSnackBar.errorSnackBar(title: 'Oh Snap!', message: e.toString());
+      CPopupSnackBar.errorSnackBar(
+        Get.overlayContext!,
+        title: 'Oh Snap!',
+        message: e.toString(),
+      );
     }
   }
 
@@ -210,6 +218,7 @@ class CUserController extends GetxController {
       } else {
         CFullScreenLoader.stopLoading();
         CPopupSnackBar.warningSnackBar(
+          Get.overlayContext!,
           title: "No Provider!",
           message: 'auth provider not found!',
         );
@@ -220,11 +229,13 @@ class CUserController extends GetxController {
 
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
+          Get.overlayContext!,
           message: e.toString(),
           title: "Oh Snap! Error deleting user account",
         );
       } else {
         CPopupSnackBar.errorSnackBar(
+          Get.overlayContext!,
           message:
               'An unknown error occurred while closing your account! Please try again later...',
           title: "Oh Snap!",
@@ -265,12 +276,14 @@ class CUserController extends GetxController {
     } catch (e) {
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
+          Get.overlayContext!,
           title: 'Error uploading profile picture1',
           message:
               'an unknown error occurred while uploading profile picture: $e',
         );
       } else {
         CPopupSnackBar.errorSnackBar(
+          Get.overlayContext!,
           title: 'Error uploading profile picture1',
           message:
               'An unknown error occurred while uploading profile picture! Please try again later',

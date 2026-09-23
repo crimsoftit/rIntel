@@ -202,7 +202,7 @@ dependencies:
   in_date_utils: any
 
   readmore: any
-  
+  vibration: ^3.2.1
 
   font_awesome_flutter: any
 

@@ -1,3 +1,4 @@
+import 'package:flutter/services.dart';
 import 'package:rintel/features/store/controllers/cart_controller.dart';
 import 'package:rintel/features/store/controllers/inv_controller.dart';
 import 'package:rintel/utils/computations/date_time_computations.dart';
@@ -41,9 +42,21 @@ class CAddToCartBtn extends StatelessWidget {
 
           if (itemExpiry != null && itemExpiry <= 0) {
             CPopupSnackBar.warningSnackBar(
+              context,
+              message: '${invItem!.name.toUpperCase()} has expired',
               title: 'item is stale/expired',
-              message: '${invItem!.name} has expired',
             );
+
+            // Trigger a generic vibration
+            HapticFeedback.vibrate();
+
+            // Trigger specific impact intensities
+            HapticFeedback.lightImpact();
+            // HapticFeedback.mediumImpact();
+            // HapticFeedback.heavyImpact();
+
+            // Trigger a selection click (like a keyboard tap)
+            //HapticFeedback.selectionClick();
           } else {
             final cartItem = cartController.convertInvToCartItem(
               invItem!,

@@ -127,6 +127,7 @@ class CAddToCartBottomNavBar extends StatelessWidget {
                           inventoryItem.calibration == 'units' ? 1 : .1;
                     } else {
                       CPopupSnackBar.warningSnackBar(
+                        context,
                         title: 'Restocking is due!!',
                         message: inventoryItem.quantity == 0
                             ? '${inventoryItem.name.toUpperCase()} is out of stock'
@@ -161,6 +162,7 @@ class CAddToCartBottomNavBar extends StatelessWidget {
                     );
                     if (itemExpiry <= 0) {
                       CPopupSnackBar.warningSnackBar(
+                        context,
                         title: 'item is stale/expired',
                         message: '${inventoryItem.name} has expired!',
                       );

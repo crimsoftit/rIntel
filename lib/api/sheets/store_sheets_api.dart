@@ -61,11 +61,13 @@ class StoreSheetsApi extends GetxController {
     } catch (e) {
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
+          Get.overlayContext!,
           message: '$e',
           title: 'error initializing gsheets!!',
         );
       } else {
         CPopupSnackBar.errorSnackBar(
+          Get.overlayContext!,
           message:
               'An unknown error occurred while initializing cloud data! Please try again later...',
           title: 'error initializing cloud data!!',
@@ -96,11 +98,13 @@ class StoreSheetsApi extends GetxController {
     } catch (e) {
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
+          Get.overlayContext!,
           title: 'error adding inventory data in cloud',
           message: e.toString(),
         );
       } else {
         CPopupSnackBar.errorSnackBar(
+          Get.overlayContext!,
           title: 'error adding inventory data in cloud',
           message:
               'an unknown error occurred while adding inventory data in cloud! please try again later.',
@@ -142,6 +146,7 @@ class StoreSheetsApi extends GetxController {
     } catch (e) {
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
+          Get.overlayContext!,
           title: 'error updating cloud inventory data',
           message: e.toString(),
         );
@@ -167,6 +172,7 @@ class StoreSheetsApi extends GetxController {
     } catch (e) {
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
+          Get.overlayContext!,
           title: 'error updating stockCount data in cloud',
           message: e.toString(),
         );
@@ -192,11 +198,13 @@ class StoreSheetsApi extends GetxController {
     } catch (e) {
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
+          Get.overlayContext!,
           title: 'error updating sales count data in cloud',
           message: e.toString(),
         );
       } else {
         CPopupSnackBar.errorSnackBar(
+          Get.overlayContext!,
           title: 'error updating sales count data in cloud!',
           message:
               'an unknown error occurred while updating sales count data in cloud! please try again later.',
@@ -234,11 +242,13 @@ class StoreSheetsApi extends GetxController {
     } catch (e) {
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
+          Get.overlayContext!,
           message: e.toString(),
           title: 'error deleting INVENTORY data from cloud!',
         );
       } else {
         CPopupSnackBar.errorSnackBar(
+          Get.overlayContext!,
           message:
               'An unknown error occurred while deleting inventory cloud data',
           title: 'error deleting INVENTORY data from cloud!',
@@ -263,17 +273,15 @@ class StoreSheetsApi extends GetxController {
       txnsSheet!.values.map.appendRows(rowItems);
       return true;
     } catch (e) {
-      // CPopupSnackBar.errorSnackBar(
-      //   title: 'error syncing txns'.toUpperCase(),
-      //   message: 'an error occurred while uploading txns to cloud',
-      // );
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
+          Get.overlayContext!,
           message: '$e',
           title: 'error syncing txns'.toUpperCase(),
         );
       } else {
         CPopupSnackBar.errorSnackBar(
+          Get.overlayContext!,
           message:
               'An unknown error occurred while syncing txns! Please try again later...',
           title: 'error syncing txns'.toUpperCase(),
@@ -295,6 +303,7 @@ class StoreSheetsApi extends GetxController {
     } catch (e) {
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
+          Get.overlayContext!,
           message: e.toString(),
           title: 'error fetching all cloud txns data',
         );
@@ -311,15 +320,20 @@ class StoreSheetsApi extends GetxController {
   ) async {
     try {
       if (txnsSheet == null) return false;
-      return await txnsSheet!.values.map.insertRowByKey(soldItemId, receiptItemModel);
+      return await txnsSheet!.values.map.insertRowByKey(
+        soldItemId,
+        receiptItemModel,
+      );
     } catch (e) {
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
+          Get.overlayContext!,
           message: e.toString(),
           title: 'error updating receipt item\'s cloud data',
         );
       } else {
         CPopupSnackBar.errorSnackBar(
+          Get.overlayContext!,
           message:
               'An unknown error occurred while updating receipt item\'s cloud data! Please try again later...',
           title: 'error updating receipt item\'s cloud data',
@@ -341,11 +355,13 @@ class StoreSheetsApi extends GetxController {
     } catch (e) {
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
+          Get.overlayContext!,
           message: e.toString(),
           title: 'error updating receipt item\'s cloud data',
         );
       } else {
         CPopupSnackBar.errorSnackBar(
+          Get.overlayContext!,
           message:
               'An unknown error encountered while updating receipt item\'s cloud data! Please try again later.',
           title: 'error updating receipt item\'s cloud data',
@@ -368,11 +384,13 @@ class StoreSheetsApi extends GetxController {
     } catch (e) {
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
+          Get.overlayContext!,
           title: 'error adding unsynced contacts to cloud!',
           message: e.toString(),
         );
       } else {
         CPopupSnackBar.errorSnackBar(
+          Get.overlayContext!,
           title: 'error adding unsynced contacts to cloud!',
           message:
               'An unknown error encountered while adding unsynced contacts to cloud! Please try again later.',
@@ -396,11 +414,13 @@ class StoreSheetsApi extends GetxController {
     } catch (e) {
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
+          Get.overlayContext!,
           title: 'error fetching all contacts from cloud!',
           message: e.toString(),
         );
       } else {
         CPopupSnackBar.errorSnackBar(
+          Get.overlayContext!,
           title: 'error fetching all contacts from cloud!',
           message:
               'An unknown error encountered while fetching contacts from cloud! Please try again later.',
@@ -423,11 +443,13 @@ class StoreSheetsApi extends GetxController {
     } catch (e) {
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
+          Get.overlayContext!,
           message: e.toString(),
           title: 'error updating cloud contacts data',
         );
       } else {
         CPopupSnackBar.errorSnackBar(
+          Get.overlayContext!,
           message:
               'An unknown error occurred while updating cloud contacts data! Please try again later...',
           title: 'error updating cloud contacts data',
@@ -457,11 +479,13 @@ class StoreSheetsApi extends GetxController {
     } catch (e) {
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
+          Get.overlayContext!,
           message: '$e',
           title: 'Error deleting contact from cloud!',
         );
       } else {
         CPopupSnackBar.errorSnackBar(
+          Get.overlayContext!,
           message:
               'An unknown error occurred while deleting contact from cloud!',
           title: 'Error deleting contact from cloud!',
