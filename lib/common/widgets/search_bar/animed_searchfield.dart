@@ -79,7 +79,7 @@ class CAnimedSearchfield extends StatelessWidget {
                       child: const Icon(
                         Iconsax.search_normal,
                         color: CColors.rBrown,
-                        size: CSizes.iconMd,
+                        size: CSizes.iconSm,
                       ),
                     ),
                     suffixIcon: Padding(
@@ -92,7 +92,7 @@ class CAnimedSearchfield extends StatelessWidget {
                         child: const Icon(
                           Icons.close,
                           color: CColors.rBrown,
-                          size: CSizes.iconMd,
+                          size: CSizes.iconSm,
                         ),
                       ),
                     ),

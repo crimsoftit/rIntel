@@ -1123,17 +1123,26 @@ class CTxnsController extends GetxController {
         (sum, txnItem) => sum + txnItem.totalAmount,
       );
 
-      // -- compute total money collected (complete txns) --
-      moneyCollected.value = userTxns
+      var partialPayments = userInvoices.fold(
+        0.0,
+        (sum, credit) => sum + credit.amountPaid,
+      );
+
+      var completePayments = userTxns
           .where(
             (txn) =>
                 txn.txnStatus == 'complete' &&
-                txn.paymentMethod.toLowerCase() != 'On the house'.toLowerCase(),
+                !txn.paymentMethod.toLowerCase().contains(
+                  'On the house'.toLowerCase(),
+                ),
           )
           .fold(
             0.0,
             (sum, sale) => sum + sale.totalAmount,
           );
+
+      // -- compute total money collected (complete txns) --
+      moneyCollected.value = partialPayments + completePayments;
 
       // -- compute gross profit --
       gProfit.value = grossRevenue.value - costOfSales.value;
@@ -1207,13 +1216,27 @@ class CTxnsController extends GetxController {
           )
           .toList();
 
-      // -- compute money collected --
-      moneyCollected.value = filteredTxns
-          .where((sale) => sale.txnStatus == 'complete')
+      // -- get partial payments of invoices --
+      var partialPayments = filteredInvoices.fold(
+        0.0,
+        (sum, credit) => sum + credit.amountPaid,
+      );
+
+      var completePayments = filteredTxns
+          .where(
+            (txn) =>
+                txn.txnStatus == 'complete' &&
+                !txn.paymentMethod.toLowerCase().contains(
+                  'On the house'.toLowerCase(),
+                ),
+          )
           .fold(
             0.0,
             (sum, sale) => sum + sale.totalAmount,
           );
+
+      // -- compute money collected --
+      moneyCollected.value = partialPayments + completePayments;
 
       // -- compute on the house sales for selected period --
       onTheHauzSales.value = filteredTxns
