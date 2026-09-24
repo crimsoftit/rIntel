@@ -44,6 +44,7 @@ class CStoreSummary extends StatelessWidget {
                     1,
                   ),
                 ),
+
                 CStoreSummaryCard(
                   iconData: Iconsax.money_recive,
                   subTitleTxt: 'g. profit($userCurrency)',

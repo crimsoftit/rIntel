@@ -22,6 +22,7 @@ class CExpensesController extends GetxController {
     'Events',
     'Other',
   ].obs;
+  final RxString presetCategory = 'Salaries'.obs;
   final RxString selectedCategory = ''.obs;
   final txtAmount = TextEditingController();
   final txtExpenseDesc = TextEditingController();
@@ -159,11 +160,13 @@ class CExpensesController extends GetxController {
                           // constraints: BoxConstraints(
                           //   minHeight: 60.0,
                           // ),
-                          fillColor: CColors.transparent,
+                          fillColor: CColors.rBrown.withValues(
+                            alpha: .1,
+                          ),
                           filled: true,
 
                           labelStyle: Theme.of(context).textTheme.labelMedium,
-                          labelText: 'Title',
+                          labelText: 'Title/description',
 
                           prefixIcon: Icon(
                             Iconsax.tag,
@@ -185,7 +188,7 @@ class CExpensesController extends GetxController {
                         children: [
                           SizedBox(
                             height: 75.0,
-                            width: MediaQuery.of(context).size.width * .5,
+                            width: MediaQuery.of(context).size.width * .53,
                             child: TextFormField(
                               autovalidateMode:
                                   AutovalidateMode.onUserInteraction,
@@ -194,7 +197,9 @@ class CExpensesController extends GetxController {
                                 constraints: BoxConstraints(
                                   minHeight: 60.0,
                                 ),
-                                fillColor: CColors.transparent,
+                                fillColor: CColors.rBrown.withValues(
+                                  alpha: .1,
+                                ),
                                 filled: true,
 
                                 labelStyle: Theme.of(
@@ -202,11 +207,11 @@ class CExpensesController extends GetxController {
                                 ).textTheme.labelMedium,
                                 labelText: 'amount',
 
-                                // prefixIcon: Icon(
-                                //   Iconsax.tag,
-                                //   color: CColors.darkGrey,
-                                //   size: CSizes.iconXs,
-                                // ),
+                                prefixIcon: Icon(
+                                  Iconsax.money_send,
+                                  color: CColors.darkGrey,
+                                  size: CSizes.iconXs,
+                                ),
                               ),
                               style: const TextStyle(
                                 fontWeight: FontWeight.normal,
@@ -233,7 +238,9 @@ class CExpensesController extends GetxController {
                                 onValueChanged: (value) {
                                   selectedCategory.value = value!;
                                 },
-                                selectedValue: categories[0],
+                                selectedValue: setDefaultCategory(
+                                  presetCategory.value,
+                                ),
                                 underlineColor: isDarkTheme
                                     ? CColors.white
                                     : CColors.rBrown,
@@ -248,18 +255,21 @@ class CExpensesController extends GetxController {
                         height: CSizes.spaceBtnInputFields,
                       ),
 
-                      Card(
-                        color: CColors.rBrown.withValues(
-                          alpha: .1,
-                        ),
-                        child: TextField(
-                          keyboardType: TextInputType.multiline,
-                          maxLines: null,
+                      TextFormField(
+                        keyboardType: TextInputType.multiline,
+                        maxLines: null,
 
-                          decoration: InputDecoration(
-                            hintText: "Your remarks? (optional)",
-                            border: OutlineInputBorder(),
+                        decoration: InputDecoration(
+                          border: OutlineInputBorder(),
+
+                          constraints: BoxConstraints(
+                            minHeight: 100.0,
                           ),
+                          fillColor: CColors.rBrown.withValues(
+                            alpha: .1,
+                          ),
+                          filled: true,
+                          hintText: "Any remarks? (optional)",
                         ),
                       ),
                     ],
@@ -275,6 +285,16 @@ class CExpensesController extends GetxController {
       useRootNavigator: true,
       useSafeArea: true,
     );
+  }
+
+  String setDefaultCategory(String? presetCategory) {
+    if (selectedCategory.value == '') {
+      selectedCategory.value = presetCategory ?? categories[0];
+    } else {
+      selectedCategory.value = selectedCategory.value;
+    }
+
+    return selectedCategory.value;
   }
 
   /// -- reset fields --

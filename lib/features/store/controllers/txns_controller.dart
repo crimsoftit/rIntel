@@ -82,6 +82,7 @@ class CTxnsController extends GetxController {
 
   /// -- summary variables --
   final RxDouble costOfSales = 0.0.obs;
+  final RxDouble cogs = 0.0.obs;
   final RxDouble grossRevenue = 0.0.obs;
 
   final RxDouble invoiceAmountOwed = 0.0.obs;
@@ -1166,7 +1167,7 @@ class CTxnsController extends GetxController {
     try {
       // -- start loader --
       isLoading.value = true;
-      userTxns.refresh();
+      fetchUserTxns();
 
       final rawDateRange = dateRangeController.selectedDateRange.value;
 
@@ -1182,8 +1183,6 @@ class CTxnsController extends GetxController {
       var formattedEndDate = DateTime.parse(
         rawDateRange.end.toLocal().toString().split(' ')[0],
       );
-
-      // -- compute total revenue --
 
       var filteredTxns = userTxns.where(
         (txn) {
@@ -1207,21 +1206,6 @@ class CTxnsController extends GetxController {
                 ).isBefore(formattedEndDate.add(Duration(days: 1))),
           )
           .toList();
-
-      var filteredTxnItems = [];
-      for (var filteredTxn in filteredTxns) {
-        var filteredTxnItem = userTxnItems.where(
-          (item) => item.txnId == filteredTxn.txnId,
-        );
-        filteredTxnItems.assign(filteredTxnItem);
-      }
-
-      // -- compute cost of sales --
-      var cogs = filteredTxnItems.fold(
-        0.0,
-        (sum, sale) => sum + (sale.quantity * sale.unitBP),
-      );
-      costOfSales.value = cogs;
 
       // -- compute money collected --
       moneyCollected.value = filteredTxns
@@ -1248,14 +1232,28 @@ class CTxnsController extends GetxController {
         (sum, credit) => sum + (credit.totalAmount - credit.amountPaid),
       );
 
+      var filteredTxnItems = filteredTxns.expand(
+        (filteredTxn) {
+          var txnItems = userTxnItems.where(
+            (child) => child.txnId == filteredTxn.txnId,
+          );
+          return txnItems;
+        },
+      ).toList();
+
       // -- compute gross revenue --
-      var tRevenue = filteredTxns.fold(
+      var tRevenue = moneyCollected.value + invoicesValue.value;
+
+      // -- compute cost of goods sold --
+      cogs.value = filteredTxnItems.fold(
         0.0,
-        (sum, sale) => sum + sale.totalAmount,
+        (sum, sale) {
+          return sum + (sale.quantity * sale.unitBP);
+        },
       );
 
       // -- compute gross profit --
-      gProfit.value = tRevenue - costOfSales.value;
+      gProfit.value = tRevenue - cogs.value;
 
       // -- compute net profit --
 
