@@ -16,6 +16,7 @@ class ContactsSearchTypeaheadField extends StatelessWidget {
     super.key,
     this.contentPadding,
     this.boxRadius,
+    this.fieldDecoration,
     this.fieldHeight,
     this.fieldLabelStyle,
     this.fieldRadius,
@@ -29,6 +30,7 @@ class ContactsSearchTypeaheadField extends StatelessWidget {
 
     this.suffixIcon,
     this.suggestionsController,
+    this.txtAlign = TextAlign.center,
     this.verticalDirection = VerticalDirection.up,
 
     required this.includeAvatarOnSuggestion,
@@ -44,9 +46,11 @@ class ContactsSearchTypeaheadField extends StatelessWidget {
   final double? boxRadius, fieldHeight, fieldRadius, minHeight;
   final EdgeInsetsGeometry? contentPadding;
   final FormFieldValidator<String>? fieldValidator;
+  final InputDecoration? fieldDecoration;
   final String labelTxt;
   final String? hintTxt;
   final SuggestionsController<CContactsModel>? suggestionsController;
+  final TextAlign txtAlign;
   final TextEditingController typeAheadFieldController;
   final TextStyle? fieldLabelStyle;
   final Widget? prefixIcon;
@@ -68,48 +72,50 @@ class ContactsSearchTypeaheadField extends StatelessWidget {
           autofocus: false,
           autovalidateMode: AutovalidateMode.onUserInteraction,
           controller: controller,
-          decoration: InputDecoration(
-            constraints: BoxConstraints(
-              minHeight: minHeight ?? 65.0,
-            ),
-            filled: true,
-            fillColor:
-                fillColor ??
-                (isDarkTheme ? CColors.transparent : CColors.white),
-            focusColor: isDarkTheme ? CColors.white : CColors.rBrown,
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(
-                fieldRadius ?? CSizes.cardRadiusXs,
+          decoration:
+              fieldDecoration ??
+              InputDecoration(
+                constraints: BoxConstraints(
+                  minHeight: minHeight ?? 65.0,
+                ),
+                filled: true,
+                fillColor:
+                    fillColor ??
+                    (isDarkTheme ? CColors.transparent : CColors.white),
+                focusColor: isDarkTheme ? CColors.white : CColors.rBrown,
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(
+                    fieldRadius ?? CSizes.cardRadiusXs,
+                  ),
+                  borderSide: BorderSide(
+                    color: CColors.grey,
+                  ),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderSide: BorderSide(
+                    color:
+                        focusedBorderColor ??
+                        CColors.black.withValues(
+                          alpha: 0.3,
+                        ),
+                  ),
+                  borderRadius: BorderRadius.circular(
+                    fieldRadius ?? CSizes.cardRadiusSm,
+                  ),
+                ),
+                hintText: hintTxt,
+                labelStyle: Theme.of(context).textTheme.labelSmall,
+                labelText: labelTxt,
+                prefixIcon: includePrefixIcon
+                    ? prefixIcon ??
+                          Icon(
+                            Iconsax.user_add,
+                            color: CColors.darkGrey,
+                            size: CSizes.iconXs,
+                          )
+                    : null,
+                suffixIcon: suffixIcon,
               ),
-              borderSide: BorderSide(
-                color: CColors.grey,
-              ),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderSide: BorderSide(
-                color:
-                    focusedBorderColor ??
-                    CColors.black.withValues(
-                      alpha: 0.3,
-                    ),
-              ),
-              borderRadius: BorderRadius.circular(
-                fieldRadius ?? CSizes.cardRadiusSm,
-              ),
-            ),
-            hintText: hintTxt,
-            labelStyle: Theme.of(context).textTheme.labelSmall,
-            labelText: labelTxt,
-            prefixIcon: includePrefixIcon
-                ? prefixIcon ??
-                      Icon(
-                        Iconsax.user_add,
-                        color: CColors.darkGrey,
-                        size: CSizes.iconXs,
-                      )
-                : null,
-            suffixIcon: suffixIcon,
-          ),
           //isScrollControlled: true,
           focusNode: focusNode,
           onChanged: onFieldValueChanged,
@@ -119,7 +125,7 @@ class ContactsSearchTypeaheadField extends StatelessWidget {
           style: const TextStyle(
             fontWeight: FontWeight.normal,
           ),
-          textAlign: TextAlign.center,
+          textAlign: txtAlign,
           validator: fieldValidator,
         );
       },

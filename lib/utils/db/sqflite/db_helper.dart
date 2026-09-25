@@ -198,6 +198,8 @@ class DbHelper extends GetxController {
             category TEXT NOT NULL,
             expenseDescription LONGTEXT,
             amount REAL NOT NULL,
+            recipientName TEXT NOT NULL,
+            recipientContact TEXT NOT NULL,
             dateAdded CHAR(30) NOT NULL,
             lastModified CHAR(30) NOT NULL,
           )

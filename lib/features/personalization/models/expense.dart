@@ -16,6 +16,9 @@ class CExpense extends Equatable {
 
   double _amount = 0.0;
 
+  String _recipientName = '';
+  String _recipientContact = '';
+
   String _dateAdded = "";
   String _lastModified = "";
 
@@ -28,6 +31,8 @@ class CExpense extends Equatable {
     this._category,
     this._expenseDescription,
     this._amount,
+    this._recipientName,
+    this._recipientContact,
     this._dateAdded,
     this._lastModified,
   );
@@ -44,6 +49,8 @@ class CExpense extends Equatable {
       0.0,
       '',
       '',
+      '',
+      '',
     );
   }
 
@@ -55,6 +62,8 @@ class CExpense extends Equatable {
   String get category => _category;
   String get expenseDescription => _expenseDescription;
   double get amount => _amount;
+  String get recipientName => _recipientName;
+  String get recipientContact => _recipientContact;
   String get dateAdded => _dateAdded;
   String get lastModified => _lastModified;
 
@@ -90,6 +99,14 @@ class CExpense extends Equatable {
     _amount = newAmount;
   }
 
+  set recipientName(String rName) {
+    _recipientName = rName;
+  }
+
+  set recipientContact(String rContact) {
+    _recipientContact = rContact;
+  }
+
   set dateAdded(String newDateAdded) {
     _dateAdded = newDateAdded;
   }
@@ -110,6 +127,8 @@ class CExpense extends Equatable {
     map['category'] = _category;
     map['expenseDescription'] = _expenseDescription;
     map['amount'] = _amount;
+    map['recipientName'] = _recipientName;
+    map['recipientContact'] = _recipientContact;
     map['dateAdded'] = _dateAdded;
     map['lastModified'] = _lastModified;
 
@@ -126,6 +145,8 @@ class CExpense extends Equatable {
     _category = map['category'];
     _expenseDescription = map['expenseDescription'];
     _amount = map['amount'];
+    _recipientName = map['recipientName'];
+    _recipientContact = map['recipientContact'];
     _dateAdded = map['dateAdded'];
     _lastModified = map['lastModified'];
   }
@@ -145,6 +166,8 @@ class CExpense extends Equatable {
       expenditure['category'],
       expenditure['expenseDescription'],
       expenditure['amount'],
+      expenditure['recipientName'],
+      expenditure['recipientContact'],
       expenditure['dateAdded'],
       expenditure['lastModified'],
     );
@@ -160,6 +183,8 @@ class CExpense extends Equatable {
     category,
     expenseDescription,
     amount,
+    recipientName,
+    recipientContact,
     dateAdded,
     lastModified,
   ];

@@ -68,8 +68,6 @@ class CCheckoutController extends GetxController {
 
   final RxString checkoutItemScanResults = ''.obs;
 
-  final RxBool setFocusOnAmtIssuedField = false.obs;
-
   final appSettingsController = Get.put(CAppSettingsController());
   final cartController = Get.put(CCartController());
   final contactsController = Get.put(CContactsController());
@@ -89,8 +87,10 @@ class CCheckoutController extends GetxController {
   DbHelper dbHelper = DbHelper.instance;
 
   final RxBool includeAmtIssuedFieldonModal = false.obs;
+  final RxBool includeCustomerDetails = false.obs;
   final RxBool isLoading = false.obs;
   final RxBool itemExists = false.obs;
+  final RxBool setFocusOnAmtIssuedField = false.obs;
 
   final RxDouble checkoutItemSales = 0.0.obs;
   final RxDouble customerBal = 0.0.obs;
@@ -118,7 +118,10 @@ class CCheckoutController extends GetxController {
     customerNameFieldController.text = '';
     customerBalField.text = '';
     includeAmtIssuedFieldonModal.value = false;
-    selectedPaymentMethod.value.platformName = 'cash';
+    selectedPaymentMethod.value = CPaymentMethodModel(
+      platformLogo: CImages.cash6,
+      platformName: 'cash',
+    );
     setFocusOnAmtIssuedField.value = false;
 
     // CLocationServices.instance
@@ -332,7 +335,7 @@ class CCheckoutController extends GetxController {
 
                       processCustomerDetails().then(
                         (_) {
-                          refreshData();
+                          resetData();
                         },
                       );
                     },
@@ -368,13 +371,15 @@ class CCheckoutController extends GetxController {
   }
 
   /// -- method to select payment method --
-  Future<dynamic> selectPaymentMethod(BuildContext context) {
+  Future<dynamic> selectPaymentMethod(BuildContext context, String event) {
     return showModalBottomSheet(
       context: context,
       builder: (_) {
         return SingleChildScrollView(
           child: Container(
-            padding: const EdgeInsets.all(CSizes.lg / 3),
+            padding: const EdgeInsets.all(
+              CSizes.lg / 3,
+            ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -387,24 +392,43 @@ class CCheckoutController extends GetxController {
                 const SizedBox(
                   height: CSizes.spaceBtnSections / 4,
                 ),
-                CPaymentMethodsTile(
-                  paymentMethod: CPaymentMethodModel(
-                    platformLogo: CImages.onTheHauz,
-                    platformName: 'On the house',
+                Visibility(
+                  maintainState: false,
+                  visible: event == 'checkout',
+
+                  child: Column(
+                    children: [
+                      CPaymentMethodsTile(
+                        paymentMethod: CPaymentMethodModel(
+                          platformLogo: CImages.onTheHauz,
+                          platformName: 'On the house',
+                        ),
+                      ),
+                      const SizedBox(
+                        height: CSizes.spaceBtnSections / 4,
+                      ),
+                    ],
                   ),
                 ),
-                const SizedBox(
-                  height: CSizes.spaceBtnSections / 4,
-                ),
-                CPaymentMethodsTile(
-                  paymentMethod: CPaymentMethodModel(
-                    platformLogo: CImages.deferred,
-                    platformName: 'credit',
+
+                Visibility(
+                  maintainState: false,
+                  visible: event == 'checkout',
+                  child: Column(
+                    children: [
+                      CPaymentMethodsTile(
+                        paymentMethod: CPaymentMethodModel(
+                          platformLogo: CImages.deferred,
+                          platformName: 'credit',
+                        ),
+                      ),
+                      const SizedBox(
+                        height: CSizes.spaceBtnSections / 4,
+                      ),
+                    ],
                   ),
                 ),
-                const SizedBox(
-                  height: CSizes.spaceBtnSections / 4,
-                ),
+
                 CPaymentMethodsTile(
                   paymentMethod: CPaymentMethodModel(
                     platformLogo: CImages.cash6,
@@ -708,18 +732,6 @@ class CCheckoutController extends GetxController {
     customerBal.value = updatedBal;
   }
 
-  void resetSalesFields() {
-    amtIssuedFieldController.text = '';
-    customerNameFieldController.text = '';
-    customerContactsFieldController.text = '';
-    customerBal.value = 0.0;
-    customerContactsFieldController.text = '';
-    customerBalField.text == '';
-    itemExists.value = false;
-    selectedPaymentMethod.value.platformName == 'cash';
-    setFocusOnAmtIssuedField.value = false;
-  }
-
   /// -- calculate totals --
   void computeTotals(String value, double usp) {
     if (value.isNotEmpty) {
@@ -739,28 +751,6 @@ class CCheckoutController extends GetxController {
         Get.to(() => const CCheckoutScreen());
       }
     });
-  }
-
-  void refreshData() {
-    final cartController = Get.put(CCartController());
-
-    selectedPaymentMethod.value.platformName == 'cash';
-
-    customerBal.value = 0.0;
-
-    // clear cart
-    cartController.clearCart();
-    itemsInCart.clear();
-
-    resetSalesFields();
-
-    cartController.qtyFieldControllers.clear();
-    if (cartController.qtyFieldControllers.isNotEmpty) {
-      cartController.qtyFieldControllers.close();
-    }
-    navController.selectedIndex.value = 1;
-
-    Get.offAll(() => CMainNav());
   }
 
   Future<void> onCheckoutBtnPressed() async {
@@ -1024,6 +1014,56 @@ class CCheckoutController extends GetxController {
       rethrow;
     }
     return txnInit;
+  }
+
+  void toggleCustomerDetsFieldsVisibility(bool value) {
+    includeCustomerDetails.value = value;
+
+    if (!value) {
+      customerNameFieldController.clear();
+      customerContactsFieldController.clear();
+    }
+  }
+
+  void resetData() {
+    final cartController = Get.put(CCartController());
+
+    selectedPaymentMethod.value = CPaymentMethodModel(
+      platformLogo: CImages.cash6,
+      platformName: 'cash',
+    );
+    includeCustomerDetails.value = false;
+
+    customerBal.value = 0.0;
+
+    // clear cart
+    cartController.clearCart();
+    itemsInCart.clear();
+
+    resetSalesFields();
+
+    cartController.qtyFieldControllers.clear();
+    if (cartController.qtyFieldControllers.isNotEmpty) {
+      cartController.qtyFieldControllers.close();
+    }
+    navController.selectedIndex.value = 1;
+
+    Get.offAll(() => CMainNav());
+  }
+
+  void resetSalesFields() {
+    amtIssuedFieldController.clear();
+    customerNameFieldController.clear();
+    customerContactsFieldController.clear();
+    customerBal.value = 0.0;
+    customerBalField.clear();
+    itemExists.value = false;
+    selectedPaymentMethod.value = CPaymentMethodModel(
+      platformLogo: CImages.cash6,
+      platformName: 'cash',
+    );
+    includeCustomerDetails.value = false;
+    setFocusOnAmtIssuedField.value = false;
   }
 
   @override

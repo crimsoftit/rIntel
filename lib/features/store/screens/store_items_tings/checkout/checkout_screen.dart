@@ -5,6 +5,8 @@ import 'package:rintel/common/widgets/loaders/animated_loader.dart';
 import 'package:rintel/common/widgets/products/store_item.dart';
 import 'package:rintel/common/widgets/search_bar/animated_typeahead_field.dart';
 import 'package:rintel/common/widgets/shimmers/vert_items_shimmer.dart';
+import 'package:rintel/common/widgets/switches/custom_switch.dart';
+import 'package:rintel/common/widgets/txt_fields/contacts_search_type_ahead.dart';
 import 'package:rintel/common/widgets/txt_fields/custom_intl_phone_input_field.dart';
 import 'package:rintel/common/widgets/txt_widgets/product_price_txt.dart';
 import 'package:rintel/features/personalization/controllers/user_controller.dart';
@@ -776,7 +778,9 @@ class CCheckoutScreen extends StatelessWidget {
 
                             // -- billing section --
                             CRoundedContainer(
-                              padding: const EdgeInsets.all(CSizes.md / 4),
+                              padding: const EdgeInsets.all(
+                                CSizes.md / 4,
+                              ),
                               showBorder: true,
                               bgColor: isDarkTheme
                                   ? CColors.black
@@ -829,39 +833,81 @@ class CCheckoutScreen extends StatelessWidget {
                                           .selectedPaymentMethod
                                           .value
                                           .platformLogo,
-                                      txtFieldSpace:
+                                      child:
                                           checkoutController
                                                   .selectedPaymentMethod
                                                   .value
                                                   .platformName
                                                   .toLowerCase() ==
                                               'cash'.toLowerCase()
-                                          ? Row(
+                                          ? Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
                                               children: [
-                                                const SizedBox(
-                                                  width: CSizes.spaceBtnItems,
-                                                  height: 40.0,
+                                                CRoundedContainer(
+                                                  bgColor: CColors.transparent,
+                                                  child: Row(
+                                                    children: [
+                                                      const SizedBox(
+                                                        width: CSizes
+                                                            .spaceBtnItems,
+                                                        height: 40.0,
+                                                      ),
+                                                      CAmountTxtField(
+                                                        fieldController:
+                                                            checkoutController
+                                                                .amtIssuedFieldController,
+                                                        onValueChanged: (value) {
+                                                          if (value != '') {
+                                                            checkoutController
+                                                                .computeCustomerBal(
+                                                                  cartController
+                                                                      .totalCartPrice
+                                                                      .value,
+                                                                  double.parse(
+                                                                    value!,
+                                                                  ),
+                                                                );
+                                                          }
+                                                        },
+                                                        txtFieldWidth:
+                                                            CHelperFunctions.screenWidth() *
+                                                            0.69,
+                                                      ),
+                                                    ],
+                                                  ),
                                                 ),
-                                                CAmountTxtField(
-                                                  fieldController:
-                                                      checkoutController
-                                                          .amtIssuedFieldController,
-                                                  onValueChanged: (value) {
-                                                    if (value != '') {
-                                                      checkoutController
-                                                          .computeCustomerBal(
-                                                            cartController
-                                                                .totalCartPrice
-                                                                .value,
-                                                            double.parse(
-                                                              value!,
-                                                            ),
-                                                          );
-                                                    }
-                                                  },
-                                                  txtFieldWidth:
-                                                      CHelperFunctions.screenWidth() *
-                                                      0.69,
+                                                customerDetsWidget(
+                                                  checkoutController,
+                                                ),
+                                                // -- toggle entry for customer details --
+                                                Padding(
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                        bottom: 2.0,
+                                                        top: 10.0,
+                                                      ),
+                                                  child: Align(
+                                                    alignment:
+                                                        Alignment.bottomRight,
+                                                    child: CCustomSwitch(
+                                                      label:
+                                                          'Customer details?',
+                                                      labelColor: isDarkTheme
+                                                          ? CColors.darkGrey
+                                                          : CColors.rBrown,
+                                                      onValueChanged: (value) {
+                                                        checkoutController
+                                                            .toggleCustomerDetsFieldsVisibility(
+                                                              value,
+                                                            );
+                                                      },
+                                                      switchValue:
+                                                          checkoutController
+                                                              .includeCustomerDetails
+                                                              .value,
+                                                    ),
+                                                  ),
                                                 ),
                                               ],
                                             )
@@ -958,6 +1004,88 @@ class CCheckoutScreen extends StatelessWidget {
             return SizedBox.shrink();
           }
         }),
+      ),
+    );
+  }
+
+  Visibility customerDetsWidget(CCheckoutController checkoutController) {
+    return Visibility(
+      visible: checkoutController.includeCustomerDetails.value,
+      child: CRoundedContainer(
+        bgColor: CColors.transparent,
+
+        padding: const EdgeInsets.only(
+          left: 20.0,
+          top: 10.0,
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            ContactsSearchTypeaheadField(
+              fieldDecoration: InputDecoration(
+                labelText: "Customer's name",
+                enabledBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(
+                    color: Colors.grey,
+                    width: 1.0,
+                  ),
+                ),
+                fillColor: CColors.rBrown.withValues(
+                  alpha: .1,
+                ),
+                focusedBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(
+                    color: Colors.blue,
+                    width: 2.0,
+                  ),
+                ),
+              ),
+              includeAvatarOnSuggestion: true,
+              includePrefixIcon: true,
+              labelTxt: "Customer's name:",
+              onItemSelected: (suggestion) {
+                checkoutController.customerNameFieldController.text =
+                    suggestion.contactName;
+                checkoutController.customerContactsFieldController.text =
+                    suggestion.contactPhone != ''
+                    ? suggestion.contactPhone
+                    : suggestion.contactEmail;
+              },
+              typeAheadFieldController:
+                  checkoutController.customerNameFieldController,
+            ),
+            ContactsSearchTypeaheadField(
+              fieldDecoration: InputDecoration(
+                labelText: 'Phone or email (optional)',
+                enabledBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(
+                    color: Colors.grey,
+                    width: 1.0,
+                  ),
+                ),
+                focusedBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(
+                    color: Colors.blue,
+                    width: 2.0,
+                  ),
+                ),
+              ),
+              includeAvatarOnSuggestion: true,
+              includePrefixIcon: true,
+              labelTxt: "Customer's name:",
+              onItemSelected: (suggestion) {
+                checkoutController.customerNameFieldController.text =
+                    suggestion.contactName;
+                checkoutController.customerContactsFieldController.text =
+                    suggestion.contactPhone != ''
+                    ? suggestion.contactPhone
+                    : suggestion.contactEmail;
+              },
+              typeAheadFieldController:
+                  checkoutController.customerContactsFieldController,
+            ),
+          ],
+        ),
       ),
     );
   }

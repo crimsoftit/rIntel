@@ -9,13 +9,14 @@ import 'package:get/get.dart';
 class CPaymentMethodSection extends StatelessWidget {
   const CPaymentMethodSection({
     super.key,
-    required this.platformName,
     required this.platformLogo,
-    required this.txtFieldSpace,
+    required this.platformName,
+
+    required this.child,
   });
 
   final String platformName, platformLogo;
-  final Widget txtFieldSpace;
+  final Widget child;
 
   @override
   Widget build(BuildContext context) {
@@ -37,12 +38,14 @@ class CPaymentMethodSection extends StatelessWidget {
             onPressed: () {
               checkoutController.amtIssuedFieldController.text = '';
               checkoutController.customerBal.value = 0.0;
-              checkoutController.selectPaymentMethod(context);
+              checkoutController.selectPaymentMethod(context, 'checkout');
             },
             txtColor: CColors.rOrange,
           );
         }),
-        SizedBox(height: CSizes.spaceBtnItems / 2.0),
+        SizedBox(
+          height: CSizes.spaceBtnItems / 2.0,
+        ),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -56,7 +59,9 @@ class CPaymentMethodSection extends StatelessWidget {
                   height: 50.0,
                   //bgColor: isDarkTheme ? CColors.light : CColors.white,
                   bgColor: CColors.transparent,
-                  padding: const EdgeInsets.all(CSizes.sm / 4),
+                  padding: const EdgeInsets.all(
+                    CSizes.sm / 4,
+                  ),
                   child: Image(
                     image: AssetImage(
                       platformLogo,
@@ -67,17 +72,14 @@ class CPaymentMethodSection extends StatelessWidget {
                 ),
               ),
             ),
-            const SizedBox(width: CSizes.spaceBtnItems / 4),
-            // if (platformName != '')
-            //   Expanded(
-            //     flex: 3,
-            //     child: Text(
-            //       //checkoutController.selectedPaymentMethod.value.platformName,
-            //       platformName,
-            //       style: Theme.of(context).textTheme.bodyLarge,
-            //     ),
-            //   ),
-            Expanded(flex: 5, child: txtFieldSpace),
+            const SizedBox(
+              width: CSizes.spaceBtnItems / 4,
+            ),
+
+            Expanded(
+              flex: 5,
+              child: child,
+            ),
             //Expanded(flex: 4, child: txtFieldSpace),
           ],
         ),

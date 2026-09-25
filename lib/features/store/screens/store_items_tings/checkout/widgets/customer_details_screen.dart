@@ -57,6 +57,7 @@ class CustomerDetailsScreen extends StatelessWidget {
                     : suggestion.contactEmail;
               },
               prefixIcon: SizedBox.shrink(),
+              txtAlign: TextAlign.start,
               typeAheadFieldController:
                   checkoutController.customerNameFieldController,
             ),
@@ -100,6 +101,7 @@ class CustomerDetailsScreen extends StatelessWidget {
                     : suggestion.contactEmail;
               },
               prefixIcon: SizedBox.shrink(),
+              txtAlign: TextAlign.start,
               typeAheadFieldController:
                   checkoutController.customerContactsFieldController,
               fieldValidator: (value) {

@@ -30,17 +30,27 @@ class CPaymentMethodsTile extends StatelessWidget {
       leading: CRoundedContainer(
         width: 100.0,
         height: 100.0,
-        padding: const EdgeInsets.all(CSizes.sm / 2),
+        padding: const EdgeInsets.all(
+          CSizes.sm / 2,
+        ),
         bgColor: isDarkTheme
-            ? CColors.rBrown.withValues(alpha: 0.2)
+            ? CColors.rBrown.withValues(
+                alpha: 0.2,
+              )
             : CColors.white,
         child: Image(
-          image: AssetImage(paymentMethod.platformLogo),
+          image: AssetImage(
+            paymentMethod.platformLogo,
+          ),
           fit: BoxFit.contain,
         ),
       ),
-      title: Text(paymentMethod.platformName),
-      trailing: const Icon(Iconsax.arrow_right_34),
+      title: Text(
+        paymentMethod.platformName,
+      ),
+      trailing: const Icon(
+        Iconsax.arrow_right_34,
+      ),
     );
   }
 }

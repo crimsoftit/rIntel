@@ -1,3 +1,4 @@
+import 'package:iconsax/iconsax.dart';
 import 'package:rintel/common/widgets/custom_shapes/containers/rounded_container.dart';
 import 'package:rintel/utils/constants/colors.dart';
 import 'package:rintel/utils/constants/sizes.dart';
@@ -73,6 +74,11 @@ class CAmountTxtField extends StatelessWidget {
           ),
           //border: InputBorder.none,
           labelText: labelTxt ?? 'Enter amount issued by customer',
+          prefixIcon: Icon(
+            Iconsax.money_recive,
+            color: CColors.rOrange,
+            size: CSizes.iconSm,
+          ),
         ),
         style: const TextStyle(
           fontWeight: FontWeight.normal,

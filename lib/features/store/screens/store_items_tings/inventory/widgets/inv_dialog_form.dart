@@ -582,8 +582,10 @@ class AddUpdateInventoryForm extends StatelessWidget {
                                       color: CColors.darkGrey,
                                       size: CSizes.iconXs,
                                     ),
+                                    txtAlign: TextAlign.start,
                                     typeAheadFieldController:
                                         invController.txtSupplierName,
+
                                     fieldValidator: (value) {
                                       return fieldValidator(value);
                                     },
@@ -664,6 +666,7 @@ class AddUpdateInventoryForm extends StatelessWidget {
                             ),
                             typeAheadFieldController:
                                 invController.txtSupplierContacts,
+                            txtAlign: TextAlign.start,
                             fieldValidator: (value) {
                               if (value == null ||
                                   value == '' ||

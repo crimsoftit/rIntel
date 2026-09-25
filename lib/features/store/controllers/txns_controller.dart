@@ -1508,6 +1508,7 @@ class CTxnsController extends GetxController {
                                     onPressed: () {
                                       checkoutController.selectPaymentMethod(
                                         context,
+                                        'invoice payment',
                                       );
                                     },
                                     icon: Icon(
