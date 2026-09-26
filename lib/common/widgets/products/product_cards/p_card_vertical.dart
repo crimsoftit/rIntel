@@ -30,7 +30,6 @@ class CProductCardVertical extends StatelessWidget {
     this.deleteAction,
     this.favIconColor,
     this.favIconData,
-    this.isSynced,
     this.expiryColor,
     this.itemAvatar,
     this.lowStockNotifierLimit,
@@ -42,7 +41,6 @@ class CProductCardVertical extends StatelessWidget {
     this.qtyAvailable,
     this.qtyRefunded,
     this.qtySold,
-    this.syncAction,
     this.stockValue,
     this.titleColor,
     this.usp,
@@ -57,14 +55,12 @@ class CProductCardVertical extends StatelessWidget {
   final String? bp,
       expiryDate,
       lastModified,
-      isSynced,
       itemAvatar,
       itemMetrics,
       qtyAvailable,
       qtyRefunded,
       qtySold,
       stockValue,
-      syncAction,
       usp;
   final String itemName, pCode;
 
@@ -78,7 +74,6 @@ class CProductCardVertical extends StatelessWidget {
   Widget build(BuildContext context) {
     final invController = Get.put(CInventoryController());
     final isDarkTheme = CHelperFunctions.isDarkMode(context);
-    //final syncController = Get.put(CSyncController());
     final txnsController = Get.put(CTxnsController());
 
     return GestureDetector(
@@ -337,7 +332,6 @@ class CProductCardVertical extends StatelessWidget {
             /// -- base buttons --
             SizedBox(
               // chora cart item usp * qtyInCart
-              // also catch socketexception when syncing data
               width: CHelperFunctions.screenWidth(),
               height: 43.0,
               child: Obx(() {

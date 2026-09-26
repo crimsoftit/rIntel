@@ -185,7 +185,6 @@ class CInvGridviewScreen extends StatelessWidget {
                   itemName: demInventoryItems[index].name,
                   pCode: demInventoryItems[index].pCode,
                   pId: demInventoryItems[index].productId,
-                  isSynced: demInventoryItems[index].isSynced.toString(),
                   itemAvatar: demInventoryItems[index].name[0],
                   itemMetrics: demInventoryItems[index].calibration,
                   lastModified: demInventoryItems[index].lastModified,
@@ -234,8 +233,6 @@ class CInvGridviewScreen extends StatelessWidget {
                               demInventoryItems[index].dateAdded,
                               demInventoryItems[index].lastModified,
                               demInventoryItems[index].expiryDate,
-                              demInventoryItems[index].isSynced,
-                              demInventoryItems[index].syncAction,
                             ),
                             false,
                             false,
@@ -273,11 +270,6 @@ class CInvGridviewScreen extends StatelessWidget {
                     demInventoryItems[index].qtySold,
                     demInventoryItems[index].calibration,
                   ),
-                  syncAction: demInventoryItems[index].syncAction,
-                  stockValue:
-                      (demInventoryItems[index].unitBp *
-                              demInventoryItems[index].quantity)
-                          .toStringAsFixed(2),
 
                   titleColor: CHelperFunctions.generateInvItemsDisplayColor(
                     isDarkTheme ? CColors.white : CColors.rBrown,

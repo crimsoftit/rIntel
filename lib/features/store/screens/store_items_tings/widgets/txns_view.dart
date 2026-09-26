@@ -680,59 +680,7 @@ class _CTxnsViewState extends State<CTxnsView> {
                                                                     ],
                                                                   ),
                                                                 ),
-                                                              // Row(
-                                                              //   children: [
-                                                              //     Expanded(
-                                                              //       child: Text(
-                                                              //         '${CFormatter.formatItemQtyDisplays(childItem.quantity, childItem.itemMetrics)} ${CFormatter.formatItemMetrics(childItem.itemMetrics, childItem.quantity)} - ',
-                                                              //         maxLines:
-                                                              //             3,
-                                                              //         overflow:
-                                                              //             TextOverflow
-                                                              //                 .ellipsis,
-                                                              //         style:
-                                                              //             Theme.of(
-                                                              //               context,
-                                                              //             ).textTheme.labelMedium!.apply(
-                                                              //               color:
-                                                              //                   CColors.darkGrey,
-                                                              //               fontStyle:
-                                                              //                   FontStyle.italic,
-                                                              //             ),
-                                                              //       ),
-                                                              //     ),
-                                                              //     Expanded(
-                                                              //       child: Text(
-                                                              //         '$userCurrency.',
-                                                              //         style: Theme.of(context).textTheme.labelSmall!.apply(
-                                                              //           color: CColors
-                                                              //               .darkGrey,
-                                                              //           fontFeatures: [
-                                                              //             FontFeature.superscripts(),
-                                                              //           ],
-                                                              //           fontSizeFactor:
-                                                              //               .8,
-                                                              //           fontStyle:
-                                                              //               FontStyle.italic,
-                                                              //         ),
-                                                              //       ),
-                                                              //     ),
-                                                              //     Expanded(
-                                                              //       child: Text(
-                                                              //         '${childItem.unitSellingPrice * childItem.quantity}',
-                                                              //         style:
-                                                              //             Theme.of(
-                                                              //               context,
-                                                              //             ).textTheme.labelMedium!.apply(
-                                                              //               color:
-                                                              //                   CColors.darkGrey,
-                                                              //               fontStyle:
-                                                              //                   FontStyle.italic,
-                                                              //             ),
-                                                              //       ),
-                                                              //     ),
-                                                              //   ],
-                                                              // ),
+
                                                               if (childItem
                                                                       .qtyRefunded >
                                                                   0)

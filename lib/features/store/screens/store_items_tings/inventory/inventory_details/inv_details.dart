@@ -588,8 +588,6 @@ class CInvDetails extends StatelessWidget {
                           invItem.dateAdded,
                           invItem.lastModified,
                           invItem.expiryDate,
-                          invItem.isSynced,
-                          invItem.syncAction,
                         ),
                         false,
                         false,

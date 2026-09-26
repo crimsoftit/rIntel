@@ -69,9 +69,6 @@ class CInventoryController extends GetxController {
   final RxList<CInventoryModel> inventoryItems = <CInventoryModel>[].obs;
   final RxList<CInventoryModel> lowStockItems = <CInventoryModel>[].obs;
 
-  // final RxList<CInventoryModel> invTopSellers = <CInventoryModel>[].obs;
-  final RxList<CInventoryModel> unSyncedAppends = <CInventoryModel>[].obs;
-  final RxList<CInventoryModel> unSyncedUpdates = <CInventoryModel>[].obs;
   final RxList<CInventoryModel> userGSheetData = <CInventoryModel>[].obs;
 
   final RxList<CInventoryModel> itemsNearingExpiry = <CInventoryModel>[].obs;
@@ -184,22 +181,6 @@ class CInventoryController extends GetxController {
         foundInventoryItems.assignAll(fetchedItems);
       }
 
-      // unsynced appends
-      unSyncedAppends.value = inventoryItems
-          .where(
-            (appendItem) =>
-                appendItem.syncAction.toLowerCase().contains('append'),
-          )
-          .toList();
-
-      // unsynced updates
-      unSyncedUpdates.value = inventoryItems
-          .where(
-            (updateItem) =>
-                updateItem.syncAction.toLowerCase().contains('update'),
-          )
-          .toList();
-
       // -- assign low stock items --
       lowStockItems.value = inventoryItems.where(
         (item) {
@@ -298,9 +279,6 @@ class CInventoryController extends GetxController {
       inventoryItem.userId = userController.user.value.id;
       inventoryItem.userEmail = userController.user.value.email;
 
-      inventoryItem.isSynced = 1;
-      inventoryItem.syncAction = 'none';
-
       await dbHelper.addInventoryItem(inventoryItem);
 
       /// -- save data to cloud firestore --
@@ -330,113 +308,113 @@ class CInventoryController extends GetxController {
   }
 
   /// -- upload unsynced data to the cloud --
-  Future<void> addUnsyncedInvToCloud() async {
-    isLoading.value = true;
-    await fetchUserInventoryItems();
+  // Future<void> addUnsyncedInvToCloud() async {
+  //   isLoading.value = true;
+  //   await fetchUserInventoryItems();
 
-    // -- check internet connectivity
-    final isConnectedToInternet = await CNetworkManager.instance.isConnected();
+  //   // -- check internet connectivity
+  //   final isConnectedToInternet = await CNetworkManager.instance.isConnected();
 
-    if (isConnectedToInternet) {
-      var gSheetAppendItems = unSyncedAppends
-          .map(
-            (e) => {
-              'productId': e.productId,
-              'userId': e.userId,
-              'userEmail': e.userEmail,
-              'userName': e.userName,
-              'pCode': e.pCode,
-              'name': e.name,
-              'markedAsFavorite': e.markedAsFavorite,
-              'calibration': e.calibration,
-              'quantity': e.quantity,
-              'qtySold': e.qtySold,
-              'qtyRefunded': e.qtyRefunded,
-              'buyingPrice': e.buyingPrice,
-              'unitBp': e.unitBp,
-              'unitSellingPrice': e.unitSellingPrice,
-              'lowStockNotifierLimit': e.lowStockNotifierLimit,
-              'supplierName': e.supplierName,
-              'supplierContacts': e.supplierContacts,
-              'dateAdded': e.dateAdded,
-              'lastModified': e.lastModified,
-              'expiryDate': e.expiryDate,
-              'isSynced': 1,
-              'syncAction': 'none',
-            },
-          )
-          .toList();
+  //   if (isConnectedToInternet) {
+  //     var gSheetAppendItems = unSyncedAppends
+  //         .map(
+  //           (e) => {
+  //             'productId': e.productId,
+  //             'userId': e.userId,
+  //             'userEmail': e.userEmail,
+  //             'userName': e.userName,
+  //             'pCode': e.pCode,
+  //             'name': e.name,
+  //             'markedAsFavorite': e.markedAsFavorite,
+  //             'calibration': e.calibration,
+  //             'quantity': e.quantity,
+  //             'qtySold': e.qtySold,
+  //             'qtyRefunded': e.qtyRefunded,
+  //             'buyingPrice': e.buyingPrice,
+  //             'unitBp': e.unitBp,
+  //             'unitSellingPrice': e.unitSellingPrice,
+  //             'lowStockNotifierLimit': e.lowStockNotifierLimit,
+  //             'supplierName': e.supplierName,
+  //             'supplierContacts': e.supplierContacts,
+  //             'dateAdded': e.dateAdded,
+  //             'lastModified': e.lastModified,
+  //             'expiryDate': e.expiryDate,
+  //             'isSynced': 1,
+  //             'syncAction': 'none',
+  //           },
+  //         )
+  //         .toList();
 
-      if (unSyncedAppends.isNotEmpty) {
-        await StoreSheetsApi.saveInvItemsToGSheets(gSheetAppendItems);
+  //     if (unSyncedAppends.isNotEmpty) {
+  //       await StoreSheetsApi.saveInvItemsToGSheets(gSheetAppendItems);
 
-        await updateSyncedInvAppends();
-        isLoading.value = false;
-      }
-    }
-  }
+  //       await updateSyncedInvAppends();
+  //       isLoading.value = false;
+  //     }
+  //   }
+  // }
 
-  Future updateSyncedInvAppends() async {
-    try {
-      // start loader while products are fetched
-      isLoading.value = true;
+  // Future updateSyncedInvAppends() async {
+  //   try {
+  //     // start loader while products are fetched
+  //     isLoading.value = true;
 
-      // -- check internet connectivity
-      final isConnectedToInternet = await CNetworkManager.instance
-          .isConnected();
+  //     // -- check internet connectivity
+  //     final isConnectedToInternet = await CNetworkManager.instance
+  //         .isConnected();
 
-      if (isConnectedToInternet) {
-        unSyncedAppends.value = inventoryItems
-            .where((item) => item.syncAction.toLowerCase().contains('append'))
-            .toList();
+  //     if (isConnectedToInternet) {
+  //       unSyncedAppends.value = inventoryItems
+  //           .where((item) => item.syncAction.toLowerCase().contains('append'))
+  //           .toList();
 
-        if (unSyncedAppends.isNotEmpty) {
-          for (var element in unSyncedAppends) {
-            var syncAppendsData = CInventoryModel.withID(
-              element.productId,
-              element.userId,
-              element.userEmail,
-              element.userName,
-              element.pCode,
-              element.name,
-              element.markedAsFavorite,
-              element.calibration,
-              element.quantity,
-              element.qtySold,
-              element.qtyRefunded,
-              element.buyingPrice,
-              element.unitBp,
-              element.unitSellingPrice,
-              element.lowStockNotifierLimit,
-              element.supplierName,
-              element.supplierContacts,
-              element.dateAdded,
-              element.lastModified,
-              element.expiryDate,
-              1,
-              'none',
-            );
+  //       if (unSyncedAppends.isNotEmpty) {
+  //         for (var element in unSyncedAppends) {
+  //           var syncAppendsData = CInventoryModel.withID(
+  //             element.productId,
+  //             element.userId,
+  //             element.userEmail,
+  //             element.userName,
+  //             element.pCode,
+  //             element.name,
+  //             element.markedAsFavorite,
+  //             element.calibration,
+  //             element.quantity,
+  //             element.qtySold,
+  //             element.qtyRefunded,
+  //             element.buyingPrice,
+  //             element.unitBp,
+  //             element.unitSellingPrice,
+  //             element.lowStockNotifierLimit,
+  //             element.supplierName,
+  //             element.supplierContacts,
+  //             element.dateAdded,
+  //             element.lastModified,
+  //             element.expiryDate,
+  //             1,
+  //             'none',
+  //           );
 
-            await dbHelper.updateInventoryItem(
-              syncAppendsData,
-            );
-            isLoading.value != isLoading.value;
-          }
-        }
-      }
-    } catch (e) {
-      isLoading.value = false;
+  //           await dbHelper.updateInventoryItem(
+  //             syncAppendsData,
+  //           );
+  //           isLoading.value != isLoading.value;
+  //         }
+  //       }
+  //     }
+  //   } catch (e) {
+  //     isLoading.value = false;
 
-      if (kDebugMode) {
-        CPopupSnackBar.errorSnackBar(
-          Get.overlayContext!,
-          title: 'error updating inventory appends!',
-          message: e.toString(),
-        );
-      }
-      rethrow;
-    }
-  }
+  //     if (kDebugMode) {
+  //       CPopupSnackBar.errorSnackBar(
+  //         Get.overlayContext!,
+  //         title: 'error updating inventory appends!',
+  //         message: e.toString(),
+  //       );
+  //     }
+  //     rethrow;
+  //   }
+  // }
 
   /// -- fetch inventory item by code --
   Future<List<CInventoryModel>> fetchItemByCodeAndEmail(String code) async {
@@ -712,8 +690,6 @@ class CInventoryController extends GetxController {
           forUpdateItem.dateAdded,
           forUpdateItem.lastModified,
           forUpdateItem.expiryDate,
-          forUpdateItem.isSynced,
-          forUpdateItem.syncAction,
         );
 
         final newContent = CInventoryModel.withID(
@@ -737,8 +713,6 @@ class CInventoryController extends GetxController {
           forUpdateItem.dateAdded,
           forUpdateItem.lastModified,
           txtExpiryDatePicker.text.trim(),
-          forUpdateItem.isSynced,
-          forUpdateItem.syncAction,
         );
 
         if (originalContent == newContent) {
@@ -815,8 +789,6 @@ class CInventoryController extends GetxController {
           'yyyy-MM-dd @ kk:mm',
         ).format(clock.now());
         inventoryItem.expiryDate = txtExpiryDatePicker.text.trim();
-
-        inventoryItem.syncAction = 'none';
 
         if (itemExists.value) {
           await updateInventoryItem(inventoryItem).then(
@@ -1092,8 +1064,6 @@ class CInventoryController extends GetxController {
               element.dateAdded,
               element.lastModified,
               element.expiryDate,
-              element.isSynced,
-              element.syncAction,
             );
 
             // -- save imported data to local sqflite database --
@@ -1129,53 +1099,51 @@ class CInventoryController extends GetxController {
     }
   }
 
-  Future syncInvUpdatesToCloud() async {
-    await fetchUserInventoryItems();
+  // Future syncInvUpdatesToCloud() async {
+  //   await fetchUserInventoryItems();
 
-    // -- check internet connectivity
-    final isConnectedToInternet = await CNetworkManager.instance.isConnected();
+  //   // -- check internet connectivity
+  //   final isConnectedToInternet = await CNetworkManager.instance.isConnected();
 
-    if (isConnectedToInternet) {
-      if (unSyncedUpdates.isNotEmpty) {
-        for (var element in unSyncedUpdates) {
-          final invUpdateItem = CInventoryModel.withID(
-            element.productId,
-            element.userId,
-            element.userEmail,
-            element.userName,
-            element.pCode,
-            element.name,
-            element.markedAsFavorite,
-            element.calibration,
-            element.quantity,
-            element.qtySold,
-            element.qtyRefunded,
-            element.buyingPrice,
-            element.unitBp,
-            element.unitSellingPrice,
-            element.lowStockNotifierLimit,
-            element.supplierName,
-            element.supplierContacts,
-            element.dateAdded,
-            element.lastModified,
-            element.expiryDate,
-            1,
-            'none',
-          );
+  //   if (isConnectedToInternet) {
+  //     if (unSyncedUpdates.isNotEmpty) {
+  //       for (var element in unSyncedUpdates) {
+  //         final invUpdateItem = CInventoryModel.withID(
+  //           element.productId,
+  //           element.userId,
+  //           element.userEmail,
+  //           element.userName,
+  //           element.pCode,
+  //           element.name,
+  //           element.markedAsFavorite,
+  //           element.calibration,
+  //           element.quantity,
+  //           element.qtySold,
+  //           element.qtyRefunded,
+  //           element.buyingPrice,
+  //           element.unitBp,
+  //           element.unitSellingPrice,
+  //           element.lowStockNotifierLimit,
+  //           element.supplierName,
+  //           element.supplierContacts,
+  //           element.dateAdded,
+  //           element.lastModified,
+  //           element.expiryDate,
+  //         );
 
-          await StoreSheetsApi.updateInvDataNoDeletions(
-            invUpdateItem.productId!,
-            invUpdateItem.toMap(),
-          ).then((result) {
-            if (result) {
-              dbHelper.updateInventoryItem(invUpdateItem);
-              fetchUserInventoryItems();
-            }
-          });
-        }
-      }
-    }
-  }
+  //         await StoreSheetsApi.updateInvDataNoDeletions(
+  //           invUpdateItem.productId!,
+  //           invUpdateItem.toMap(),
+  //         ).then((result) {
+  //           if (result) {
+  //             dbHelper.updateInventoryItem(invUpdateItem);
+  //             fetchUserInventoryItems();
+  //           }
+  //         });
+  //       }
+  //     }
+  //   }
+  // }
 
   /// -- compute low stock threshold for alerts --
   void computeLowStockThreshold(double qty) {
@@ -1607,8 +1575,6 @@ class CInventoryController extends GetxController {
           '',
           '',
           '',
-          '',
-          0,
           '',
         ),
         true,

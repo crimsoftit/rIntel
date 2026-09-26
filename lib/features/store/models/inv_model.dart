@@ -29,9 +29,6 @@ class CInventoryModel extends Equatable {
   String _dateAdded = "";
   String _lastModified = "";
   String _expiryDate = "";
-  int _isSynced = 0;
-  String _syncAction = "";
-
   CInventoryModel(
     //this._productId,
     this._userId,
@@ -53,8 +50,6 @@ class CInventoryModel extends Equatable {
     this._dateAdded,
     this._lastModified,
     this._expiryDate,
-    this._isSynced,
-    this._syncAction,
   );
 
   CInventoryModel.withID(
@@ -78,8 +73,6 @@ class CInventoryModel extends Equatable {
     this._dateAdded,
     this._lastModified,
     this._expiryDate,
-    this._isSynced,
-    this._syncAction,
   );
 
   static CInventoryModel empty() {
@@ -102,8 +95,6 @@ class CInventoryModel extends Equatable {
       '',
       '',
       '',
-      '',
-      0,
       '',
     );
   }
@@ -134,8 +125,6 @@ class CInventoryModel extends Equatable {
   String get dateAdded => _dateAdded;
   String get lastModified => _lastModified;
   String get expiryDate => _expiryDate;
-  int get isSynced => _isSynced;
-  String get syncAction => _syncAction;
 
   set userId(String newUid) {
     _userId = newUid;
@@ -219,14 +208,6 @@ class CInventoryModel extends Equatable {
     _expiryDate = newExpiryDate;
   }
 
-  set isSynced(int syncState) {
-    _isSynced = syncState;
-  }
-
-  set syncAction(String newSyncAction) {
-    _syncAction = newSyncAction;
-  }
-
   // convert an InventoryModel object into a Map object
   Map<String, dynamic> toMap() {
     var map = <String, dynamic>{};
@@ -257,9 +238,6 @@ class CInventoryModel extends Equatable {
     map['dateAdded'] = _dateAdded;
     map['lastModified'] = _lastModified;
     map['expiryDate'] = _expiryDate;
-
-    map['isSynced'] = _isSynced;
-    map['syncAction'] = _syncAction;
 
     return map;
   }
@@ -293,8 +271,6 @@ class CInventoryModel extends Equatable {
       invData['dateAdded'],
       invData['lastModified'],
       invData['expiryDate'],
-      invData['isSynced'],
-      invData['syncAction'],
     );
   }
 
@@ -324,9 +300,6 @@ class CInventoryModel extends Equatable {
     _dateAdded = map['dateAdded'];
     _lastModified = map['lastModified'];
     _expiryDate = map['expiryDate'];
-
-    _isSynced = map['isSynced'];
-    _syncAction = map['syncAction'];
   }
 
   // extract a CInventoryModel object from a GSheet Map object
@@ -352,13 +325,10 @@ class CInventoryModel extends Equatable {
       json[InvSheetFields.dateAdded],
       json[InvSheetFields.lastModified],
       json[InvSheetFields.expiryDate],
-      jsonDecode(json[InvSheetFields.isSynced]),
-      json[InvSheetFields.syncAction],
     );
   }
 
   @override
-  
   List<Object?> get props => [
     productId,
     userId,
@@ -380,7 +350,5 @@ class CInventoryModel extends Equatable {
     dateAdded,
     lastModified,
     expiryDate,
-    isSynced,
-    syncAction,
   ];
 }

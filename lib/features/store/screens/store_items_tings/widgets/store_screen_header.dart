@@ -68,9 +68,7 @@ class CStoreScreenHeader extends StatelessWidget {
                 //   ),
                 // ),
                 forStoreScreen
-                    ? invController.unSyncedAppends.isEmpty &&
-                              invController.unSyncedUpdates.isEmpty &&
-                              txnsController.unsyncedTxnAppends.isEmpty &&
+                    ? txnsController.unsyncedTxnAppends.isEmpty &&
                               txnsController.unsyncedTxnUpdates.isEmpty
                           ? Icon(
                               Iconsax.cloud_add,
@@ -87,11 +85,7 @@ class CStoreScreenHeader extends StatelessWidget {
                           : FloatingActionButton(
                               elevation: 0, // -- removes shadow
                               onPressed:
-                                  invController.unSyncedAppends.isEmpty &&
-                                      invController.unSyncedUpdates.isEmpty &&
-                                      txnsController
-                                          .unsyncedTxnAppends
-                                          .isEmpty &&
+                                  txnsController.unsyncedTxnAppends.isEmpty &&
                                       txnsController
                                           .unsyncedTxnUpdates
                                           .isEmpty &&

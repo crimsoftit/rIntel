@@ -78,9 +78,7 @@ class DbHelper extends GetxController {
             supplierContacts TEXT NOT NULL,
             dateAdded CHAR(30) NOT NULL,
             lastModified CHAR(30) NOT NULL,
-            expiryDate CHAR(30) NOT NULL,
-            isSynced INTEGER NOT NULL,
-            syncAction TEXT NOT NULL
+            expiryDate CHAR(30) NOT NULL
             )
           ''');
 
@@ -235,8 +233,6 @@ class DbHelper extends GetxController {
       'added: 03/03/2025',
       clock.now().toString(),
       'expires: 13/12/2025',
-      1,
-      'none',
     );
 
     await _db!.execute('INSERT INTO $invTable VALUES ($invItem)');
@@ -410,8 +406,6 @@ class DbHelper extends GetxController {
         maps[i]['dateAdded'],
         maps[i]['lastModified'],
         maps[i]['expiryDate'],
-        maps[i]['isSynced'],
-        maps[i]['syncAction'],
       );
     });
   }
@@ -454,17 +448,18 @@ class DbHelper extends GetxController {
   }
 
   /// -- update inventory quantities on checkout --
-  Future<int> updateInvOnCheckout(CInventoryModel inventory) async {
+  Future<int> updateInvQties(CInventoryModel inventory) async {
     try {
       final db = _db;
       int updateResult = await db!.rawUpdate(
         '''
           UPDATE $invTable
-          SET quantity = ?, qtySold = ?
+          SET quantity = ?, qtyRefunded = ?, qtySold = ?
           WHERE productId = ?
         ''',
         [
           inventory.quantity,
+          inventory.qtyRefunded,
           inventory.qtySold,
           inventory.productId,
         ],

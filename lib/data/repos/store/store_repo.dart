@@ -158,16 +158,25 @@ class CStoreRepo extends GetxController {
   }
 
   /// -- update inventory quantities upon checkout --
-  Future<void> updateInvCloudOnCheckout(CInventoryModel invItem) async {
+  Future<void> updateInvCloudQties(
+    CInventoryModel invItem,
+    String event,
+  ) async {
     try {
       firestoreDb
           .collection("inventory")
           .doc(invItem.productId.toString())
           .update(
-            {
-              'quantity': invItem.quantity,
-              'qtySold': invItem.qtySold,
-            },
+            event == 'checkout'
+                ? {
+                    'quantity': invItem.quantity,
+                    'qtySold': invItem.qtySold,
+                  }
+                : {
+                    'quantity': invItem.quantity,
+                    'qtySold': invItem.qtySold,
+                    'qtyRefunded': invItem.qtyRefunded,
+                  },
           );
     } catch (e) {
       if (kDebugMode) {

@@ -244,11 +244,11 @@ class CCheckoutController extends GetxController {
                   invItem.quantity -= cartItem.quantity;
                 }
 
-                await dbHelper.updateInvOnCheckout(invItem).then(
+                await dbHelper.updateInvQties(invItem).then(
                   (result) {
                     if (result == 1) {
                       // -- update inventory data on cloud firestore --
-                      storeRepo.updateInvCloudOnCheckout(invItem);
+                      storeRepo.updateInvCloudQties(invItem, 'checkout');
                     } else {
                       if (kDebugMode) {
                         CPopupSnackBar.warningSnackBar(
@@ -554,8 +554,6 @@ class CCheckoutController extends GetxController {
                 '',
                 '',
                 '',
-                '',
-                0,
                 '',
               ),
               true,

@@ -933,7 +933,6 @@ class CTxnsController extends GetxController {
                           invItem.qtySold -= double.parse(
                             txtRefundQty.text.trim(),
                           );
-                          invItem.syncAction = 'none';
 
                           parentTxn.totalAmount -=
                               double.parse(txtRefundQty.text.trim()) *
@@ -959,8 +958,9 @@ class CTxnsController extends GetxController {
                                           .then(
                                             (_) {
                                               // -- update inventory cloud data --
-                                              storeRepo.updateInvCloudData(
+                                              storeRepo.updateInvCloudQties(
                                                 invItem,
+                                                'refund',
                                               );
                                             },
                                           );
