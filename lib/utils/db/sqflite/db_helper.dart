@@ -437,7 +437,52 @@ class DbHelper extends GetxController {
         CPopupSnackBar.errorSnackBar(
           Get.overlayContext!,
 
+          message: e.toString(),
+          title: 'Oh Snap!',
+        );
+      } else {
+        CPopupSnackBar.errorSnackBar(
+          Get.overlayContext!,
+
           message: 'error updating inventory item on device storage',
+          title: 'Oh Snap!',
+        );
+      }
+
+      rethrow;
+    }
+  }
+
+  /// -- update inventory quantities on checkout --
+  Future<int> updateInvOnCheckout(CInventoryModel inventory) async {
+    try {
+      final db = _db;
+      int updateResult = await db!.rawUpdate(
+        '''
+          UPDATE $invTable
+          SET quantity = ?, qtySold = ?
+          WHERE productId = ?
+        ''',
+        [
+          inventory.quantity,
+          inventory.qtySold,
+          inventory.productId,
+        ],
+      );
+      return updateResult;
+    } catch (e) {
+      if (kDebugMode) {
+        CPopupSnackBar.errorSnackBar(
+          Get.overlayContext!,
+
+          message: e.toString(),
+          title: 'Oh Snap!',
+        );
+      } else {
+        CPopupSnackBar.errorSnackBar(
+          Get.overlayContext!,
+
+          message: 'error updating inventory quantities on checkout',
           title: 'Oh Snap!',
         );
       }

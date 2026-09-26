@@ -31,9 +31,16 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:iconsax/iconsax.dart';
 
-class CCheckoutScreen extends StatelessWidget {
+class CCheckoutScreen extends StatefulWidget {
   const CCheckoutScreen({super.key});
 
+  @override
+  State<CCheckoutScreen> createState() => _CCheckoutScreenState();
+}
+
+class _CCheckoutScreenState extends State<CCheckoutScreen> {
+  final innerScrollController = ScrollController();
+  final outerScrollController = ScrollController();
   @override
   Widget build(BuildContext context) {
     final cartController = Get.put(CCartController());
@@ -42,7 +49,7 @@ class CCheckoutScreen extends StatelessWidget {
     final invController = Get.put(CInventoryController());
 
     final navController = Get.put(CNavMenuController());
-    final scrollController = ScrollController();
+
     final searchBarController = Get.put(CSearchBarController());
     final txnsController = Get.put(CTxnsController());
     final userController = Get.put(CUserController());
@@ -99,6 +106,7 @@ class CCheckoutScreen extends StatelessWidget {
           alpha: 0.2,
         ),
         body: SingleChildScrollView(
+          controller: outerScrollController,
           physics: AlwaysScrollableScrollPhysics(),
           child: Padding(
             padding: const EdgeInsets.only(
@@ -192,10 +200,10 @@ class CCheckoutScreen extends StatelessWidget {
                                 bgColor: CColors.transparent,
                                 child: Scrollbar(
                                   thumbVisibility: true,
-                                  controller: scrollController,
+                                  controller: innerScrollController,
                                   child: ListView.separated(
                                     shrinkWrap: true,
-                                    controller: scrollController,
+                                    controller: innerScrollController,
                                     itemCount: cartController.cartItems.length,
                                     separatorBuilder: (_, _) {
                                       return SizedBox(
@@ -778,8 +786,13 @@ class CCheckoutScreen extends StatelessWidget {
 
                             // -- billing section --
                             CRoundedContainer(
-                              padding: const EdgeInsets.all(
-                                CSizes.md / 4,
+                              padding: EdgeInsets.only(
+                                bottom: MediaQuery.of(
+                                  context,
+                                ).viewInsets.bottom,
+                                left: CSizes.md / 4,
+                                right: CSizes.md / 4,
+                                top: CSizes.md / 4,
                               ),
                               showBorder: true,
                               bgColor: isDarkTheme
@@ -878,6 +891,7 @@ class CCheckoutScreen extends StatelessWidget {
                                                   ),
                                                 ),
                                                 customerDetsWidget(
+                                                  context,
                                                   checkoutController,
                                                 ),
                                                 // -- toggle entry for customer details --
@@ -901,6 +915,9 @@ class CCheckoutScreen extends StatelessWidget {
                                                             .toggleCustomerDetsFieldsVisibility(
                                                               value,
                                                             );
+                                                        if (value) {
+                                                          _scrollToBottom();
+                                                        }
                                                       },
                                                       switchValue:
                                                           checkoutController
@@ -956,65 +973,74 @@ class CCheckoutScreen extends StatelessWidget {
         ),
 
         /// -- bottom navigation bar --
-        bottomNavigationBar: Obx(() {
-          if (cartController.cartItems.isNotEmpty) {
-            return Padding(
-              padding: const EdgeInsets.all(8.0),
-              child:
-                  /// -- button to complete/suspend txn --
-                  SizedBox(
-                    width: CHelperFunctions.screenWidth() * 0.98,
-                    child: ElevatedButton.icon(
-                      onPressed: () {
-                        checkoutController.onCheckoutBtnPressed();
-                      },
-                      label: SizedBox(
-                        height: 38.2,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text(
-                              'CHECKOUT',
-                              style: Theme.of(context).textTheme.bodyMedium!
-                                  .apply(
-                                    color: CColors.white,
-                                    fontSizeFactor: 0.88,
-                                    fontWeightDelta: 1,
-                                  ),
-                            ),
-                            Text(
-                              '$currencySymbol.${cartController.totalCartPrice.value.toStringAsFixed(2)}',
-                              style: Theme.of(context).textTheme.bodyMedium!
-                                  .apply(
-                                    color: CColors.white,
-                                    fontSizeFactor: 1.10,
-                                    fontWeightDelta: 2,
-                                  ),
-                            ),
-                          ],
+        bottomNavigationBar: Obx(
+          () {
+            if (cartController.cartItems.isNotEmpty) {
+              return Padding(
+                padding: const EdgeInsets.all(8.0),
+                child:
+                    /// -- button to complete/suspend txn --
+                    SizedBox(
+                      width: CHelperFunctions.screenWidth() * 0.98,
+                      child: ElevatedButton.icon(
+                        onPressed: () {
+                          checkoutController.onCheckoutBtnPressed();
+                        },
+                        label: SizedBox(
+                          height: 38.2,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                'CHECKOUT',
+                                style: Theme.of(context).textTheme.bodyMedium!
+                                    .apply(
+                                      color: CColors.white,
+                                      fontSizeFactor: 0.88,
+                                      fontWeightDelta: 1,
+                                    ),
+                              ),
+                              Text(
+                                '$currencySymbol.${cartController.totalCartPrice.value.toStringAsFixed(2)}',
+                                style: Theme.of(context).textTheme.bodyMedium!
+                                    .apply(
+                                      color: CColors.white,
+                                      fontSizeFactor: 1.10,
+                                      fontWeightDelta: 2,
+                                    ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        icon: Icon(
+                          Iconsax.wallet_check,
+                          color: CColors.white,
                         ),
                       ),
-                      icon: Icon(Iconsax.wallet_check, color: CColors.white),
                     ),
-                  ),
-            );
-          } else {
-            return SizedBox.shrink();
-          }
-        }),
+              );
+            } else {
+              return SizedBox.shrink();
+            }
+          },
+        ),
       ),
     );
   }
 
-  Visibility customerDetsWidget(CCheckoutController checkoutController) {
+  Widget customerDetsWidget(
+    BuildContext context,
+    CCheckoutController checkoutController,
+  ) {
     return Visibility(
       visible: checkoutController.includeCustomerDetails.value,
       child: CRoundedContainer(
         bgColor: CColors.transparent,
 
-        padding: const EdgeInsets.only(
+        padding: EdgeInsets.only(
+          bottom: MediaQuery.of(context).viewInsets.bottom,
           left: 20.0,
           top: 10.0,
         ),
@@ -1022,11 +1048,12 @@ class CCheckoutScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             ContactsSearchTypeaheadField(
+              autofocus: true,
               fieldDecoration: InputDecoration(
                 labelText: "Customer's name",
                 enabledBorder: UnderlineInputBorder(
                   borderSide: BorderSide(
-                    color: Colors.grey,
+                    color: CColors.rBrown,
                     width: 1.0,
                   ),
                 ),
@@ -1035,7 +1062,7 @@ class CCheckoutScreen extends StatelessWidget {
                 ),
                 focusedBorder: UnderlineInputBorder(
                   borderSide: BorderSide(
-                    color: Colors.blue,
+                    color: CColors.rBrown,
                     width: 2.0,
                   ),
                 ),
@@ -1059,13 +1086,13 @@ class CCheckoutScreen extends StatelessWidget {
                 labelText: 'Phone or email (optional)',
                 enabledBorder: UnderlineInputBorder(
                   borderSide: BorderSide(
-                    color: Colors.grey,
+                    color: CColors.rBrown,
                     width: 1.0,
                   ),
                 ),
                 focusedBorder: UnderlineInputBorder(
                   borderSide: BorderSide(
-                    color: Colors.blue,
+                    color: CColors.rBrown,
                     width: 2.0,
                   ),
                 ),
@@ -1088,5 +1115,24 @@ class CCheckoutScreen extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  void _scrollToBottom() {
+    if (outerScrollController.hasClients) {
+      outerScrollController.animateTo(
+        outerScrollController.position.maxScrollExtent,
+        duration: const Duration(
+          seconds: 2,
+        ),
+        curve: Curves.bounceInOut,
+      );
+    }
+  }
+
+  @override
+  void dispose() {
+    innerScrollController.dispose();
+    outerScrollController.dispose();
+    super.dispose();
   }
 }

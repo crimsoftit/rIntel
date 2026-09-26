@@ -14,8 +14,9 @@ import 'package:iconsax/iconsax.dart';
 class ContactsSearchTypeaheadField extends StatelessWidget {
   const ContactsSearchTypeaheadField({
     super.key,
-    this.contentPadding,
+    this.autofocus = false,
     this.boxRadius,
+    this.contentPadding,
     this.fieldDecoration,
     this.fieldHeight,
     this.fieldLabelStyle,
@@ -41,7 +42,7 @@ class ContactsSearchTypeaheadField extends StatelessWidget {
     required this.typeAheadFieldController,
   });
 
-  final bool includePrefixIcon, includeAvatarOnSuggestion;
+  final bool autofocus, includePrefixIcon, includeAvatarOnSuggestion;
   final Color? fillColor, focusedBorderColor;
   final double? boxRadius, fieldHeight, fieldRadius, minHeight;
   final EdgeInsetsGeometry? contentPadding;
@@ -69,7 +70,7 @@ class ContactsSearchTypeaheadField extends StatelessWidget {
     return TypeAheadField<CContactsModel>(
       builder: (context, controller, focusNode) {
         return TextFormField(
-          autofocus: false,
+          autofocus: autofocus,
           autovalidateMode: AutovalidateMode.onUserInteraction,
           controller: controller,
           decoration:

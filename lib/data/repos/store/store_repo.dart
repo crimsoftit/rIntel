@@ -157,6 +157,38 @@ class CStoreRepo extends GetxController {
     }
   }
 
+  /// -- update inventory quantities upon checkout --
+  Future<void> updateInvCloudOnCheckout(CInventoryModel invItem) async {
+    try {
+      firestoreDb
+          .collection("inventory")
+          .doc(invItem.productId.toString())
+          .update(
+            {
+              'quantity': invItem.quantity,
+              'qtySold': invItem.qtySold,
+            },
+          );
+    } catch (e) {
+      if (kDebugMode) {
+        CPopupSnackBar.errorSnackBar(
+          Get.overlayContext!,
+          message: e.toString(),
+          title: "error updating inventory details",
+        );
+      } else {
+        CPopupSnackBar.errorSnackBar(
+          Get.overlayContext!,
+          message:
+              'an unknown error occurred while updating inventory details on the cloud! please try again later...',
+          title: "error updating inventory details",
+        );
+      }
+
+      rethrow;
+    }
+  }
+
   /// -- update inventory data on the cloud --
   Future<void> updateInvCloudData(CInventoryModel invItem) async {
     try {
@@ -219,8 +251,6 @@ class CStoreRepo extends GetxController {
           title: "error updating inventory details",
         );
       }
-
-      //throw 'something went wrong! please try again!';
 
       rethrow;
     }

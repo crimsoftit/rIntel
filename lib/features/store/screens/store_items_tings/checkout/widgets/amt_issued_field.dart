@@ -84,7 +84,7 @@ class CAmountTxtField extends StatelessWidget {
           fontWeight: FontWeight.normal,
         ),
         onChanged: onValueChanged,
-        textAlign: TextAlign.center,
+        textAlign: TextAlign.start,
       ),
     );
   }
