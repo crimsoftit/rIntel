@@ -319,6 +319,10 @@ flutter:
     - family: Signika
       fonts:
         - asset: assets/fonts/Signika/static/Signika-Light.ttf
+    - family: Saira
+      fonts:
+        - asset: assets/fonts/Saira/Saira-VariableFont_wdth,wght.ttf
+        - asset: assets/fonts/Saira/Saira-VariableFont_wdth,wght.ttf
     - family: Poppins
       fonts:
         - asset: assets/fonts/Poppins-Light.ttf

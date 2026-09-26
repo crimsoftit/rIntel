@@ -172,6 +172,7 @@ class CUserController extends GetxController {
       await auth.deleteAccount();
       CFullScreenLoader.stopLoading();
       CPopupSnackBar.successSnackBar(
+        Get.overlayContext!,
         title: 'Account deleted',
         message: 'your account was successfully deleted.',
       );
@@ -269,6 +270,7 @@ class CUserController extends GetxController {
         user.refresh();
 
         CPopupSnackBar.successSnackBar(
+          Get.overlayContext!,
           title: 'update successful!',
           message: 'your profile picture was updated successfully!',
         );

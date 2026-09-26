@@ -583,13 +583,98 @@ class CStoreRepo extends GetxController {
     }
   }
 
+  /// -- cloud update txn totals and timestamp upon refund --
+  Future<void> cloudUpdateTxnTotals(CTxn txn) async {
+    try {
+      firestoreDb
+          .collection('txns')
+          .doc(
+            txn.txnId.toString(),
+          )
+          .update(
+            {
+              'lastModified': txn.lastModified,
+              'totalAmount': txn.totalAmount,
+            },
+          );
+    } on FirebaseException catch (e) {
+      if (kDebugMode) {
+        CPopupSnackBar.errorSnackBar(
+          Get.overlayContext!,
+          title: 'firebase cloud error!',
+          message: 'unable to update cloud txn details: ${e.code}',
+        );
+      } else {
+        CPopupSnackBar.errorSnackBar(
+          Get.overlayContext!,
+          title: 'Oh Snap!',
+          message:
+              'an unknown error occurred while updating cloud txn details! please try again later',
+        );
+      }
+      rethrow;
+    } on FormatException catch (e) {
+      if (kDebugMode) {
+        CPopupSnackBar.errorSnackBar(
+          Get.overlayContext!,
+          title: 'cloud txn details threw a format error!',
+          message: e.message,
+        );
+      } else {
+        CPopupSnackBar.errorSnackBar(
+          Get.overlayContext!,
+          title: 'Oh Snap!',
+          message:
+              'an unknown error occurred while updating cloud txn details! please try again later',
+        );
+      }
+      rethrow;
+    } on PlatformException catch (e) {
+      CPopupSnackBar.errorSnackBar(
+        Get.overlayContext!,
+        message: CPlatformExceptions(e.code).message,
+        title: "txn cloud data update threw a platform exception error",
+      );
+
+      rethrow;
+    } catch (e) {
+      if (kDebugMode) {
+        CPopupSnackBar.errorSnackBar(
+          Get.overlayContext!,
+          message: e.toString(),
+          title: "error updating txn details",
+        );
+      } else {
+        CPopupSnackBar.errorSnackBar(
+          Get.overlayContext!,
+          message:
+              'an unknown error occurred while updating txn details on the cloud! please try again later...',
+          title: "error updating txn details",
+        );
+      }
+      rethrow;
+    }
+  }
+
   /// -- update specific txn --
-  Future<void> cloudUpdateTxn(CTxn txn) async {
+  Future<void> cloudUpdateTxn(CTxn txn, String event) async {
     try {
       firestoreDb
           .collection('txns')
           .doc(txn.txnId.toString())
-          .update(txn.toMap());
+          .update(
+            event == 'invoice payment'
+                ? {
+                    'amountPaid': txn.amountPaid,
+                    'lastModified': txn.lastModified,
+                    'paymentMethod': txn.paymentMethod,
+                    'txnStatus': txn.txnStatus,
+                  }
+                : {
+                    'customerName': txn.customerName,
+                    'customerContacts': txn.customerContacts,
+                  },
+          );
     } on FirebaseException catch (e) {
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
@@ -650,12 +735,22 @@ class CStoreRepo extends GetxController {
   }
 
   /// -- update a specific txn item --
-  Future<void> cloudUpdateSale(CSoldItemModel soldItem) async {
+  Future<void> cloudUpdateSale(CSoldItemModel soldItem, String event) async {
     try {
       firestoreDb
           .collection('sales')
           .doc(soldItem.soldItemId.toString())
-          .update(soldItem.toMap());
+          .update(
+            event == 'rename'
+                ? {
+                    'productName': soldItem.productName,
+                  }
+                : {
+                    'quantity': soldItem.quantity,
+                    'qtyRefunded': soldItem.qtyRefunded,
+                    'refundReason': soldItem.refundReason,
+                  },
+          );
     } on FirebaseException catch (e) {
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(

@@ -23,10 +23,8 @@ class CExpansionTile extends StatelessWidget {
     this.btn2Icon,
     this.btn2NavAction,
     this.includeRefundBtn = false,
-    this.isSynced,
     this.refundBtnAction,
     this.refundBtn,
-    this.syncAction,
     this.txnStatus,
   });
 
@@ -40,8 +38,7 @@ class CExpansionTile extends StatelessWidget {
   final String subTitleTxt2Item2;
   final String subTitleTxt3Item1;
   final String subTitleTxt3Item2;
-  final String? isSynced;
-  final String? syncAction, txnStatus;
+  final String? txnStatus;
   final String btn1Txt, btn2Txt;
   final VoidCallback? btn1NavAction, btn2NavAction, refundBtnAction;
   final Widget? refundBtn;
@@ -107,7 +104,7 @@ class CExpansionTile extends StatelessWidget {
               ),
             ),
             Text(
-              '$isSynced $syncAction  $txnStatus',
+                txnStatus!,
               style: Theme.of(context).textTheme.labelSmall!.apply(
                 color: isDarkTheme
                     ? CColors.white

@@ -10,7 +10,6 @@ import 'package:rintel/common/widgets/flushbars/flushbars.dart';
 import 'package:rintel/common/widgets/txt_fields/contacts_search_type_ahead.dart';
 import 'package:rintel/data/repos/user/contacts_repo.dart';
 import 'package:rintel/features/personalization/controllers/user_controller.dart';
-import 'package:rintel/features/personalization/models/contacts_del_model.dart';
 import 'package:rintel/features/personalization/models/contacts_model.dart';
 import 'package:rintel/features/personalization/screens/contacts/contact_details/widgets/add_update_contact_form.dart';
 import 'package:rintel/features/store/controllers/inv_controller.dart';
@@ -73,8 +72,6 @@ class CContactsController extends GetxController {
   final RxDouble contactInvoicedPurchasesValue = 0.0.obs;
   final RxDouble contactSuppliesValue = 0.0.obs;
   final RxDouble contactTotalPurchasesValue = 0.0.obs;
-
-  final RxList<CContactsDelModel> cloudDelContacts = <CContactsDelModel>[].obs;
 
   final RxList<CContactsModel> allCloudContacts = <CContactsModel>[].obs;
   final RxList<CContactsModel> userCloudContacts = <CContactsModel>[].obs;

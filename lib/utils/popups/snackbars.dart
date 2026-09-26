@@ -25,16 +25,26 @@ class CPopupSnackBar extends GetxController {
     ScaffoldMessenger.of(Get.context!).showSnackBar(
       SnackBar(
         elevation: 0,
-        duration: const Duration(seconds: 4),
+        duration: const Duration(
+          seconds: 4,
+        ),
         backgroundColor: Colors.transparent,
         content: CRoundedContainer(
           bgColor: isDarkTheme
-              ? CColors.darkGrey.withValues(alpha: 0.9)
-              : CColors.grey.withValues(alpha: 0.9),
+              ? CColors.darkGrey.withValues(
+                  alpha: 0.9,
+                )
+              : CColors.grey.withValues(
+                  alpha: 0.9,
+                ),
           borderRadius: 20.0,
-          padding: const EdgeInsets.all(10.0),
+          padding: const EdgeInsets.all(
+            10.0,
+          ),
 
-          margin: const EdgeInsets.symmetric(horizontal: 20.0),
+          margin: const EdgeInsets.symmetric(
+            horizontal: 20.0,
+          ),
 
           child: Center(
             child: forInternetConnectivityStatus
@@ -80,22 +90,72 @@ class CPopupSnackBar extends GetxController {
     );
   }
 
-  static void successSnackBar({
+  // static void successSnackBar({
+  //   required String title,
+  //   String message = '',
+  //   duration = 5,
+  // }) {
+  //   Get.snackbar(
+  //     title,
+  //     message,
+  //     isDismissible: true,
+  //     shouldIconPulse: true,
+  //     colorText: CColors.white,
+  //     backgroundColor: Colors.green,
+  //     snackPosition: SnackPosition.BOTTOM,
+  //     duration: Duration(seconds: duration),
+  //     margin: const EdgeInsets.all(10.0),
+  //     icon: const Icon(Iconsax.check, color: CColors.white),
+  //   );
+  // }
+
+  static void successSnackBar(
+    BuildContext context, {
     required String title,
     String message = '',
     duration = 5,
   }) {
-    Get.snackbar(
-      title,
-      message,
-      isDismissible: true,
-      shouldIconPulse: true,
-      colorText: CColors.white,
-      backgroundColor: Colors.green,
-      snackPosition: SnackPosition.BOTTOM,
-      duration: Duration(seconds: duration),
-      margin: const EdgeInsets.all(10.0),
-      icon: const Icon(Iconsax.check, color: CColors.white),
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Icon(
+              Iconsax.check,
+              color: CColors.white,
+            ),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: Theme.of(context).textTheme.titleMedium!.apply(
+                    color: CColors.white,
+                    fontFamily: 'Signika',
+                  ),
+                ),
+                Text(
+                  message,
+                  style: Theme.of(context).textTheme.labelMedium!.apply(
+                    color: CColors.white,
+                    fontFamily: 'Saira',
+                    fontStyle: FontStyle.italic,
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+        backgroundColor: Colors.green,
+        behavior: SnackBarBehavior.floating,
+        duration: const Duration(
+          seconds: 6,
+        ),
+
+        margin: const EdgeInsets.all(
+          20.0,
+        ),
+      ),
     );
   }
 

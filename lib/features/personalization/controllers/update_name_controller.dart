@@ -68,6 +68,7 @@ class CUpdateNameController extends GetxController {
 
       // -- show success message
       CPopupSnackBar.successSnackBar(
+        Get.overlayContext!,
         title: 'update successful!',
         message: 'your name was updated successfully.',
       );

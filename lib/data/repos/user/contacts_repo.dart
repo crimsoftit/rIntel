@@ -123,6 +123,7 @@ class CContactsRepo extends GetxController {
 
       if (kDebugMode) {
         CPopupSnackBar.successSnackBar(
+          Get.overlayContext!,
           message: 'your contacts were successfully backed up to cloud',
           title: "contacts successfully backed up to cloud",
         );

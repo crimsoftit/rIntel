@@ -1,5 +1,4 @@
 import 'package:rintel/features/personalization/controllers/user_controller.dart';
-import 'package:rintel/features/personalization/models/contacts_del_model.dart';
 import 'package:rintel/features/personalization/models/contacts_model.dart';
 import 'package:rintel/features/personalization/models/notification_model.dart';
 import 'package:rintel/features/store/models/best_sellers_model.dart';
@@ -1424,36 +1423,6 @@ class DbHelper extends GetxController {
           Get.overlayContext!,
           title: 'delete error',
           message: 'error deleting contact!',
-        );
-      }
-      rethrow;
-    }
-  }
-
-  /// -- update synced contact deletions from local db by deleting them --
-  Future<int> locallyDeleteSyncedContactDeletions(
-    CContactsDelModel contactDelItem,
-  ) async {
-    try {
-      int contactDelResult = await _db!.delete(
-        'contactDelsForSyncTable',
-        where: 'contactId = ?',
-        whereArgs: [contactDelItem.contactId],
-      );
-      return contactDelResult;
-    } catch (e) {
-      if (kDebugMode) {
-        CPopupSnackBar.errorSnackBar(
-          Get.overlayContext!,
-          message: 'error updating cloud deletion contacts locally: $e',
-          title: 'error updating cloud deletion contacts locally! ',
-        );
-      } else {
-        CPopupSnackBar.errorSnackBar(
-          Get.overlayContext!,
-          message:
-              'An unknown error occurred while fetching cloud deletion contacts! Please try again later...',
-          title: 'error fetching cloud deletion contacts!',
         );
       }
       rethrow;

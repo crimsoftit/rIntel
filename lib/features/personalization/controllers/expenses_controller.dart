@@ -269,7 +269,7 @@ class CExpensesController extends GetxController {
                             alpha: .1,
                           ),
                           filled: true,
-                          hintText: "Any remarks? (optional)",
+                          hintText: "Any remarks?",
                         ),
                       ),
                     ],

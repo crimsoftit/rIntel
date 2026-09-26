@@ -33,12 +33,16 @@ class CUpdateName extends StatelessWidget {
           autoImplyLeading: autoImplyLeading,
           displayMenuIcon: displayMenuIcon,
         ),
-        backgroundColor: CColors.rBrown.withValues(alpha: 0.2),
+        backgroundColor: CColors.rBrown.withValues(
+          alpha: 0.2,
+        ),
 
         /// -- body --
         body: SingleChildScrollView(
           child: Padding(
-            padding: const EdgeInsets.all(CSizes.defaultSpace),
+            padding: const EdgeInsets.all(
+              CSizes.defaultSpace,
+            ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
@@ -46,15 +50,21 @@ class CUpdateName extends StatelessWidget {
                 const SizedBox(
                   child: Image(
                     height: 90.0,
-                    image: AssetImage(CImages.darkAppLogo),
+                    image: AssetImage(
+                      CImages.darkAppLogo,
+                    ),
                   ),
                 ),
-                const SizedBox(height: CSizes.spaceBtnItems),
+                const SizedBox(
+                  height: CSizes.spaceBtnItems,
+                ),
                 Text(
-                  'use your real name for easy verification. this name will appear on several pages...',
+                  'Use your real name for easy verification. This name will appear on several pages...',
                   style: Theme.of(context).textTheme.labelMedium,
                 ),
-                const SizedBox(height: CSizes.spaceBtnSections),
+                const SizedBox(
+                  height: CSizes.spaceBtnSections,
+                ),
 
                 // -- textfield & button --
                 Form(
@@ -74,7 +84,9 @@ class CUpdateName extends StatelessWidget {
                     ],
                   ),
                 ),
-                const SizedBox(height: CSizes.spaceBtnSections / 4),
+                const SizedBox(
+                  height: CSizes.spaceBtnSections / 4,
+                ),
                 Align(
                   alignment: Alignment.bottomRight,
                   child: SizedBox(
@@ -88,33 +100,14 @@ class CUpdateName extends StatelessWidget {
                           editNameController.updateName();
                         }
                       },
-                      label: const Text('SAVE & CONTINUE'),
-                      icon: const Icon(Iconsax.save_2),
+                      label: const Text(
+                        'SAVE & CONTINUE',
+                      ),
+                      icon: const Icon(
+                        Iconsax.save_2,
+                      ),
                     ),
                   ),
-                  // TextButton.icon(
-                  //   icon: Icon(
-                  //     Iconsax.save_add,
-                  //     size: CSizes.iconSm,
-                  //     color: isDarkTheme ? CColors.white : CColors.rBrown,
-                  //   ),
-                  //   onPressed: () async {
-                  //     final internetIsConnected = await CNetworkManager.instance
-                  //         .isConnected();
-                  //     if (internetIsConnected) {
-                  //       bizNameController.updateBizName();
-                  //     } else {
-                  //       CPopupSnackBar.warningSnackBar(
-                  //         title: 'offline',
-                  //         message: 'internet connection required',
-                  //       );
-                  //     }
-                  //   },
-                  //   label: Text(
-                  //     'save & continue',
-                  //     style: Theme.of(context).textTheme.bodyMedium,
-                  //   ),
-                  // ),
                 ),
               ],
             ),

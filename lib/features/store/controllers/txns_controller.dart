@@ -218,7 +218,10 @@ class CTxnsController extends GetxController {
         for (var relatedItem in relatedSoldItems) {
           relatedItem.productName = pName.trim();
 
-          storeRepo.cloudUpdateSale(relatedItem);
+          storeRepo.cloudUpdateSale(
+            relatedItem,
+            'rename',
+          );
         }
         await dbHelper.bulkUpdateSoldItemsWithChunks(relatedSoldItems);
       } else {
@@ -695,7 +698,7 @@ class CTxnsController extends GetxController {
         return Padding(
           padding: MediaQuery.of(context).viewInsets,
           child: CRoundedContainer(
-            height: CHelperFunctions.screenHeight() * 0.38,
+            height: CHelperFunctions.screenHeight() * 0.40,
             padding: const EdgeInsets.all(
               CSizes.lg / 3,
             ),
@@ -732,7 +735,10 @@ class CTxnsController extends GetxController {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      '${CFormatter.formatItemMetrics(refundItem.itemMetrics, qtyAvailable.value)})',
+                      CFormatter.formatItemMetrics(
+                        refundItem.itemMetrics,
+                        qtyAvailable.value,
+                      ),
                     ),
                     const SizedBox(
                       width: CSizes.spaceBtnInputFields,
@@ -806,7 +812,7 @@ class CTxnsController extends GetxController {
                               Iconsax.add_circle,
                               size: CSizes.iconMd,
                             ),
-                            color: CColors.darkGrey,
+                            color: isDarkTheme ? CColors.white : CColors.rBrown,
                             onPressed: () {
                               if (refundQty.value < refundItem.quantity) {
                                 refundQty.value +=
@@ -882,13 +888,15 @@ class CTxnsController extends GetxController {
                     decoration: InputDecoration(
                       // fillColor: CColors.lightGrey,
                       // filled: true,
-                      labelText: 'reason for refund(optional)',
+                      labelText: 'Reason for refund',
                       //labelStyle: textStyle,
                       suffixIcon: const Icon(
                         Iconsax.message,
                       ),
                     ),
-                    maxLines: 1, // marked for observation - could be a textarea
+                    keyboardType: TextInputType.multiline,
+                    maxLines:
+                        null, // marked for observation - could be a textarea
                     style: const TextStyle(
                       fontWeight: FontWeight.normal,
                     ),
@@ -945,11 +953,14 @@ class CTxnsController extends GetxController {
                               .then(
                                 (_) {
                                   // -- update txn details on cloud firestore --
-                                  storeRepo.cloudUpdateTxn(parentTxn);
+                                  storeRepo.cloudUpdateTxnTotals(parentTxn);
                                   dbHelper.updateSoldItemDetails(refundItem).then(
                                     (_) async {
                                       // -- update txn details on cloud firestore --
-                                      storeRepo.cloudUpdateSale(refundItem);
+                                      storeRepo.cloudUpdateSale(
+                                        refundItem,
+                                        'refund',
+                                      );
 
                                       dbHelper
                                           .updateInventoryItem(
@@ -1572,9 +1583,6 @@ class CTxnsController extends GetxController {
                                 );
 
                                 if (txn.amountPaid - txn.totalAmount >= 0) {
-                                  // txn.totalAmount -= double.parse(
-                                  //   txtAmountIssued.text.trim(),
-                                  // );
                                   txn.txnStatus = 'complete';
                                 }
                                 txn.lastModified = DateFormat(
@@ -1594,7 +1602,10 @@ class CTxnsController extends GetxController {
                                     .then(
                                       (result) async {
                                         // -- update txn item details on cloud firestore --
-                                        storeRepo.cloudUpdateTxn(txn);
+                                        storeRepo.cloudUpdateTxn(
+                                          txn,
+                                          'invoice payment',
+                                        );
                                         initializeSalesSummaryValues();
 
                                         resetSalesFields();
@@ -1954,7 +1965,7 @@ class CTxnsController extends GetxController {
           )
           .then(
             (result) {
-              storeRepo.cloudUpdateTxnCustomerDetails(txn);
+              storeRepo.cloudUpdateTxn(txn, 'buyer update');
             },
           );
     } catch (e) {
