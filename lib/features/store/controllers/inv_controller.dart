@@ -1613,7 +1613,7 @@ class CInventoryController extends GetxController {
                       '',
                     ),
                   ) <=
-                  3 &&
+                  4 &&
               CFormatter.computeTimeRangeFromNow(
                     item.expiryDate.replaceAll(
                       '@ ',
@@ -1624,43 +1624,45 @@ class CInventoryController extends GetxController {
         },
       ).toList();
 
-      var payloadData = {
-        'date': DateFormat(
-          'yyyy-MM-dd @ kk:mm',
-        ).format(clock.now()),
-        'notification_body':
-            '${itemsNearingExpiry.first.name.toUpperCase()} expires in 5 days!',
-        'notification_id': itemsNearingExpiry.first.productId.hashCode,
-        'notification_title':
-            '${itemsNearingExpiry.first.name.toUpperCase()} is soon going stale!',
-        'product_id': itemsNearingExpiry.first.productId.toString(),
-      };
+      if (itemsNearingExpiry.isNotEmpty) {
+        var payloadData = {
+          'date': DateFormat(
+            'yyyy-MM-dd @ kk:mm',
+          ).format(clock.now()),
+          'notification_body':
+              '${itemsNearingExpiry.first.name.toUpperCase()} expires in 4 days!',
+          'notification_id': itemsNearingExpiry.first.productId.hashCode,
+          'notification_title':
+              '${itemsNearingExpiry.first.name.toUpperCase()} is soon going stale!',
+          'product_id': itemsNearingExpiry.first.productId.toString(),
+        };
 
-      // -- display basic notification first --
-      CLocalNotificationsController.displaySimpleAlert(
-        body:
-            '${itemsNearingExpiry.first.name.toUpperCase()} expires in 5 days!',
-        title: 'Inventory items are soon going stale!',
-        payload: jsonEncode(payloadData),
-      );
+        // -- display basic notification first --
+        CLocalNotificationsController.displaySimpleAlert(
+          body:
+              '${itemsNearingExpiry.first.name.toUpperCase()} expires in 5 days!',
+          title: 'Inventory items are soon going stale!',
+          payload: jsonEncode(payloadData),
+        );
 
-      var notificationItem = CNotificationsModel(
-        itemsNearingExpiry.first.productId.hashCode,
-        '${itemsNearingExpiry.first.name.toUpperCase()} is soon going stale!',
-        '${itemsNearingExpiry.first.name.toUpperCase()} expires in 5 days!',
-        0,
-        itemsNearingExpiry.first.productId,
-        userController.user.value.email,
-        DateFormat('yyyy-MM-dd @ kk:mm').format(clock.now()),
-      );
+        var notificationItem = CNotificationsModel(
+          itemsNearingExpiry.first.productId.hashCode,
+          '${itemsNearingExpiry.first.name.toUpperCase()} is soon going stale!',
+          '${itemsNearingExpiry.first.name.toUpperCase()} expires in 5 days!',
+          0,
+          itemsNearingExpiry.first.productId,
+          userController.user.value.email,
+          DateFormat('yyyy-MM-dd @ kk:mm').format(clock.now()),
+        );
 
-      // -- insert notification item into sqflite db --
-      await DbHelper.instance.addNotificationItem(
-        notificationItem,
-      );
+        // -- insert notification item into sqflite db --
+        await DbHelper.instance.addNotificationItem(
+          notificationItem,
+        );
 
-      // -- schedule subsequent notifications --
-      notificationsController.scheduleAllItems(itemsNearingExpiry);
+        // -- schedule subsequent notifications --
+        notificationsController.scheduleAllItems(itemsNearingExpiry);
+      }
     } catch (e) {
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
