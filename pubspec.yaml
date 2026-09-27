@@ -138,6 +138,7 @@ dependencies:
   
   #csv: any
   auto_size_text: ^3.0.0
+  
   intl: ^0.20.0
   jiffy: any
   logger: any
@@ -211,6 +212,7 @@ dependencies:
 
   # -- validators --
   email_validator: any
+  flutter_timezone: ^5.1.0
 
 dependency_overrides:
   intl: ^0.20.0

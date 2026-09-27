@@ -1973,14 +1973,14 @@ class CTxnsController extends GetxController {
         CPopupSnackBar.errorSnackBar(
           Get.overlayContext!,
           message: e.toString(),
-          title: "error updating txn's customer details on device",
+          title: "error updating customer details",
         );
       } else {
         CPopupSnackBar.errorSnackBar(
           Get.overlayContext!,
           message:
-              "an unknown error occurred while updating txn's customer details on the device! please try again later...",
-          title: "error updating txn's customer details on device",
+              "an unknown error occurred while updating customer details! please try again later...",
+          title: "error updating customer details",
         );
       }
       rethrow;

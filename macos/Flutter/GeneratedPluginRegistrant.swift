@@ -17,6 +17,7 @@ import firebase_storage
 import flutter_contacts
 import flutter_email_sender_method_channel
 import flutter_local_notifications
+import flutter_timezone
 import geocoding_darwin
 import geolocator_apple
 import google_sign_in_ios
@@ -41,6 +42,7 @@ func RegisterGeneratedPlugins(registry: FlutterPluginRegistry) {
   FlutterContactsPlugin.register(with: registry.registrar(forPlugin: "FlutterContactsPlugin"))
   FlutterEmailSenderPlugin.register(with: registry.registrar(forPlugin: "FlutterEmailSenderPlugin"))
   FlutterLocalNotificationsPlugin.register(with: registry.registrar(forPlugin: "FlutterLocalNotificationsPlugin"))
+  FlutterTimezonePlugin.register(with: registry.registrar(forPlugin: "FlutterTimezonePlugin"))
   GeocodingDarwinPlugin.register(with: registry.registrar(forPlugin: "GeocodingDarwinPlugin"))
   GeolocatorPlugin.register(with: registry.registrar(forPlugin: "GeolocatorPlugin"))
   FLTGoogleSignInPlugin.register(with: registry.registrar(forPlugin: "FLTGoogleSignInPlugin"))

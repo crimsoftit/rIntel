@@ -31,23 +31,19 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:iconsax/iconsax.dart';
 
-class CCheckoutScreen extends StatefulWidget {
+class CCheckoutScreen extends StatelessWidget {
   const CCheckoutScreen({super.key});
 
-  @override
-  State<CCheckoutScreen> createState() => _CCheckoutScreenState();
-}
-
-class _CCheckoutScreenState extends State<CCheckoutScreen> {
-  final innerScrollController = ScrollController();
-  final outerScrollController = ScrollController();
   @override
   Widget build(BuildContext context) {
     final cartController = Get.put(CCartController());
     final checkoutController = Get.put(CCheckoutController());
-    final isDarkTheme = CHelperFunctions.isDarkMode(context);
-    final invController = Get.put(CInventoryController());
 
+    final innerScrollController = ScrollController();
+    final invController = Get.put(CInventoryController());
+    final outerScrollController = ScrollController();
+
+    final isDarkTheme = CHelperFunctions.isDarkMode(context);
     final navController = Get.put(CNavMenuController());
 
     final searchBarController = Get.put(CSearchBarController());
@@ -915,9 +911,6 @@ class _CCheckoutScreenState extends State<CCheckoutScreen> {
                                                             .toggleCustomerDetsFieldsVisibility(
                                                               value,
                                                             );
-                                                        if (value) {
-                                                          _scrollToBottom();
-                                                        }
                                                       },
                                                       switchValue:
                                                           checkoutController
@@ -1066,6 +1059,12 @@ class _CCheckoutScreenState extends State<CCheckoutScreen> {
                     width: 2.0,
                   ),
                 ),
+                labelStyle:
+                    Theme.of(
+                      context,
+                    ).textTheme.labelSmall!.apply(
+                      fontStyle: FontStyle.italic,
+                    ),
               ),
               includeAvatarOnSuggestion: true,
               includePrefixIcon: true,
@@ -1083,7 +1082,6 @@ class _CCheckoutScreenState extends State<CCheckoutScreen> {
             ),
             ContactsSearchTypeaheadField(
               fieldDecoration: InputDecoration(
-                labelText: 'Phone or email (optional)',
                 enabledBorder: UnderlineInputBorder(
                   borderSide: BorderSide(
                     color: CColors.rBrown,
@@ -1096,6 +1094,13 @@ class _CCheckoutScreenState extends State<CCheckoutScreen> {
                     width: 2.0,
                   ),
                 ),
+                labelStyle:
+                    Theme.of(
+                      context,
+                    ).textTheme.labelSmall!.apply(
+                      fontStyle: FontStyle.italic,
+                    ),
+                labelText: 'Phone or email (optional)',
               ),
               includeAvatarOnSuggestion: true,
               includePrefixIcon: true,
@@ -1115,24 +1120,5 @@ class _CCheckoutScreenState extends State<CCheckoutScreen> {
         ),
       ),
     );
-  }
-
-  void _scrollToBottom() {
-    if (outerScrollController.hasClients) {
-      outerScrollController.animateTo(
-        outerScrollController.position.maxScrollExtent,
-        duration: const Duration(
-          seconds: 2,
-        ),
-        curve: Curves.bounceInOut,
-      );
-    }
-  }
-
-  @override
-  void dispose() {
-    innerScrollController.dispose();
-    outerScrollController.dispose();
-    super.dispose();
   }
 }

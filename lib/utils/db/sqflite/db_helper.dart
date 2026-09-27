@@ -199,6 +199,7 @@ class DbHelper extends GetxController {
             recipientContact TEXT NOT NULL,
             dateAdded CHAR(30) NOT NULL,
             lastModified CHAR(30) NOT NULL,
+            txnCode TEXT NOT NULL
           )
         ''');
       },

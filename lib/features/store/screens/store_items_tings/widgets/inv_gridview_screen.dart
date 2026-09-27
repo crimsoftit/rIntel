@@ -270,6 +270,10 @@ class CInvGridviewScreen extends StatelessWidget {
                     demInventoryItems[index].qtySold,
                     demInventoryItems[index].calibration,
                   ),
+                  stockValue:
+                      (demInventoryItems[index].quantity *
+                              demInventoryItems[index].unitBp)
+                          .toStringAsFixed(2),
 
                   titleColor: CHelperFunctions.generateInvItemsDisplayColor(
                     isDarkTheme ? CColors.white : CColors.rBrown,

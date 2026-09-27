@@ -1,8 +1,11 @@
+import 'dart:convert';
+
 import 'package:rintel/api/sheets/store_sheets_api.dart';
 import 'package:rintel/common/widgets/custom_shapes/containers/rounded_container.dart';
 import 'package:rintel/data/repos/store/store_repo.dart';
 import 'package:rintel/features/personalization/controllers/notification_tings/flutter_local_notifications/local_notifications_controller.dart';
 import 'package:rintel/features/personalization/controllers/user_controller.dart';
+import 'package:rintel/features/personalization/models/notification_model.dart';
 import 'package:rintel/features/store/controllers/cart_controller.dart';
 import 'package:rintel/features/store/controllers/search_bar_controller.dart';
 import 'package:rintel/features/store/controllers/txns_controller.dart';
@@ -124,8 +127,7 @@ class CInventoryController extends GetxController {
       await fetchUserInventoryItems();
     }
 
-    // fetchInvDels();
-    // fetchInvUpdates();
+    sheduleExpiryNotifications();
 
     //await scheduleExpiryAlerts();
 
@@ -1596,6 +1598,77 @@ class CInventoryController extends GetxController {
         );
       }
       rethrow;
+    }
+  }
+
+  /// -- schedule notifications for items nearing expiry --
+  Future<void> sheduleExpiryNotifications() async {
+    try {
+      var itemsNearingExpiry = inventoryItems.where(
+        (item) {
+          return item.expiryDate != '' &&
+              CFormatter.computeTimeRangeFromNow(
+                    item.expiryDate.replaceAll(
+                      '@ ',
+                      '',
+                    ),
+                  ) <=
+                  3 &&
+              CFormatter.computeTimeRangeFromNow(
+                    item.expiryDate.replaceAll(
+                      '@ ',
+                      '',
+                    ),
+                  ) >
+                  0;
+        },
+      ).toList();
+
+      var payloadData = {
+        'date': DateFormat(
+          'yyyy-MM-dd @ kk:mm',
+        ).format(clock.now()),
+        'notification_body':
+            '${itemsNearingExpiry.first.name.toUpperCase()} expires in 5 days!',
+        'notification_id': itemsNearingExpiry.first.productId.hashCode,
+        'notification_title':
+            '${itemsNearingExpiry.first.name.toUpperCase()} is soon going stale!',
+        'product_id': itemsNearingExpiry.first.productId.toString(),
+      };
+
+      // -- display basic notification first --
+      CLocalNotificationsController.displaySimpleAlert(
+        body:
+            '${itemsNearingExpiry.first.name.toUpperCase()} expires in 5 days!',
+        title: 'Inventory items are soon going stale!',
+        payload: jsonEncode(payloadData),
+      );
+
+      var notificationItem = CNotificationsModel(
+        itemsNearingExpiry.first.productId.hashCode,
+        '${itemsNearingExpiry.first.name.toUpperCase()} is soon going stale!',
+        '${itemsNearingExpiry.first.name.toUpperCase()} expires in 5 days!',
+        0,
+        itemsNearingExpiry.first.productId,
+        userController.user.value.email,
+        DateFormat('yyyy-MM-dd @ kk:mm').format(clock.now()),
+      );
+
+      // -- insert notification item into sqflite db --
+      await DbHelper.instance.addNotificationItem(
+        notificationItem,
+      );
+
+      // -- schedule subsequent notifications --
+      notificationsController.scheduleAllItems(itemsNearingExpiry);
+    } catch (e) {
+      if (kDebugMode) {
+        CPopupSnackBar.errorSnackBar(
+          Get.overlayContext!,
+          message: e.toString(),
+          title: 'error scheduling expiry notifications!',
+        );
+      }
     }
   }
 
