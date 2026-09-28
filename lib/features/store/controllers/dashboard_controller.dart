@@ -258,8 +258,16 @@ class CDashboardController extends GetxController {
           },
         ),
       ),
-      rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-      topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+      rightTitles: const AxisTitles(
+        sideTitles: SideTitles(
+          showTitles: false,
+        ),
+      ),
+      topTitles: const AxisTitles(
+        sideTitles: SideTitles(
+          showTitles: false,
+        ),
+      ),
     );
   }
 

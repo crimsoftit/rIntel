@@ -198,6 +198,36 @@ class CStoreRepo extends GetxController {
     }
   }
 
+  Future<void> updateInvCloudFavoriteStatus(CInventoryModel invItem) async {
+    try {
+      firestoreDb
+          .collection('inventory')
+          .doc(invItem.productId.toString())
+          .update(
+            {
+              'markedAsFavorite': invItem.markedAsFavorite,
+            },
+          );
+    } catch (e) {
+      if (kDebugMode) {
+        CPopupSnackBar.errorSnackBar(
+          Get.overlayContext!,
+          message: e.toString(),
+          title: "error updating inventory favorite status",
+        );
+      } else {
+        CPopupSnackBar.errorSnackBar(
+          Get.overlayContext!,
+          message:
+              'an unknown error occurred while updating inventory favorite status on the cloud! please try again later...',
+          title: "error updating inventory favorite status",
+        );
+      }
+
+      rethrow;
+    }
+  }
+
   /// -- update inventory data on the cloud --
   Future<void> updateInvCloudData(CInventoryModel invItem) async {
     try {
