@@ -64,11 +64,7 @@ class DashboardHeaderWidget extends StatelessWidget {
                       color: CNetworkManager.instance.hasConnection.value
                           ? CColors.rBrown
                           : CColors.darkGrey,
-                      // color: CNetworkManager.instance.hasConnection.value
-                      //     ? isDarkTheme
-                      //           ? CColors.darkGrey
-                      //           : CColors.rBrown
-                      //     : CColors.rBrown,
+                      fontFamily: 'Saira',
                       fontSizeFactor: 2.5,
                       fontWeightDelta: -7,
                       overflow: TextOverflow.ellipsis,

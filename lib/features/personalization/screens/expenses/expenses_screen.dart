@@ -45,7 +45,7 @@ class CExpensesScreen extends StatelessWidget {
               expandedHeight: 90.0,
               flexibleSpace: CRoundedContainer(
                 bgColor: CColors.transparent,
-                height: 80.0,
+                height: CHelperFunctions.screenHeight() * .4,
                 padding: const EdgeInsets.only(
                   left: 15.0,
                   right: 10.0,
@@ -74,6 +74,7 @@ class CExpensesScreen extends StatelessWidget {
                           color: CNetworkManager.instance.hasConnection.value
                               ? CColors.rBrown
                               : CColors.darkGrey,
+                          fontFamily: 'Saira',
                           fontSizeFactor: 2.5,
                           fontWeightDelta: -7,
                         ),

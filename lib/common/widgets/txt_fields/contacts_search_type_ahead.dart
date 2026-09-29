@@ -17,6 +17,7 @@ class ContactsSearchTypeaheadField extends StatelessWidget {
     this.autofocus = false,
     this.boxRadius,
     this.contentPadding,
+    this.enabledBorderColor,
     this.fieldDecoration,
     this.fieldHeight,
     this.fieldLabelStyle,
@@ -43,7 +44,7 @@ class ContactsSearchTypeaheadField extends StatelessWidget {
   });
 
   final bool autofocus, includePrefixIcon, includeAvatarOnSuggestion;
-  final Color? fillColor, focusedBorderColor;
+  final Color? enabledBorderColor, fillColor, focusedBorderColor;
   final double? boxRadius, fieldHeight, fieldRadius, minHeight;
   final EdgeInsetsGeometry? contentPadding;
   final FormFieldValidator<String>? fieldValidator;
@@ -89,7 +90,7 @@ class ContactsSearchTypeaheadField extends StatelessWidget {
                     fieldRadius ?? CSizes.cardRadiusXs,
                   ),
                   borderSide: BorderSide(
-                    color: CColors.grey,
+                    color: enabledBorderColor ?? CColors.grey,
                   ),
                 ),
                 focusedBorder: OutlineInputBorder(

@@ -941,12 +941,17 @@ class AddUpdateInventoryForm extends StatelessWidget {
                             }
                           } else {
                             invController.resetInvFields();
-                            Navigator.pop(Get.overlayContext!, true);
+                            Navigator.pop(
+                              Get.overlayContext!,
+                              true,
+                            );
                           }
                         },
                       ),
                     ),
-                    const SizedBox(width: CSizes.spaceBtnSections / 4),
+                    const SizedBox(
+                      width: CSizes.spaceBtnSections / 4,
+                    ),
                     Expanded(
                       flex: 4,
                       child: TextButton.icon(

@@ -1462,4 +1462,7 @@ class DbHelper extends GetxController {
       rethrow;
     }
   }
+
+  /// --- ### CRUD OPERATIONS ON EXPENSES TABLE ### ---
+  /// -- add expense --
 }
