@@ -617,7 +617,9 @@ class AddUpdateInventoryForm extends StatelessWidget {
                                       ).textTheme.labelSmall,
                                     ),
                                     onTap: () {
-                                      contactsController.selectContactCountry();
+                                      contactsController.selectContactCountry(
+                                        invController.txtContactCountryPicker,
+                                      );
                                     },
                                     //readOnly: true,
                                     style: const TextStyle(

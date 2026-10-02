@@ -32,12 +32,6 @@ class CContactDetailsScreen extends StatelessWidget {
     );
 
     return Obx(() {
-      if (contactsController.isLoading.value) {
-        return CVerticalProductShimmer(
-          itemCount: 5,
-        );
-      }
-
       /// -- summarize contact txns --
       contactsController.summarizeContactTxns(
         contactItem.contactName,
@@ -139,7 +133,7 @@ class CContactDetailsScreen extends StatelessWidget {
                       context,
                     ).textTheme.labelLarge!.apply(fontSizeFactor: 1.6),
                   ),
-                  const SizedBox(height: CSizes.spaceBtnItems),
+                  const SizedBox(height: CSizes.spaceBtnItems,),
                   Padding(
                     padding: const EdgeInsets.all(15.0),
                     child: Row(

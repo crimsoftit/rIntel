@@ -14,9 +14,11 @@ class CKPIDisplayCard extends StatelessWidget {
     this.borderRadius,
     this.fractionDigits,
     this.leadingWidget,
+    this.margin,
     this.onCardTap,
     this.prefixLabel,
-    this.subTitle,
+    this.subTitleTxt,
+    this.subTitleWidget,
     this.trailingWidget,
     this.titleWidget,
     this.width,
@@ -25,10 +27,15 @@ class CKPIDisplayCard extends StatelessWidget {
   final Color? bgColor;
   final double animeDigit;
   final double? borderRadius, width;
+  final EdgeInsetsGeometry? margin;
   final int? fractionDigits;
-  final String? prefixLabel, subTitle;
+  final String? prefixLabel, subTitleTxt;
   final void Function()? onCardTap;
-  final Widget? anotherTitleWidget, leadingWidget, titleWidget, trailingWidget;
+  final Widget? anotherTitleWidget,
+      leadingWidget,
+      subTitleWidget,
+      titleWidget,
+      trailingWidget;
 
   @override
   Widget build(BuildContext context) {
@@ -37,10 +44,15 @@ class CKPIDisplayCard extends StatelessWidget {
       child: CRoundedContainer(
         bgColor: bgColor ?? CColors.transparent,
         borderRadius: borderRadius ?? 20.0,
+        margin: margin,
         width: width ?? CHelperFunctions.screenWidth() * .88,
         child: ListTile(
           leading:
-              leadingWidget ?? Icon(Icons.attach_money, color: CColors.rBrown,),
+              leadingWidget ??
+              Icon(
+                Icons.attach_money,
+                color: CColors.rBrown,
+              ),
 
           title: Row(
             children: [
@@ -63,14 +75,18 @@ class CKPIDisplayCard extends StatelessWidget {
               anotherTitleWidget ?? const SizedBox.shrink(),
             ],
           ),
-          subtitle: Text(subTitle ?? 'Total sales'),
+          subtitle:
+              subTitleWidget ??
+              Text(
+                subTitleTxt ?? 'Total sales',
+              ),
 
           trailing:
               trailingWidget ??
               Icon(
                 Icons.info_outline,
                 color: CColors.rBrown,
-                size: CSizes.iconSm,
+                size: CSizes.iconMd,
               ),
         ),
       ),

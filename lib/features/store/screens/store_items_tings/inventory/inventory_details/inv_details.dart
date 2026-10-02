@@ -289,7 +289,7 @@ class CInvDetails extends StatelessWidget {
                           color: CColors.rBrown,
                         ),
                         prefixLabel: currency,
-                        subTitle: 'Gross Profit',
+                        subTitleTxt: 'Gross Profit',
                       ),
 
                       /// -- Inventory Turnover Ratio --
@@ -300,7 +300,7 @@ class CInvDetails extends StatelessWidget {
                           color: CColors.rBrown,
                         ),
                         prefixLabel: '',
-                        subTitle: 'Inventory Turnover Ratio',
+                        subTitleTxt: 'Inventory Turnover Ratio',
                       ),
 
                       /// -- inventory turn days --
@@ -312,14 +312,14 @@ class CInvDetails extends StatelessWidget {
                         ),
                         prefixLabel: 'days',
 
-                        subTitle: 'Inventory Turn Days',
+                        subTitleTxt: 'Inventory Turn Days',
                       ),
 
                       /// -- Gross Margin Return On Inventory Investment (GMROI) --
                       CKPIDisplayCard(
                         animeDigit: txnsController.gmroi.value,
                         prefixLabel: currency,
-                        subTitle:
+                        subTitleTxt:
                             'Gross Margin Return On Inventory Investment (GMROI)',
                       ),
 
@@ -331,7 +331,7 @@ class CInvDetails extends StatelessWidget {
                           color: CColors.rBrown,
                         ),
                         prefixLabel: '%',
-                        subTitle: 'Return On Inventory Investment (ROI)',
+                        subTitleTxt: 'Return On Inventory Investment (ROI)',
                       ),
                     ],
                   ),

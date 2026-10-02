@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:rintel/features/personalization/models/expense.dart';
 import 'package:rintel/features/store/models/inv_model.dart';
 import 'package:rintel/features/store/models/txns/sold_item_model.dart';
 import 'package:rintel/features/store/models/txns/txn_model.dart';
@@ -862,6 +863,32 @@ class CStoreRepo extends GetxController {
           message:
               "an unknown error occurred while updating txn's customer details on the cloud! please try again later...",
           title: "error updating txn's customer details",
+        );
+      }
+      rethrow;
+    }
+  }
+
+  /// -- save expense to cloud firestore --
+  Future<void> saveExpenseToCloud(CExpense expense) async {
+    try {
+      firestoreDb
+          .collection('expenses')
+          .doc(expense.expenseId.toString())
+          .set(expense.toMap());
+    } catch (e) {
+      if (kDebugMode) {
+        CPopupSnackBar.errorSnackBar(
+          Get.overlayContext!,
+          message: e.toString(),
+          title: "Error adding expense details to the cloud!",
+        );
+      } else {
+        CPopupSnackBar.errorSnackBar(
+          Get.overlayContext!,
+          message:
+              "an unknown error occurred while adding expense details to the cloud! please try again later...",
+          title: "Error adding expense details to the cloud",
         );
       }
       rethrow;

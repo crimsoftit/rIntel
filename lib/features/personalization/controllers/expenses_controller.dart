@@ -1,12 +1,24 @@
+import 'package:clock/clock.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:get/get.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:intl/intl.dart';
 import 'package:rintel/common/widgets/buttons/custom_dropdown_btn.dart';
 import 'package:rintel/common/widgets/custom_shapes/containers/rounded_container.dart';
 import 'package:rintel/common/widgets/txt_fields/contacts_search_type_ahead.dart';
+import 'package:rintel/data/repos/store/store_repo.dart';
+import 'package:rintel/features/personalization/controllers/contacts_controller.dart';
+import 'package:rintel/features/personalization/controllers/user_controller.dart';
+import 'package:rintel/features/personalization/models/contacts_model.dart';
+import 'package:rintel/features/personalization/models/expense.dart';
 import 'package:rintel/utils/constants/colors.dart';
 import 'package:rintel/utils/constants/sizes.dart';
+import 'package:rintel/utils/db/sqflite/db_helper.dart';
 import 'package:rintel/utils/helpers/helper_functions.dart';
+import 'package:rintel/utils/popups/snackbars.dart';
 import 'package:rintel/utils/validators/validation.dart';
 
 class CExpensesController extends GetxController {
@@ -16,7 +28,11 @@ class CExpensesController extends GetxController {
   }
 
   /// -- variables --
+  final addUpdateExpenseFormKey = GlobalKey<FormState>();
+  final contactsController = Get.put(CContactsController());
+  final DbHelper dbHelper = DbHelper.instance;
   final RxBool isLoading = false.obs;
+
   final RxList<String> categories = [
     'Bills',
     'Salaries',
@@ -24,8 +40,16 @@ class CExpensesController extends GetxController {
     'Events',
     'Other',
   ].obs;
+
+  final RxList<CExpense> myExpenses = <CExpense>[].obs;
+
   final RxString presetCategory = 'Salaries'.obs;
   final RxString selectedCategory = ''.obs;
+
+  final storeRepo = Get.put(CStoreRepo());
+
+  final SuggestionsController<CContactsModel> suggestionsBoxController =
+      SuggestionsController();
   final txtAmount = TextEditingController();
   final txtContactCountryPicker = TextEditingController();
   final txtExpenseDesc = TextEditingController();
@@ -34,9 +58,12 @@ class CExpensesController extends GetxController {
   final txtRecipientContacts = TextEditingController();
   final txtRemarks = TextEditingController();
 
+  final userController = Get.put(CUserController());
+
   @override
-  void onInit() {
+  void onInit() async {
     isLoading.value = false;
+    await fetchMyExpenses();
     resetFields();
     super.onInit();
   }
@@ -47,6 +74,7 @@ class CExpensesController extends GetxController {
     String formAction,
   ) async {
     final isDarkTheme = CHelperFunctions.isDarkMode(context);
+    final userCurrency = userController.user.value.currencyCode;
 
     return await showModalBottomSheet(
       backgroundColor: isDarkTheme
@@ -67,6 +95,7 @@ class CExpensesController extends GetxController {
               top: CSizes.lg / 4,
             ),
             child: Form(
+              key: addUpdateExpenseFormKey,
               child: SizedBox(
                 height: CHelperFunctions.screenHeight() * .7,
                 child: Column(
@@ -84,11 +113,11 @@ class CExpensesController extends GetxController {
                             child: CircleAvatar(
                               backgroundColor:
                                   CHelperFunctions.randomAestheticColor(),
-                              radius: 25.0,
+                              radius: 30.0,
                               child: Icon(
                                 Iconsax.money_send,
                                 color: CColors.white,
-                                size: CSizes.iconSm,
+                                size: CSizes.iconMd,
                               ),
                             ),
                           ),
@@ -151,7 +180,43 @@ class CExpensesController extends GetxController {
                               ),
                             ),
                           ),
-                          onPressed: () {},
+                          onPressed: () async {
+                            // -- form validation
+                            if (!addUpdateExpenseFormKey.currentState!
+                                .validate()) {
+                              return;
+                            }
+                            var expense = CExpense(
+                              CHelperFunctions.generateId(),
+                              userController.user.value.id,
+                              userController.user.value.email,
+                              userController.user.value.fullName,
+                              txtExpenseTitle.text.trim(),
+                              selectedCategory.value,
+                              txtExpenseDesc.text.trim(),
+                              double.parse(txtAmount.text.trim()),
+                              txtRecipientName.text,
+                              txtRecipientContacts.text.trim(),
+                              txtContactCountryPicker.text.trim(),
+                              DateFormat(
+                                'yyyy-MM-dd kk:mm',
+                              ).format(clock.now()),
+                              DateFormat(
+                                'yyyy-MM-dd kk:mm',
+                              ).format(clock.now()),
+                              //_txnCode,
+                            );
+                            saveExpense(expense).then(
+                              (_) {
+                                Get.back();
+                                CPopupSnackBar.successSnackBar(
+                                  Get.overlayContext!,
+                                  message: 'Expense recorded successfully!',
+                                  title: 'success!!',
+                                );
+                              },
+                            );
+                          },
                         ),
                       ],
                     ),
@@ -182,79 +247,98 @@ class CExpensesController extends GetxController {
                       style: const TextStyle(
                         fontWeight: FontWeight.normal,
                       ),
+                      validator: (value) {
+                        return CValidator.validateEmptyText(
+                          'Expense title',
+                          value,
+                        );
+                      },
                     ),
 
                     const SizedBox(
                       height: CSizes.spaceBtnInputFields,
                     ),
 
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      //mainAxisSize: MainAxisSize.min,
-                      children: [
-                        SizedBox(
-                          height: 75.0,
-                          width: MediaQuery.of(context).size.width * .6,
-                          child: TextFormField(
-                            autovalidateMode:
-                                AutovalidateMode.onUserInteraction,
-                            controller: txtAmount,
-                            decoration: InputDecoration(
-                              constraints: BoxConstraints(
-                                minHeight: 60.0,
-                              ),
-                              fillColor: CColors.rBrown.withValues(
-                                alpha: .1,
-                              ),
-                              filled: true,
+                    SizedBox(
+                      height: 75.0,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        //mainAxisSize: MainAxisSize.min,
+                        children: [
+                          SizedBox(
+                            height: 74.0,
+                            width: MediaQuery.of(context).size.width * .6,
+                            child: TextFormField(
+                              autovalidateMode:
+                                  AutovalidateMode.onUserInteraction,
+                              controller: txtAmount,
+                              decoration: InputDecoration(
+                                constraints: BoxConstraints(
+                                  minHeight: 60.0,
+                                ),
+                                fillColor: CColors.rBrown.withValues(
+                                  alpha: .1,
+                                ),
+                                filled: true,
 
-                              labelStyle: Theme.of(
-                                context,
-                              ).textTheme.labelMedium,
-                              labelText: 'amount',
+                                labelStyle: Theme.of(
+                                  context,
+                                ).textTheme.labelMedium,
+                                labelText: 'amount($userCurrency)',
 
-                              prefixIcon: Icon(
-                                Iconsax.money_send,
-                                color: CColors.rOrange,
-                                size: CSizes.iconXs,
+                                prefixIcon: Icon(
+                                  Iconsax.money_send,
+                                  color: CColors.rOrange,
+                                  size: CSizes.iconXs,
+                                ),
                               ),
+                              keyboardType:
+                                  const TextInputType.numberWithOptions(
+                                    decimal: true,
+                                    signed: false,
+                                  ),
+                              inputFormatters: <TextInputFormatter>[
+                                FilteringTextInputFormatter.allow(
+                                  RegExp(r'^\d*\.?\d{0,2}$'),
+                                ),
+                              ],
+                              style: const TextStyle(
+                                fontWeight: FontWeight.normal,
+                              ),
+                              validator: (value) {
+                                return CValidator.validateNumber(
+                                  'Amount',
+                                  value,
+                                );
+                              },
                             ),
-                            style: const TextStyle(
-                              fontWeight: FontWeight.normal,
-                            ),
-                            validator: (value) {
-                              return CValidator.validateEmptyText(
-                                'Amount',
-                                value,
+                          ),
+                          Obx(
+                            () {
+                              return CCustomDropdownBtn(
+                                defaultItemColor: isDarkTheme
+                                    ? CColors.white
+                                    : CColors.rBrown,
+                                defaultItemFontSizeFactor: 1.05,
+                                iconColor: isDarkTheme
+                                    ? CColors.white
+                                    : CColors.rBrown,
+                                dropdownItems: categories,
+                                onValueChanged: (value) {
+                                  selectedCategory.value = value!;
+                                },
+                                selectedValue: setDefaultCategory(
+                                  presetCategory.value,
+                                ),
+                                underlineColor: isDarkTheme
+                                    ? CColors.white
+                                    : CColors.rBrown,
+                                underlineHeight: .8,
                               );
                             },
                           ),
-                        ),
-                        Obx(
-                          () {
-                            return CCustomDropdownBtn(
-                              defaultItemColor: isDarkTheme
-                                  ? CColors.white
-                                  : CColors.rBrown,
-                              defaultItemFontSizeFactor: 1.05,
-                              iconColor: isDarkTheme
-                                  ? CColors.white
-                                  : CColors.rBrown,
-                              dropdownItems: categories,
-                              onValueChanged: (value) {
-                                selectedCategory.value = value!;
-                              },
-                              selectedValue: setDefaultCategory(
-                                presetCategory.value,
-                              ),
-                              underlineColor: isDarkTheme
-                                  ? CColors.white
-                                  : CColors.rBrown,
-                              underlineHeight: .8,
-                            );
-                          },
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
 
                     Row(
@@ -265,14 +349,21 @@ class CExpensesController extends GetxController {
                           child: ContactsSearchTypeaheadField(
                             enabledBorderColor: isDarkTheme
                                 ? CColors.grey
-                                : CColors.rBrown,
+                                : const Color.fromRGBO(
+                                    121,
+                                    85,
+                                    72,
+                                    1,
+                                  ).withValues(
+                                    alpha: .5,
+                                  ),
                             fillColor: CColors.rBrown.withValues(
                               alpha: .1,
                             ),
                             focusedBorderColor: isDarkTheme
                                 ? CColors.grey
                                 : CColors.rBrown.withValues(
-                                    alpha: .4,
+                                    alpha: .1,
                                   ),
                             includeAvatarOnSuggestion: true,
                             includePrefixIcon: true,
@@ -316,13 +407,15 @@ class CExpensesController extends GetxController {
                                 fillColor: CColors.rBrown.withValues(
                                   alpha: .1,
                                 ),
-                                labelText: ' country:',
+                                labelText: 'Country',
                                 labelStyle: Theme.of(
                                   context,
                                 ).textTheme.labelSmall,
                               ),
                               onTap: () {
-                                //contactsController.selectContactCountry();
+                                contactsController.selectContactCountry(
+                                  txtContactCountryPicker,
+                                );
                               },
                               //readOnly: true,
                               style: const TextStyle(
@@ -342,12 +435,14 @@ class CExpensesController extends GetxController {
                     ContactsSearchTypeaheadField(
                       enabledBorderColor: isDarkTheme
                           ? CColors.grey
-                          : CColors.rBrown,
+                          : CColors.rBrown.withValues(
+                              alpha: .5,
+                            ),
                       fieldHeight: 70.0,
                       focusedBorderColor: isDarkTheme
                           ? CColors.grey
                           : CColors.rBrown.withValues(
-                              alpha: .4,
+                              alpha: .1,
                             ),
                       includeAvatarOnSuggestion: true,
                       includePrefixIcon: true,
@@ -365,13 +460,16 @@ class CExpensesController extends GetxController {
                         size: CSizes.iconXs,
                       ),
                       suffixIcon: IconButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          suggestionsBoxController.close();
+                        },
                         icon: Icon(
                           Icons.close,
                           color: CColors.rOrange,
                           size: CSizes.iconXs,
                         ),
                       ),
+                      suggestionsController: suggestionsBoxController,
                       typeAheadFieldController: txtRecipientContacts,
                       txtAlign: TextAlign.start,
                       fieldValidator: (value) {
@@ -430,6 +528,56 @@ class CExpensesController extends GetxController {
     );
   }
 
+  /// -- add expense to local db and cloud --
+  Future<void> saveExpense(CExpense expense) async {
+    await dbHelper.addExpense(expense).then(
+      (result) {
+        if (result >= 1) {
+          storeRepo.saveExpenseToCloud(expense);
+        } else {
+          CPopupSnackBar.errorSnackBar(
+            Get.overlayContext!,
+            title: 'Error saving expense details!',
+          );
+        }
+      },
+    );
+    await fetchMyExpenses();
+  }
+
+  /// -- fetch user expenses --
+  Future<List<CExpense>> fetchMyExpenses() async {
+    try {
+      isLoading.value = true;
+
+      var expenses = await dbHelper.fetchMyExpenses(
+        userController.user.value.email,
+      );
+
+      myExpenses.assignAll(expenses);
+
+      isLoading.value = false;
+      return myExpenses;
+    } catch (e) {
+      isLoading.value = false;
+      if (kDebugMode) {
+        CPopupSnackBar.errorSnackBar(
+          Get.overlayContext!,
+          title: 'error fetching expenses!',
+          message: e.toString(),
+        );
+      } else {
+        CPopupSnackBar.errorSnackBar(
+          Get.overlayContext!,
+          title: 'error fetching expenses!',
+          message: 'An unknown error occurred while fetching your expenses!',
+        );
+      }
+
+      rethrow;
+    }
+  }
+
   String setDefaultCategory(String? presetCategory) {
     if (selectedCategory.value == '') {
       selectedCategory.value = presetCategory ?? categories[0];
@@ -438,6 +586,10 @@ class CExpensesController extends GetxController {
     }
 
     return selectedCategory.value;
+  }
+
+  String? fieldValidator(String? value) {
+    return CValidator.validateEmptyText('supplier name', value);
   }
 
   /// -- reset fields --
@@ -453,6 +605,7 @@ class CExpensesController extends GetxController {
 
   @override
   void dispose() {
+    suggestionsBoxController.dispose();
     txtAmount.dispose();
     txtContactCountryPicker.dispose();
     txtExpenseDesc.dispose();

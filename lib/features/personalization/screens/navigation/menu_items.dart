@@ -23,7 +23,7 @@ class CMenuItems {
 
   static const contacts = CMenuItemModel(
     title: "Contacts",
-    icon: Icons.notifications,
+    icon: Iconsax.user_octagon,
   );
 
   static const rateUs = CMenuItemModel(

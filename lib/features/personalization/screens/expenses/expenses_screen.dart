@@ -8,6 +8,7 @@ import 'package:rintel/common/widgets/dividers/custom_divider.dart';
 import 'package:rintel/features/personalization/controllers/expenses_controller.dart';
 import 'package:rintel/features/personalization/controllers/user_controller.dart';
 import 'package:rintel/features/personalization/screens/expenses/widgets/expenses_view.dart';
+import 'package:rintel/features/personalization/screens/expenses/widgets/inv_expenses_view.dart';
 import 'package:rintel/utils/constants/colors.dart';
 import 'package:rintel/utils/helpers/helper_functions.dart';
 import 'package:rintel/utils/helpers/network_manager.dart';
@@ -74,7 +75,7 @@ class CExpensesScreen extends StatelessWidget {
                           color: CNetworkManager.instance.hasConnection.value
                               ? CColors.rBrown
                               : CColors.darkGrey,
-                          fontFamily: 'Saira',
+                          fontFamily: 'Signika',
                           fontSizeFactor: 2.5,
                           fontWeightDelta: -7,
                         ),
@@ -96,9 +97,8 @@ class CExpensesScreen extends StatelessWidget {
               snap: true,
             ),
 
-            CExpensesView(
-              isInventoryRelated: true,
-            ),
+            CInvExpensesView(),
+            CExpensesView(),
           ],
         ),
 

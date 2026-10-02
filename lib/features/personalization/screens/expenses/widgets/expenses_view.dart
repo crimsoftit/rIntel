@@ -1,115 +1,145 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:iconsax/iconsax.dart';
+import 'package:rintel/features/personalization/controllers/expenses_controller.dart';
 import 'package:rintel/features/personalization/controllers/user_controller.dart';
-import 'package:rintel/features/store/controllers/inv_controller.dart';
+import 'package:rintel/features/personalization/models/expense.dart';
+import 'package:rintel/features/personalization/screens/no_data/no_data_screen.dart';
 import 'package:rintel/features/store/screens/store_items_tings/inventory/inventory_details/widgets/cards/kpi_display_card.dart';
 import 'package:rintel/utils/constants/colors.dart';
+import 'package:rintel/utils/constants/img_strings.dart';
+import 'package:rintel/utils/constants/sizes.dart';
 import 'package:rintel/utils/helpers/helper_functions.dart';
 
-class CExpensesView extends StatefulWidget {
-  const CExpensesView({
-    required this.isInventoryRelated,
-    super.key,
-  });
-
-  /// -- variables --
-  final bool isInventoryRelated;
-
-  @override
-  State<CExpensesView> createState() => _CExpensesViewState();
-}
-
-class _CExpensesViewState extends State<CExpensesView> {
-  final GlobalKey<SliverAnimatedListState> _listKey = GlobalKey();
-  final List<String> _items = ['Item 0', 'Item 1', 'Item 2'];
-
-  void addItem() {
-    final String newItem = 'Item ${_items.length}';
-    setState(() {
-      _items.add(newItem);
-    });
-    _listKey.currentState!.insertItem(_items.length - 1);
-  }
-
-  void removeItem(int index) {
-    setState(
-      () {
-        _items.removeAt(index);
-      },
-    );
-    _listKey.currentState!.removeItem(
-      index,
-      (_, animation) {
-        return _buildRemovedItem(_items.length, animation);
-      },
-    );
-  }
-
-  Widget _buildRemovedItem(int index, Animation<double> animation) {
-    return SizeTransition(
-      sizeFactor: animation,
-      child: Card(
-        child: ListTile(title: Text('Removed Item $index')),
-      ),
-    );
-  }
+class CExpensesView extends StatelessWidget {
+  const CExpensesView({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final invController = Get.put(CInventoryController());
+    final expensesController = Get.put(CExpensesController());
+    // 1. Define Global Key for SliverAnimatedList
+    final GlobalKey<SliverAnimatedListState> listKey =
+        GlobalKey<SliverAnimatedListState>();
     final isDarkTheme = CHelperFunctions.isDarkMode(context);
+    final List<CExpense> expenses = [];
+
     final userController = Get.put(CUserController());
     final userCurrency = userController.user.value.currencyCode;
 
-    return SliverAnimatedList(
-      initialItemCount: widget.isInventoryRelated ? 1 : _items.length,
-      itemBuilder: (context, index, animation) {
-        return SizeTransition(
-          alignment: Alignment.center,
-          sizeFactor: animation,
-          child: Obx(
-            () {
-              return CKPIDisplayCard(
-                animeDigit: invController.totalInventoryValue.value
-                  ..toStringAsFixed(2),
-                bgColor: isDarkTheme
-                    ? CColors.rBrown.withValues(
-                        alpha: .3,
-                      )
-                    : CColors.rBrown.withValues(
-                        alpha: .1,
-                      ),
-                borderRadius: 10.0,
-                leadingWidget: Icon(
-                  Icons.inventory,
-                  color: CColors.rBrown,
-                ),
-                prefixLabel: userCurrency,
-                subTitle: 'Inventory purchases',
-                width: CHelperFunctions.screenWidth() * .92,
-              );
+    return // 2. Wrap the SliverAnimatedList with FutureBuilder
+    FutureBuilder<List<CExpense>>(
+      future: expensesController.fetchMyExpenses(), // Your async function
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          // Initialize items if needed, or use snapshot.data directly
 
-              // CKPIDisplayCard(
-              //   animeDigit: txnsController.totalAmtSold.value,
-              //   anotherTitleWidget: CAnimatedDigitWidget(
-              //     fractionDigits: 0,
-              //     prefix: ' ',
-              //     suffix:
-              //         ' ${CFormatter.kSuffixFormatter(invController.totalInventoryValue.value..toStringAsFixed(2))})',
-              //     txtStyle: Theme.of(context).textTheme.titleMedium!.apply(
-              //       color: CColors.rOrange,
-              //       fontWeightDelta: 2,
-              //     ),
-              //     value: txnsController.numberOfUnitsSold.value,
-              //   ),
-              //   fractionDigits: 0,
-              //   prefixLabel: userCurrency,
-              // );
+          expenses.assignAll(snapshot.data!);
+
+          return SliverAnimatedList(
+            key: listKey,
+            initialItemCount: expenses.length,
+            itemBuilder: (context, index, animation) {
+              return SizeTransition(
+                alignment: Alignment.center,
+                sizeFactor: animation,
+                child: CKPIDisplayCard(
+                  animeDigit: expenses[index].amount..toStringAsFixed(2),
+
+                  bgColor: isDarkTheme
+                      ? CColors.rBrown.withValues(
+                          alpha: .3,
+                        )
+                      : CColors.rBrown.withValues(
+                          alpha: .1,
+                        ),
+                  borderRadius: 10.0,
+                  leadingWidget: Icon(
+                    Iconsax.money_send,
+                    color: CColors.rBrown,
+                    size: CSizes.iconMd,
+                  ),
+                  margin: const EdgeInsets.only(
+                    bottom: 3.0,
+                    top: 3.0,
+                  ),
+                  onCardTap: () {
+                    Get.toNamed(
+                      '/expenses/expense_details',
+                      arguments: expenses[index],
+                    );
+                  },
+                  prefixLabel: userCurrency,
+                  subTitleTxt: expenses[index].expenseTitle,
+                  // subTitleWidget: Column(
+                  //   crossAxisAlignment: CrossAxisAlignment.start,
+                  //   children: [
+                  //     Text(
+                  //       expenses[index].expenseTitle,
+                  //     ),
+                  //     const SizedBox(
+                  //       height: CSizes.spaceBtnInputFields,
+                  //     ),
+                  //     Row(
+                  //       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  //       children: [
+                  //         Text(
+                  //           'Paid to:',
+                  //         ),
+                  //         Column(
+                  //           crossAxisAlignment: CrossAxisAlignment.end,
+                  //           children: [
+                  //             Text(
+                  //               expenses[index].recipientName,
+                  //             ),
+                  //             Text(
+                  //               expenses[index].recipientContact,
+                  //             ),
+                  //           ],
+                  //         ),
+                  //       ],
+                  //     ),
+                  //   ],
+                  // ),
+                  //trailingWidget: SizedBox.shrink(),
+
+                  // IconButton(
+                  //   onPressed: () {},
+                  //   icon: Icon(
+                  //     Iconsax.information,
+                  //     color: CColors.rBrown,
+                  //     size: CSizes.iconMd,
+                  //   ),
+                  // ),
+                  width: CHelperFunctions.screenWidth() * .92,
+                ),
+              );
             },
+          );
+        } else if (!snapshot.hasData) {
+          return SliverToBoxAdapter(
+            child: Center(
+              child: NoDataScreen(
+                lottieImage: CImages.noDataLottie,
+                txt: 'Your expenses will be displayed here...',
+              ),
+            ),
+          );
+        } else if (snapshot.hasError) {
+          return SliverToBoxAdapter(
+            child: Center(
+              child: Text(
+                'Error: ${snapshot.error}',
+              ),
+            ),
+          );
+        }
+        // Loading state
+        return SliverToBoxAdapter(
+          child: Center(
+            child: CircularProgressIndicator(),
           ),
         );
       },
-      key: _listKey,
     );
   }
 }

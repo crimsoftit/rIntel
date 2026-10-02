@@ -1345,29 +1345,20 @@ class CContactsController extends GetxController {
   }
 
   /// -- set contact's country code and(or) dial code --
-  void selectContactCountry() {
+  void selectContactCountry(TextEditingController affectedField) {
     showCountryPicker(
       context: Get.overlayContext!,
       onSelect: (Country country) {
         contactCountryCode.value = country.countryCode;
-        // contactDialCode.value = CFormatter.getDialCodeFromCountryCode(
-        //   country.countryCode,
-        // );
+
         contactDialCode.value = CFormatter.getDialCodeFromCountryCode(
           contactCountryCode.value,
         );
-        invController.txtContactCountryPicker.text = contactCountryCode.value;
-        // ScaffoldMessenger.of(
-        //   Get.overlayContext!,
-        // ).showSnackBar(
-        //   SnackBar(
-        //     content: Text(
-        //       'country code: ${contactCountryCode.value} \n dial code: ${contactDialCode.value} \n flag: ${country.flagEmoji}',
-        //     ),
-        //   ),
-        // );
+        affectedField.text = contactCountryCode.value;
       },
       showPhoneCode: true,
+      useRootNavigator: true,
+      useSafeArea: true,
     );
   }
 

@@ -18,10 +18,11 @@ class CExpense extends Equatable {
 
   String _recipientName = '';
   String _recipientContact = '';
+  String _recipientCountry = '';
 
   String _dateAdded = "";
   String _lastModified = "";
-  String _txnCode = '';
+  //String _txnCode = '';
 
   CExpense(
     this._expenseId,
@@ -34,9 +35,10 @@ class CExpense extends Equatable {
     this._amount,
     this._recipientName,
     this._recipientContact,
+    this._recipientCountry,
     this._dateAdded,
     this._lastModified,
-    this._txnCode,
+    //this._txnCode,
   );
 
   static CExpense empty() {
@@ -67,9 +69,10 @@ class CExpense extends Equatable {
   double get amount => _amount;
   String get recipientName => _recipientName;
   String get recipientContact => _recipientContact;
+  String get recipientCountry => _recipientCountry;
   String get dateAdded => _dateAdded;
   String get lastModified => _lastModified;
-  String get txnCode => _txnCode;
+  //String get txnCode => _txnCode;
 
   set expenseId(int newId) {
     _expenseId = newId;
@@ -111,6 +114,10 @@ class CExpense extends Equatable {
     _recipientContact = rContact;
   }
 
+  set recipientCountry(String newCountry) {
+    _recipientCountry = newCountry;
+  }
+
   set dateAdded(String newDateAdded) {
     _dateAdded = newDateAdded;
   }
@@ -119,9 +126,9 @@ class CExpense extends Equatable {
     _lastModified = newLastModified;
   }
 
-  set txnCode(String newTxnCode) {
-    _txnCode = newTxnCode;
-  }
+  // set txnCode(String newTxnCode) {
+  //   _txnCode = newTxnCode;
+  // }
 
   /// -- convert a CExpense Object into a Map 0bject --
   Map<String, dynamic> toMap() {
@@ -137,9 +144,10 @@ class CExpense extends Equatable {
     map['amount'] = _amount;
     map['recipientName'] = _recipientName;
     map['recipientContact'] = _recipientContact;
+    map['recipientCountry'] = _recipientCountry;
     map['dateAdded'] = _dateAdded;
     map['lastModified'] = _lastModified;
-    map['txnCode'] = _txnCode;
+    //map['txnCode'] = _txnCode;
 
     return map;
   }
@@ -156,9 +164,10 @@ class CExpense extends Equatable {
     _amount = map['amount'];
     _recipientName = map['recipientName'];
     _recipientContact = map['recipientContact'];
+    _recipientCountry = map['recipientCountry'];
     _dateAdded = map['dateAdded'];
     _lastModified = map['lastModified'];
-    _txnCode = map['txnCode'];
+    //_txnCode = map['txnCode'];
   }
 
   /// -- factory method to create a CExpense model from a Firebase document snapshot --
@@ -178,9 +187,10 @@ class CExpense extends Equatable {
       expenditure['amount'],
       expenditure['recipientName'],
       expenditure['recipientContact'],
+      expenditure['recipientCountry'],
       expenditure['dateAdded'],
       expenditure['lastModified'],
-      expenditure['txnCode'],
+      //expenditure['txnCode'],
     );
   }
 
@@ -196,9 +206,10 @@ class CExpense extends Equatable {
     amount,
     recipientName,
     recipientContact,
+    recipientCountry,
     dateAdded,
     lastModified,
-    txnCode,
+    //txnCode,
   ];
   // List<Object?> get props => throw UnimplementedError();
 }

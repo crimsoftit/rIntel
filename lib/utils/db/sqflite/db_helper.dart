@@ -1,5 +1,6 @@
 import 'package:rintel/features/personalization/controllers/user_controller.dart';
 import 'package:rintel/features/personalization/models/contacts_model.dart';
+import 'package:rintel/features/personalization/models/expense.dart';
 import 'package:rintel/features/personalization/models/notification_model.dart';
 import 'package:rintel/features/store/models/best_sellers_model.dart';
 import 'package:rintel/features/store/models/inv_model.dart';
@@ -197,9 +198,9 @@ class DbHelper extends GetxController {
             amount REAL NOT NULL,
             recipientName TEXT NOT NULL,
             recipientContact TEXT NOT NULL,
+            recipientCountry TEXT NOT NULL,
             dateAdded CHAR(30) NOT NULL,
-            lastModified CHAR(30) NOT NULL,
-            txnCode TEXT NOT NULL
+            lastModified CHAR(30) NOT NULL
           )
         ''');
       },
@@ -1465,4 +1466,67 @@ class DbHelper extends GetxController {
 
   /// --- ### CRUD OPERATIONS ON EXPENSES TABLE ### ---
   /// -- add expense --
+  Future<int> addExpense(CExpense expense) async {
+    try {
+      var db = _db;
+      int result = await db!.insert(
+        expensesTable,
+        expense.toMap(),
+        conflictAlgorithm: ConflictAlgorithm.replace,
+      );
+
+      return result;
+    } catch (e) {
+      if (kDebugMode) {
+        CPopupSnackBar.errorSnackBar(
+          Get.overlayContext!,
+          message: 'an error occurred while adding expense to local db: $e',
+          title: 'error adding expense to local db!',
+        );
+      } else {
+        CPopupSnackBar.errorSnackBar(
+          Get.overlayContext!,
+          message:
+              'an error occurred while adding expense. please try again later!',
+          title: 'error adding expense!',
+        );
+      }
+      rethrow;
+    }
+  }
+
+  /// -- fetch user expenses --
+  Future<List<CExpense>> fetchMyExpenses(String userEmail) async {
+    try {
+      final db = _db;
+      final expenses = await db!.rawQuery(
+        'SELECT * FROM $expensesTable WHERE userEmail = ? ORDER BY lastModified DESC',
+        [userEmail],
+      );
+
+      if (expenses.isEmpty) return [];
+
+      // -- convert the List<Map<String, dynamic> into a List<CExpense> object --
+      return expenses.map(
+        (json) {
+          return CExpense.fromMap(json);
+        },
+      ).toList();
+    } catch (e) {
+      if (kDebugMode) {
+        CPopupSnackBar.errorSnackBar(
+          Get.overlayContext!,
+          title: 'error fetching inventory items',
+          message: e.toString(),
+        );
+      } else {
+        CPopupSnackBar.errorSnackBar(
+          Get.overlayContext!,
+          title: 'error fetching inventory items',
+          message: 'An unknown error occurred while fetching inventory items!',
+        );
+      }
+      rethrow;
+    }
+  }
 }

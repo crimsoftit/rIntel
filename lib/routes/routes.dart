@@ -6,6 +6,8 @@ class CRoutes {
   static const contactDetailsScreen = '/my_contacts/contact_details';
   static const contactTxnsScreen = '/my_contacts/contact_txns';
 
+  static const expenseDetailzScreen = '/expenses/expense_details';
+
   static const forgotPassword = '/forgot_password';
 
   // -- dashboard --

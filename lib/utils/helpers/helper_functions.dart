@@ -162,6 +162,11 @@ class CHelperFunctions {
     return now.millisecondsSinceEpoch + generateRandom3DigitNumber();
   }
 
+  static int generateId() {
+    final now = DateTime.now();
+    return now.millisecondsSinceEpoch - generateRandom3DigitNumber();
+  }
+
   static int generateTxnId() {
     final now = DateTime.now();
     return now.millisecondsSinceEpoch + generateRandom4DigitNumber();

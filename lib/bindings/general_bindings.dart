@@ -1,4 +1,5 @@
 import 'package:rintel/features/personalization/controllers/contacts_controller.dart';
+import 'package:rintel/features/personalization/controllers/expenses_controller.dart';
 import 'package:rintel/features/personalization/controllers/notification_tings/flutter_local_notifications/local_notifications_controller.dart';
 import 'package:rintel/features/personalization/controllers/user_controller.dart';
 import 'package:rintel/features/store/controllers/checkout_controller.dart';
@@ -12,12 +13,30 @@ import 'package:get_storage/get_storage.dart';
 class CGeneralBindings extends Bindings {
   @override
   void dependencies() async {
-    Get.lazyPut(() => CNetworkManager(), fenix: true);
-    Get.lazyPut(() => CUserController(), fenix: true);
-    Get.lazyPut(() => CTxnsController(), fenix: true);
-    Get.lazyPut(() => CInventoryController(), fenix: true);
-    //Get.lazyPut(() => CNotificationServices(), fenix: true);
-    Get.lazyPut(() => CLocalNotificationsController(), fenix: true);
+    Get.lazyPut(
+      () => CNetworkManager(),
+      fenix: true,
+    );
+    Get.lazyPut(
+      () => CUserController(),
+      fenix: true,
+    );
+    Get.lazyPut(
+      () => CTxnsController(),
+      fenix: true,
+    );
+    Get.lazyPut(
+      () => CInventoryController(),
+      fenix: true,
+    );
+    Get.lazyPut(
+      () => CExpensesController(),
+      fenix: true,
+    );
+    Get.lazyPut(
+      () => CLocalNotificationsController(),
+      fenix: true,
+    );
 
     /// -- todo: init local storage (GetX Local Storage) --
     GetStorage.init().then((_) async {

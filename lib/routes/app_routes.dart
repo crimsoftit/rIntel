@@ -6,6 +6,7 @@ import 'package:rintel/features/authentication/screens/signup/verify_email.dart'
 import 'package:rintel/features/personalization/screens/contacts/contacts_screen.dart';
 import 'package:rintel/features/personalization/screens/contacts/contact_details/contact_detailz_screen.dart';
 import 'package:rintel/features/personalization/screens/contacts/contact_details/contact_txns_screen.dart';
+import 'package:rintel/features/personalization/screens/expenses/widgets/expense_details/expense_details.dart';
 import 'package:rintel/features/personalization/screens/profile/profile.dart';
 import 'package:rintel/features/personalization/screens/settings/user_settings_screen.dart';
 import 'package:rintel/features/store/screens/home/home.dart';
@@ -43,28 +44,49 @@ class CAppRoutes {
       page: () => const CInvDetails(),
     ),
 
-    GetPage(name: CRoutes.checkoutScreen, page: () => const CCheckoutScreen()),
+    GetPage(
+      name: CRoutes.checkoutScreen,
+      page: () => const CCheckoutScreen(),
+    ),
 
-    GetPage(name: CRoutes.settings, page: () => const CUserSettingsScreen()),
+    GetPage(
+      name: CRoutes.settings,
+      page: () => const CUserSettingsScreen(),
+    ),
 
     // GetPage(
     //   name: CRoutes.settingsScreenRaw,
     //   page: () => const SettingsScreenRaw(),
     // ),
-    GetPage(name: CRoutes.userProfile, page: () => const CProfileScreen()),
+    GetPage(
+      name: CRoutes.userProfile,
+      page: () => const CProfileScreen(),
+    ),
 
-    GetPage(name: CRoutes.signup, page: () => const SignupScreen()),
+    GetPage(
+      name: CRoutes.signup,
+      page: () => const SignupScreen(),
+    ),
 
-    GetPage(name: CRoutes.verifyEmail, page: () => const VerifyEmailScreen()),
+    GetPage(
+      name: CRoutes.verifyEmail,
+      page: () => const VerifyEmailScreen(),
+    ),
 
-    GetPage(name: CRoutes.login, page: () => const LoginScreen()),
+    GetPage(
+      name: CRoutes.login,
+      page: () => const LoginScreen(),
+    ),
 
     GetPage(
       name: CRoutes.forgotPassword,
       page: () => const ForgotPasswordScreen(),
     ),
 
-    GetPage(name: CRoutes.onBoarding, page: () => const OnboardingScreen()),
+    GetPage(
+      name: CRoutes.onBoarding,
+      page: () => const OnboardingScreen(),
+    ),
 
     GetPage(
       name: CRoutes.contactsScreen,
@@ -82,6 +104,12 @@ class CAppRoutes {
       name: CRoutes.contactTxnsScreen,
       page: () {
         return const CContactTxnsScreen();
+      },
+    ),
+    GetPage(
+      name: CRoutes.expenseDetailzScreen,
+      page: () {
+        return const CExpenseDetails();
       },
     ),
   ];

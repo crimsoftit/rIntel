@@ -26,20 +26,20 @@ class CTextFormFieldTheme {
     ),
     floatingLabelStyle: const TextStyle().copyWith(
       //color: CColors.rBrown.withOpacity(0.8),
-      color: CColors.rBrown.withValues(alpha: 0.8),
+      color: CColors.rBrown.withValues(alpha: 0.8,),
     ),
     border: const OutlineInputBorder().copyWith(
-      borderRadius: BorderRadius.circular(5.0),
+      borderRadius: BorderRadius.circular(5.0,),
       borderSide: BorderSide(
         width: 1.0,
-        color: CColors.rBrown.withValues(alpha: .5),
+        color: CColors.rBrown.withValues(alpha: .5,),
       ),
     ),
     enabledBorder: OutlineInputBorder().copyWith(
-      borderRadius: BorderRadius.circular(5.0),
+      borderRadius: BorderRadius.circular(5.0,),
       borderSide: BorderSide(
         width: 1.0,
-        color: CColors.rBrown.withValues(alpha: .5),
+        color: CColors.rBrown.withValues(alpha: .5,),
       ),
     ),
     focusedBorder: const OutlineInputBorder().copyWith(
