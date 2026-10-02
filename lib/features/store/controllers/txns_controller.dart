@@ -343,11 +343,9 @@ class CTxnsController extends GetxController {
   }
 
   /// -- search through store sales --
-  void searchSales(String value) {
+  Future<void> searchSales(String value) async {
     try {
-      userTxns.refresh();
-
-      userTxnItems.refresh();
+      await fetchUserTxns();
 
       var txnsFound = userTxns.where((foundTxn) {
         var foundTxnItems = userTxnItems.where(

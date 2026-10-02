@@ -42,17 +42,17 @@ class CAnimedSearchfield extends StatelessWidget {
       duration: const Duration(
         milliseconds: 500,
       ),
-      height: 45.0,
-      width: fieldExpanded ? CHelperFunctions.screenWidth() : 45,
+      height: 40.0,
+      width: fieldExpanded ? CHelperFunctions.screenWidth() : 40,
       child: fieldExpanded
           ? CRoundedContainer(
               bgColor: CColors.transparent,
-              height: 45.0,
+              height: 40.0,
               width: CHelperFunctions.screenWidth(),
               showBorder: false,
               child: Padding(
                 padding: const EdgeInsets.only(
-                  bottom: 6.0,
+                  bottom: 10.0,
                 ),
                 child: TextFormField(
                   autofocus: true,
@@ -105,6 +105,7 @@ class CAnimedSearchfield extends StatelessWidget {
                     fontWeight: FontWeight.normal,
                   ),
                   textAlign: TextAlign.center,
+                  textAlignVertical: TextAlignVertical.top,
                 ),
               ),
             )

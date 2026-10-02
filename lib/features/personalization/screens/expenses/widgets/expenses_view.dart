@@ -42,75 +42,96 @@ class CExpensesView extends StatelessWidget {
               return SizeTransition(
                 alignment: Alignment.center,
                 sizeFactor: animation,
-                child: CKPIDisplayCard(
-                  animeDigit: expenses[index].amount..toStringAsFixed(2),
-
-                  bgColor: isDarkTheme
-                      ? CColors.rBrown.withValues(
-                          alpha: .3,
-                        )
-                      : CColors.rBrown.withValues(
-                          alpha: .1,
+                child: Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(
+                        bottom: 2.0,
+                        right: 10.0,
+                        top: 5.0,
+                      ),
+                      child: Align(
+                        alignment: Alignment.bottomRight,
+                        child: Text(
+                          expenses[index].lastModified,
+                          style: Theme.of(context).textTheme.labelSmall!.apply(
+                            color: CColors.rBrown,
+                            fontFamily: 'Saira',
+                          ),
                         ),
-                  borderRadius: 10.0,
-                  leadingWidget: Icon(
-                    Iconsax.money_send,
-                    color: CColors.rBrown,
-                    size: CSizes.iconMd,
-                  ),
-                  margin: const EdgeInsets.only(
-                    bottom: 3.0,
-                    top: 3.0,
-                  ),
-                  onCardTap: () {
-                    Get.toNamed(
-                      '/expenses/expense_details',
-                      arguments: expenses[index],
-                    );
-                  },
-                  prefixLabel: userCurrency,
-                  subTitleTxt: expenses[index].expenseTitle,
-                  // subTitleWidget: Column(
-                  //   crossAxisAlignment: CrossAxisAlignment.start,
-                  //   children: [
-                  //     Text(
-                  //       expenses[index].expenseTitle,
-                  //     ),
-                  //     const SizedBox(
-                  //       height: CSizes.spaceBtnInputFields,
-                  //     ),
-                  //     Row(
-                  //       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  //       children: [
-                  //         Text(
-                  //           'Paid to:',
-                  //         ),
-                  //         Column(
-                  //           crossAxisAlignment: CrossAxisAlignment.end,
-                  //           children: [
-                  //             Text(
-                  //               expenses[index].recipientName,
-                  //             ),
-                  //             Text(
-                  //               expenses[index].recipientContact,
-                  //             ),
-                  //           ],
-                  //         ),
-                  //       ],
-                  //     ),
-                  //   ],
-                  // ),
-                  //trailingWidget: SizedBox.shrink(),
+                      ),
+                    ),
+                    CKPIDisplayCard(
+                      animeDigit: expenses[index].amount..toStringAsFixed(2),
 
-                  // IconButton(
-                  //   onPressed: () {},
-                  //   icon: Icon(
-                  //     Iconsax.information,
-                  //     color: CColors.rBrown,
-                  //     size: CSizes.iconMd,
-                  //   ),
-                  // ),
-                  width: CHelperFunctions.screenWidth() * .92,
+                      bgColor: isDarkTheme
+                          ? CColors.rBrown.withValues(
+                              alpha: .3,
+                            )
+                          : CColors.rBrown.withValues(
+                              alpha: .1,
+                            ),
+                      borderRadius: 10.0,
+                      leadingWidget: Icon(
+                        Iconsax.money_send,
+                        color: CColors.rBrown,
+                        size: CSizes.iconMd,
+                      ),
+                      margin: const EdgeInsets.only(
+                        bottom: 3.0,
+                        top: 3.0,
+                      ),
+                      onCardTap: () {
+                        Get.toNamed(
+                          '/expenses/expense_details',
+                          arguments: expenses[index],
+                        );
+                      },
+                      prefixLabel: userCurrency,
+                      subTitleTxt: expenses[index].expenseTitle,
+                      // subTitleWidget: Column(
+                      //   crossAxisAlignment: CrossAxisAlignment.start,
+                      //   children: [
+                      //     Text(
+                      //       expenses[index].expenseTitle,
+                      //     ),
+                      //     const SizedBox(
+                      //       height: CSizes.spaceBtnInputFields,
+                      //     ),
+                      //     Row(
+                      //       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      //       children: [
+                      //         Text(
+                      //           'Paid to:',
+                      //         ),
+                      //         Column(
+                      //           crossAxisAlignment: CrossAxisAlignment.end,
+                      //           children: [
+                      //             Text(
+                      //               expenses[index].recipientName,
+                      //             ),
+                      //             Text(
+                      //               expenses[index].recipientContact,
+                      //             ),
+                      //           ],
+                      //         ),
+                      //       ],
+                      //     ),
+                      //   ],
+                      // ),
+                      //trailingWidget: SizedBox.shrink(),
+
+                      // IconButton(
+                      //   onPressed: () {},
+                      //   icon: Icon(
+                      //     Iconsax.information,
+                      //     color: CColors.rBrown,
+                      //     size: CSizes.iconMd,
+                      //   ),
+                      // ),
+                      width: CHelperFunctions.screenWidth() * .92,
+                    ),
+                  ],
                 ),
               );
             },
