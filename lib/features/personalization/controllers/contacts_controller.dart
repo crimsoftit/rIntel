@@ -173,7 +173,6 @@ class CContactsController extends GetxController {
     } catch (e) {
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
-          Get.overlayContext!,
           message: 'error checking contact existence: $e',
           title: 'error checking contact existence!',
         );
@@ -189,7 +188,6 @@ class CContactsController extends GetxController {
     } catch (e) {
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
-          Get.overlayContext!,
           message: 'error checking for contact\'s country code: $e',
           title: 'error checking for contact\'s country code!',
         );
@@ -222,13 +220,11 @@ class CContactsController extends GetxController {
       isLoading.value = false;
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
-          Get.overlayContext!,
           message: 'an error occurred while adding contact: $e',
           title: 'error adding contact!',
         );
       } else {
         CPopupSnackBar.errorSnackBar(
-          Get.overlayContext!,
           message:
               'An unknown error occurred while adding contact! Please try again later...',
           title: 'error adding contact!',
@@ -276,7 +272,6 @@ class CContactsController extends GetxController {
       isLoading.value = false;
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
-          Get.overlayContext!,
           message: 'an error occurred while fetching contacts: $e',
           title: 'error fetching contacts!',
         );
@@ -305,13 +300,11 @@ class CContactsController extends GetxController {
       isLoading.value = false;
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
-          Get.overlayContext!,
           title: 'ERROR fetching contacts from cloud firestore!',
           message: e.toString(),
         );
       } else {
         CPopupSnackBar.errorSnackBar(
-          Get.overlayContext!,
           message:
               'an unknown error occurred while fetching contacts from cloud firestore',
           title: 'ERROR importing contacts from the cloud!',
@@ -368,13 +361,11 @@ class CContactsController extends GetxController {
       isLoading.value = false;
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
-          Get.overlayContext!,
           message: 'error updating contact: $e',
           title: 'error updating contact!',
         );
       } else {
         CPopupSnackBar.errorSnackBar(
-          Get.overlayContext!,
           message: 'An unknown error occurred while updating contact details!',
           title: 'error updating contact!',
         );
@@ -580,7 +571,6 @@ class CContactsController extends GetxController {
     } catch (e) {
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
-          Get.overlayContext!,
           message: 'error displaying add contact bottom sheet modal: $e',
           title: 'error popping bottom sheet modal!',
         );
@@ -601,13 +591,11 @@ class CContactsController extends GetxController {
     } catch (e) {
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
-          Get.overlayContext!,
           message: 'error restoring contact from trash bin: $e',
           title: 'error restoring contact!',
         );
       } else {
         CPopupSnackBar.errorSnackBar(
-          Get.overlayContext!,
           message:
               'An unknown error occurred while restoring contact from trash bin! Please try again later...',
           title: 'error restoring contact!',
@@ -626,7 +614,6 @@ class CContactsController extends GetxController {
             contactsRepo.deleteCloudContact(contact);
           } else {
             CPopupSnackBar.errorSnackBar(
-              Get.overlayContext!,
               message: 'An unknown error occurred while deleting contact ',
               title: 'error deleting contact!',
             );
@@ -637,13 +624,11 @@ class CContactsController extends GetxController {
     } catch (e) {
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
-          Get.overlayContext!,
           message: 'An unknown error occurred while deleting contact: $e',
           title: 'error deleting contact!',
         );
       } else {
         CPopupSnackBar.errorSnackBar(
-          Get.overlayContext!,
           message:
               'An unknown error occurred while deleting contact! Please try again later...',
           title: 'error deleting contact!',
@@ -768,13 +753,11 @@ class CContactsController extends GetxController {
     } catch (e) {
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
-          Get.overlayContext!,
           message: 'An unknown error occurred while deleting contact: $e',
           title: 'error deleting contact!',
         );
       } else {
         CPopupSnackBar.errorSnackBar(
-          Get.overlayContext!,
           message:
               'An unknown error occurred while deleting contact! Please try again later...',
           title: 'error deleting contact!',
@@ -793,13 +776,11 @@ class CContactsController extends GetxController {
     } catch (error) {
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
-          Get.overlayContext!,
           message: 'error sending simple sms: $error',
           title: 'error sending simple sms!',
         );
       } else {
         CPopupSnackBar.errorSnackBar(
-          Get.overlayContext!,
           message: 'an unknown error occurred while sending sms!',
           title: 'error sending sms!',
         );
@@ -827,13 +808,11 @@ class CContactsController extends GetxController {
     } catch (error) {
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
-          Get.overlayContext!,
           message: error.toString(),
           title: 'Error sending direct sms!',
         );
       } else {
         CPopupSnackBar.errorSnackBar(
-          Get.overlayContext!,
           message: 'Unable to send direct sms! Please try again later...',
           title: 'Error sending direct sms!',
         );
@@ -860,7 +839,6 @@ class CContactsController extends GetxController {
       if (kDebugMode) {
         print('error launching dialer: $e');
         CPopupSnackBar.errorSnackBar(
-          Get.overlayContext!,
           message: 'error launching dialer: $e',
           title: 'error launching dialer',
         );
@@ -886,7 +864,6 @@ class CContactsController extends GetxController {
       if (kDebugMode) {
         print('error sending email: $e');
         CPopupSnackBar.errorSnackBar(
-          Get.overlayContext!,
           message: 'error sending email: $e',
           title: 'error sending email',
         );
@@ -907,7 +884,6 @@ class CContactsController extends GetxController {
         await launchUrl(emailUri);
       } else {
         CPopupSnackBar.warningSnackBar(
-          Get.overlayContext!,
           message: 'Unable to launch email app! try again later.',
           title: 'Could not launch email app!',
         );
@@ -917,7 +893,6 @@ class CContactsController extends GetxController {
       if (kDebugMode) {
         print('error sending email: $e');
         CPopupSnackBar.errorSnackBar(
-          Get.overlayContext!,
           message: 'error sending email: $e',
           title: 'error sending email',
         );
@@ -956,13 +931,11 @@ class CContactsController extends GetxController {
       if (kDebugMode) {
         print('error launching whatsapp: $e');
         CPopupSnackBar.errorSnackBar(
-          Get.overlayContext!,
           message: 'error launching whatsapp: $e',
           title: 'error launching whatsapp',
         );
       } else {
         CPopupSnackBar.errorSnackBar(
-          Get.overlayContext!,
           message: 'unable to launch whatsapp chat! please try again later',
           title: 'error launching whatsapp',
         );
@@ -1197,13 +1170,11 @@ class CContactsController extends GetxController {
       if (kDebugMode) {
         print('error trashing contact: $e');
         CPopupSnackBar.errorSnackBar(
-          Get.overlayContext!,
           message: 'error trashing contact: $e',
           title: 'error trashing contact',
         );
       } else {
         CPopupSnackBar.errorSnackBar(
-          Get.overlayContext!,
           message:
               'Unable to send contact to trash bin. Please try again later',
           title: 'error trashing contact',
@@ -1262,13 +1233,11 @@ class CContactsController extends GetxController {
       isLoading.value = false;
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
-          Get.overlayContext!,
           title: 'error fetching all contacts from cloud!',
           message: e.toString(),
         );
       } else {
         CPopupSnackBar.errorSnackBar(
-          Get.overlayContext!,
           title: 'error fetching all contacts from cloud!',
           message:
               'an unknown error occurred while fetching all contacts from cloud! Please try again later.',
@@ -1328,13 +1297,11 @@ class CContactsController extends GetxController {
       isLoading.value = false;
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
-          Get.overlayContext!,
           message: 'error fetching contact suggestions: $e',
           title: 'error fetching contact suggestions!',
         );
       } else {
         CPopupSnackBar.errorSnackBar(
-          Get.overlayContext!,
           message:
               'An unknown error occurred while fetching contact search results! Please try again later...',
           title: 'Error searching through contacts!',
@@ -1395,13 +1362,11 @@ class CContactsController extends GetxController {
     } catch (e) {
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
-          Get.overlayContext!,
           message: 'error fetching supplier\'s country code: $e',
           title: 'error fetching supplier\'s country code!',
         );
       } else {
         CPopupSnackBar.errorSnackBar(
-          Get.overlayContext!,
           message:
               'An unknown error occurred while fetching supplier\'s country code!',
           title: 'Error fetching supplier\'s country code!!',
@@ -1504,13 +1469,11 @@ class CContactsController extends GetxController {
     } catch (e) {
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
-          Get.overlayContext!,
           message: 'error summarizing contact\'s transactional data: $e',
           title: 'error summarizing contact\'s transactional data!',
         );
       } else {
         CPopupSnackBar.errorSnackBar(
-          Get.overlayContext!,
           message:
               'An unknown error occurred while summarizing contact\'s transactional data! Please try again later...',
           title: 'Error summarizing contact\'s transactional data!',
@@ -1586,7 +1549,6 @@ class CContactsController extends GetxController {
           await deviceContactsImportLogic();
         } else {
           CPopupSnackBar.errorSnackBar(
-            Get.overlayContext!,
             message:
                 'permission to access device contacts was denied! please grant permission and try again later...',
             title: 'permission denied after request to access device contacts',
@@ -1597,7 +1559,6 @@ class CContactsController extends GetxController {
         // Direct user to app settings
         openAppSettings();
         CPopupSnackBar.errorSnackBar(
-          Get.overlayContext!,
           message:
               'permission to access device contacts was permanently denied. Please enable in settings to import contacts...',
           title: 'permission permanently denied',
@@ -1609,13 +1570,11 @@ class CContactsController extends GetxController {
       isImportingContacts.value = false;
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
-          Get.overlayContext!,
           message: 'unable to import device contacts: $e',
           title: 'unable to import device contacts',
         );
       } else {
         CPopupSnackBar.errorSnackBar(
-          Get.overlayContext!,
           message:
               'an unknown error occurred while importing contacts from your device! please try again later...',
           title: 'unable to import device contacts',
@@ -1687,13 +1646,11 @@ class CContactsController extends GetxController {
     } catch (e) {
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
-          Get.overlayContext!,
           message: 'unable to import device contacts: $e',
           title: 'unable to import device contacts',
         );
       } else {
         CPopupSnackBar.errorSnackBar(
-          Get.overlayContext!,
           message:
               'an unknown error occurred while importing contacts from your device! please try again later...',
           title: 'unable to import device contacts',

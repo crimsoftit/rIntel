@@ -86,7 +86,7 @@ class CNetworkManager extends GetxController {
     } catch (err) {
       hasConnection.value = false;
       CPopupSnackBar.errorSnackBar(
-        Get.overlayContext!,
+        
         title: 'internet connection error',
         message: err.toString(),
       );
@@ -111,13 +111,13 @@ class CNetworkManager extends GetxController {
     } catch (e) {
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
-          Get.overlayContext!,
+          
           message: 'internet connection error: $e',
           title: 'internet connection error',
         );
       } else {
         CPopupSnackBar.errorSnackBar(
-          Get.overlayContext!,
+          
           message: 'internet connection error!',
           title: 'internet connection error',
         );

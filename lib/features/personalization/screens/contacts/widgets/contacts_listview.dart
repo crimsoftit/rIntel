@@ -190,7 +190,6 @@ class CContactsListview extends StatelessWidget {
 
             if (kDebugMode) {
               CPopupSnackBar.errorSnackBar(
-                context,
                 message: 'no contacts for this tab space!',
                 title: 'invalid tab space',
               );

@@ -180,53 +180,67 @@ class CInvDetails extends StatelessWidget {
                     child: CRoundedContainer(
                       bgColor:
                           CFormatter.computeTimeRangeFromNow(
-                                invItem.expiryDate.replaceAll(
-                                  '@ ',
-                                  '',
-                                ),
-                              ) <=
-                              3
+                                    invItem.expiryDate.replaceAll(
+                                      '@ ',
+                                      '',
+                                    ),
+                                  ) <=
+                                  3 &&
+                              CFormatter.computeTimeRangeFromNow(
+                                    invItem.expiryDate.replaceAll(
+                                      '@ ',
+                                      '',
+                                    ),
+                                  ) >
+                                  0
                           ? CColors.warning
                           : Colors.redAccent,
                       borderRadius: CSizes.borderRadiusLg * 1.5,
-                      height: 50.0,
+                      height: 60.0,
                       padding: const EdgeInsets.only(
                         left: 15.0,
                         right: 15.0,
                       ),
-                      width: CHelperFunctions.screenWidth() * .65,
+                      width: CHelperFunctions.screenWidth() * .75,
 
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
 
                         children: [
-                          Icon(
-                            CFormatter.computeTimeRangeFromNow(
-                                      invItem.expiryDate.replaceAll(
-                                        '@ ',
-                                        '',
-                                      ),
-                                    ) <=
-                                    3
-                                ? Iconsax.danger
-                                : Icons.alarm_on,
-                            color: CColors.white,
-                            size: CSizes.iconSm,
+                          Expanded(
+                            child: Icon(
+                              CFormatter.computeTimeRangeFromNow(
+                                        invItem.expiryDate.replaceAll(
+                                          '@ ',
+                                          '',
+                                        ),
+                                      ) <=
+                                      3
+                                  ? Iconsax.danger
+                                  : Icons.alarm_on,
+                              color: CColors.white,
+                              size: CSizes.iconSm,
+                            ),
                           ),
-                          const SizedBox(
-                            width: 10.0,
-                          ),
-                          Text(
-                            CFormatter.computeTimeRangeFromNow(
-                                      invItem.expiryDate.replaceAll('@ ', ''),
-                                    ) <=
-                                    0
-                                ? '${invItem.name.toUpperCase()} is expired!!'
-                                : '${invItem.name.toUpperCase()} expires ${CFormatter.formatTimeRangeFromNow(invItem.expiryDate.replaceAll('@ ', ''))}',
-                            style: Theme.of(context).textTheme.bodyMedium!
-                                .apply(
-                                  color: CColors.white,
-                                ),
+                          // const SizedBox(
+                          //   width: 10.0,
+                          // ),
+                          Expanded(
+                            flex: 8,
+                            child: Text(
+                              CFormatter.computeTimeRangeFromNow(
+                                        invItem.expiryDate.replaceAll('@ ', ''),
+                                      ) <=
+                                      0
+                                  ? '${invItem.name.toUpperCase()} is expired!!'
+                                  : '${invItem.name.toUpperCase()} expires ${CFormatter.formatTimeRangeFromNow(invItem.expiryDate.replaceAll('@ ', ''))}',
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                              style: Theme.of(context).textTheme.bodyMedium!
+                                  .apply(
+                                    color: CColors.white,
+                                  ),
+                            ),
                           ),
                         ],
                       ),

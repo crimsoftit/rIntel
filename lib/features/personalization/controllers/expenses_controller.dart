@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:intl/intl.dart';
 import 'package:rintel/common/widgets/buttons/custom_dropdown_btn.dart';
@@ -31,6 +32,7 @@ class CExpensesController extends GetxController {
   final addUpdateExpenseFormKey = GlobalKey<FormState>();
   final contactsController = Get.put(CContactsController());
   final DbHelper dbHelper = DbHelper.instance;
+  final localStorage = GetStorage();
   final RxBool isLoading = false.obs;
 
   final RxList<String> categories = [
@@ -57,15 +59,41 @@ class CExpensesController extends GetxController {
   final txtRecipientName = TextEditingController();
   final txtRecipientContacts = TextEditingController();
   final txtRemarks = TextEditingController();
+  final txtTxnCode = TextEditingController();
 
   final userController = Get.put(CUserController());
 
   @override
   void onInit() async {
     isLoading.value = false;
-    await fetchMyExpenses();
+    await initExpensesSync();
     resetFields();
     super.onInit();
+  }
+
+  /// -- initialize cloud sync --
+  Future<void> initExpensesSync() async {
+    await fetchMyExpenses().then(
+      (myExpenses) async {
+        if (localStorage.read('SyncExpensesWithCloud') == true &&
+            myExpenses.isEmpty) {
+          switch (await importExpensesFromCloud()) {
+            case true:
+              localStorage.write(
+                'SyncExpensesWithCloud',
+                false,
+              );
+              break;
+            default:
+              localStorage.write(
+                'SyncExpensesWithCloud',
+                true,
+              );
+              break;
+          }
+        }
+      },
+    );
   }
 
   /// -- add expense dialog --
@@ -86,10 +114,9 @@ class CExpensesController extends GetxController {
             ),
       builder: (context) {
         return SingleChildScrollView(
-          child: CRoundedContainer(
-            bgColor: CColors.transparent,
+          child: Padding(
             padding: EdgeInsets.only(
-              bottom: MediaQuery.of(context).viewInsets.bottom,
+              bottom: MediaQuery.of(context).viewInsets.bottom + 20,
               left: CSizes.lg,
               right: CSizes.lg + 5.0,
               top: CSizes.lg / 4,
@@ -97,7 +124,7 @@ class CExpensesController extends GetxController {
             child: Form(
               key: addUpdateExpenseFormKey,
               child: SizedBox(
-                height: CHelperFunctions.screenHeight() * .7,
+                height: CHelperFunctions.screenHeight() * .75,
                 child: Column(
                   children: [
                     CRoundedContainer(
@@ -204,16 +231,17 @@ class CExpensesController extends GetxController {
                               DateFormat(
                                 'yyyy-MM-dd kk:mm',
                               ).format(clock.now()),
-                              //_txnCode,
+                              txtTxnCode.text.trim(),
                             );
                             saveExpense(expense).then(
                               (_) {
-                                Get.back();
                                 CPopupSnackBar.successSnackBar(
-                                  Get.overlayContext!,
+                                  behavior: SnackBarBehavior.fixed,
+
                                   message: 'Expense recorded successfully!',
                                   title: 'success!!',
                                 );
+                                Get.back();
                               },
                             );
                           },
@@ -244,6 +272,10 @@ class CExpensesController extends GetxController {
                           size: CSizes.iconXs,
                         ),
                       ),
+                      // Optional: Add scrollPadding to ensure space above keyboard
+                      scrollPadding: EdgeInsets.only(
+                        bottom: 50.0,
+                      ),
                       style: const TextStyle(
                         fontWeight: FontWeight.normal,
                       ),
@@ -256,11 +288,11 @@ class CExpensesController extends GetxController {
                     ),
 
                     const SizedBox(
-                      height: CSizes.spaceBtnInputFields,
+                      height: CSizes.spaceBtnInputFields / 4,
                     ),
 
                     SizedBox(
-                      height: 75.0,
+                      height: 61.0,
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         //mainAxisSize: MainAxisSize.min,
@@ -344,8 +376,10 @@ class CExpensesController extends GetxController {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Expanded(
-                          flex: 5,
+                        CRoundedContainer(
+                          bgColor: CColors.transparent,
+                          height: 60.0,
+                          width: CHelperFunctions.screenWidth() * .6,
                           child: ContactsSearchTypeaheadField(
                             enabledBorderColor: isDarkTheme
                                 ? CColors.grey
@@ -357,6 +391,7 @@ class CExpensesController extends GetxController {
                                   ).withValues(
                                     alpha: .5,
                                   ),
+                            fieldHeight: 60.0,
                             fillColor: CColors.rBrown.withValues(
                               alpha: .1,
                             ),
@@ -394,40 +429,37 @@ class CExpensesController extends GetxController {
                           width: 5.0,
                         ),
 
-                        Expanded(
-                          flex: 2,
-                          child: CRoundedContainer(
-                            bgColor: CColors.transparent,
-                            height: 65.0,
-                            width: CHelperFunctions.screenWidth() * .24,
-                            child: TextFormField(
-                              controller: txtContactCountryPicker,
-                              decoration: InputDecoration(
-                                filled: true,
-                                fillColor: CColors.rBrown.withValues(
-                                  alpha: .1,
-                                ),
-                                labelText: 'Country',
-                                labelStyle: Theme.of(
-                                  context,
-                                ).textTheme.labelSmall,
+                        CRoundedContainer(
+                          bgColor: CColors.transparent,
+                          height: 60.0,
+                          width: CHelperFunctions.screenWidth() * .22,
+                          child: TextFormField(
+                            controller: txtContactCountryPicker,
+                            decoration: InputDecoration(
+                              filled: true,
+                              fillColor: CColors.rBrown.withValues(
+                                alpha: .1,
                               ),
-                              onTap: () {
-                                contactsController.selectContactCountry(
-                                  txtContactCountryPicker,
-                                );
-                              },
-                              //readOnly: true,
-                              style: const TextStyle(
-                                fontWeight: FontWeight.normal,
-                              ),
-                              validator: (value) {
-                                return CValidator.validateEmptyText(
-                                  'Recipeint\'s country',
-                                  value,
-                                );
-                              },
+                              labelText: 'Country',
+                              labelStyle: Theme.of(
+                                context,
+                              ).textTheme.labelSmall,
                             ),
+                            onTap: () {
+                              contactsController.selectContactCountry(
+                                txtContactCountryPicker,
+                              );
+                            },
+                            //readOnly: true,
+                            style: const TextStyle(
+                              fontWeight: FontWeight.normal,
+                            ),
+                            validator: (value) {
+                              return CValidator.validateEmptyText(
+                                'Recipeint\'s country',
+                                value,
+                              );
+                            },
                           ),
                         ),
                       ],
@@ -438,7 +470,7 @@ class CExpensesController extends GetxController {
                           : CColors.rBrown.withValues(
                               alpha: .5,
                             ),
-                      fieldHeight: 70.0,
+                      fieldHeight: 60.0,
                       focusedBorderColor: isDarkTheme
                           ? CColors.grey
                           : CColors.rBrown.withValues(
@@ -489,6 +521,53 @@ class CExpensesController extends GetxController {
                         alpha: .1,
                       ),
                     ),
+                    // const SizedBox(
+                    //   height: CSizes.spaceBtnInputFields / 8,
+                    // ),
+                    TextFormField(
+                      controller: txtTxnCode,
+                      decoration: InputDecoration(
+                        constraints: BoxConstraints(
+                          maxHeight: 60.5,
+                          minHeight: 60.0,
+                        ),
+                        fillColor: CColors.rBrown.withValues(
+                          alpha: .1,
+                        ),
+                        filled: true,
+
+                        labelStyle: Theme.of(context).textTheme.labelMedium,
+                        labelText: 'Txn Code/Reference No.',
+
+                        prefixIcon: TextButton.icon(
+                          onPressed: () {
+                            CHelperFunctions.generateCode().toString();
+                          },
+                          icon: Icon(
+                            Iconsax.flash,
+                            size: CSizes.iconXs,
+                            color: CColors.rOrange,
+                          ),
+                          label: Text(
+                            'Auto',
+                            style: Theme.of(context).textTheme.labelSmall!
+                                .apply(
+                                  color: CColors.rOrange,
+                                  fontStyle: FontStyle.italic,
+                                ),
+                          ),
+                        ),
+                      ),
+                      style: const TextStyle(
+                        fontWeight: FontWeight.normal,
+                      ),
+                      validator: (value) {
+                        return CValidator.validateEmptyText(
+                          'Reference No.',
+                          value,
+                        );
+                      },
+                    ),
                     const SizedBox(
                       height: CSizes.spaceBtnInputFields / 4,
                     ),
@@ -536,7 +615,6 @@ class CExpensesController extends GetxController {
           storeRepo.saveExpenseToCloud(expense);
         } else {
           CPopupSnackBar.errorSnackBar(
-            Get.overlayContext!,
             title: 'Error saving expense details!',
           );
         }
@@ -562,18 +640,50 @@ class CExpensesController extends GetxController {
       isLoading.value = false;
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
-          Get.overlayContext!,
           title: 'error fetching expenses!',
           message: e.toString(),
         );
       } else {
         CPopupSnackBar.errorSnackBar(
-          Get.overlayContext!,
           title: 'error fetching expenses!',
           message: 'An unknown error occurred while fetching your expenses!',
         );
       }
 
+      rethrow;
+    }
+  }
+
+  /// -- import contacts from cloud firestore --
+  Future<bool> importExpensesFromCloud() async {
+    try {
+      // -- start loader --
+      isLoading.value = true;
+
+      final myXpenses = await storeRepo.fetchExpensesFromCloud(
+        userController.user.value.email,
+      );
+
+      // -- batch insert expenses to local db --
+      await dbHelper.batchInsertXpenses(myXpenses);
+
+      // -- stop loader --
+      isLoading.value = false;
+      return true;
+    } catch (e) {
+      isLoading.value = false;
+      if (kDebugMode) {
+        CPopupSnackBar.errorSnackBar(
+          title: 'ERROR fetching expenses from cloud firestore!',
+          message: e.toString(),
+        );
+      } else {
+        CPopupSnackBar.errorSnackBar(
+          message:
+              'an unknown error occurred while fetching expenses from cloud firestore',
+          title: 'ERROR fetching expenses from the cloud!',
+        );
+      }
       rethrow;
     }
   }

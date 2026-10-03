@@ -51,7 +51,6 @@ class ForgotPasswordController extends GetxController {
 
       // show success screen
       CPopupSnackBar.successSnackBar(
-        Get.overlayContext!,
         title: 'password reset email sent...',
         message: 'please check your email for a password reset link'.tr,
       );
@@ -62,7 +61,6 @@ class ForgotPasswordController extends GetxController {
       // stop loader
       CFullScreenLoader.stopLoading();
       CPopupSnackBar.errorSnackBar(
-        Get.overlayContext!,
         title: 'Oh Snap!',
         message: e.toString(),
       );
@@ -99,7 +97,6 @@ class ForgotPasswordController extends GetxController {
 
       // show success screen
       CPopupSnackBar.successSnackBar(
-        Get.overlayContext!,
         title: 'password reset email has been re-sent...',
         message: 'please check your email for a password reset link'.tr,
       );
@@ -107,7 +104,6 @@ class ForgotPasswordController extends GetxController {
       // stop loader
       CFullScreenLoader.stopLoading();
       CPopupSnackBar.errorSnackBar(
-        Get.overlayContext!,
         title: 'Oh Snap!',
         message: e.toString(),
       );

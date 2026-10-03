@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_zoom_drawer/flutter_zoom_drawer.dart';
 import 'package:get/get.dart';
+import 'package:rintel/data/repos/auth/auth_repo.dart';
 import 'package:rintel/features/personalization/models/menu_item_model.dart';
 import 'package:rintel/features/personalization/screens/expenses/expenses_screen.dart';
 import 'package:rintel/features/personalization/screens/navigation/menu_items.dart';
@@ -71,6 +72,10 @@ class _CMainNavState extends State<CMainNav> {
 
       case CMenuItems.contacts:
         navController.selectedIndex.value = 2;
+        return NavMenu();
+
+      case CMenuItems.logout:
+        AuthRepo.instance.logout();
         return NavMenu();
 
       default:

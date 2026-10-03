@@ -36,13 +36,11 @@ class CContactsRepo extends GetxController {
       isLoading.value = false;
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
-          Get.overlayContext!,
           title: 'contact datails format error!',
           message: e.message,
         );
       } else {
         CPopupSnackBar.errorSnackBar(
-          Get.overlayContext!,
           title: 'error uploading contact!',
           message:
               'an unknown error occurred while uploading contact details! please try again later',
@@ -54,13 +52,11 @@ class CContactsRepo extends GetxController {
       isLoading.value = false;
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
-          Get.overlayContext!,
           title: 'firebase cloud error!',
           message: 'unable to save your contact details: ${e.code}',
         );
       } else {
         CPopupSnackBar.errorSnackBar(
-          Get.overlayContext!,
           title: 'Oh Snap!',
           message:
               'an unknown error occurred while saving your contact details! please try again later',
@@ -71,7 +67,6 @@ class CContactsRepo extends GetxController {
       // -- stop loader --
       isLoading.value = false;
       CPopupSnackBar.errorSnackBar(
-        Get.overlayContext!,
         message: CPlatformExceptions(e.code).message,
         title: "contact data platform exception error",
       );
@@ -82,13 +77,11 @@ class CContactsRepo extends GetxController {
       isLoading.value = false;
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
-          Get.overlayContext!,
           message: e.toString(),
           title: "error uploading contact details",
         );
       } else {
         CPopupSnackBar.errorSnackBar(
-          Get.overlayContext!,
           message:
               'an unknown error occurred while uploading contact details to cloud! please try again later...',
           title: "error uploading contact details",
@@ -123,7 +116,6 @@ class CContactsRepo extends GetxController {
 
       if (kDebugMode) {
         CPopupSnackBar.successSnackBar(
-          Get.overlayContext!,
           message: 'your contacts were successfully backed up to cloud',
           title: "contacts successfully backed up to cloud",
         );
@@ -136,13 +128,11 @@ class CContactsRepo extends GetxController {
       isLoading.value = false;
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
-          Get.overlayContext!,
           message: e.toString(),
           title: "error uploading contact details",
         );
       } else {
         CPopupSnackBar.errorSnackBar(
-          Get.overlayContext!,
           message:
               'an unknown error occurred while uploading contact details to cloud! please try again later...',
           title: "error uploading contact details",
@@ -173,13 +163,11 @@ class CContactsRepo extends GetxController {
     } on FirebaseException catch (e) {
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
-          Get.overlayContext!,
           title: 'firebase cloud error!',
           message: 'unable to fetch cloud contacts: ${e.code}',
         );
       } else {
         CPopupSnackBar.errorSnackBar(
-          Get.overlayContext!,
           title: 'Oh Snap! Error fetching cloud contacts!',
           message:
               'an unknown error occurred while fetching contacts from cloud firestore!! please try again later',
@@ -189,13 +177,11 @@ class CContactsRepo extends GetxController {
     } on FormatException catch (e) {
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
-          Get.overlayContext!,
           title: 'contacts cloud data fetch format error!',
           message: e.message,
         );
       } else {
         CPopupSnackBar.errorSnackBar(
-          Get.overlayContext!,
           title: 'Oh Snap!',
           message:
               'an unknown error occurred while fetching contacts from cloud firestore!! please try again later',
@@ -204,7 +190,6 @@ class CContactsRepo extends GetxController {
       rethrow;
     } on PlatformException catch (e) {
       CPopupSnackBar.errorSnackBar(
-        Get.overlayContext!,
         message: CPlatformExceptions(e.code).message,
         title: "contacts cloud data fetch platform exception error",
       );
@@ -213,13 +198,11 @@ class CContactsRepo extends GetxController {
     } catch (e) {
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
-          Get.overlayContext!,
           message: e.toString(),
           title: "error fetching cloud contacts",
         );
       } else {
         CPopupSnackBar.errorSnackBar(
-          Get.overlayContext!,
           message:
               'an unknown error occurred while fetching contacts from cloud firestore! please try again later...',
           title: "error fetching contacts from cloud firestore!",
@@ -240,13 +223,11 @@ class CContactsRepo extends GetxController {
     } catch (e) {
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
-          Get.overlayContext!,
           message: e.toString(),
           title: "error updating contact on the cloud ",
         );
       } else {
         CPopupSnackBar.errorSnackBar(
-          Get.overlayContext!,
           message:
               'an unknown error occurred while updating contact on the cloud! please try again later...',
           title: "error updating contact on the cloud!",
@@ -267,13 +248,11 @@ class CContactsRepo extends GetxController {
     } catch (e) {
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
-          Get.overlayContext!,
           message: e.toString(),
           title: "error deleting contact on the cloud ",
         );
       } else {
         CPopupSnackBar.errorSnackBar(
-          Get.overlayContext!,
           message:
               'an unknown error occurred while deleting contact on the cloud! please try again later...',
           title: "error deleting contact on the cloud!",

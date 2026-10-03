@@ -34,7 +34,6 @@ class CSocialButtons extends StatelessWidget {
               // }
 
               CPopupSnackBar.warningSnackBar(
-                context,
                 title: 'option not available at the moment!',
                 message:
                     'WOOPS... sorry for the inconvenience, this option is '

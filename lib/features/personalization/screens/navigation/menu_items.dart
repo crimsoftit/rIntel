@@ -31,6 +31,11 @@ class CMenuItems {
     icon: Icons.star,
   );
 
+  static const logout = CMenuItemModel(
+    title: "Logout",
+    icon: Icons.logout,
+  );
+
   static const List<CMenuItemModel> menuItems = [
     dashboard,
     expenses,

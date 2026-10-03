@@ -195,13 +195,13 @@ class CFormatter {
     } catch (e) {
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
-          Get.overlayContext!,
+          
           message: 'error formatting item metrics: $e',
           title: 'item metrics format error!',
         );
       } else {
         CPopupSnackBar.errorSnackBar(
-          Get.overlayContext!,
+          
           message: 'error formatting item metrics!',
           title: 'item metrics format error!',
         );
@@ -222,7 +222,7 @@ class CFormatter {
     } catch (e) {
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
-          Get.overlayContext!,
+          
           message: 'metrics format error: $e',
           title: 'metrics format error!',
         );
@@ -249,7 +249,7 @@ class CFormatter {
     } catch (e) {
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
-          Get.overlayContext!,
+          
           message: e.toString(),
           title: 'format error',
         );

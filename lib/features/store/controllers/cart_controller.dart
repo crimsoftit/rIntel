@@ -82,13 +82,11 @@ class CCartController extends GetxController {
     } catch (e) {
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
-          Get.overlayContext!,
           message: 'Error fetching cart items: $e',
           title: 'Error fetching cart items!',
         );
       } else {
         CPopupSnackBar.errorSnackBar(
-          Get.overlayContext!,
           message:
               'an unknown error occurred while fetching cart items!  Please try again later...',
           title: 'Error fetching cart items!',
@@ -116,7 +114,6 @@ class CCartController extends GetxController {
       );
       if (itemExpiry <= 0) {
         CPopupSnackBar.warningSnackBar(
-          Get.overlayContext!,
           title: 'item is stale/expired',
           message: '${item.name} is stale/expired!',
         );
@@ -125,7 +122,6 @@ class CCartController extends GetxController {
     }
     if (item.quantity < 0.01) {
       CPopupSnackBar.warningSnackBar(
-        Get.overlayContext!,
         title: 'oh snap!',
         message: '${item.name} is out of stock!!',
       );
@@ -133,7 +129,6 @@ class CCartController extends GetxController {
     }
     if (itemQtyInCart > item.quantity) {
       CPopupSnackBar.warningSnackBar(
-        Get.overlayContext!,
         title: 'oh snap!',
         message: item.quantity == 0
             ? 'Oh no! \n${item.name.toUpperCase()} is out of stock!'
@@ -210,7 +205,6 @@ class CCartController extends GetxController {
             ) <=
             0) {
       CPopupSnackBar.warningSnackBar(
-        Get.overlayContext!,
         title: 'item is stale/expired',
         message: '${inventoryItem.name} has expired!',
       );
@@ -221,7 +215,6 @@ class CCartController extends GetxController {
           if (fromQtyTxtField && qtyValue != '') {
             if (double.parse(qtyValue!) > inventoryItem.quantity) {
               CPopupSnackBar.warningSnackBar(
-                Get.overlayContext!,
                 title: 'Oh snap!',
                 message: inventoryItem.quantity == 0
                     ? 'Oh no! \n${inventoryItem.name.toUpperCase()} is out of stock!'
@@ -246,7 +239,6 @@ class CCartController extends GetxController {
           } else {
             if (cartItems[itemIndex].quantity >= inventoryItem.quantity) {
               CPopupSnackBar.warningSnackBar(
-                Get.overlayContext!,
                 title: 'oh snap!',
                 message: inventoryItem.quantity == 1
                     ? 'Only ${CFormatter.formatItemQtyDisplays(inventoryItem.quantity, inventoryItem.calibration)} ${CFormatter.formatItemMetrics(inventoryItem.calibration, inventoryItem.quantity)} of ${inventoryItem.name.toUpperCase()} is stocked!'
@@ -281,7 +273,6 @@ class CCartController extends GetxController {
         }
       } else {
         CPopupSnackBar.warningSnackBar(
-          Get.overlayContext!,
           title: 'Oh snap!',
           message: '${inventoryItem.name.toUpperCase()} is out of stock!',
         );

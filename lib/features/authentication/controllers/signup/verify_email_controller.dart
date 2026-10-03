@@ -27,14 +27,12 @@ class CVerifyEmailController extends GetxController {
     try {
       await AuthRepo.instance.sendEmailVerification();
       CPopupSnackBar.successSnackBar(
-        Get.overlayContext!,
         title: 'Verification e-mail sent!',
         message:
             'Please check your inbox or spam to verify your e-mail address',
       );
     } catch (e) {
       CPopupSnackBar.errorSnackBar(
-        Get.overlayContext!,
         message: e.toString(),
         title: 'Oh Snap!',
       );

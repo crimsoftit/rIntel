@@ -68,7 +68,6 @@ class CUpdateNameController extends GetxController {
 
       // -- show success message
       CPopupSnackBar.successSnackBar(
-        Get.overlayContext!,
         title: 'update successful!',
         message: 'your name was updated successfully.',
       );
@@ -79,13 +78,11 @@ class CUpdateNameController extends GetxController {
       CFullScreenLoader.stopLoading();
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
-          Get.overlayContext!,
           message: e.toString(),
           title: 'Oh Snap!',
         );
       }
       CPopupSnackBar.errorSnackBar(
-        Get.overlayContext!,
         message:
             'An error occurred while updating your name! please try again later.',
         title: 'Oh Snap!',

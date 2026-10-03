@@ -182,11 +182,11 @@ class CHelperFunctions {
     return generateRandom4DigitNumber();
   }
 
-  static String generateProductCode() {
+  static String generateCode() {
     final now = DateTime.now();
 
     var codeString = now.microsecondsSinceEpoch.toString();
-    var pCode = codeString.substring(codeString.length - 7);
+    var pCode = codeString.substring(codeString.length - 4);
     var productCode = 'rI-$pCode';
     return productCode;
   }

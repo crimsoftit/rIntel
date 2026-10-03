@@ -109,13 +109,13 @@ class CPopupSnackBar extends GetxController {
   //   );
   // }
 
-  static void successSnackBar(
-    BuildContext context, {
+  static void successSnackBar({
+    SnackBarBehavior behavior = SnackBarBehavior.floating,
     required String title,
     String message = '',
     duration = 5,
   }) {
-    ScaffoldMessenger.of(context).showSnackBar(
+    ScaffoldMessenger.of(Get.overlayContext!).showSnackBar(
       SnackBar(
         content: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -129,25 +129,27 @@ class CPopupSnackBar extends GetxController {
               children: [
                 Text(
                   title,
-                  style: Theme.of(context).textTheme.titleMedium!.apply(
-                    color: CColors.white,
-                    fontFamily: 'Signika',
-                  ),
+                  style: Theme.of(Get.overlayContext!).textTheme.titleMedium!
+                      .apply(
+                        color: CColors.white,
+                        fontFamily: 'Signika',
+                      ),
                 ),
                 Text(
                   message,
-                  style: Theme.of(context).textTheme.labelMedium!.apply(
-                    color: CColors.white,
-                    fontFamily: 'Saira',
-                    fontStyle: FontStyle.italic,
-                  ),
+                  style: Theme.of(Get.overlayContext!).textTheme.labelMedium!
+                      .apply(
+                        color: CColors.white,
+                        fontFamily: 'Saira',
+                        fontStyle: FontStyle.italic,
+                      ),
                 ),
               ],
             ),
           ],
         ),
         backgroundColor: Colors.green,
-        behavior: SnackBarBehavior.floating,
+        behavior: behavior,
         duration: const Duration(
           seconds: 6,
         ),
@@ -170,9 +172,16 @@ class CPopupSnackBar extends GetxController {
       isDismissible: true,
       shouldIconPulse: true,
       colorText: CColors.white,
-      backgroundColor: const Color.fromARGB(255, 235, 108, 108),
+      backgroundColor: const Color.fromARGB(
+        255,
+        235,
+        108,
+        108,
+      ),
       snackPosition: SnackPosition.BOTTOM,
-      duration: Duration(seconds: duration),
+      duration: Duration(
+        seconds: duration,
+      ),
       margin: const EdgeInsets.all(10.0),
       icon: const Icon(Iconsax.check, color: CColors.white),
     );
@@ -204,12 +213,11 @@ class CPopupSnackBar extends GetxController {
   //     icon: const Icon(Iconsax.warning_2, color: CColors.white),
   //   );
   // }
-  static void warningSnackBar(
-    BuildContext context, {
+  static void warningSnackBar({
     required String title,
     String message = '',
   }) {
-    ScaffoldMessenger.of(context).showSnackBar(
+    ScaffoldMessenger.of(Get.overlayContext!).showSnackBar(
       SnackBar(
         content: Row(
           children: [
@@ -228,14 +236,14 @@ class CPopupSnackBar extends GetxController {
                   Text(
                     title,
                     style: Theme.of(
-                      context,
+                      Get.overlayContext!,
                     ).textTheme.titleMedium!.apply(color: CColors.white),
                   ),
                   if (message.isNotEmpty)
                     Text(
                       message,
                       style: Theme.of(
-                        context,
+                        Get.overlayContext!,
                       ).textTheme.bodyMedium!.apply(color: CColors.white),
                     ),
                 ],
@@ -267,12 +275,11 @@ class CPopupSnackBar extends GetxController {
     // );
   }
 
-  static void errorSnackBar(
-    BuildContext context, {
+  static void errorSnackBar({
     required String title,
     String message = '',
   }) {
-    ScaffoldMessenger.of(context).showSnackBar(
+    ScaffoldMessenger.of(Get.overlayContext!).showSnackBar(
       SnackBar(
         content: Row(
           children: [
@@ -291,14 +298,14 @@ class CPopupSnackBar extends GetxController {
                   Text(
                     title,
                     style: Theme.of(
-                      context,
+                      Get.overlayContext!,
                     ).textTheme.titleMedium!.apply(color: CColors.white),
                   ),
                   if (message.isNotEmpty)
                     Text(
                       message,
                       style: Theme.of(
-                        context,
+                        Get.overlayContext!,
                       ).textTheme.bodyMedium!.apply(color: CColors.white),
                     ),
                 ],

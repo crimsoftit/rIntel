@@ -38,7 +38,6 @@ class CUserRepo extends GetxController {
       _db.collection("users").doc(user.id).set(user.toJson());
     } on FirebaseAuthException catch (e) {
       CPopupSnackBar.errorSnackBar(
-        Get.overlayContext!,
         title: "firebaseAuth exception error",
         message: e.code.toString(),
       );
@@ -46,13 +45,11 @@ class CUserRepo extends GetxController {
     } on FirebaseException catch (e) {
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
-          Get.overlayContext!,
           title: 'firebase cloud error!',
           message: 'unable to save your details: ${e.code}',
         );
       } else {
         CPopupSnackBar.errorSnackBar(
-          Get.overlayContext!,
           title: 'Oh Snap!',
           message:
               'an unknown error occurred while saving your details! please try again later',
@@ -62,13 +59,11 @@ class CUserRepo extends GetxController {
     } on FormatException catch (e) {
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
-          Get.overlayContext!,
           title: 'user datails format error!',
           message: e.message,
         );
       } else {
         CPopupSnackBar.errorSnackBar(
-          Get.overlayContext!,
           title: 'Oh Snap!',
           message:
               'an unknown error occurred while saving your details! please try again later',
@@ -77,14 +72,12 @@ class CUserRepo extends GetxController {
       rethrow;
     } on PlatformException catch (e) {
       CPopupSnackBar.errorSnackBar(
-        Get.overlayContext!,
         title: "platform exception error",
         message: e.code.toString(),
       );
       throw CPlatformExceptions(e.code).message;
     } catch (e) {
       CPopupSnackBar.errorSnackBar(
-        Get.overlayContext!,
         title: "An error occurred",
         message: e.toString(),
       );
@@ -108,35 +101,30 @@ class CUserRepo extends GetxController {
       }
     } on FirebaseAuthException catch (e) {
       CPopupSnackBar.errorSnackBar(
-        Get.overlayContext!,
         title: "firebaseAuth exception error",
         message: CFirebaseAuthExceptions(e.code).message,
       );
       rethrow;
     } on FirebaseException catch (e) {
       CPopupSnackBar.errorSnackBar(
-        Get.overlayContext!,
         title: "firebase exception error",
         message: CFirebaseAuthExceptions(e.code).message,
       );
       rethrow;
     } on FormatException catch (e) {
       CPopupSnackBar.errorSnackBar(
-        Get.overlayContext!,
         title: "platform exception error",
         message: CFormatExceptions(e.message).toString(),
       );
       rethrow;
     } on PlatformException catch (e) {
       CPopupSnackBar.errorSnackBar(
-        Get.overlayContext!,
         title: "platform exception error",
         message: CPlatformExceptions(e.code).message,
       );
       rethrow;
     } catch (e) {
       CPopupSnackBar.errorSnackBar(
-        Get.overlayContext!,
         title: "An error occurred",
         message: e.toString(),
       );
@@ -159,14 +147,12 @@ class CUserRepo extends GetxController {
       return docs.length == 1;
     } on FirebaseException catch (e) {
       CPopupSnackBar.errorSnackBar(
-        Get.overlayContext!,
         title: "firebase exception error",
         message: e.code.toString(),
       );
       throw CFirebaseAuthExceptions(e.code).message;
     } catch (e) {
       CPopupSnackBar.errorSnackBar(
-        Get.overlayContext!,
         title: "An error occurred",
         message: e.toString(),
       );
@@ -188,7 +174,6 @@ class CUserRepo extends GetxController {
         if (kDebugMode) {
           print('user id not established...');
           CPopupSnackBar.errorSnackBar(
-            Get.overlayContext!,
             title: 'invalid user id',
             message: 'user id not established!!!',
           );
@@ -196,35 +181,30 @@ class CUserRepo extends GetxController {
       }
     } on FirebaseAuthException catch (e) {
       CPopupSnackBar.errorSnackBar(
-        Get.overlayContext!,
         title: "firebaseAuth exception error",
         message: e.code.toString(),
       );
       throw CFirebaseAuthExceptions(e.code).message;
     } on FirebaseException catch (e) {
       CPopupSnackBar.errorSnackBar(
-        Get.overlayContext!,
         title: "firebase exception error",
         message: e.code.toString(),
       );
       throw CFirebaseAuthExceptions(e.code).message;
     } on FormatException catch (e) {
       CPopupSnackBar.errorSnackBar(
-        Get.overlayContext!,
         title: "platform exception error",
         message: e.message,
       );
       throw CFormatExceptions(e.message);
     } on PlatformException catch (e) {
       CPopupSnackBar.errorSnackBar(
-        Get.overlayContext!,
         title: "platform exception error",
         message: e.code.toString(),
       );
       throw CPlatformExceptions(e.code).message;
     } catch (e) {
       CPopupSnackBar.errorSnackBar(
-        Get.overlayContext!,
         title: "error updating user details",
         message: e.toString(),
       );
@@ -244,13 +224,11 @@ class CUserRepo extends GetxController {
     } on FirebaseAuthException catch (e) {
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
-          Get.overlayContext!,
           title: "firebaseAuth exception error",
           message: e.code.toString(),
         );
       }
       CPopupSnackBar.errorSnackBar(
-        Get.overlayContext!,
         title: "server error!",
         message: 'an error occurred while updating your details!',
       );
@@ -258,20 +236,17 @@ class CUserRepo extends GetxController {
     } on FirebaseException catch (e) {
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
-          Get.overlayContext!,
           title: "firebaseAuth exception error",
           message: e.code.toString(),
         );
       }
       CPopupSnackBar.errorSnackBar(
-        Get.overlayContext!,
         title: "server error!",
         message: 'an error occurred while updating your details!',
       );
       throw CFirebaseAuthExceptions(e.code).message;
     } on FormatException catch (e) {
       CPopupSnackBar.errorSnackBar(
-        Get.overlayContext!,
         title: "format exception error",
         message: e.message,
       );
@@ -279,13 +254,11 @@ class CUserRepo extends GetxController {
     } on PlatformException catch (e) {
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
-          Get.overlayContext!,
           title: "platform exception error",
           message: e.code.toString(),
         );
       }
       CPopupSnackBar.errorSnackBar(
-        Get.overlayContext!,
         title: "platform exception error",
         message: 'an unknown platform error occurred!',
       );
@@ -293,13 +266,11 @@ class CUserRepo extends GetxController {
     } catch (e) {
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
-          Get.overlayContext!,
           title: "an error occurred while updating your details!",
           message: e.toString(),
         );
       }
       CPopupSnackBar.errorSnackBar(
-        Get.overlayContext!,
         title: "an unknown error occurred!",
         message: 'an error occurred while updating your details!',
       );
@@ -317,35 +288,30 @@ class CUserRepo extends GetxController {
       );
     } on FirebaseAuthException catch (e) {
       CPopupSnackBar.errorSnackBar(
-        Get.overlayContext!,
         title: "firebaseAuth exception error",
         message: e.code.toString(),
       );
       throw CFirebaseAuthExceptions(e.code).message;
     } on FirebaseException catch (e) {
       CPopupSnackBar.errorSnackBar(
-        Get.overlayContext!,
         title: "firebase exception error",
         message: e.code.toString(),
       );
       throw CFirebaseAuthExceptions(e.code).message;
     } on FormatException catch (e) {
       CPopupSnackBar.errorSnackBar(
-        Get.overlayContext!,
         title: "platform exception error",
         message: e.message,
       );
       throw CFormatExceptions(e.message);
     } on PlatformException catch (e) {
       CPopupSnackBar.errorSnackBar(
-        Get.overlayContext!,
         title: "platform exception error",
         message: e.code.toString(),
       );
       throw CPlatformExceptions(e.code).message;
     } catch (e) {
       CPopupSnackBar.errorSnackBar(
-        Get.overlayContext!,
         title: "An error occurred",
         message: e.toString(),
       );
@@ -366,28 +332,24 @@ class CUserRepo extends GetxController {
       );
     } on FirebaseAuthException catch (e) {
       CPopupSnackBar.errorSnackBar(
-        Get.overlayContext!,
         title: "firebaseAuth exception error",
         message: e.code.toString(),
       );
       throw CFirebaseAuthExceptions(e.code).message;
     } on FirebaseException catch (e) {
       CPopupSnackBar.errorSnackBar(
-        Get.overlayContext!,
         title: "device location update -> firebase exception error",
         message: CFirebaseAuthExceptions(e.code).message,
       );
       rethrow;
     } on FormatException catch (e) {
       CPopupSnackBar.errorSnackBar(
-        Get.overlayContext!,
         message: CFormatExceptions(e.message).toString(),
         title: "device location update -> format exception",
       );
       rethrow;
     } on PlatformException catch (e) {
       CPopupSnackBar.errorSnackBar(
-        Get.overlayContext!,
         message: CPlatformExceptions(e.code).message,
         title: "device location update platform exception",
       );
@@ -395,13 +357,11 @@ class CUserRepo extends GetxController {
     } catch (e) {
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
-          Get.overlayContext!,
           title: "error updating device's current location",
           message: e.toString(),
         );
       } else {
         CPopupSnackBar.errorSnackBar(
-          Get.overlayContext!,
           message: 'An unknown error occurred while updating device location!',
           title: "error updating device's current location",
         );
@@ -417,35 +377,30 @@ class CUserRepo extends GetxController {
       _db.collection("users").doc(userID).delete();
     } on FirebaseAuthException catch (e) {
       CPopupSnackBar.errorSnackBar(
-        Get.overlayContext!,
         title: "firebaseAuth exception error",
         message: e.code.toString(),
       );
       throw CFirebaseAuthExceptions(e.code).message;
     } on FirebaseException catch (e) {
       CPopupSnackBar.errorSnackBar(
-        Get.overlayContext!,
         title: "firebase exception error",
         message: e.code.toString(),
       );
       throw CFirebaseAuthExceptions(e.code).message;
     } on FormatException catch (e) {
       CPopupSnackBar.errorSnackBar(
-        Get.overlayContext!,
         title: "platform exception error",
         message: e.message,
       );
       throw CFormatExceptions(e.message);
     } on PlatformException catch (e) {
       CPopupSnackBar.errorSnackBar(
-        Get.overlayContext!,
         title: "platform exception error",
         message: e.code.toString(),
       );
       throw CPlatformExceptions(e.code).message;
     } catch (e) {
       CPopupSnackBar.errorSnackBar(
-        Get.overlayContext!,
         title: "An error occurred",
         message: e.toString(),
       );
@@ -463,35 +418,30 @@ class CUserRepo extends GetxController {
       return url;
     } on FirebaseAuthException catch (e) {
       CPopupSnackBar.errorSnackBar(
-        Get.overlayContext!,
         title: "firebaseAuth exception error",
         message: e.code.toString(),
       );
       throw CFirebaseAuthExceptions(e.code).message;
     } on FirebaseException catch (e) {
       CPopupSnackBar.errorSnackBar(
-        Get.overlayContext!,
         title: "firebase exception error",
         message: e.code.toString(),
       );
       throw CFirebaseAuthExceptions(e.code).message;
     } on FormatException catch (e) {
       CPopupSnackBar.errorSnackBar(
-        Get.overlayContext!,
         title: "platform exception error",
         message: e.message,
       );
       throw CFormatExceptions(e.message);
     } on PlatformException catch (e) {
       CPopupSnackBar.errorSnackBar(
-        Get.overlayContext!,
         title: "platform exception error",
         message: e.code.toString(),
       );
       throw CPlatformExceptions(e.code).message;
     } catch (e) {
       CPopupSnackBar.errorSnackBar(
-        Get.overlayContext!,
         title: "An error occurred",
         message: e.toString(),
       );

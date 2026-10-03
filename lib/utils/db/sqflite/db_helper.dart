@@ -200,7 +200,8 @@ class DbHelper extends GetxController {
             recipientContact TEXT NOT NULL,
             recipientCountry TEXT NOT NULL,
             dateAdded CHAR(30) NOT NULL,
-            lastModified CHAR(30) NOT NULL
+            lastModified CHAR(30) NOT NULL,
+            txnCode TEXT NOT NULL
           )
         ''');
       },
@@ -340,13 +341,11 @@ class DbHelper extends GetxController {
     } on DatabaseException catch (e) {
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
-          Get.overlayContext!,
           title: 'database error fetching inventory items',
           message: e.toString(),
         );
       } else {
         CPopupSnackBar.errorSnackBar(
-          Get.overlayContext!,
           title: 'database error fetching inventory items',
           message:
               'An unknown database error occurred while fetching inventory items!',
@@ -356,13 +355,11 @@ class DbHelper extends GetxController {
     } catch (e) {
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
-          Get.overlayContext!,
           title: 'error fetching inventory items',
           message: e.toString(),
         );
       } else {
         CPopupSnackBar.errorSnackBar(
-          Get.overlayContext!,
           title: 'error fetching inventory items',
           message: 'An unknown error occurred while fetching inventory items!',
         );
@@ -430,15 +427,11 @@ class DbHelper extends GetxController {
     } catch (e) {
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
-          Get.overlayContext!,
-
           message: e.toString(),
           title: 'Oh Snap!',
         );
       } else {
         CPopupSnackBar.errorSnackBar(
-          Get.overlayContext!,
-
           message: 'error updating inventory item on device storage',
           title: 'Oh Snap!',
         );
@@ -469,15 +462,11 @@ class DbHelper extends GetxController {
     } catch (e) {
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
-          Get.overlayContext!,
-
           message: e.toString(),
           title: 'Oh Snap!',
         );
       } else {
         CPopupSnackBar.errorSnackBar(
-          Get.overlayContext!,
-
           message: 'error updating inventory quantities on checkout',
           title: 'Oh Snap!',
         );
@@ -501,16 +490,12 @@ class DbHelper extends GetxController {
     } catch (e) {
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
-          Get.overlayContext!,
-
           message:
               'An unknown error occurred while deleting inventory item: $e',
           title: 'error deleting inventory item',
         );
       } else {
         CPopupSnackBar.errorSnackBar(
-          Get.overlayContext!,
-
           message: 'An unknown error occurred while deleting inventory item',
           title: 'error deleting inventory item',
         );
@@ -539,13 +524,11 @@ class DbHelper extends GetxController {
     } catch (e) {
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
-          Get.overlayContext!,
           title: 'error updating stock count',
           message: e.toString(),
         );
       } else {
         CPopupSnackBar.errorSnackBar(
-          Get.overlayContext!,
           title: 'error updating stock count',
           message: 'An unknown error occurred while updating stock count!!',
         );
@@ -578,7 +561,6 @@ class DbHelper extends GetxController {
     } catch (e) {
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
-          Get.overlayContext!,
           title: 'stock count sync error!',
           message: 'error updating stock count SYNC ACTION: $e',
         );
@@ -607,13 +589,11 @@ class DbHelper extends GetxController {
     } on DatabaseException catch (e) {
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
-          Get.overlayContext!,
           title: 'database error fetching top sellers',
           message: e.toString(),
         );
       } else {
         CPopupSnackBar.errorSnackBar(
-          Get.overlayContext!,
           title: 'database error fetching top sellers',
           message:
               'An unknown database error occurred while fetching top sellers!',
@@ -622,7 +602,6 @@ class DbHelper extends GetxController {
       return [];
     } catch (e) {
       CPopupSnackBar.errorSnackBar(
-        Get.overlayContext!,
         title: 'error fetching top sellers',
         message: '$e',
       );
@@ -652,13 +631,11 @@ class DbHelper extends GetxController {
     } on DatabaseException catch (e) {
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
-          Get.overlayContext!,
           title: 'database error fetching top sellers',
           message: e.toString(),
         );
       } else {
         CPopupSnackBar.errorSnackBar(
-          Get.overlayContext!,
           title: 'database error fetching top sellers',
           message:
               'An unknown database error occurred while fetching top sellers!',
@@ -668,7 +645,6 @@ class DbHelper extends GetxController {
     } catch (e) {
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
-          Get.overlayContext!,
           title: 'error fetching top sellers from sales!',
           message: e.toString(),
         );
@@ -696,13 +672,11 @@ class DbHelper extends GetxController {
     } catch (e) {
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
-          Get.overlayContext!,
           title: 'error performing transaction',
           message: e.toString(),
         );
       } else {
         CPopupSnackBar.errorSnackBar(
-          Get.overlayContext!,
           title: 'error performing transaction',
           message: 'error saving txn details! please try again later',
         );
@@ -729,13 +703,11 @@ class DbHelper extends GetxController {
     } catch (e) {
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
-          Get.overlayContext!,
           title: 'error performing transaction',
           message: e.toString(),
         );
       } else {
         CPopupSnackBar.errorSnackBar(
-          Get.overlayContext!,
           title: 'error performing transaction',
           message: 'error saving txn details! please try again later',
         );
@@ -844,13 +816,11 @@ class DbHelper extends GetxController {
     } catch (e) {
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
-          Get.overlayContext!,
           title: 'error fetching user\'s sold items',
           message: e.toString(),
         );
       } else {
         CPopupSnackBar.errorSnackBar(
-          Get.overlayContext!,
           title: 'error fetching user\'s sold items',
           message:
               'An unknown error occurred while fetching user\'s sold items!',
@@ -892,13 +862,11 @@ class DbHelper extends GetxController {
     } catch (e) {
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
-          Get.overlayContext!,
           title: 'error fetching user\'s sold items',
           message: e.toString(),
         );
       } else {
         CPopupSnackBar.errorSnackBar(
-          Get.overlayContext!,
           title: 'error fetching sold items',
           message:
               'An unknown error occurred while fetching user\'s sold items!',
@@ -922,13 +890,11 @@ class DbHelper extends GetxController {
     } catch (e) {
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
-          Get.overlayContext!,
           title: 'Oh Snap! error updating sold item details!',
           message: e.toString(),
         );
       } else {
         CPopupSnackBar.errorSnackBar(
-          Get.overlayContext!,
           title: 'Oh Snap! error updating sold item details!',
           message:
               'An unknown error occurred while updating sold item details! please try again later',
@@ -958,13 +924,11 @@ class DbHelper extends GetxController {
     } on DatabaseException catch (e) {
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
-          Get.overlayContext!,
           title: 'database error fetching user\'s sold items',
           message: e.toString(),
         );
       } else {
         CPopupSnackBar.errorSnackBar(
-          Get.overlayContext!,
           title: 'database error fetching user\'s sold items',
           message:
               'An unknown database error occurred while fetching user\'s sold items!',
@@ -974,13 +938,11 @@ class DbHelper extends GetxController {
     } catch (e) {
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
-          Get.overlayContext!,
           title: 'error fetching user\'s sold items',
           message: e.toString(),
         );
       } else {
         CPopupSnackBar.errorSnackBar(
-          Get.overlayContext!,
           title: 'error fetching user\'s sold items',
           message:
               'An unknown error occurred while fetching user\'s sold items!',
@@ -1012,13 +974,11 @@ class DbHelper extends GetxController {
     } on DatabaseException catch (e) {
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
-          Get.overlayContext!,
           title: 'database error fetching user\'s sold items by txn id',
           message: e.toString(),
         );
       } else {
         CPopupSnackBar.errorSnackBar(
-          Get.overlayContext!,
           title: 'database error fetching user\'s sold items by txn id',
           message:
               'An unknown database error occurred while fetching user\'s sold items by txn id!',
@@ -1028,13 +988,11 @@ class DbHelper extends GetxController {
     } catch (e) {
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
-          Get.overlayContext!,
           title: 'error fetching user\'s sold items by txn id',
           message: e.toString(),
         );
       } else {
         CPopupSnackBar.errorSnackBar(
-          Get.overlayContext!,
           title: 'error fetching user\'s sold items by txn id',
           message:
               'An unknown error occurred while fetching user\'s sold items by txn id!',
@@ -1064,7 +1022,6 @@ class DbHelper extends GetxController {
       return updateResult;
     } catch (e) {
       CPopupSnackBar.errorSnackBar(
-        Get.overlayContext!,
         title: 'Oh Snap! error updating receipt item',
         message: e.toString(),
       );
@@ -1091,13 +1048,11 @@ class DbHelper extends GetxController {
     } catch (e) {
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
-          Get.overlayContext!,
           title: 'txn sync error!',
           message: 'error updating txns SYNC LOCALLY: $e',
         );
       } else {
         CPopupSnackBar.errorSnackBar(
-          Get.overlayContext!,
           title: 'txn sync error!',
           message:
               'an unknown error occurred while updating txns SYNC LOCALLY: $e',
@@ -1125,7 +1080,6 @@ class DbHelper extends GetxController {
     } catch (e) {
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
-          Get.overlayContext!,
           title: 'error saving notification',
           message: e.toString(),
         );
@@ -1155,13 +1109,11 @@ class DbHelper extends GetxController {
     } on DatabaseException catch (e) {
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
-          Get.overlayContext!,
           title: 'database error fetching notifications',
           message: e.toString(),
         );
       } else {
         CPopupSnackBar.errorSnackBar(
-          Get.overlayContext!,
           title: 'database error fetching notifications',
           message:
               'An unknown database error occurred while fetching notifications!',
@@ -1171,13 +1123,11 @@ class DbHelper extends GetxController {
     } catch (e) {
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
-          Get.overlayContext!,
           title: 'error fetching notifications!',
           message: e.toString(),
         );
       } else {
         CPopupSnackBar.errorSnackBar(
-          Get.overlayContext!,
           title: 'error fetching notifications!',
           message: 'error fetching notifications!',
         );
@@ -1203,13 +1153,11 @@ class DbHelper extends GetxController {
     } catch (e) {
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
-          Get.overlayContext!,
           title: 'delete error',
           message: 'error deleting notification: $e',
         );
       } else {
         CPopupSnackBar.errorSnackBar(
-          Get.overlayContext!,
           title: 'delete error',
           message: 'error deleting notification!',
         );
@@ -1232,13 +1180,11 @@ class DbHelper extends GetxController {
     } catch (e) {
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
-          Get.overlayContext!,
           title: 'error updating notification item',
           message: e.toString(),
         );
       } else {
         CPopupSnackBar.errorSnackBar(
-          Get.overlayContext!,
           title: 'update error',
           message: 'error updating notification item',
         );
@@ -1258,13 +1204,11 @@ class DbHelper extends GetxController {
     } catch (e) {
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
-          Get.overlayContext!,
           title: 'error updating notification item\'s read status',
           message: e.toString(),
         );
       } else {
         CPopupSnackBar.errorSnackBar(
-          Get.overlayContext!,
           title: 'update error',
           message:
               'An unknown error occurred while updating notification item\'s read status',
@@ -1290,13 +1234,11 @@ class DbHelper extends GetxController {
     } catch (e) {
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
-          Get.overlayContext!,
           message: 'an error occurred while adding contact: $e',
           title: 'error adding contact!',
         );
       } else {
         CPopupSnackBar.errorSnackBar(
-          Get.overlayContext!,
           message:
               'an error occurred while adding contact. please try again later!',
           title: 'error adding contact!',
@@ -1341,13 +1283,11 @@ class DbHelper extends GetxController {
     } on DatabaseException catch (e) {
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
-          Get.overlayContext!,
           title: 'database error fetching contacts',
           message: e.toString(),
         );
       } else {
         CPopupSnackBar.errorSnackBar(
-          Get.overlayContext!,
           title: 'database error fetching contacts',
           message:
               'An unknown database error occurred while fetching contacts!',
@@ -1357,13 +1297,11 @@ class DbHelper extends GetxController {
     } catch (e) {
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
-          Get.overlayContext!,
           message: 'error fetching contacts: $e',
           title: 'error fetching contacts!',
         );
       } else {
         CPopupSnackBar.errorSnackBar(
-          Get.overlayContext!,
           message: 'error fetching contacts!',
           title: 'error fetching contacts!',
         );
@@ -1389,13 +1327,11 @@ class DbHelper extends GetxController {
     } catch (e) {
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
-          Get.overlayContext!,
           message: 'error updating contact: $e',
           title: 'error updating contact!',
         );
       } else {
         CPopupSnackBar.errorSnackBar(
-          Get.overlayContext!,
           message: 'an unknown error occurred while updating contact details!',
           title: 'error updating contact!',
         );
@@ -1416,13 +1352,11 @@ class DbHelper extends GetxController {
     } catch (e) {
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
-          Get.overlayContext!,
           title: 'delete error',
           message: 'error deleting contact: $e',
         );
       } else {
         CPopupSnackBar.errorSnackBar(
-          Get.overlayContext!,
           title: 'delete error',
           message: 'error deleting contact!',
         );
@@ -1448,13 +1382,11 @@ class DbHelper extends GetxController {
     } catch (e) {
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
-          Get.overlayContext!,
           title: 'error updating notification item\'s read status',
           message: e.toString(),
         );
       } else {
         CPopupSnackBar.errorSnackBar(
-          Get.overlayContext!,
           title: 'update error',
           message:
               'An unknown error occurred while updating notification item\'s read status',
@@ -1479,13 +1411,11 @@ class DbHelper extends GetxController {
     } catch (e) {
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
-          Get.overlayContext!,
           message: 'an error occurred while adding expense to local db: $e',
           title: 'error adding expense to local db!',
         );
       } else {
         CPopupSnackBar.errorSnackBar(
-          Get.overlayContext!,
           message:
               'an error occurred while adding expense. please try again later!',
           title: 'error adding expense!',
@@ -1515,17 +1445,66 @@ class DbHelper extends GetxController {
     } catch (e) {
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
-          Get.overlayContext!,
           title: 'error fetching inventory items',
           message: e.toString(),
         );
       } else {
         CPopupSnackBar.errorSnackBar(
-          Get.overlayContext!,
           title: 'error fetching inventory items',
           message: 'An unknown error occurred while fetching inventory items!',
         );
       }
+      rethrow;
+    }
+  }
+
+  /// -- batch insert expenses --
+  Future<void> batchInsertXpenses(List<CExpense> xpenses) async {
+    try {
+      final db = _db;
+      final xpensesBatch = db!.batch();
+
+      const int chunkSize = 500;
+
+      for (int i = 0; i < xpenses.length; i++) {
+        xpensesBatch.insert(
+          expensesTable,
+          xpenses[i].toMap(),
+          conflictAlgorithm: ConflictAlgorithm.replace,
+        );
+
+        // -- commit every chunk size --
+        if ((i + 1) % chunkSize == 0) {
+          // Create a new batch for the next chunk
+          // Note: You must re-initialize batch if you want to continue using the same instance logic,
+          // but typically you create a new batch or just continue appending if the DB connection allows.
+          // A safer pattern for large loops often involves creating a new batch instance or using transaction boundaries.
+          await xpensesBatch.commit(
+            noResult: true,
+          );
+        }
+      }
+
+      // -- commit any remaining items --
+      if (xpenses.length % chunkSize != 0) {
+        await xpensesBatch.commit(
+          noResult: true,
+        );
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        CPopupSnackBar.errorSnackBar(
+          title: 'error importing xpenses to device storage!',
+          message: e.toString(),
+        );
+      } else {
+        CPopupSnackBar.errorSnackBar(
+          title: 'Error importing xpenses to device storage!',
+          message:
+              'Error importing xpenses to device storage!! please try again later',
+        );
+      }
+
       rethrow;
     }
   }

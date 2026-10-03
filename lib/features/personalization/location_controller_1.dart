@@ -26,7 +26,6 @@ class CLocationController1 extends GetxController {
     // }
     if (permissionStatus.value == "NO PERMISSION") {
       CPopupSnackBar.warningSnackBar(
-        Get.overlayContext!,
         title: 'location services are required!',
         message:
             'kindly note that rIntel requires access to your device\'s location to operate optimally...',
@@ -184,7 +183,6 @@ class CLocationController1 extends GetxController {
       AuthRepo.instance.screenRedirect();
     } catch (e) {
       CPopupSnackBar.errorSnackBar(
-        Get.overlayContext!,
         title: "An error occurred",
         message: e.toString(),
       );

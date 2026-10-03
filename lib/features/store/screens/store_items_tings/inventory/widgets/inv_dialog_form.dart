@@ -107,8 +107,7 @@ class AddUpdateInventoryForm extends StatelessWidget {
                               invController.txtCode.text =
                                   invController.txtCode.text.isNotEmpty
                                   ? invController.txtCode.text = ''
-                                  : CHelperFunctions.generateProductCode()
-                                        .toString();
+                                  : CHelperFunctions.generateCode().toString();
                             },
                             icon: Icon(
                               Iconsax.flash,
@@ -815,7 +814,6 @@ class AddUpdateInventoryForm extends StatelessWidget {
                                   '' &&
                               invController.includeSupplierDetails.value) {
                             CPopupSnackBar.warningSnackBar(
-                              context,
                               message: 'Please select supplier\'s country!',
                               title: ' supplier\'s country is required!',
                             );
@@ -936,7 +934,6 @@ class AddUpdateInventoryForm extends StatelessWidget {
                               }
                             } else {
                               CPopupSnackBar.errorSnackBar(
-                                Get.overlayContext!,
                                 title: 'Error adding/updating inventory item ',
                               );
                               return;

@@ -2,7 +2,6 @@ import 'package:rintel/common/widgets/buttons/icon_buttons/custom_icon_btn.dart'
 import 'package:rintel/common/widgets/custom_shapes/containers/rounded_container.dart';
 import 'package:rintel/common/widgets/dividers/c_divider.dart';
 import 'package:rintel/common/widgets/list_tiles/menu_tile.dart';
-import 'package:rintel/common/widgets/shimmers/vert_items_shimmer.dart';
 import 'package:rintel/common/widgets/txt_widgets/c_section_headings.dart';
 import 'package:rintel/features/personalization/controllers/contacts_controller.dart';
 import 'package:rintel/features/personalization/controllers/user_controller.dart';
@@ -133,7 +132,9 @@ class CContactDetailsScreen extends StatelessWidget {
                       context,
                     ).textTheme.labelLarge!.apply(fontSizeFactor: 1.6),
                   ),
-                  const SizedBox(height: CSizes.spaceBtnItems,),
+                  const SizedBox(
+                    height: CSizes.spaceBtnItems,
+                  ),
                   Padding(
                     padding: const EdgeInsets.all(15.0),
                     child: Row(

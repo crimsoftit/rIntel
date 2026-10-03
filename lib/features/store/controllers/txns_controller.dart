@@ -227,7 +227,6 @@ class CTxnsController extends GetxController {
       } else {
         if (kDebugMode) {
           CPopupSnackBar.warningSnackBar(
-            Get.overlayContext!,
             title: 'no related sold items with this name',
           );
         }
@@ -240,13 +239,11 @@ class CTxnsController extends GetxController {
       isLoading.value = false;
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
-          Get.overlayContext!,
           message: 'error updating sold item name: $e',
           title: 'error updating sold item name!',
         );
       } else {
         CPopupSnackBar.errorSnackBar(
-          Get.overlayContext!,
           message: 'an unknown error occurred while updating sold item name!',
           title: 'error updating sold item name!',
         );
@@ -276,13 +273,11 @@ class CTxnsController extends GetxController {
       isLoading.value = false;
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
-          Get.overlayContext!,
           title: 'error fetching top sellers from sales table',
           message: e.toString(),
         );
       }
       CPopupSnackBar.errorSnackBar(
-        Get.overlayContext!,
         title: 'error fetching top sellers',
         message:
             'an unknown error occurred while fetching top sellers! please try again later...',
@@ -331,7 +326,6 @@ class CTxnsController extends GetxController {
       isLoading.value = false;
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
-          Get.overlayContext!,
           title: 'error fetching scan item!',
           message: 'error fetching scan item for sale: $e',
         );
@@ -438,7 +432,6 @@ class CTxnsController extends GetxController {
       );
     } catch (e) {
       CPopupSnackBar.errorSnackBar(
-        Get.overlayContext!,
         title: 'error searching sales',
         message: '$e',
       );
@@ -603,14 +596,12 @@ class CTxnsController extends GetxController {
 
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
-          Get.overlayContext!,
           message:
               'An unknown error occurred while fetching user\'s cloud txn data: $e',
           title: 'Oh Snap!',
         );
       } else {
         CPopupSnackBar.errorSnackBar(
-          Get.overlayContext!,
           message:
               'An unknown error occurred while fetching user\'s cloud txn data',
           title: 'Oh Snap! Error fetching user\'s cloud txn data',
@@ -662,13 +653,11 @@ class CTxnsController extends GetxController {
       isLoading.value = false;
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
-          Get.overlayContext!,
           title: 'ERROR IMPORTING sales  DATA FROM CLOUD!',
           message: e.toString(),
         );
       } else {
         CPopupSnackBar.errorSnackBar(
-          Get.overlayContext!,
           title: 'ERROR IMPORTING sales DATA FROM CLOUD!',
           message:
               'An unknown error occurred while fetching user cloud sales data...',
@@ -1051,7 +1040,6 @@ class CTxnsController extends GetxController {
       await StoreSheetsApi.updateReceiptItem(itemId, itemModel.toMap());
     } catch (e) {
       CPopupSnackBar.errorSnackBar(
-        Get.overlayContext!,
         title: 'error updating sheet data',
         message: e.toString(),
       );
@@ -1085,7 +1073,6 @@ class CTxnsController extends GetxController {
       isLoading.value = false;
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
-          Get.overlayContext!,
           title: 'error checking inventory item by name',
           message: e.toString(),
         );
@@ -1169,7 +1156,6 @@ class CTxnsController extends GetxController {
       isLoading.value = false;
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
-          Get.overlayContext!,
           message: 'error summarizing sales: $e',
           title: 'sales summary error',
         );
@@ -1299,7 +1285,6 @@ class CTxnsController extends GetxController {
       isLoading.value = false;
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
-          Get.overlayContext!,
           message: 'error fetching sales summary: $e',
           title: 'error fetching sales summary!',
         );
@@ -1557,7 +1542,6 @@ class CTxnsController extends GetxController {
                                         .removeAllWhitespace ==
                                     '') {
                                   CPopupSnackBar.errorSnackBar(
-                                    Get.overlayContext!,
                                     message:
                                         'Please enter the amount issued and try again...',
                                     title: 'invalid amount',
@@ -1569,7 +1553,6 @@ class CTxnsController extends GetxController {
                                     ) <=
                                     0) {
                                   CPopupSnackBar.errorSnackBar(
-                                    Get.overlayContext!,
                                     message: 'Invalid amount',
                                     title: 'invalid amount',
                                   );
@@ -1612,7 +1595,6 @@ class CTxnsController extends GetxController {
                                         // Guard against unmounted context
                                         if (!context.mounted) {
                                           CPopupSnackBar.warningSnackBar(
-                                            Get.overlayContext!,
                                             message: 'context is not mounted',
                                             title:
                                                 'BuildContext is not mounted',
@@ -1683,13 +1665,11 @@ class CTxnsController extends GetxController {
     } catch (e) {
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
-          Get.overlayContext!,
           message: 'error displaying partial payment dialog: $e',
           title: 'error popping dialog!',
         );
       } else {
         CPopupSnackBar.errorSnackBar(
-          Get.overlayContext!,
           message: 'error displaying partial payment dialog!',
           title: 'error popping dialog!',
         );
@@ -1762,13 +1742,11 @@ class CTxnsController extends GetxController {
       isLoading.value = false;
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
-          Get.overlayContext!,
           title: 'ERROR fetching sales data from cloud firestore!',
           message: e.toString(),
         );
       } else {
         CPopupSnackBar.errorSnackBar(
-          Get.overlayContext!,
           message:
               'an unknown error occurred while fetching transactions from cloud firestore',
           title: 'ERROR IMPORTING TRANSACTIONS FROM THE CLOUD!',
@@ -1801,13 +1779,11 @@ class CTxnsController extends GetxController {
       isLoading.value = false;
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
-          Get.overlayContext!,
           title: 'ERROR fetching sales from cloud firestore!',
           message: e.toString(),
         );
       } else {
         CPopupSnackBar.errorSnackBar(
-          Get.overlayContext!,
           message:
               'an unknown error occurred while fetching sales from cloud firestore',
           title: 'ERROR IMPORTING sales FROM the cloud!',
@@ -1893,7 +1869,6 @@ class CTxnsController extends GetxController {
 
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
-          Get.overlayContext!,
           title: 'error fetching txns!',
           message: e.toString(),
         );
@@ -1940,7 +1915,6 @@ class CTxnsController extends GetxController {
 
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
-          Get.overlayContext!,
           title: 'error fetching txns!',
           message: e.toString(),
         );
@@ -1969,13 +1943,11 @@ class CTxnsController extends GetxController {
     } catch (e) {
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
-          Get.overlayContext!,
           message: e.toString(),
           title: "error updating customer details",
         );
       } else {
         CPopupSnackBar.errorSnackBar(
-          Get.overlayContext!,
           message:
               "an unknown error occurred while updating customer details! please try again later...",
           title: "error updating customer details",

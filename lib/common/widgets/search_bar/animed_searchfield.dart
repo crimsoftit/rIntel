@@ -52,7 +52,7 @@ class CAnimedSearchfield extends StatelessWidget {
               showBorder: false,
               child: Padding(
                 padding: const EdgeInsets.only(
-                  bottom: 10.0,
+                  bottom: 15.0,
                 ),
                 child: TextFormField(
                   autofocus: true,
@@ -73,8 +73,8 @@ class CAnimedSearchfield extends StatelessWidget {
                     hintText: hintTxt,
                     prefixIcon: Padding(
                       padding: const EdgeInsets.only(
-                        left: 5.0,
-                        top: 6.0,
+                        left: 2.0,
+                        top: 12.5,
                       ),
                       child: const Icon(
                         Iconsax.search_normal,
@@ -84,8 +84,8 @@ class CAnimedSearchfield extends StatelessWidget {
                     ),
                     suffixIcon: Padding(
                       padding: const EdgeInsets.only(
-                        right: 5.0,
-                        top: 6.0,
+                        left: 2.0,
+                        top: 12.5,
                       ),
                       child: InkWell(
                         onTap: onIconTap,

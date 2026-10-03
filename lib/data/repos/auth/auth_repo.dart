@@ -145,7 +145,6 @@ class AuthRepo extends GetxController {
             CFullScreenLoader.stopLoading();
             if (kDebugMode) {
               CPopupSnackBar.errorSnackBar(
-                Get.overlayContext!,
                 title: 'error fetching user details!!',
               );
             }
@@ -184,7 +183,6 @@ class AuthRepo extends GetxController {
     } on FirebaseAuthException catch (e) {
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
-          Get.overlayContext!,
           title: "login error!",
           message: e.code.toString(),
         );
@@ -194,7 +192,6 @@ class AuthRepo extends GetxController {
     } on FirebaseException catch (e) {
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
-          Get.overlayContext!,
           title: "login error",
           message: e.code.toString(),
         );
@@ -203,14 +200,12 @@ class AuthRepo extends GetxController {
       throw CFirebaseAuthExceptions(e.code).message;
     } on FormatException catch (e) {
       CPopupSnackBar.errorSnackBar(
-        Get.overlayContext!,
         title: "platform exception error",
         message: e.message,
       );
       throw CFormatExceptions(e.message);
     } on PlatformException catch (e) {
       CPopupSnackBar.errorSnackBar(
-        Get.overlayContext!,
         title: "platform exception error",
         message: e.code.toString(),
       );
@@ -218,7 +213,6 @@ class AuthRepo extends GetxController {
     } catch (e) {
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
-          Get.overlayContext!,
           title: "a login error occurred",
           message: e.toString(),
         );
@@ -239,35 +233,30 @@ class AuthRepo extends GetxController {
       );
     } on FirebaseAuthException catch (e) {
       CPopupSnackBar.errorSnackBar(
-        Get.overlayContext!,
         title: "signup error",
         message: e.code.toString(),
       );
       throw CFirebaseAuthExceptions(e.code).message;
     } on FirebaseException catch (e) {
       CPopupSnackBar.errorSnackBar(
-        Get.overlayContext!,
         title: "authentication error",
         message: e.code.toString(),
       );
       throw CFirebaseAuthExceptions(e.code).message;
     } on FormatException catch (e) {
       CPopupSnackBar.errorSnackBar(
-        Get.overlayContext!,
         title: "platform exception error",
         message: e.message,
       );
       throw CFormatExceptions(e.message);
     } on PlatformException catch (e) {
       CPopupSnackBar.errorSnackBar(
-        Get.overlayContext!,
         title: "platform exception error",
         message: e.code.toString(),
       );
       throw CPlatformExceptions(e.code).message;
     } catch (e) {
       CPopupSnackBar.errorSnackBar(
-        Get.overlayContext!,
         title: "An error occurred",
         message: e.toString(),
       );
@@ -281,35 +270,30 @@ class AuthRepo extends GetxController {
       await _auth.currentUser?.sendEmailVerification();
     } on FirebaseAuthException catch (e) {
       CPopupSnackBar.errorSnackBar(
-        Get.overlayContext!,
         title: "authentication error",
         message: e.code.toString(),
       );
       throw CFirebaseAuthExceptions(e.code).message;
     } on FirebaseException catch (e) {
       CPopupSnackBar.errorSnackBar(
-        Get.overlayContext!,
         title: "authentication error",
         message: e.code.toString(),
       );
       throw CFirebaseAuthExceptions(e.code).message;
     } on FormatException catch (e) {
       CPopupSnackBar.errorSnackBar(
-        Get.overlayContext!,
         title: "platform exception error",
         message: e.message,
       );
       throw CFormatExceptions(e.message);
     } on PlatformException catch (e) {
       CPopupSnackBar.errorSnackBar(
-        Get.overlayContext!,
         title: "platform exception error",
         message: e.code.toString(),
       );
       throw CPlatformExceptions(e.code).message;
     } catch (e) {
       CPopupSnackBar.errorSnackBar(
-        Get.overlayContext!,
         title: "An error occurred",
         message: e.toString(),
       );
@@ -330,28 +314,24 @@ class AuthRepo extends GetxController {
       await _auth.currentUser!.reauthenticateWithCredential(credential);
     } on FirebaseAuthException catch (e) {
       CPopupSnackBar.errorSnackBar(
-        Get.overlayContext!,
         title: e.code,
         message: e.message!,
       );
       throw CFirebaseAuthExceptions(e.code).message;
     } on FirebaseException catch (e) {
       CPopupSnackBar.errorSnackBar(
-        Get.overlayContext!,
         title: e.code,
         message: e.message!,
       );
       throw CFirebaseExceptions(e.code).message;
     } on FormatException catch (e) {
       CPopupSnackBar.errorSnackBar(
-        Get.overlayContext!,
         title: 'Format ERROR!',
         message: e.message,
       );
       throw CFormatExceptions(e.message);
     } on PlatformException catch (e) {
       CPopupSnackBar.errorSnackBar(
-        Get.overlayContext!,
         title: 'Platform exception!',
         message: e.message!,
       );
@@ -359,13 +339,11 @@ class AuthRepo extends GetxController {
     } catch (e) {
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
-          Get.overlayContext!,
           title: 'Oh Snap!',
           message: 'an unknown error occurred while re-authenticating user: $e',
         );
       } else {
         CPopupSnackBar.errorSnackBar(
-          Get.overlayContext!,
           title: 'Oh Snap!',
           message: 'an unknown error occurred! please try again later',
         );
@@ -380,35 +358,30 @@ class AuthRepo extends GetxController {
       await _auth.sendPasswordResetEmail(email: email);
     } on FirebaseAuthException catch (e) {
       CPopupSnackBar.errorSnackBar(
-        Get.overlayContext!,
         title: "authentication error",
         message: e.code.toString(),
       );
       throw CFirebaseAuthExceptions(e.code).message;
     } on FirebaseException catch (e) {
       CPopupSnackBar.errorSnackBar(
-        Get.overlayContext!,
         title: "authentication error",
         message: e.code.toString(),
       );
       throw CFirebaseAuthExceptions(e.code).message;
     } on FormatException catch (e) {
       CPopupSnackBar.errorSnackBar(
-        Get.overlayContext!,
         title: "platform exception error",
         message: e.message,
       );
       throw CFormatExceptions(e.message);
     } on PlatformException catch (e) {
       CPopupSnackBar.errorSnackBar(
-        Get.overlayContext!,
         title: "platform exception error",
         message: e.code.toString(),
       );
       throw CPlatformExceptions(e.code).message;
     } catch (e) {
       CPopupSnackBar.errorSnackBar(
-        Get.overlayContext!,
         title: "An error occurred",
         message: e.toString(),
       );
@@ -461,9 +434,22 @@ class AuthRepo extends GetxController {
   Future<void> logout() async {
     try {
       // -- reset cloud sync keys --
-      deviceStorage.write('SyncContactsWithCloud', true);
-      deviceStorage.write('SyncInvDataWithCloud', true);
-      deviceStorage.write('SyncTxnsDataWithCloud', true);
+      deviceStorage.write(
+        'SyncContactsWithCloud',
+        true,
+      );
+      deviceStorage.write(
+        'SyncExpensesWithCloud',
+        true,
+      );
+      deviceStorage.write(
+        'SyncInvDataWithCloud',
+        true,
+      );
+      deviceStorage.write(
+        'SyncTxnsDataWithCloud',
+        true,
+      );
 
       final cartController = Get.put(CCartController());
 
@@ -474,14 +460,12 @@ class AuthRepo extends GetxController {
       Get.offAll(() => const LoginScreen());
     } on FirebaseAuthException catch (e) {
       CPopupSnackBar.errorSnackBar(
-        Get.overlayContext!,
         title: 'logout error',
         message: CFirebaseAuthExceptions(e.code).message,
       );
       throw CFirebaseAuthExceptions(e.code).message;
     } on FirebaseException catch (e) {
       CPopupSnackBar.errorSnackBar(
-        Get.overlayContext!,
         title: 'logout error',
         message: CFirebaseExceptions(e.code).message,
       );
@@ -490,14 +474,12 @@ class AuthRepo extends GetxController {
       throw CFormatExceptions(e.message);
     } on PlatformException catch (e) {
       CPopupSnackBar.errorSnackBar(
-        Get.overlayContext!,
         title: 'logout platform exception error',
         message: CPlatformExceptions(e.code).message,
       );
       throw CPlatformExceptions(e.code).message;
     } catch (e) {
       CPopupSnackBar.errorSnackBar(
-        Get.overlayContext!,
         title: 'unknown error!',
         message: e.toString(),
       );
@@ -522,7 +504,6 @@ class AuthRepo extends GetxController {
       throw CPlatformExceptions(e.code).message;
     } catch (e) {
       CPopupSnackBar.errorSnackBar(
-        Get.overlayContext!,
         title: 'unknown error!',
         message: e.toString(),
       );

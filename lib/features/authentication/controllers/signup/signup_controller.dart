@@ -121,7 +121,7 @@ class SignupController extends GetxController {
       if (!checkPrivacyPolicy.value) {
         CFullScreenLoader.stopLoading();
         CPopupSnackBar.warningSnackBar(
-          Get.overlayContext!,
+          
           title: 'accept privacy policy',
           message:
               'to create an account, you must read and accept the privacy policy & terms of use!',
@@ -136,7 +136,7 @@ class SignupController extends GetxController {
       if (phoneNoExists) {
         CFullScreenLoader.stopLoading();
         CPopupSnackBar.warningSnackBar(
-          Get.overlayContext!,
+          
           title: 'phone no. exists!',
           message: 'the supplied phone no. is already in use!',
         );
@@ -177,7 +177,7 @@ class SignupController extends GetxController {
 
       // -- show signup success message
       CPopupSnackBar.successSnackBar(
-        Get.overlayContext!,
+        
         title: 'welcome aboard!',
         message:
             'your account has been created! verify your e-mail address to proceed!',
@@ -191,7 +191,7 @@ class SignupController extends GetxController {
       CLoadingDialog.hideLoader();
       // -- show some generic error msg to the user
       CPopupSnackBar.errorSnackBar(
-        Get.overlayContext!,
+        
         message: e.toString(),
         title: 'Oh Snap!',
       );

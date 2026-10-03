@@ -42,7 +42,6 @@ class CAddToCartBtn extends StatelessWidget {
 
           if (itemExpiry != null && itemExpiry <= 0) {
             CPopupSnackBar.warningSnackBar(
-              context,
               message: '${invItem!.name.toUpperCase()} has expired',
               title: 'item is stale/expired',
             );

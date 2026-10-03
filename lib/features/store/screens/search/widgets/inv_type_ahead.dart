@@ -332,7 +332,6 @@ class InventorySearchTypeAhead extends StatelessWidget {
                                 );
                               } else {
                                 CPopupSnackBar.warningSnackBar(
-                                  context,
                                   title: 'item is out of stock',
                                   message:
                                       '${suggestion.name} is out of stock!!',
