@@ -4,6 +4,7 @@ import 'package:rintel/features/authentication/screens/login/login.dart';
 import 'package:rintel/features/authentication/screens/onboarding/onboarding_screen.dart';
 import 'package:rintel/features/authentication/screens/signup/verify_email.dart';
 import 'package:rintel/features/personalization/controllers/contacts_controller.dart';
+import 'package:rintel/features/personalization/controllers/expenses_controller.dart';
 import 'package:rintel/features/personalization/controllers/user_controller.dart';
 import 'package:rintel/features/personalization/screens/profile/widgets/update_business_name.dart';
 import 'package:rintel/features/personalization/screens/settings/app_settings_screen.dart';
@@ -36,8 +37,9 @@ class AuthRepo extends GetxController {
   static AuthRepo get instance => Get.find();
 
   // -- variables --
-  final deviceStorage = GetStorage();
   final _auth = FirebaseAuth.instance;
+  final deviceStorage = GetStorage();
+
   final signupController = Get.put(SignupController());
 
   // -- get authenticated user data --
@@ -88,17 +90,26 @@ class AuthRepo extends GetxController {
             'Redirecting...',
             CImages.docerAnimation,
             CNetworkManager.instance.hasConnection.value
-                ? CColors.rBrown.withValues(alpha: .8)
-                : CColors.dark.withValues(alpha: .8),
+                ? CColors.rBrown.withValues(
+                    alpha: .4,
+                  )
+                : CColors.dark.withValues(
+                    alpha: .4,
+                  ),
             CColors.white,
           );
 
           if (await userController.fetchUserDetails()) {
+            final expensesController = Get.put(CExpensesController());
             final invController = Get.put(CInventoryController());
             final txnsController = Get.put(CTxnsController());
             final contactsController = Get.put(CContactsController());
 
-            // check data sync status
+            // -- check data sync status --
+            deviceStorage.writeIfNull(
+              'SyncExpensesWithCloud',
+              true,
+            );
             deviceStorage.writeIfNull(
               'SyncInvDataWithCloud',
               true,
@@ -111,6 +122,8 @@ class AuthRepo extends GetxController {
               'SyncContactsWithCloud',
               true,
             );
+
+            await expensesController.initExpensesSync();
             await invController.initInvSync();
 
             await invController.fetchUserInventoryItems();

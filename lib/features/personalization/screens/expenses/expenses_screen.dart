@@ -25,7 +25,6 @@ class CExpensesScreen extends StatelessWidget {
       MediaQuery.of(context).size.width,
       MediaQuery.of(context).size.height * 0.9,
     );
-
     final expensesController = Get.put(CExpensesController());
     final userController = Get.put(CUserController());
 
@@ -122,6 +121,7 @@ class CExpensesScreen extends StatelessWidget {
                         context,
                         'add',
                       );
+                      await expensesController.fetchMyExpenses();
                     },
                     backgroundColor:
                         CNetworkManager.instance.hasConnection.value

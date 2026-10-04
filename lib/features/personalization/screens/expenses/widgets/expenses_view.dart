@@ -9,31 +9,71 @@ import 'package:rintel/features/store/screens/store_items_tings/inventory/invent
 import 'package:rintel/utils/constants/colors.dart';
 import 'package:rintel/utils/constants/img_strings.dart';
 import 'package:rintel/utils/constants/sizes.dart';
+import 'package:rintel/utils/db/sqflite/db_helper.dart';
 import 'package:rintel/utils/helpers/helper_functions.dart';
 
-class CExpensesView extends StatelessWidget {
+class CExpensesView extends StatefulWidget {
   const CExpensesView({super.key});
 
   @override
+  State<CExpensesView> createState() => _CExpensesViewState();
+}
+
+class _CExpensesViewState extends State<CExpensesView> {
+  final expensesController = Get.put(CExpensesController());
+  final userController = Get.put(CUserController());
+
+  late Future<List<CExpense>> itemsFuture;
+  @override
+  void initState() {
+    // -- trigger data fetch --
+    itemsFuture = DbHelper.instance.fetchMyExpenses(
+      userController.user.value.email,
+    );
+    super.initState();
+    Future.delayed(
+      Duration.zero,
+      () {
+        WidgetsBinding.instance.addPostFrameCallback(
+          (_) {
+            if (!mounted) return;
+            setState(
+              () {
+                expensesController.fetchMyExpenses();
+              },
+            );
+          },
+        );
+      },
+    );
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final expensesController = Get.put(CExpensesController());
     // 1. Define Global Key for SliverAnimatedList
     final GlobalKey<SliverAnimatedListState> listKey =
         GlobalKey<SliverAnimatedListState>();
     final isDarkTheme = CHelperFunctions.isDarkMode(context);
     final List<CExpense> expenses = [];
-
-    final userController = Get.put(CUserController());
     final userCurrency = userController.user.value.currencyCode;
 
     return // 2. Wrap the SliverAnimatedList with FutureBuilder
     FutureBuilder<List<CExpense>>(
-      future: expensesController.fetchMyExpenses(), // Your async function
+      future: itemsFuture, // Your async function
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           // Initialize items if needed, or use snapshot.data directly
 
           expenses.assignAll(snapshot.data!);
+
+          if (expenses.isEmpty) {
+            return Center(
+              child: NoDataScreen(
+                lottieImage: CImages.noDataLottie,
+                txt: 'your expenses will be displayed here...',
+              ),
+            );
+          }
 
           return SliverAnimatedList(
             key: listKey,

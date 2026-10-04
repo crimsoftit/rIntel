@@ -37,10 +37,11 @@ class CTxnsView extends StatefulWidget {
 
 class _CTxnsViewState extends State<CTxnsView> {
   int? _expandedIndex; // Stores the index of the currently expanded item
-  late Future<List<CTxn>> _itemsFuture;
+  
   final invController = Get.put(CInventoryController());
   final txnsController = Get.put(CTxnsController());
   final userController = Get.put(CUserController());
+  late Future<List<CTxn>> _itemsFuture;
 
   @override
   void initState() {

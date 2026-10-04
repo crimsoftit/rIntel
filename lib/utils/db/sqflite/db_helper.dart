@@ -741,7 +741,6 @@ class DbHelper extends GetxController {
   ) async {
     final db = _db;
     final batch = db!.batch();
-    const int chunkSize = 500;
 
     for (int i = 0; i < soldItems.length; i++) {
       batch.update(
@@ -749,21 +748,10 @@ class DbHelper extends GetxController {
         soldItems[i].toMap(),
         conflictAlgorithm: ConflictAlgorithm.replace,
       );
-
-      // Commit every chunk size
-      if ((i + 1) % chunkSize == 0) {
-        await batch.commit(noResult: true);
-        // Create a new batch for the next chunk
-        // Note: You must re-initialize batch if you want to continue using the same instance logic,
-        // but typically you create a new batch or just continue appending if the DB connection allows.
-        // A safer pattern for large loops often involves creating a new batch instance or using transaction boundaries.
-      }
     }
-
-    // Commit any remaining items
-    if (soldItems.length % chunkSize != 0) {
-      await batch.commit(noResult: true);
-    }
+    await batch.commit(
+      noResult: true,
+    );
   }
 
   /// -- batch insert txn items --
@@ -1464,33 +1452,17 @@ class DbHelper extends GetxController {
       final db = _db;
       final xpensesBatch = db!.batch();
 
-      const int chunkSize = 500;
-
-      for (int i = 0; i < xpenses.length; i++) {
+      for (var xpense in xpenses) {
         xpensesBatch.insert(
           expensesTable,
-          xpenses[i].toMap(),
+          xpense.toMap(),
           conflictAlgorithm: ConflictAlgorithm.replace,
         );
-
-        // -- commit every chunk size --
-        if ((i + 1) % chunkSize == 0) {
-          // Create a new batch for the next chunk
-          // Note: You must re-initialize batch if you want to continue using the same instance logic,
-          // but typically you create a new batch or just continue appending if the DB connection allows.
-          // A safer pattern for large loops often involves creating a new batch instance or using transaction boundaries.
-          await xpensesBatch.commit(
-            noResult: true,
-          );
-        }
       }
 
-      // -- commit any remaining items --
-      if (xpenses.length % chunkSize != 0) {
-        await xpensesBatch.commit(
-          noResult: true,
-        );
-      }
+      await xpensesBatch.commit(
+        noResult: true,
+      );
     } catch (e) {
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(

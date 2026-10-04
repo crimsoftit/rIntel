@@ -27,7 +27,9 @@ class NavMenu extends StatelessWidget {
     final searchController = Get.put(CSearchBarController());
 
     Future.delayed(
-      Duration(milliseconds: 200),
+      Duration(
+        milliseconds: 100,
+      ),
       () {
         WidgetsBinding.instance.addPostFrameCallback(
           (_) {

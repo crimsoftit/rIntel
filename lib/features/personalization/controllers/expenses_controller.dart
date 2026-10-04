@@ -66,6 +66,7 @@ class CExpensesController extends GetxController {
   @override
   void onInit() async {
     isLoading.value = false;
+    await fetchMyExpenses();
     await initExpensesSync();
     resetFields();
     super.onInit();
@@ -73,27 +74,22 @@ class CExpensesController extends GetxController {
 
   /// -- initialize cloud sync --
   Future<void> initExpensesSync() async {
-    await fetchMyExpenses().then(
-      (myExpenses) async {
-        if (localStorage.read('SyncExpensesWithCloud') == true &&
-            myExpenses.isEmpty) {
-          switch (await importExpensesFromCloud()) {
-            case true:
-              localStorage.write(
-                'SyncExpensesWithCloud',
-                false,
-              );
-              break;
-            default:
-              localStorage.write(
-                'SyncExpensesWithCloud',
-                true,
-              );
-              break;
-          }
-        }
-      },
-    );
+    if (localStorage.read('SyncExpensesWithCloud') == true) {
+      switch (await importExpensesFromCloud()) {
+        case true:
+          localStorage.write(
+            'SyncExpensesWithCloud',
+            false,
+          );
+          break;
+        default:
+          localStorage.write(
+            'SyncExpensesWithCloud',
+            true,
+          );
+          break;
+      }
+    }
   }
 
   /// -- add expense dialog --
@@ -113,18 +109,20 @@ class CExpensesController extends GetxController {
               alpha: .85,
             ),
       builder: (context) {
-        return SingleChildScrollView(
-          child: Padding(
-            padding: EdgeInsets.only(
-              bottom: MediaQuery.of(context).viewInsets.bottom + 20,
-              left: CSizes.lg,
-              right: CSizes.lg + 5.0,
-              top: CSizes.lg / 4,
-            ),
-            child: Form(
-              key: addUpdateExpenseFormKey,
-              child: SizedBox(
-                height: CHelperFunctions.screenHeight() * .75,
+        return Scaffold(
+          // backgroundColor: CColors.rBrown.withValues(
+          //   alpha: 0.2,
+          // ),
+          body: SingleChildScrollView(
+            child: Padding(
+              padding: EdgeInsets.only(
+                bottom: MediaQuery.of(context).viewInsets.bottom + 20,
+                left: CSizes.lg,
+                right: CSizes.lg + 5.0,
+                top: CSizes.lg / 4,
+              ),
+              child: Form(
+                key: addUpdateExpenseFormKey,
                 child: Column(
                   children: [
                     CRoundedContainer(
@@ -235,13 +233,16 @@ class CExpensesController extends GetxController {
                             );
                             saveExpense(expense).then(
                               (_) {
+                                fetchMyExpenses();
                                 CPopupSnackBar.successSnackBar(
-                                  behavior: SnackBarBehavior.fixed,
+                                  behavior: SnackBarBehavior.floating,
 
                                   message: 'Expense recorded successfully!',
                                   title: 'success!!',
                                 );
-                                Get.back();
+                                if (context.mounted) {
+                                  Navigator.pop(context, true);
+                                }
                               },
                             );
                           },
@@ -274,7 +275,7 @@ class CExpensesController extends GetxController {
                       ),
                       // Optional: Add scrollPadding to ensure space above keyboard
                       scrollPadding: EdgeInsets.only(
-                        bottom: 50.0,
+                        bottom: 100.0,
                       ),
                       style: const TextStyle(
                         fontWeight: FontWeight.normal,
@@ -288,7 +289,7 @@ class CExpensesController extends GetxController {
                     ),
 
                     const SizedBox(
-                      height: CSizes.spaceBtnInputFields / 4,
+                      height: CSizes.spaceBtnInputFields / 2.0,
                     ),
 
                     SizedBox(
@@ -298,7 +299,7 @@ class CExpensesController extends GetxController {
                         //mainAxisSize: MainAxisSize.min,
                         children: [
                           SizedBox(
-                            height: 74.0,
+                            height: 60.0,
                             width: MediaQuery.of(context).size.width * .6,
                             child: TextFormField(
                               autovalidateMode:
@@ -528,7 +529,7 @@ class CExpensesController extends GetxController {
                       controller: txtTxnCode,
                       decoration: InputDecoration(
                         constraints: BoxConstraints(
-                          maxHeight: 60.5,
+                          maxHeight: 60.05,
                           minHeight: 60.0,
                         ),
                         fillColor: CColors.rBrown.withValues(
@@ -577,7 +578,7 @@ class CExpensesController extends GetxController {
                         border: OutlineInputBorder(),
 
                         constraints: BoxConstraints(
-                          minHeight: 100.0,
+                          minHeight: 60.0,
                         ),
                         fillColor: CColors.rBrown.withValues(
                           alpha: .1,
@@ -711,6 +712,7 @@ class CExpensesController extends GetxController {
     txtRecipientContacts.clear();
     txtRecipientName.clear();
     txtRemarks.clear();
+    txtTxnCode.clear();
   }
 
   @override
@@ -723,6 +725,7 @@ class CExpensesController extends GetxController {
     txtRecipientContacts.dispose();
     txtRecipientName.dispose();
     txtRemarks.dispose();
+    txtTxnCode.dispose();
     super.dispose();
   }
 }
