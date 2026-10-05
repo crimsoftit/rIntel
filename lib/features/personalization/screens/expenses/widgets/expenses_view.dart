@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:iconsax/iconsax.dart';
 import 'package:rintel/features/personalization/controllers/expenses_controller.dart';
 import 'package:rintel/features/personalization/controllers/user_controller.dart';
 import 'package:rintel/features/personalization/models/expense.dart';
@@ -11,6 +10,7 @@ import 'package:rintel/utils/constants/colors.dart';
 import 'package:rintel/utils/constants/img_strings.dart';
 import 'package:rintel/utils/constants/sizes.dart';
 import 'package:rintel/utils/db/sqflite/db_helper.dart';
+import 'package:rintel/utils/helpers/formatter.dart';
 import 'package:rintel/utils/helpers/helper_functions.dart';
 
 class CExpensesView extends StatefulWidget {
@@ -65,17 +65,7 @@ class _CExpensesViewState extends State<CExpensesView> {
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           // Initialize items if needed, or use snapshot.data directly
-
           expenses.assignAll(snapshot.data!);
-
-          if (expenses.isEmpty) {
-            return Center(
-              child: NoDataScreen(
-                lottieImage: CImages.noDataLottie,
-                txt: 'your expenses will be displayed here...',
-              ),
-            );
-          }
 
           return SliverAnimatedList(
             key: listKey,
@@ -114,11 +104,25 @@ class _CExpensesViewState extends State<CExpensesView> {
                               alpha: .1,
                             ),
                       borderRadius: 10.0,
-                      leadingWidget: Icon(
-                        Iconsax.money_send,
-                        color: CColors.rBrown,
-                        size: CSizes.iconMd,
+                      leadingWidget: CircleAvatar(
+                        backgroundColor:
+                            CHelperFunctions.randomAestheticColor(),
+                        radius: 16.0,
+                        child: Text(
+                          expenses[index].recipientName[0].toUpperCase(),
+                          style: Theme.of(context).textTheme.bodyLarge!.apply(
+                            //color: CColors.white,
+                            color: CHelperFunctions.aestheticColor(),
+                            fontFamily: 'Signika',
+                          ),
+                        ),
                       ),
+
+                      // Icon(
+                      //   Iconsax.money_send,
+                      //   color: CColors.rBrown,
+                      //   size: CSizes.iconMd,
+                      // ),
                       margin: const EdgeInsets.only(
                         bottom: 3.0,
                         top: 3.0,
@@ -130,9 +134,40 @@ class _CExpensesViewState extends State<CExpensesView> {
                         );
                       },
                       prefixLabel: userCurrency,
-                      subTitleTxt: expenses[index].expenseTitle,
+                      subTitleTxt: expenses[index].recipientName,
 
-                      trailingWidget: SizedBox.shrink(),
+                      trailingWidget: Padding(
+                        padding: const EdgeInsets.only(
+                          top: 15.0,
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                            Text(
+                              expenses[index].recipientContact,
+                              style:
+                                  Theme.of(
+                                    context,
+                                  ).textTheme.labelMedium!.apply(
+                                    fontSizeFactor: 1.2,
+                                  ),
+                            ),
+                            const SizedBox(
+                              height: CSizes.spaceBtnInputFields / 4,
+                            ),
+                            Text(
+                              CFormatter.getOnlyTime(
+                                DateTime.parse(expenses[index].dateAdded),
+                              ),
+                              style: Theme.of(context).textTheme.labelSmall!
+                                  .apply(
+                                    color: CColors.darkGrey,
+                                    fontStyle: FontStyle.italic,
+                                  ),
+                            ),
+                          ],
+                        ),
+                      ),
 
                       width: CHelperFunctions.screenWidth() * .92,
                     ),

@@ -325,6 +325,7 @@ flutter:
       fonts:
         - asset: assets/fonts/Saira/Saira-VariableFont_wdth,wght.ttf
         - asset: assets/fonts/Saira/Saira-VariableFont_wdth,wght.ttf
+        - asset: assets/fonts/Saira/static/Saira-Thin.ttf
     - family: Poppins
       fonts:
         - asset: assets/fonts/Poppins-Light.ttf

@@ -14,6 +14,25 @@ class CFormatter {
     return '$onlyDate at $onlyTime';
   }
 
+  static String getOnlyTime(DateTime date) {
+    // 1. The source string containing both date and time
+    // String dateTimeString = "2021-07-13T13:15:54.000000Z";
+
+    // // 2. Parse the string into a DateTime object
+    // DateTime date = DateTime.parse(dateTimeString);
+
+    // // 3. Format to extract only the time
+    // // Option A: 24-hour format (13:15)
+    // String time24h = DateFormat.Hm().format(date);
+    // print("24-hour: $time24h");
+
+    // // Option B: 12-hour format (1:15 PM)
+    // String time12h = DateFormat.jm().format(date);
+    // print("12-hour: $time12h");
+    final time = DateFormat('hh:mm a').format(date);
+    return time;
+  }
+
   /// -- format time range and return result toString() --
   static int computeTimeRangeFromNow(String end) {
     final startTime = DateTime.now();
@@ -195,13 +214,11 @@ class CFormatter {
     } catch (e) {
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
-          
           message: 'error formatting item metrics: $e',
           title: 'item metrics format error!',
         );
       } else {
         CPopupSnackBar.errorSnackBar(
-          
           message: 'error formatting item metrics!',
           title: 'item metrics format error!',
         );
@@ -222,7 +239,6 @@ class CFormatter {
     } catch (e) {
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
-          
           message: 'metrics format error: $e',
           title: 'metrics format error!',
         );
@@ -249,7 +265,6 @@ class CFormatter {
     } catch (e) {
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
-          
           message: e.toString(),
           title: 'format error',
         );

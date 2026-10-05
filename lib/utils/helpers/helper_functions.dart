@@ -213,6 +213,14 @@ class CHelperFunctions {
     return HSLColor.fromAHSL(.5, hue, saturation, lightness).toColor();
   }
 
+  static Color aestheticColor() {
+    final hue = math.Random().nextDouble() * 360;
+    final saturation = .6 + (math.Random().nextDouble() * .2);
+    final lightness = .5 + (math.Random().nextDouble() * .3);
+
+    return HSLColor.fromAHSL(.7, hue, saturation, lightness).toColor();
+  }
+
   static ui.Color generateInvItemsDisplayColor(
     Color? defaultDisplayColor,
     double qtyAvailable,
