@@ -1,3 +1,4 @@
+import 'package:iconsax/iconsax.dart';
 import 'package:rintel/common/widgets/appbar/v2_app_bar.dart';
 import 'package:rintel/common/widgets/buttons/custom_dropdown_btn.dart';
 import 'package:rintel/common/widgets/custom_shapes/containers/rounded_container.dart';
@@ -7,6 +8,7 @@ import 'package:rintel/common/widgets/products/cart/cart_counter_icon.dart';
 import 'package:rintel/common/widgets/search_bar/animated_search_bar.dart';
 import 'package:rintel/common/widgets/shimmers/horizontal_items_shimmer.dart';
 import 'package:rintel/common/widgets/txt_widgets/c_section_headings.dart';
+import 'package:rintel/features/personalization/controllers/user_controller.dart';
 import 'package:rintel/features/store/controllers/dashboard_controller.dart';
 import 'package:rintel/features/store/controllers/inv_controller.dart';
 import 'package:rintel/features/store/controllers/nav_menu_controller.dart';
@@ -17,11 +19,13 @@ import 'package:rintel/features/store/screens/home/widgets/charts/bar_charts/wee
 import 'package:rintel/features/store/screens/home/widgets/charts/line_charts/cutom_line_chart.dart';
 import 'package:rintel/features/store/screens/home/widgets/dashboard_header.dart';
 import 'package:rintel/features/store/screens/home/widgets/store_summary.dart';
+import 'package:rintel/features/store/screens/home/widgets/store_summary_card.dart';
 import 'package:rintel/features/store/screens/home/widgets/top_sellers.dart';
 import 'package:rintel/main_nav.dart';
 import 'package:rintel/utils/constants/colors.dart';
 import 'package:rintel/utils/constants/sizes.dart';
 import 'package:rintel/utils/constants/txt_strings.dart';
+import 'package:rintel/utils/helpers/formatter.dart';
 import 'package:rintel/utils/helpers/helper_functions.dart';
 import 'package:rintel/utils/helpers/network_manager.dart';
 import 'package:fl_chart/fl_chart.dart';
@@ -34,12 +38,14 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final dashboardController = Get.put(CDashboardController());
-
     final invController = Get.put(CInventoryController());
     final isDarkTheme = CHelperFunctions.isDarkMode(context);
 
     final navController = Get.put(CNavMenuController());
     final txnsController = Get.put(CTxnsController());
+
+    final userController = Get.put(CUserController());
+    final userCurrency = userController.user.value.currencyCode;
 
     var salesCount = txnsController.userTxns.fold(
       0.0,
@@ -79,24 +85,26 @@ class HomeScreen extends StatelessWidget {
               ),
 
               /// -- dashboard header widget --
-              Obx(() {
-                return DashboardHeaderWidget(
-                  actionsSection:
-                      dashboardController.showSummaryFilterField.value
-                      ? SizedBox.shrink()
-                      : CAnimatedSearchBar(
-                          controller: txnsController.dateRangeFieldController,
-                          customTxtField: CDateRangePickerWidget(),
-                          forStoreSearch: false,
-                          useCustomTxtField: true,
-                          hintTxt: '',
-                        ),
-                  appBarTitle: CTexts.homeAppbarTitle,
-                  isHomeScreen: true,
-                  screenTitle: 'dashboard',
-                  showAppBarTitle: false,
-                );
-              }),
+              Obx(
+                () {
+                  return DashboardHeaderWidget(
+                    actionsSection:
+                        dashboardController.showSummaryFilterField.value
+                        ? SizedBox.shrink()
+                        : CAnimatedSearchBar(
+                            controller: txnsController.dateRangeFieldController,
+                            customTxtField: CDateRangePickerWidget(),
+                            forStoreSearch: false,
+                            useCustomTxtField: true,
+                            hintTxt: '',
+                          ),
+                    appBarTitle: CTexts.homeAppbarTitle,
+                    isHomeScreen: true,
+                    screenTitle: 'dashboard',
+                    showAppBarTitle: false,
+                  );
+                },
+              ),
 
               /// -- custom divider --
               CCustomDivider(),
@@ -154,6 +162,18 @@ class HomeScreen extends StatelessWidget {
 
                             /// -- sales summary cards --
                             CStoreSummary(),
+
+                            const SizedBox(
+                              height: CSizes.defaultSpace / 6,
+                            ),
+
+                            CStoreSummaryCard(
+                              iconData: Iconsax.money_send,
+                              subTitleTxt: 'Expenses($userCurrency)',
+                              titleTxt: CFormatter.kSuffixFormatter(
+                                txnsController.tExpenses.value,
+                              ),
+                            ),
 
                             /// -- top sellers --
                             CSectionHeading(

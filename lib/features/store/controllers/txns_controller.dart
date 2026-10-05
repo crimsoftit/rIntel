@@ -6,6 +6,7 @@ import 'package:rintel/common/widgets/txt_fields/custom_txtfield.dart';
 import 'package:rintel/data/repos/store/store_repo.dart';
 import 'package:rintel/features/personalization/controllers/notification_tings/flutter_local_notifications/local_notifications_controller.dart';
 import 'package:rintel/features/personalization/controllers/user_controller.dart';
+import 'package:rintel/features/personalization/models/expense.dart';
 import 'package:rintel/features/store/controllers/checkout_controller.dart';
 import 'package:rintel/features/store/controllers/dashboard_controller.dart';
 import 'package:rintel/features/store/controllers/date_controller.dart';
@@ -57,6 +58,7 @@ class CTxnsController extends GetxController {
   final RxList<CTxnsModel> receipts = <CTxnsModel>[].obs;
 
   final RxList<CTxnsModel> allGsheetTxnsData = <CTxnsModel>[].obs;
+  final RxList<CExpense> myExpenses = <CExpense>[].obs;
   final RxList<CTxnsModel> unsyncedTxnAppends = <CTxnsModel>[].obs;
   final RxList<CTxnsModel> unsyncedTxnUpdates = <CTxnsModel>[].obs;
   final RxList<CTxnsModel> userGsheetTxnsData = <CTxnsModel>[].obs;
@@ -115,17 +117,19 @@ class CTxnsController extends GetxController {
   final RxDouble customerBal = 0.0.obs;
 
   /// -- controllers - classes --
-  final userController = Get.put(CUserController());
-  final searchController = Get.put(CSearchBarController());
   final invController = Get.put(CInventoryController());
   final notsController = Get.put(CLocalNotificationsController());
+  final searchController = Get.put(CSearchBarController());
+
   final txnsFormKey = GlobalKey<FormState>();
+  final userController = Get.put(CUserController());
 
   final invoicePaymentFormKey = GlobalKey<FormState>();
 
   /// -- for KPIs --
   final RxDouble averageInvCost = 0.0.obs;
   final RxDouble averageInvValue = 0.0.obs;
+
   final RxDouble grossProfitPercentage = 0.0.obs;
   final RxDouble costOfGoodsSold = 0.0.obs;
   final RxDouble gmroi = 0.0.obs;
@@ -145,11 +149,13 @@ class CTxnsController extends GetxController {
 
   final RxList<CSoldItemModel> userTxnItems = <CSoldItemModel>[].obs;
 
+  /// -- summaries --
+  final RxDouble gProfit = 0.0.obs;
   final RxDouble invoicesValue = 0.0.obs;
   final RxDouble moneyCollected = 0.0.obs;
   final RxDouble netProfit = 0.0.obs;
   final RxDouble onTheHauzSales = 0.0.obs;
-  final RxDouble gProfit = 0.0.obs;
+  final RxDouble tExpenses = 0.0.obs;
 
   @override
   void onInit() async {
@@ -165,6 +171,8 @@ class CTxnsController extends GetxController {
     }
     await fetchUserTxns();
     await fetchUserTxnItems();
+
+    await fetchMyExpenses();
 
     super.onInit();
   }
@@ -1143,9 +1151,20 @@ class CTxnsController extends GetxController {
       // -- compute gross profit --
       gProfit.value = grossRevenue.value - costOfSales.value;
 
+      // -- total expenses --
+      tExpenses.value = myExpenses.fold(
+        0.0,
+        (sum, xpense) {
+          return sum + xpense.amount;
+        },
+      );
+
       // -- compute net profit --
       netProfit.value =
-          gProfit.value - onTheHauzSales.value - invoicesValue.value;
+          gProfit.value -
+          onTheHauzSales.value -
+          invoicesValue.value -
+          tExpenses.value;
 
       fetchTopSellersFromSales();
 
@@ -1187,6 +1206,23 @@ class CTxnsController extends GetxController {
       var formattedEndDate = DateTime.parse(
         rawDateRange.end.toLocal().toString().split(' ')[0],
       );
+
+      var filteredXpenses = myExpenses.where(
+        (xpense) {
+          return DateTime.parse(
+                xpense.lastModified,
+              ).isAfter(formattedStartDate.subtract(Duration(days: 0))) &&
+              DateTime.parse(
+                xpense.lastModified,
+              ).isBefore(
+                formattedEndDate.add(
+                  Duration(
+                    days: 1,
+                  ),
+                ),
+              );
+        },
+      ).toList();
 
       var filteredTxns = userTxns.where(
         (txn) {
@@ -1274,8 +1310,18 @@ class CTxnsController extends GetxController {
       gProfit.value = tRevenue - cogs.value;
 
       // -- compute net profit --
+      tExpenses.value = filteredXpenses.fold(
+        0.0,
+        (sum, xpense) {
+          return sum + xpense.amount;
+        },
+      );
 
-      var nProfit = gProfit.value - onTheHauzSales.value - invoicesValue.value;
+      var nProfit =
+          gProfit.value -
+          onTheHauzSales.value -
+          invoicesValue.value -
+          tExpenses.value;
       netProfit.value = nProfit;
 
       // -- stop loader --
@@ -1955,6 +2001,53 @@ class CTxnsController extends GetxController {
       }
       rethrow;
     }
+  }
+
+  /// -- fetch user expenses --
+  Future<List<CExpense>> fetchMyExpenses() async {
+    try {
+      isLoading.value = true;
+
+      var expenses = await dbHelper.fetchMyExpenses(
+        userController.user.value.email,
+      );
+
+      myExpenses.assignAll(expenses);
+
+      isLoading.value = false;
+      return myExpenses;
+    } catch (e) {
+      isLoading.value = false;
+      if (kDebugMode) {
+        CPopupSnackBar.errorSnackBar(
+          title: 'error fetching expenses!',
+          message: e.toString(),
+        );
+      } else {
+        CPopupSnackBar.errorSnackBar(
+          title: 'error fetching expenses!',
+          message: 'An unknown error occurred while fetching your expenses!',
+        );
+      }
+
+      rethrow;
+    }
+  }
+
+  /// -- add expense to local db and cloud --
+  Future<void> saveExpense(CExpense expense) async {
+    await dbHelper.addExpense(expense).then(
+      (result) {
+        if (result >= 1) {
+          storeRepo.saveExpenseToCloud(expense);
+        } else {
+          CPopupSnackBar.errorSnackBar(
+            title: 'Error saving expense details!',
+          );
+        }
+      },
+    );
+    await fetchMyExpenses();
   }
 
   @override

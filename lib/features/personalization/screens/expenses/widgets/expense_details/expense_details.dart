@@ -4,6 +4,7 @@ import 'package:iconsax/iconsax.dart';
 import 'package:rintel/features/personalization/controllers/expenses_controller.dart';
 import 'package:rintel/features/personalization/controllers/user_controller.dart';
 import 'package:rintel/features/personalization/models/expense.dart';
+import 'package:rintel/features/store/controllers/txns_controller.dart';
 import 'package:rintel/utils/constants/colors.dart';
 import 'package:rintel/utils/constants/sizes.dart';
 import 'package:rintel/utils/helpers/helper_functions.dart';
@@ -15,6 +16,10 @@ class CExpenseDetails extends StatelessWidget {
   Widget build(BuildContext context) {
     final expensesController = Get.put(CExpensesController());
     final isDarkTheme = CHelperFunctions.isDarkMode(context);
+
+    final txnsController = Get.put(
+      CTxnsController(),
+    );
 
     final userController = Get.put(CUserController());
     final userCurrency = userController.user.value.currencyCode;
@@ -53,7 +58,7 @@ class CExpenseDetails extends StatelessWidget {
                   context,
                   'update',
                 );
-                expensesController.myExpenses.refresh();
+                txnsController.myExpenses.refresh();
               },
               icon: Icon(
                 Iconsax.edit,
@@ -74,20 +79,31 @@ class CExpenseDetails extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Center(
-                  child: Padding(
-                    padding: const EdgeInsets.only(
-                      bottom: 10.0,
-                      top: 20.0,
-                    ),
+                Padding(
+                  padding: const EdgeInsets.only(
+                    bottom: 8.0,
+                    top: 10.0,
+                  ),
+                  child: Center(
                     child: CircleAvatar(
                       backgroundColor: CHelperFunctions.randomAestheticColor(),
                       radius: 40.0,
-                      child: Text(
-                        expense.expenseTitle[0].toUpperCase(),
-                        style: Theme.of(context).textTheme.bodyLarge!.apply(
-                          color: CColors.white,
-                          fontSizeFactor: 2.0,
+                      child: Center(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              expense.recipientName[0].toUpperCase(),
+                              style: Theme.of(context).textTheme.bodyLarge!
+                                  .apply(
+                                    color: CColors.white,
+                                    fontSizeFactor: 2.0,
+                                  ),
+                            ),
+                            const Icon(
+                              Iconsax.money_send,
+                            ),
+                          ],
                         ),
                       ),
                     ),
@@ -97,10 +113,13 @@ class CExpenseDetails extends StatelessWidget {
                   height: CSizes.spaceBtnItems / 2.0,
                 ),
                 SelectableText(
-                  expense.expenseTitle,
-                  style: Theme.of(
-                    context,
-                  ).textTheme.labelLarge!.apply(fontSizeFactor: 1.6),
+                  expense.recipientName,
+                  style:
+                      Theme.of(
+                        context,
+                      ).textTheme.labelLarge!.apply(
+                        fontSizeFactor: 1.6,
+                      ),
                 ),
                 const SizedBox(
                   height: CSizes.spaceBtnItems,

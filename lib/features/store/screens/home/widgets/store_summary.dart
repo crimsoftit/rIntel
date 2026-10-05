@@ -19,7 +19,6 @@ class CStoreSummary extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final dashboardController = Get.put(CDashboardController());
-    //final dateRangeController = Get.put(CDateRangeController());
     final invController = Get.put(CInventoryController());
     final txnsController = Get.put(CTxnsController());
     final userController = Get.put(CUserController());

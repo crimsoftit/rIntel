@@ -5,6 +5,7 @@ import 'package:rintel/features/personalization/controllers/expenses_controller.
 import 'package:rintel/features/personalization/controllers/user_controller.dart';
 import 'package:rintel/features/personalization/models/expense.dart';
 import 'package:rintel/features/personalization/screens/no_data/no_data_screen.dart';
+import 'package:rintel/features/store/controllers/txns_controller.dart';
 import 'package:rintel/features/store/screens/store_items_tings/inventory/inventory_details/widgets/cards/kpi_display_card.dart';
 import 'package:rintel/utils/constants/colors.dart';
 import 'package:rintel/utils/constants/img_strings.dart';
@@ -21,6 +22,7 @@ class CExpensesView extends StatefulWidget {
 
 class _CExpensesViewState extends State<CExpensesView> {
   final expensesController = Get.put(CExpensesController());
+  final txnsController = Get.put(CTxnsController());
   final userController = Get.put(CUserController());
 
   late Future<List<CExpense>> itemsFuture;
@@ -39,7 +41,7 @@ class _CExpensesViewState extends State<CExpensesView> {
             if (!mounted) return;
             setState(
               () {
-                expensesController.fetchMyExpenses();
+                txnsController.fetchMyExpenses();
               },
             );
           },
@@ -129,46 +131,9 @@ class _CExpensesViewState extends State<CExpensesView> {
                       },
                       prefixLabel: userCurrency,
                       subTitleTxt: expenses[index].expenseTitle,
-                      // subTitleWidget: Column(
-                      //   crossAxisAlignment: CrossAxisAlignment.start,
-                      //   children: [
-                      //     Text(
-                      //       expenses[index].expenseTitle,
-                      //     ),
-                      //     const SizedBox(
-                      //       height: CSizes.spaceBtnInputFields,
-                      //     ),
-                      //     Row(
-                      //       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      //       children: [
-                      //         Text(
-                      //           'Paid to:',
-                      //         ),
-                      //         Column(
-                      //           crossAxisAlignment: CrossAxisAlignment.end,
-                      //           children: [
-                      //             Text(
-                      //               expenses[index].recipientName,
-                      //             ),
-                      //             Text(
-                      //               expenses[index].recipientContact,
-                      //             ),
-                      //           ],
-                      //         ),
-                      //       ],
-                      //     ),
-                      //   ],
-                      // ),
-                      //trailingWidget: SizedBox.shrink(),
 
-                      // IconButton(
-                      //   onPressed: () {},
-                      //   icon: Icon(
-                      //     Iconsax.information,
-                      //     color: CColors.rBrown,
-                      //     size: CSizes.iconMd,
-                      //   ),
-                      // ),
+                      trailingWidget: SizedBox.shrink(),
+
                       width: CHelperFunctions.screenWidth() * .92,
                     ),
                   ],
