@@ -112,5 +112,12 @@ class CAppRoutes {
         return const CExpenseDetails();
       },
     ),
+
+    // GetPage(
+    //   name: CRoutes.xpenseForm,
+    //   page: () {
+    //     return CXpenseForm();
+    //   },
+    // ),
   ];
 }

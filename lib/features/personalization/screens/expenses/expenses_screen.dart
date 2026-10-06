@@ -5,11 +5,10 @@ import 'package:iconsax/iconsax.dart';
 import 'package:rintel/common/widgets/appbar/v2_app_bar.dart';
 import 'package:rintel/common/widgets/custom_shapes/containers/rounded_container.dart';
 import 'package:rintel/common/widgets/dividers/custom_divider.dart';
-import 'package:rintel/features/personalization/controllers/expenses_controller.dart';
 import 'package:rintel/features/personalization/controllers/user_controller.dart';
 import 'package:rintel/features/personalization/screens/expenses/widgets/expenses_view.dart';
 import 'package:rintel/features/personalization/screens/expenses/widgets/inv_expenses_view.dart';
-import 'package:rintel/features/store/controllers/txns_controller.dart';
+import 'package:rintel/features/personalization/screens/expenses/widgets/xpense_form.dart';
 import 'package:rintel/utils/constants/colors.dart';
 import 'package:rintel/utils/helpers/helper_functions.dart';
 import 'package:rintel/utils/helpers/network_manager.dart';
@@ -26,8 +25,7 @@ class CExpensesScreen extends StatelessWidget {
       MediaQuery.of(context).size.width,
       MediaQuery.of(context).size.height * 0.9,
     );
-    final expensesController = Get.put(CExpensesController());
-    final txnsController = Get.put(CTxnsController());
+
     final userController = Get.put(CUserController());
 
     return Container(
@@ -118,12 +116,14 @@ class CExpensesScreen extends StatelessWidget {
                   alignment: AlignmentGeometry.bottomRight,
                   child: FloatingActionButton(
                     elevation: 1, // -- removes shadow
-                    onPressed: () async {
-                      await expensesController.addUpdateExpenseDialog(
-                        context,
-                        'add',
+                    onPressed: () {
+                      Get.to(
+                        () {
+                          return CXpenseForm(
+                            formAction: 'add',
+                          );
+                        },
                       );
-                      await txnsController.fetchMyExpenses();
                     },
                     backgroundColor:
                         CNetworkManager.instance.hasConnection.value

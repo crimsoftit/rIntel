@@ -121,9 +121,9 @@ class ContactsSearchTypeaheadField extends StatelessWidget {
           //isScrollControlled: true,
           focusNode: focusNode,
           onChanged: onFieldValueChanged,
-          // scrollPadding: const EdgeInsets.only(
-          //   bottom: 600.0,
-          // ),
+          scrollPadding: const EdgeInsets.only(
+            bottom: 100.0,
+          ),
           style: const TextStyle(
             fontWeight: FontWeight.normal,
           ),

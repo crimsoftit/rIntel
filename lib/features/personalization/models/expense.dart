@@ -10,8 +10,7 @@ class CExpense extends Equatable {
   String _userEmail = "";
   String _userName = "";
 
-  String _expenseTitle = "";
-  String _category = '';
+  String _expenseCategory = "";
   String _expenseDescription = '';
 
   double _amount = 0.0;
@@ -29,8 +28,7 @@ class CExpense extends Equatable {
     this._userId,
     this._userEmail,
     this._userName,
-    this._expenseTitle,
-    this._category,
+    this._expenseCategory,
     this._expenseDescription,
     this._amount,
     this._recipientName,
@@ -44,7 +42,6 @@ class CExpense extends Equatable {
   static CExpense empty() {
     return CExpense(
       0,
-      '',
       '',
       '',
       '',
@@ -64,8 +61,7 @@ class CExpense extends Equatable {
   String get userId => _userId;
   String get userEmail => _userEmail;
   String get userName => _userName;
-  String get expenseTitle => _expenseTitle;
-  String get category => _category;
+  String get expenseCategory => _expenseCategory;
   String get expenseDescription => _expenseDescription;
   double get amount => _amount;
   String get recipientName => _recipientName;
@@ -91,12 +87,8 @@ class CExpense extends Equatable {
     _userName = newUName;
   }
 
-  set expenseTitle(String newExpenseTitle) {
-    _expenseTitle = newExpenseTitle;
-  }
-
-  set category(String newCategory) {
-    _category = newCategory;
+  set expenseCategory(String newExpenseCategory) {
+    _expenseCategory = newExpenseCategory;
   }
 
   set expenseDescription(String newDesc) {
@@ -139,8 +131,7 @@ class CExpense extends Equatable {
     map['userId'] = _userId;
     map['userEmail'] = _userEmail;
     map['userName'] = _userName;
-    map['expenseTitle'] = _expenseTitle;
-    map['category'] = _category;
+    map['expenseCategory'] = _expenseCategory;
     map['expenseDescription'] = _expenseDescription;
     map['amount'] = _amount;
     map['recipientName'] = _recipientName;
@@ -159,8 +150,7 @@ class CExpense extends Equatable {
     _userId = map['userId'];
     _userEmail = map['userEmail'];
     _userName = map['userName'];
-    _expenseTitle = map['expenseTitle'];
-    _category = map['category'];
+    _expenseCategory = map['expenseCategory'];
     _expenseDescription = map['expenseDescription'];
     _amount = map['amount'];
     _recipientName = map['recipientName'];
@@ -182,8 +172,7 @@ class CExpense extends Equatable {
       expenditure['userId'],
       expenditure['userEmail'],
       expenditure['userName'],
-      expenditure['expenseTitle'],
-      expenditure['category'],
+      expenditure['expenseCategory'],
       expenditure['expenseDescription'],
       expenditure['amount'],
       expenditure['recipientName'],
@@ -201,8 +190,7 @@ class CExpense extends Equatable {
     userId,
     userEmail,
     userName,
-    expenseTitle,
-    category,
+    expenseCategory,
     expenseDescription,
     amount,
     recipientName,

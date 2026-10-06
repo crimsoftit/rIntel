@@ -130,6 +130,7 @@ dependencies:
   flutter_launcher_icons: ^0.14.4
   flutter_native_splash: any
   flutter_typeahead: ^6.0.0
+  typeaheadx: ^0.0.2
   gsheets: ^0.5.0
   googleapis: any
   http: any

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:rintel/common/widgets/anime/animated_digit_widget.dart';
+import 'package:rintel/common/widgets/custom_shapes/containers/rounded_container.dart';
 import 'package:rintel/features/personalization/controllers/expenses_controller.dart';
 import 'package:rintel/features/personalization/controllers/user_controller.dart';
 import 'package:rintel/features/personalization/models/expense.dart';
@@ -14,10 +16,10 @@ class CExpenseDetails extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final expensesController = Get.put(CExpensesController());
+    Get.put(CExpensesController());
     final isDarkTheme = CHelperFunctions.isDarkMode(context);
 
-    final txnsController = Get.put(
+    Get.put(
       CTxnsController(),
     );
 
@@ -54,11 +56,11 @@ class CExpenseDetails extends StatelessWidget {
             ),
             IconButton(
               onPressed: () {
-                expensesController.addUpdateExpenseDialog(
-                  context,
-                  'update',
-                );
-                txnsController.myExpenses.refresh();
+                // expensesController.addUpdateExpenseDialog(
+                //   context,
+                //   'update',
+                // );
+                // txnsController.myExpenses.refresh();
               },
               icon: Icon(
                 Iconsax.edit,
@@ -87,7 +89,7 @@ class CExpenseDetails extends StatelessWidget {
                   child: Center(
                     child: CircleAvatar(
                       backgroundColor: CHelperFunctions.randomAestheticColor(),
-                      radius: 40.0,
+                      radius: 30.0,
                       child: Center(
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
@@ -112,6 +114,25 @@ class CExpenseDetails extends StatelessWidget {
                 const SizedBox(
                   height: CSizes.spaceBtnItems / 2.0,
                 ),
+                CRoundedContainer(
+                  bgColor: CColors.transparent,
+                  padding: const EdgeInsets.all(
+                    5.0,
+                  ),
+                  showBorder: true,
+                  child: Text(
+                    expense.expenseCategory,
+                    style:
+                        Theme.of(
+                          context,
+                        ).textTheme.labelLarge!.apply(
+                          fontSizeFactor: 1.6,
+                        ),
+                  ),
+                ),
+                const SizedBox(
+                  height: CSizes.spaceBtnItems / 4.0,
+                ),
                 SelectableText(
                   expense.recipientName,
                   style:
@@ -122,7 +143,27 @@ class CExpenseDetails extends StatelessWidget {
                       ),
                 ),
                 const SizedBox(
-                  height: CSizes.spaceBtnItems,
+                  height: CSizes.spaceBtnItems * .25,
+                ),
+                Row(
+                  children: [
+                    Text(
+                      userCurrency,
+                      style: Theme.of(context).textTheme.labelSmall!.apply(
+                        fontFeatures: [FontFeature.superscripts()],
+                        fontSizeFactor: .9,
+                      ),
+                    ),
+                    CAnimatedDigitWidget(
+                      fractionDigits: 2,
+                      prefix: '',
+                      txtStyle: Theme.of(context).textTheme.titleMedium!.apply(
+                        color: CColors.rOrange,
+                        fontWeightDelta: 2,
+                      ),
+                      value: expense.amount,
+                    ),
+                  ],
                 ),
               ],
             ),

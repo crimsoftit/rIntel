@@ -1,4 +1,6 @@
 class CRoutes {
+  static const xpenseForm = '/expenses/expense_form';
+
   static const checkoutScreen = '/checkout';
 
   // -- contacts
