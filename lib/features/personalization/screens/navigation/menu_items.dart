@@ -5,7 +5,7 @@ import 'package:rintel/features/personalization/models/menu_item_model.dart';
 class CMenuItems {
   static const dashboard = CMenuItemModel(
     title: "Dashboard",
-    icon: Icons.dashboard,
+    icon: Iconsax.home,
   );
   static const expenses = CMenuItemModel(
     title: "Expenses",
@@ -31,6 +31,11 @@ class CMenuItems {
     icon: Icons.star,
   );
 
+  static const account = CMenuItemModel(
+    title: "Account",
+    icon: Iconsax.setting,
+  );
+
   static const logout = CMenuItemModel(
     title: "Logout",
     icon: Icons.logout,
@@ -43,5 +48,7 @@ class CMenuItems {
     alerts,
     contacts,
     rateUs,
+    account,
+    logout,
   ];
 }

@@ -12,12 +12,14 @@ class AppScreenHeader extends StatelessWidget {
     required this.title,
     required this.subTitle,
     required this.includeAfterSpace,
+    this.trailingWidget,
     this.txtColor,
   });
 
   final bool includeAfterSpace;
   final Color? txtColor;
   final String title, subTitle;
+  final Widget? trailingWidget;
 
   @override
   Widget build(BuildContext context) {
@@ -33,29 +35,27 @@ class AppScreenHeader extends StatelessWidget {
             Text(
               title,
               style: Theme.of(context).textTheme.labelLarge!.apply(
-                // color: CNetworkManager.instance.hasConnection.value
-                //     ? CColors.rBrown
-                //     : CColors.darkGrey,
                 color: txtColor,
                 fontSizeFactor: 2.5,
                 fontWeightDelta: -7,
               ),
             ),
-            const SizedBox(
-              //width: double.infinity,
-              child: Image(
-                height: 40.0,
-                //image: AssetImage( isDark ? RImages.darkAppLogo_1 : RImages.lightAppLogo_1),
-                // image: AssetImage(
-                //   isDarkTheme ? CImages.darkAppLogo : CImages.lightAppLogo,
-                // ),
-                image: AssetImage(CImages.darkAppLogo),
-              ),
-            ),
+            trailingWidget ??
+                Image(
+                  height: 40.0,
+
+                  image: AssetImage(
+                    CImages.darkAppLogo,
+                  ),
+                ),
           ],
         ),
-        CCustomDivider(leftPadding: 2.0),
-        const SizedBox(height: CSizes.spaceBtnSections / 3),
+        CCustomDivider(
+          leftPadding: 2.0,
+        ),
+        const SizedBox(
+          height: CSizes.spaceBtnSections / 3,
+        ),
 
         Text(
           subTitle,
@@ -68,7 +68,9 @@ class AppScreenHeader extends StatelessWidget {
           ),
         ),
 
-        const SizedBox(height: CSizes.spaceBtnSections / 2),
+        const SizedBox(
+          height: CSizes.spaceBtnSections / 2,
+        ),
       ],
     );
   }

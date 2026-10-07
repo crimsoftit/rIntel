@@ -55,8 +55,16 @@ class _CMainNavState extends State<CMainNav> {
   Widget getScreen() {
     final navController = Get.put(CNavMenuController());
     switch (currentScreen) {
+      case CMenuItems.account:
+        navController.selectedIndex.value = 3;
+        return NavMenu();
+
       case CMenuItems.alerts:
         navController.selectedIndex.value = 4;
+        return NavMenu();
+
+      case CMenuItems.contacts:
+        navController.selectedIndex.value = 2;
         return NavMenu();
 
       case CMenuItems.dashboard:
@@ -66,16 +74,12 @@ class _CMainNavState extends State<CMainNav> {
       case CMenuItems.expenses:
         return CExpensesScreen();
 
-      case CMenuItems.store:
-        navController.selectedIndex.value = 1;
-        return NavMenu();
-
-      case CMenuItems.contacts:
-        navController.selectedIndex.value = 2;
-        return NavMenu();
-
       case CMenuItems.logout:
         AuthRepo.instance.logout();
+        return NavMenu();
+
+      case CMenuItems.store:
+        navController.selectedIndex.value = 1;
         return NavMenu();
 
       default:

@@ -6,6 +6,7 @@ import 'package:get/get.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:intl/intl.dart';
 import 'package:rintel/common/widgets/custom_shapes/containers/rounded_container.dart';
+import 'package:rintel/common/widgets/headers/app_header.dart';
 import 'package:rintel/common/widgets/txt_fields/contacts_search_type_ahead.dart';
 import 'package:rintel/features/personalization/controllers/contacts_controller.dart';
 import 'package:rintel/features/personalization/controllers/expenses_controller.dart';
@@ -15,6 +16,7 @@ import 'package:rintel/features/store/controllers/txns_controller.dart';
 import 'package:rintel/utils/constants/colors.dart';
 import 'package:rintel/utils/constants/sizes.dart';
 import 'package:rintel/utils/helpers/helper_functions.dart';
+import 'package:rintel/utils/helpers/network_manager.dart';
 import 'package:rintel/utils/popups/snackbars.dart';
 import 'package:rintel/utils/validators/validation.dart';
 
@@ -35,6 +37,11 @@ class CXpenseForm extends StatelessWidget {
 
     final userController = Get.put(CUserController());
     final userCurrency = userController.user.value.currencyCode;
+    // final SuggestionsController<CContactsModel> nameFieldController =
+    //     SuggestionsController();
+    // final SuggestionsController<CContactsModel> contactFieldController =
+    //     SuggestionsController();
+
     final xpensesController = Get.put(CExpensesController());
     return Scaffold(
       appBar: AppBar(
@@ -53,22 +60,22 @@ class CXpenseForm extends StatelessWidget {
           ),
         ),
         actions: [
-          IconButton(
-            onPressed: () {},
-            icon: Icon(
-              Iconsax.star,
-              color: isDarkTheme ? CColors.white : CColors.rBrown,
-              size: CSizes.iconMd,
-            ),
-          ),
-          IconButton(
-            onPressed: () {},
-            icon: Icon(
-              Iconsax.edit,
-              color: isDarkTheme ? CColors.white : CColors.rBrown,
-              size: CSizes.iconMd,
-            ),
-          ),
+          // IconButton(
+          //   onPressed: () {},
+          //   icon: Icon(
+          //     Iconsax.star,
+          //     color: isDarkTheme ? CColors.white : CColors.rBrown,
+          //     size: 20.0,
+          //   ),
+          // ),
+          // IconButton(
+          //   onPressed: () {},
+          //   icon: Icon(
+          //     Iconsax.edit,
+          //     color: isDarkTheme ? CColors.white : CColors.rBrown,
+          //     size: 20.0,
+          //   ),
+          // ),
         ],
       ),
       body: SingleChildScrollView(
@@ -86,37 +93,27 @@ class CXpenseForm extends StatelessWidget {
                 CRoundedContainer(
                   alignment: Alignment.center,
                   bgColor: CColors.transparent,
-                  height: 100,
+                  height: 150.0,
                   padding: const EdgeInsets.only(
                     bottom: 20.0,
                   ),
-                  child: Column(
-                    children: [
-                      Expanded(
-                        child: CircleAvatar(
-                          backgroundColor:
-                              CHelperFunctions.randomAestheticColor(),
-                          radius: 30.0,
-                          child: Icon(
-                            Iconsax.money_send,
-                            color: CColors.white,
-                            size: CSizes.iconMd,
-                          ),
-                        ),
+                  child: AppScreenHeader(
+                    includeAfterSpace: false,
+                    subTitle: 'Track your expenses in style...',
+
+                    title: formAction.capitalizeFirst!,
+                    trailingWidget: CircleAvatar(
+                      backgroundColor: CHelperFunctions.randomAestheticColor(),
+                      radius: 25.0,
+                      child: Icon(
+                        Iconsax.money_send,
+                        color: CColors.white,
+                        size: 20.0,
                       ),
-                      Padding(
-                        padding: const EdgeInsets.only(
-                          bottom: 20.0,
-                          top: 10.0,
-                        ),
-                        child: Text(
-                            '$formAction expense',
-                            style: Theme.of(
-                              context,
-                            ).textTheme.labelLarge!.apply(),
-                          ),
-                      ),
-                    ],
+                    ),
+                    txtColor: CNetworkManager.instance.hasConnection.value
+                        ? CColors.rBrown
+                        : CColors.darkGrey,
                   ),
                 ),
 
@@ -126,26 +123,29 @@ class CXpenseForm extends StatelessWidget {
                       controller: controller,
                       focusNode: focusNode,
                       decoration: InputDecoration(
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(
-                            12,
+                        enabledBorder: OutlineInputBorder(
+                          borderSide: BorderSide(
+                            width: .6,
+                            color: isDarkTheme
+                                ? CColors.darkGrey
+                                : CColors.rBrown,
                           ),
                         ),
-                        constraints: BoxConstraints(
-                          minHeight: 60.0,
-                        ),
-                        fillColor: CColors.rBrown.withValues(
-                          alpha: .1,
-                        ),
-                        filled: true,
+                        // constraints: BoxConstraints(
+                        //   minHeight: 60.0,
+                        // ),
+                        // fillColor: CColors.rBrown.withValues(
+                        //   alpha: .1,
+                        // ),
+                        // filled: true,
                         hintText: 'Category',
 
                         labelText: 'Category',
 
                         prefixIcon: Icon(
                           Icons.search,
-                          color: CColors.rOrange,
-                          //size: CSizes.iconSm,
+                          // color: CColors.rOrange,
+                          size: 20.0,
                         ),
                       ),
                       onChanged: (query) {
@@ -174,7 +174,7 @@ class CXpenseForm extends StatelessWidget {
                     ),
                     clipBehavior: Clip.antiAlias,
                     color: CColors.rBrown.withValues(
-                      alpha: .05,
+                      alpha: .2,
                     ),
                     elevation: 1.0,
                     type: MaterialType.canvas,
@@ -186,6 +186,9 @@ class CXpenseForm extends StatelessWidget {
                       child: SizedBox(
                         width: CHelperFunctions.screenWidth() * .7,
                         child: ListTile(
+                          contentPadding: const EdgeInsets.all(
+                            5.0,
+                          ),
                           title: Text(
                             suggestion,
                             style:
@@ -193,8 +196,7 @@ class CXpenseForm extends StatelessWidget {
                                   context,
                                 ).textTheme.bodyMedium!.apply(
                                   color: CColors.white,
-                                  fontFamily: 'Signika',
-                                  fontSizeFactor: 1.3,
+                                  fontSizeFactor: 1.2,
                                 ),
                           ),
                         ),
@@ -238,23 +240,30 @@ class CXpenseForm extends StatelessWidget {
                   autovalidateMode: AutovalidateMode.onUserInteraction,
                   controller: xpensesController.txtAmount,
                   decoration: InputDecoration(
-                    constraints: BoxConstraints(
-                      minHeight: 60.0,
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(
+                        width: .6,
+                        color: isDarkTheme ? CColors.darkGrey : CColors.rBrown,
+                      ),
                     ),
-                    fillColor: CColors.rBrown.withValues(
-                      alpha: .1,
-                    ),
-                    filled: true,
 
                     labelStyle: Theme.of(
                       context,
                     ).textTheme.labelMedium,
-                    labelText: 'amount($userCurrency)',
+                    labelText: 'Amount',
 
                     prefixIcon: Icon(
                       Iconsax.money_send,
-                      color: CColors.rOrange,
-                      size: CSizes.iconSm,
+                      // color: CColors.rOrange,
+                      size: 20.0,
+                    ),
+                    suffixIcon: Padding(
+                      padding: const EdgeInsets.only(
+                        top: 10.0,
+                      ),
+                      child: Text(
+                        userCurrency,
+                      ),
                     ),
                   ),
                   keyboardType: const TextInputType.numberWithOptions(
@@ -279,6 +288,9 @@ class CXpenseForm extends StatelessWidget {
                     );
                   },
                 ),
+                const SizedBox(
+                  height: CSizes.spaceBtnInputFields,
+                ),
 
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -288,25 +300,37 @@ class CXpenseForm extends StatelessWidget {
                       height: 60.0,
                       width: CHelperFunctions.screenWidth() * .6,
                       child: ContactsSearchTypeaheadField(
-                        enabledBorderColor: isDarkTheme
-                            ? CColors.grey
-                            : const Color.fromRGBO(
-                                121,
-                                85,
-                                72,
-                                1,
-                              ).withValues(
-                                alpha: .5,
-                              ),
+                        fieldDecoration: InputDecoration(
+                          enabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide(
+                              width: .6,
+                              color: isDarkTheme
+                                  ? CColors.darkGrey
+                                  : CColors.rBrown,
+                            ),
+                          ),
+                          hintText: "Recipient's name",
+                          labelText: "Recipient's name",
+                          suffixIcon: IconButton(
+                            onPressed: () {
+                              //nameFieldController.close();
+                            },
+                            icon: Icon(
+                              Icons.close,
+                              color: CColors.rOrange,
+                              size: 20.0,
+                            ),
+                          ),
+                        ),
                         fieldHeight: 60.0,
                         fillColor: CColors.rBrown.withValues(
                           alpha: .1,
                         ),
-                        focusedBorderColor: isDarkTheme
-                            ? CColors.grey
-                            : CColors.rBrown.withValues(
-                                alpha: .1,
-                              ),
+                        // focusedBorderColor: isDarkTheme
+                        //     ? CColors.grey
+                        //     : CColors.rBrown.withValues(
+                        //         alpha: .1,
+                        //       ),
                         includeAvatarOnSuggestion: true,
                         includePrefixIcon: true,
                         labelTxt: "Recipient's name",
@@ -317,12 +341,15 @@ class CXpenseForm extends StatelessWidget {
                               suggestion.contactPhone != ''
                               ? suggestion.contactPhone
                               : suggestion.contactEmail;
+                          xpensesController.txtContactCountryPicker.text =
+                              suggestion.contactCountryCode;
                         },
                         prefixIcon: Icon(
                           Iconsax.user,
-                          color: CColors.rOrange,
-                          size: CSizes.iconSm,
+                          // color: CColors.rOrange,
+                          size: 20.0,
                         ),
+                        //suggestionsController: nameFieldController,
                         typeAheadFieldController:
                             xpensesController.txtRecipientName,
                         txtAlign: TextAlign.start,
@@ -332,6 +359,7 @@ class CXpenseForm extends StatelessWidget {
                             value,
                           );
                         },
+                        verticalDirection: VerticalDirection.up,
                       ),
                     ),
                     const SizedBox(
@@ -345,9 +373,13 @@ class CXpenseForm extends StatelessWidget {
                       child: TextFormField(
                         controller: xpensesController.txtContactCountryPicker,
                         decoration: InputDecoration(
-                          filled: true,
-                          fillColor: CColors.rBrown.withValues(
-                            alpha: .1,
+                          enabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide(
+                              width: .6,
+                              color: isDarkTheme
+                                  ? CColors.darkGrey
+                                  : CColors.rBrown,
+                            ),
                           ),
                           labelText: 'Country',
                           labelStyle: Theme.of(
@@ -375,12 +407,33 @@ class CXpenseForm extends StatelessWidget {
                     ),
                   ],
                 ),
+                const SizedBox(
+                  height: CSizes.spaceBtnInputFields,
+                ),
                 ContactsSearchTypeaheadField(
-                  enabledBorderColor: isDarkTheme
-                      ? CColors.grey
-                      : CColors.rBrown.withValues(
-                          alpha: .5,
-                        ),
+                  fieldDecoration: InputDecoration(
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(
+                        width: .6,
+                        color: isDarkTheme ? CColors.darkGrey : CColors.rBrown,
+                      ),
+                    ),
+                    hintText: "Recipient's phone no. or e-mail:",
+                    labelText: "Recipient's phone no. or e-mail:",
+                    prefixIcon: Icon(
+                      Icons.mail,
+                    ),
+                    suffixIcon: IconButton(
+                      onPressed: () {
+                        //contactFieldController.close();
+                      },
+                      icon: Icon(
+                        Icons.close,
+                        color: CColors.rOrange,
+                        size: 20.0,
+                      ),
+                    ),
+                  ),
                   fieldHeight: 60.0,
                   focusedBorderColor: isDarkTheme
                       ? CColors.grey
@@ -397,24 +450,11 @@ class CXpenseForm extends StatelessWidget {
                         suggestion.contactPhone != ''
                         ? suggestion.contactPhone
                         : suggestion.contactEmail;
+                    xpensesController.txtContactCountryPicker.text =
+                        suggestion.contactCountryCode;
                   },
-                  prefixIcon: Icon(
-                    Icons.contact_mail,
-                    color: CColors.rOrange,
-                    size: CSizes.iconXs,
-                  ),
-                  suffixIcon: IconButton(
-                    onPressed: () {
-                      xpensesController.suggestionsBoxController.close();
-                    },
-                    icon: Icon(
-                      Icons.close,
-                      color: CColors.rOrange,
-                      size: CSizes.iconXs,
-                    ),
-                  ),
-                  suggestionsController:
-                      xpensesController.suggestionsBoxController,
+
+                  //suggestionsController: contactFieldController,
                   typeAheadFieldController:
                       xpensesController.txtRecipientContacts,
                   txtAlign: TextAlign.start,
@@ -431,21 +471,23 @@ class CXpenseForm extends StatelessWidget {
                     }
                     return null;
                   },
-                  fillColor: CColors.rBrown.withValues(
-                    alpha: .1,
-                  ),
+                  // fillColor: CColors.rBrown.withValues(
+                  //   alpha: .1,
+                  // ),
+                  verticalDirection: VerticalDirection.up,
+                ),
+                const SizedBox(
+                  height: CSizes.spaceBtnInputFields,
                 ),
                 TextFormField(
                   controller: xpensesController.txtTxnCode,
                   decoration: InputDecoration(
-                    constraints: BoxConstraints(
-                      maxHeight: 60.05,
-                      minHeight: 60.0,
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(
+                        width: .6,
+                        color: isDarkTheme ? CColors.darkGrey : CColors.rBrown,
+                      ),
                     ),
-                    fillColor: CColors.rBrown.withValues(
-                      alpha: .1,
-                    ),
-                    filled: true,
 
                     labelStyle: Theme.of(
                       context,
@@ -459,13 +501,13 @@ class CXpenseForm extends StatelessWidget {
                       },
                       icon: Icon(
                         Iconsax.flash,
-                        size: CSizes.iconXs,
-                        color: CColors.rOrange,
+                        size: CSizes.iconSm,
+                        // // color: CColors.rOrange,
                       ),
                       label: Text(
                         'Auto',
                         style: Theme.of(context).textTheme.labelSmall!.apply(
-                          color: CColors.rOrange,
+                          // color: CColors.rOrange,
                           fontStyle: FontStyle.italic,
                         ),
                       ),
@@ -493,35 +535,37 @@ class CXpenseForm extends StatelessWidget {
                     border: OutlineInputBorder(),
 
                     constraints: BoxConstraints(
-                      minHeight: 60.0,
+                      minHeight: 100.0,
                     ),
-                    fillColor: CColors.rBrown.withValues(
-                      alpha: .1,
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(
+                        width: .6,
+                        color: isDarkTheme ? CColors.darkGrey : CColors.rBrown,
+                      ),
                     ),
-                    filled: true,
-                    hintText: "Any remarks?",
+                    hintText: "Description or remarks?",
                     prefixIcon: Icon(
                       Iconsax.pen_add,
-                      color: CColors.rOrange,
-                      size: CSizes.iconXs,
+                      // color: CColors.rOrange,
+                      size: 20.0,
                     ),
                   ),
                   keyboardType: TextInputType.multiline,
                   maxLines: null,
                 ),
 
-                Align(
-                  alignment: Alignment.bottomRight,
+                SizedBox(
+                  width: CHelperFunctions.screenWidth() * .92,
                   child: TextButton.icon(
                     icon: Icon(
                       formAction == 'update'
                           ? Iconsax.edit_2
                           : Iconsax.save_add,
-                      size: CSizes.iconSm,
+                      // size: 20.0,
                       color: isDarkTheme ? CColors.rBrown : CColors.white,
                     ),
                     label: Text(
-                      formAction,
+                      'SAVE',
                       style: Theme.of(context).textTheme.labelMedium!.apply(
                         color: isDarkTheme ? CColors.rBrown : CColors.white,
                       ),
@@ -531,6 +575,9 @@ class CXpenseForm extends StatelessWidget {
                           ? CColors.white
                           : CColors.rBrown,
                       foregroundColor: CColors.white,
+                      padding: const EdgeInsets.all(
+                        10.0,
+                      ),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadiusGeometry.circular(
                           10.0,

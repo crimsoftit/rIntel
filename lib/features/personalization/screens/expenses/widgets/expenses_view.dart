@@ -88,7 +88,7 @@ class _CExpensesViewState extends State<CExpensesView> {
                           expenses[index].lastModified,
                           style: Theme.of(context).textTheme.labelSmall!.apply(
                             color: CColors.rBrown,
-                            fontFamily: 'Saira',
+                            //fontFamily: 'Saira',
                           ),
                         ),
                       ),
@@ -112,8 +112,7 @@ class _CExpensesViewState extends State<CExpensesView> {
                           expenses[index].recipientName[0].toUpperCase(),
                           style: Theme.of(context).textTheme.bodyLarge!.apply(
                             //color: CColors.white,
-                            color: CHelperFunctions.aestheticColor(),
-                            fontFamily: 'Signika',
+                            color: CColors.white,
                           ),
                         ),
                       ),

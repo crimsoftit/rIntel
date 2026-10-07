@@ -60,7 +60,7 @@ class CSideMenu extends StatelessWidget {
           menuItem.title,
           style: TextStyle(
             color: currentItem == menuItem ? CColors.white : CColors.rOrange,
-            fontFamily: 'Signika',
+            //fontFamily: 'Signika',
           ),
         ),
       ),

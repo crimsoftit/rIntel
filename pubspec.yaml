@@ -322,6 +322,8 @@ flutter:
     - family: Signika
       fonts:
         - asset: assets/fonts/Signika/static/Signika-Light.ttf
+        - asset: assets/fonts/Signika/static/Signika-Regular.ttf
+
     - family: Saira
       fonts:
         - asset: assets/fonts/Saira/Saira-VariableFont_wdth,wght.ttf

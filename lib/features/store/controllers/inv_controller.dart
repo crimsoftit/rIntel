@@ -1592,7 +1592,8 @@ class CInventoryController extends GetxController {
                       '',
                     ),
                   ) >
-                  0;
+                  0 &&
+              item.quantity > 0;
         },
       ).toList();
 
