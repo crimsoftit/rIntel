@@ -234,7 +234,6 @@ class CContactsListview extends StatelessWidget {
         }
 
         /// -- grouping logic --
-
         Map<String, List<CContactsModel>> groupedContacts = {};
         demContacts.sort(
           (a, b) {

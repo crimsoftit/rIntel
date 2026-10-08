@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_floaty/flutter_floaty.dart';
 import 'package:get/get.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:rintel/common/widgets/appbar/tab_bar.dart';
 import 'package:rintel/common/widgets/appbar/v2_app_bar.dart';
 import 'package:rintel/common/widgets/custom_shapes/containers/rounded_container.dart';
 import 'package:rintel/common/widgets/dividers/custom_divider.dart';
@@ -9,6 +10,7 @@ import 'package:rintel/features/personalization/controllers/user_controller.dart
 import 'package:rintel/features/personalization/screens/expenses/widgets/expenses_view.dart';
 import 'package:rintel/features/personalization/screens/expenses/widgets/inv_expenses_view.dart';
 import 'package:rintel/features/personalization/screens/expenses/widgets/xpense_form.dart';
+import 'package:rintel/features/store/screens/store_items_tings/widgets/inv_gridview_screen.dart';
 import 'package:rintel/utils/constants/colors.dart';
 import 'package:rintel/utils/helpers/helper_functions.dart';
 import 'package:rintel/utils/helpers/network_manager.dart';
@@ -28,146 +30,227 @@ class CExpensesScreen extends StatelessWidget {
 
     final userController = Get.put(CUserController());
 
-    return Container(
-      color: CColors.rBrown.withValues(
-        alpha: 0.2,
+    return DefaultTabController(
+      animationDuration: Duration(
+        milliseconds: 100,
       ),
-
-      child: Scaffold(
-        appBar: CVersion2AppBar(
-          autoImplyLeading: true,
-          rightPadding: 10.0,
+      length: 6,
+      child: Container(
+        color: CColors.rBrown.withValues(
+          alpha: 0.2,
         ),
-        body: CustomScrollView(
-          slivers: [
-            SliverAppBar(
-              backgroundColor: CColors.transparent,
-              expandedHeight: 90.0,
-              flexibleSpace: CRoundedContainer(
-                bgColor: CColors.transparent,
-                height: CHelperFunctions.screenHeight() * .4,
-                padding: const EdgeInsets.only(
-                  left: 15.0,
-                  right: 10.0,
-                ),
-                showBorder: false,
-                child: Stack(
-                  //crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Positioned(
-                      top: 5,
-                      child: Text(
-                        userController.user.value.email,
-                        style: Theme.of(context).textTheme.labelSmall!.apply(
-                          color: CNetworkManager.instance.hasConnection.value
-                              ? CColors.rBrown
-                              : CColors.darkGrey,
+        child: Scaffold(
+          appBar: CVersion2AppBar(
+            autoImplyLeading: true,
+            rightPadding: 10.0,
+          ),
+          body: NestedScrollView(
+            headerSliverBuilder: (context, innerBoxIsScrolled) {
+              return [
+                SliverAppBar(
+                  backgroundColor: CColors.transparent,
+                  expandedHeight: 130.0,
+                  flexibleSpace: CRoundedContainer(
+                    bgColor: CColors.transparent,
+                    height: CHelperFunctions.screenHeight() * .4,
+                    padding: const EdgeInsets.only(
+                      left: 15.0,
+                      right: 10.0,
+                    ),
+                    showBorder: false,
+                    child: Stack(
+                      //crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Positioned(
+                          top: 5,
+                          child: Text(
+                            userController.user.value.email,
+                            style: Theme.of(context).textTheme.labelSmall!
+                                .apply(
+                                  color:
+                                      CNetworkManager
+                                          .instance
+                                          .hasConnection
+                                          .value
+                                      ? CColors.rBrown
+                                      : CColors.darkGrey,
+                                ),
+                          ),
                         ),
-                      ),
-                    ),
 
-                    Positioned(
-                      top: 15.0,
-                      child: Text(
-                        'Expenses',
-                        style: Theme.of(context).textTheme.labelLarge!.apply(
-                          color: CNetworkManager.instance.hasConnection.value
-                              ? CColors.rBrown
-                              : CColors.darkGrey,
-                          fontFamily: 'Signika',
-                          fontSizeFactor: 2.5,
-                          fontWeightDelta: -7,
+                        Positioned(
+                          top: 15.0,
+                          child: Text(
+                            'Expenses',
+                            style: Theme.of(context).textTheme.labelLarge!
+                                .apply(
+                                  color:
+                                      CNetworkManager
+                                          .instance
+                                          .hasConnection
+                                          .value
+                                      ? CColors.rBrown
+                                      : CColors.darkGrey,
+                                  fontFamily: 'Signika',
+                                  fontSizeFactor: 2.5,
+                                  fontWeightDelta: -7,
+                                ),
+                          ),
                         ),
-                      ),
-                    ),
 
-                    /// -- custom divider --
-                    Positioned(
-                      top: 60.0,
-                      child: CCustomDivider(
-                        leftPadding: 0.0,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              floating: true,
-              pinned: true,
-              snap: true,
-            ),
-
-            CInvExpensesView(),
-            CExpensesView(),
-          ],
-        ),
-
-        floatingActionButton: Stack(
-          children: [
-            FlutterFloaty(
-              // backgroundColor:
-              //     CNetworkManager.instance.hasConnection.value
-              //     ? CColors.rBrown
-              //     : CColors.darkerGrey,
-              backgroundColor: CColors.transparent,
-              borderRadius: 15.0,
-
-              builder: (context) {
-                return Align(
-                  alignment: AlignmentGeometry.bottomRight,
-                  child: FloatingActionButton(
-                    elevation: 1, // -- removes shadow
-                    onPressed: () {
-                      Get.to(
-                        () {
-                          return CXpenseForm(
-                            formAction: 'add',
-                          );
-                        },
-                      );
-                    },
-                    backgroundColor:
-                        CNetworkManager.instance.hasConnection.value
-                        ? CColors.rBrown
-                        : CColors.black,
-
-                    foregroundColor: CColors.white,
-                    heroTag: 'add',
-                    child: Icon(
-                      // Iconsax.scan_barcode,
-                      Iconsax.add,
+                        /// -- custom divider --
+                        Positioned(
+                          top: 60.0,
+                          child: CCustomDivider(
+                            leftPadding: 0.0,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                );
-              },
-              growingFactor: 1.1,
-              height: 50.0,
-              initialX: CHelperFunctions.screenWidth() * .8,
-              initialY: CHelperFunctions.screenHeight() * .8,
-              intrinsicBoundaries: boundaries,
+                  floating: true,
+                  pinned: true,
+                  snap: true,
 
-              onDragBackgroundColor:
-                  CNetworkManager.instance.hasConnection.value
-                  ? CColors.rBrown.withValues(
-                      alpha: .4,
-                    )
-                  : CColors.darkerGrey.withValues(
-                      alpha: .4,
-                    ),
-              shadow: BoxShadow(
-                blurRadius: 3.0,
-                color: CColors.grey.withValues(
-                  alpha: .1,
+                  /// -- tabs --
+                  bottom: CTabBar(
+                    tabs: [
+                      Tab(
+                        child: Text(
+                          'All',
+                        ),
+                      ),
+
+                      Tab(
+                        child: Text(
+                          'Bills',
+                        ),
+                      ),
+                      Tab(
+                        child: Text(
+                          'Inventory',
+                        ),
+                      ),
+
+                      Tab(
+                        child: Text(
+                          'Rent',
+                        ),
+                      ),
+
+                      Tab(
+                        child: Text(
+                          'Salaries',
+                        ),
+                      ),
+                      Tab(
+                        child: Text(
+                          'Others',
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-                offset: const Offset(
-                  0.0,
-                  1.0,
+              ];
+            },
+
+            body: const TabBarView(
+              physics: BouncingScrollPhysics(),
+              children: [
+                // -- all --
+                Column(
+                  children: [
+                    CInvExpensesView(),
+                    CExpensesView(),
+                  ],
                 ),
-                spreadRadius: 1.0,
-              ),
-              shape: BoxShape.rectangle,
-              width: 50.0,
+
+                // -- bills--
+                CExpensesView(),
+
+                // -- inventory items --
+                CInvGridviewScreen(
+                  //mainAxisExtent: 185.20,
+                  screen: 'store',
+                ),
+
+                CExpensesView(),
+                CExpensesView(),
+
+                // -- other expenses --
+                CExpensesView(),
+              ],
             ),
-          ],
+          ),
+
+          floatingActionButton: Stack(
+            children: [
+              FlutterFloaty(
+                // backgroundColor:
+                //     CNetworkManager.instance.hasConnection.value
+                //     ? CColors.rBrown
+                //     : CColors.darkerGrey,
+                backgroundColor: CColors.transparent,
+                borderRadius: 15.0,
+
+                builder: (context) {
+                  return Align(
+                    alignment: AlignmentGeometry.bottomRight,
+                    child: FloatingActionButton(
+                      elevation: 1, // -- removes shadow
+                      onPressed: () {
+                        Get.to(
+                          () {
+                            return CXpenseForm(
+                              formAction: 'add',
+                            );
+                          },
+                        );
+                      },
+                      backgroundColor:
+                          CNetworkManager.instance.hasConnection.value
+                          ? CColors.rBrown
+                          : CColors.black,
+
+                      foregroundColor: CColors.white,
+                      heroTag: 'add',
+                      child: Icon(
+                        // Iconsax.scan_barcode,
+                        Iconsax.add,
+                      ),
+                    ),
+                  );
+                },
+                growingFactor: 1.1,
+                height: 50.0,
+                initialX: CHelperFunctions.screenWidth() * .8,
+                initialY: CHelperFunctions.screenHeight() * .8,
+                intrinsicBoundaries: boundaries,
+
+                onDragBackgroundColor:
+                    CNetworkManager.instance.hasConnection.value
+                    ? CColors.rBrown.withValues(
+                        alpha: .4,
+                      )
+                    : CColors.darkerGrey.withValues(
+                        alpha: .4,
+                      ),
+                shadow: BoxShadow(
+                  blurRadius: 3.0,
+                  color: CColors.grey.withValues(
+                    alpha: .1,
+                  ),
+                  offset: const Offset(
+                    0.0,
+                    1.0,
+                  ),
+                  spreadRadius: 1.0,
+                ),
+                shape: BoxShape.rectangle,
+                width: 50.0,
+              ),
+            ],
+          ),
         ),
       ),
     );

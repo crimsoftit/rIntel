@@ -37,7 +37,7 @@ class LoginForm extends StatelessWidget {
                   ),
                 ),
                 labelText: CTexts.email,
-                prefixIcon: Icon(Iconsax.direct_right),
+                prefixIcon: Icon(Iconsax.direct_right,),
               ),
               validator: (value) {
                 return CValidator.validateEmail(

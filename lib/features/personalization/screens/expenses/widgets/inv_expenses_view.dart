@@ -14,46 +14,39 @@ class CInvExpensesView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final GlobalKey<SliverAnimatedListState> listKey = GlobalKey();
     final invController = Get.put(CInventoryController());
     final isDarkTheme = CHelperFunctions.isDarkMode(context);
     final userController = Get.put(CUserController());
     final userCurrency = userController.user.value.currencyCode;
 
-    return SliverAnimatedList(
-      initialItemCount: 1,
-      itemBuilder: (context, index, animation) {
-        return SizeTransition(
-          alignment: Alignment.center,
-          sizeFactor: animation,
-          child: CKPIDisplayCard(
-            animeDigit: invController.totalInventoryValue.value
-              ..toStringAsFixed(2),
+    return Padding(
+      padding: const EdgeInsets.only(
+        top: 10.0,
+      ),
+      child: CKPIDisplayCard(
+        animeDigit: invController.totalInventoryValue.value..toStringAsFixed(2),
 
-            bgColor: isDarkTheme
-                ? CColors.rBrown.withValues(
-                    alpha: .3,
-                  )
-                : CColors.rBrown.withValues(
-                    alpha: .1,
-                  ),
-            borderRadius: 10.0,
-            leadingWidget: Icon(
-              Icons.inventory,
-              color: CColors.rBrown,
-              size: CSizes.iconSm,
-            ),
-            margin: const EdgeInsets.only(
-              bottom: 3.0,
-              top: 3.0,
-            ),
-            prefixLabel: userCurrency,
-            subTitleTxt: 'Inventory purchases',
-            width: CHelperFunctions.screenWidth() * .92,
-          ),
-        );
-      },
-      key: listKey,
+        bgColor: isDarkTheme
+            ? CColors.rBrown.withValues(
+                alpha: .3,
+              )
+            : CColors.rBrown.withValues(
+                alpha: .1,
+              ),
+        borderRadius: 10.0,
+        leadingWidget: Icon(
+          Icons.inventory,
+          color: CColors.rBrown,
+          size: CSizes.iconSm,
+        ),
+        margin: const EdgeInsets.only(
+          bottom: 3.0,
+          top: 3.0,
+        ),
+        prefixLabel: userCurrency,
+        subTitleTxt: 'Inventory purchases',
+        width: CHelperFunctions.screenWidth() * .92,
+      ),
     );
   }
 }

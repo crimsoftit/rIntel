@@ -33,6 +33,16 @@ class CFormatter {
     return time;
   }
 
+  static String getOnlyDate(String dateString) {
+    // 1. Parse the string to DateTime
+    DateTime dateTime = DateTime.parse(dateString);
+
+    // 2. Format to include only date (yyyy-MM-dd)
+    String onlyDate = DateFormat('yyyy-MM-dd').format(dateTime);
+
+    return onlyDate;
+  }
+
   /// -- format time range and return result toString() --
   static int computeTimeRangeFromNow(String end) {
     final startTime = DateTime.now();
