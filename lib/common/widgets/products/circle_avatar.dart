@@ -39,17 +39,14 @@ class CCircleAvatar extends StatelessWidget {
                 height: 40.0,
                 child: Stack(
                   children: [
-                    CValidator.isFirstCharacterALetter(avatarInitial)
-                        ? Text(
-                            avatarInitial.toUpperCase(),
-                            style: Theme.of(context).textTheme.titleMedium!
-                                .apply(
-                                  color: txtColor,
-                                  fontSizeFactor: 1.7,
-                                  fontWeightDelta: -3,
-                                ),
-                          )
-                        : Icon(Iconsax.tag),
+                    Text(
+                      avatarInitial.toUpperCase(),
+                      style: Theme.of(context).textTheme.titleMedium!.apply(
+                        color: txtColor,
+                        fontSizeFactor: 1.7,
+                        fontWeightDelta: -3,
+                      ),
+                    ),
                     Positioned(
                       top: 15.0,
                       right: 5.0,

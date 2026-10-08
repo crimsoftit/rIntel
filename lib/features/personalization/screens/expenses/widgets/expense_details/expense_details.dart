@@ -79,7 +79,7 @@ class CExpenseDetails extends StatelessWidget {
               10.0,
             ),
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Padding(
                   padding: const EdgeInsets.only(
@@ -92,7 +92,7 @@ class CExpenseDetails extends StatelessWidget {
                       radius: 30.0,
                       child: Center(
                         child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.start,
                           children: [
                             Text(
                               expense.recipientName[0].toUpperCase(),
@@ -116,8 +116,12 @@ class CExpenseDetails extends StatelessWidget {
                 ),
                 CRoundedContainer(
                   bgColor: CColors.transparent,
-                  padding: const EdgeInsets.all(
-                    5.0,
+                  borderColor: CColors.rOrange,
+                  padding: const EdgeInsets.only(
+                    bottom: 5.0,
+                    left: 7.0,
+                    right: 7.0,
+                    top: 5.0,
                   ),
                   showBorder: true,
                   child: Text(
@@ -125,8 +129,8 @@ class CExpenseDetails extends StatelessWidget {
                     style:
                         Theme.of(
                           context,
-                        ).textTheme.labelLarge!.apply(
-                          fontSizeFactor: 1.6,
+                        ).textTheme.labelMedium!.apply(
+                          //fontSizeFactor: 1.6,
                         ),
                   ),
                 ),
@@ -145,23 +149,78 @@ class CExpenseDetails extends StatelessWidget {
                 const SizedBox(
                   height: CSizes.spaceBtnItems * .25,
                 ),
-                Row(
+                Padding(
+                  padding: const EdgeInsets.only(
+                    bottom: 30.0,
+                    top: 10.0,
+                  ),
+                  child: Center(
+                    child: Row(
+                      children: [
+                        Text(
+                          userCurrency,
+                          style: Theme.of(context).textTheme.labelSmall!.apply(
+                            fontFeatures: [
+                              FontFeature.superscripts(),
+                            ],
+                            fontSizeFactor: .9,
+                          ),
+                        ),
+                        CAnimatedDigitWidget(
+                          fractionDigits: 2,
+                          prefix: '',
+                          txtStyle: Theme.of(context).textTheme.labelLarge!
+                              .apply(
+                                color: CColors.rOrange,
+                                fontWeightDelta: 2,
+                              ),
+                          value: expense.amount,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      userCurrency,
-                      style: Theme.of(context).textTheme.labelSmall!.apply(
-                        fontFeatures: [FontFeature.superscripts()],
-                        fontSizeFactor: .9,
+                      'CONTACTS:',
+                      style: Theme.of(context).textTheme.labelSmall!.apply(),
+                    ),
+                    Text(
+                      expense.recipientContact,
+                      style: Theme.of(context).textTheme.labelMedium!.apply(
+                        fontSizeFactor: 1.3,
+                        fontWeightDelta: -1,
                       ),
                     ),
-                    CAnimatedDigitWidget(
-                      fractionDigits: 2,
-                      prefix: '',
-                      txtStyle: Theme.of(context).textTheme.titleMedium!.apply(
-                        color: CColors.rOrange,
-                        fontWeightDelta: 2,
+                    const SizedBox(
+                      height: CSizes.spaceBtnItems,
+                    ),
+                    Text(
+                      'TXN ID:',
+                      style: Theme.of(context).textTheme.labelSmall!.apply(),
+                    ),
+                    Text(
+                      expense.expenseId.toString(),
+                      style: Theme.of(context).textTheme.labelMedium!.apply(
+                        fontSizeFactor: 1.3,
+                        fontWeightDelta: -1,
                       ),
-                      value: expense.amount,
+                    ),
+                    const SizedBox(
+                      height: CSizes.spaceBtnItems,
+                    ),
+                    Text(
+                      'REFERENCE CODE:',
+                      style: Theme.of(context).textTheme.labelSmall!.apply(),
+                    ),
+                    Text(
+                      expense.txnCode,
+                      style: Theme.of(context).textTheme.labelMedium!.apply(
+                        fontSizeFactor: 1.3,
+                        fontWeightDelta: -1,
+                      ),
                     ),
                   ],
                 ),
