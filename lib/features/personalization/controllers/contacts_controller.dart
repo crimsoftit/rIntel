@@ -87,6 +87,7 @@ class CContactsController extends GetxController {
     'Supplier',
     'Family',
     'Colleague',
+    'Staff',
     'Other',
   ].obs;
   final RxList alphabet = [].obs;

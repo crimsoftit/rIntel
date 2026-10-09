@@ -7,10 +7,11 @@ class CDivider extends StatelessWidget {
     this.color = CColors.rBrown,
     this.endIndent = 20.0,
     this.startIndent = 20.0,
+    this.thickness = .4,
   });
 
   final Color? color;
-  final double? endIndent, startIndent;
+  final double? endIndent, startIndent, thickness;
 
   @override
   Widget build(BuildContext context) {
@@ -18,7 +19,7 @@ class CDivider extends StatelessWidget {
       color: color,
       endIndent: endIndent,
       indent: startIndent,
-      thickness: 0.2,
+      thickness: thickness,
     );
   }
 }

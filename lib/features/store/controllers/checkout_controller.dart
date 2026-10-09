@@ -238,11 +238,7 @@ class CCheckoutController extends GetxController {
 
                 invItem.qtySold += cartItem.quantity;
 
-                if (invItem.quantity == cartItem.quantity) {
-                  invItem.quantity = 0;
-                } else {
-                  invItem.quantity -= cartItem.quantity;
-                }
+                invItem.quantity -= cartItem.quantity;
 
                 await dbHelper.updateInvQties(invItem).then(
                   (result) {

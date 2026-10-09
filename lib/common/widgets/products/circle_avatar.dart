@@ -1,8 +1,8 @@
 import 'package:rintel/utils/constants/colors.dart';
 import 'package:rintel/utils/constants/sizes.dart';
-import 'package:rintel/utils/validators/validation.dart';
 import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:rintel/utils/validators/validation.dart';
 
 class CCircleAvatar extends StatelessWidget {
   const CCircleAvatar({
@@ -39,14 +39,27 @@ class CCircleAvatar extends StatelessWidget {
                 height: 40.0,
                 child: Stack(
                   children: [
-                    Text(
-                      avatarInitial.toUpperCase(),
-                      style: Theme.of(context).textTheme.titleMedium!.apply(
-                        color: txtColor,
-                        fontSizeFactor: 1.7,
-                        fontWeightDelta: -3,
-                      ),
-                    ),
+                    CValidator.isFirstCharacterALetter(avatarInitial)
+                        ? Text(
+                            avatarInitial.toUpperCase(),
+                            style: Theme.of(context).textTheme.titleMedium!
+                                .apply(
+                                  color: txtColor,
+                                  fontSizeFactor: 1.7,
+                                  fontWeightDelta: -3,
+                                ),
+                          )
+                        : Padding(
+                            padding: const EdgeInsets.only(
+                              right: 30.0,
+                              top: 10.0,
+                            ),
+                            child: Icon(
+                              Iconsax.tag,
+                              color: CColors.rBrown,
+                              size: CSizes.iconMd,
+                            ),
+                          ),
                     Positioned(
                       top: 15.0,
                       right: 5.0,

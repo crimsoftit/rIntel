@@ -10,7 +10,6 @@ import 'package:rintel/features/store/screens/store_items_tings/inventory/invent
 import 'package:rintel/utils/constants/colors.dart';
 import 'package:rintel/utils/constants/img_strings.dart';
 import 'package:rintel/utils/constants/sizes.dart';
-import 'package:rintel/utils/db/sqflite/db_helper.dart';
 import 'package:rintel/utils/helpers/formatter.dart';
 import 'package:rintel/utils/helpers/helper_functions.dart';
 
@@ -30,9 +29,10 @@ class _CExpensesViewState extends State<CExpensesView> {
   @override
   void initState() {
     // -- trigger data fetch --
-    itemsFuture = DbHelper.instance.fetchMyExpenses(
-      userController.user.value.email,
-    );
+    // itemsFuture = DbHelper.instance.fetchMyExpenses(
+    //   userController.user.value.email,
+    // );
+    itemsFuture = txnsController.fetchMyExpenses();
     super.initState();
     Future.delayed(
       Duration.zero,
@@ -87,7 +87,7 @@ class _CExpensesViewState extends State<CExpensesView> {
 
           return CRoundedContainer(
             bgColor: CColors.transparent,
-            height: CHelperFunctions.screenHeight() * .2,
+            height: CHelperFunctions.screenHeight() * .6,
             margin: const EdgeInsets.only(
               left: 15.0,
               right: 15.0,

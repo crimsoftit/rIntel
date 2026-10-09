@@ -1,5 +1,6 @@
 import 'package:clock/clock.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:get/get.dart';
@@ -11,13 +12,14 @@ import 'package:rintel/common/widgets/txt_fields/contacts_search_type_ahead.dart
 import 'package:rintel/features/personalization/controllers/contacts_controller.dart';
 import 'package:rintel/features/personalization/controllers/expenses_controller.dart';
 import 'package:rintel/features/personalization/controllers/user_controller.dart';
+import 'package:rintel/features/personalization/models/contacts_model.dart';
 import 'package:rintel/features/personalization/models/expense.dart';
 import 'package:rintel/features/store/controllers/txns_controller.dart';
 import 'package:rintel/utils/constants/colors.dart';
 import 'package:rintel/utils/constants/sizes.dart';
+import 'package:rintel/utils/helpers/formatter.dart';
 import 'package:rintel/utils/helpers/helper_functions.dart';
 import 'package:rintel/utils/helpers/network_manager.dart';
-import 'package:rintel/utils/popups/snackbars.dart';
 import 'package:rintel/utils/validators/validation.dart';
 
 class CXpenseForm extends StatelessWidget {
@@ -34,7 +36,6 @@ class CXpenseForm extends StatelessWidget {
     final contactsController = Get.put(CContactsController());
 
     final isDarkTheme = CHelperFunctions.isDarkMode(context);
-
     final userController = Get.put(CUserController());
     final userCurrency = userController.user.value.currencyCode;
     // final SuggestionsController<CContactsModel> nameFieldController =
@@ -159,7 +160,7 @@ class CXpenseForm extends StatelessWidget {
                       ),
                       validator: (value) {
                         if (value == null || value == '') {
-                          return 'invalid description!';
+                          return 'Invalid description!';
                         }
                         return null;
                       },
@@ -181,13 +182,52 @@ class CXpenseForm extends StatelessWidget {
                     child: child,
                   ),
                   direction: VerticalDirection.up,
+                  hideOnEmpty: true,
+                  hideOnSelect: true,
+                  hideOnUnfocus: true,
+                  offset: Offset(
+                    0,
+                    5.0,
+                  ),
                   itemBuilder: (context, suggestion) {
+                    // -- build icon --
+
+                    IconData icon;
+
+                    switch (suggestion) {
+                      case 'Electricity Bill':
+                        icon = Iconsax.flash;
+                        break;
+                      case 'Rent':
+                        icon = Icons.store;
+                        break;
+                      case 'Salary':
+                        icon = Icons.people;
+                        break;
+                      case 'Transport':
+                        icon = Icons.train;
+                        break;
+                      default:
+                        icon = Iconsax.money_send;
+                        break;
+                    }
                     return Center(
                       child: SizedBox(
                         width: CHelperFunctions.screenWidth() * .7,
+                        height: 40.0,
                         child: ListTile(
-                          contentPadding: const EdgeInsets.all(
-                            5.0,
+                          contentPadding: const EdgeInsets.only(
+                            bottom: 5.0,
+                            left: 5.0,
+                            top: 2.5,
+                          ),
+                          leading: CircleAvatar(
+                            backgroundColor: CColors.rBrown,
+                            child: Icon(
+                              icon,
+                              color: CColors.white,
+                              size: CSizes.iconXs,
+                            ),
                           ),
                           title: Text(
                             suggestion,
@@ -203,7 +243,49 @@ class CXpenseForm extends StatelessWidget {
                       ),
                     );
                   },
+                  listBuilder: (context, children) {
+                    return Obx(
+                      () {
+                        return CRoundedContainer(
+                          bgColor: CColors.transparent,
+                          height:
+                              xpensesController.matchingCategories.length *
+                              60.0,
 
+                          child: ListView.separated(
+                            itemBuilder: (context, index) {
+                              return children[index];
+                            },
+                            itemCount:
+                                xpensesController.matchingCategories.length,
+                            padding: const EdgeInsets.all(
+                              0.0,
+                            ),
+                            scrollCacheExtent: const ScrollCacheExtent.pixels(
+                              10.0,
+                            ),
+                            separatorBuilder: (context, index) {
+                              return const SizedBox(
+                                height: 4.0,
+                              );
+                            }, // 10px space between items
+                          ),
+                        );
+
+                        // ListView.separated(
+                        //   itemCount: contactsController.foundMatches.length,
+                        //   separatorBuilder: (context, index) {
+                        //     return const SizedBox(
+                        //       height: 5.0,
+                        //     );
+                        //   }, // 10px space between items
+                        //   itemBuilder: (context, index) {
+                        //     return children[index];
+                        //   },
+                        // );
+                      },
+                    );
+                  },
                   loadingBuilder: (context) => const Center(
                     child: CircularProgressIndicator(),
                   ),
@@ -605,7 +687,7 @@ class CXpenseForm extends StatelessWidget {
                         double.parse(
                           xpensesController.txtAmount.text.trim(),
                         ),
-                        xpensesController.txtRecipientName.text,
+                        xpensesController.txtRecipientName.text.trim(),
                         xpensesController.txtRecipientContacts.text.trim(),
                         xpensesController.txtContactCountryPicker.text.trim(),
                         DateFormat(
@@ -617,16 +699,90 @@ class CXpenseForm extends StatelessWidget {
                         xpensesController.txtTxnCode.text.trim(),
                       );
                       txnsController.saveExpense(expense).then(
-                        (_) {
-                          CPopupSnackBar.successSnackBar(
-                            behavior: SnackBarBehavior.floating,
+                        (_) async {
+                          if (await contactsController.contactActionIsAdd(
+                            xpensesController.txtRecipientName.text.trim(),
+                            xpensesController.txtRecipientContacts.text.trim(),
+                          )) {
+                            // -- determine receipient designation --
+                            String contactCategory = '';
+                            switch (xpensesController.txtExpenseCategory.text
+                                .toLowerCase()) {
+                              case 'rent':
+                                contactCategory = 'Landlord';
+                                break;
+                              case 'salary':
+                                contactCategory = 'Staff';
+                                break;
+                              default:
+                                contactCategory = 'Other';
+                                break;
+                            }
 
-                            message: 'Expense recorded successfully!',
-                            title: 'success!!',
-                          );
-                          if (context.mounted) {
-                            Navigator.pop(context, true);
+                            // -- extract dial code from phone number --
+                            final (dialCode, mobileNumber) =
+                                CValidator.isValidPhoneNumber(
+                                      xpensesController
+                                          .txtRecipientContacts
+                                          .text
+                                          .trim()
+                                          .removeAllWhitespace,
+                                    ) ||
+                                    CValidator.isValidIntlPhoneNumber(
+                                      xpensesController
+                                          .txtRecipientContacts
+                                          .text
+                                          .trim()
+                                          .removeAllWhitespace,
+                                      contactsController.contactDialCode.value,
+                                    )
+                                ? CFormatter.seperatePhoneAndDialCode(
+                                    xpensesController.txtRecipientContacts.text
+                                        .trim(),
+                                  )
+                                : ('', '');
+
+                            var contactDetails = CContactsModel(
+                              userController.user.value.email,
+                              xpensesController.txtRecipientName.text.trim(),
+                              contactsController.contactCountryCode.value,
+                              contactsController.contactDialCode.value,
+                              mobileNumber,
+                              CValidator.isValidEmail(
+                                    xpensesController.txtRecipientContacts.text
+                                        .trim()
+                                        .removeAllWhitespace,
+                                  )
+                                  ? xpensesController.txtRecipientContacts.text
+                                        .trim()
+                                        .removeAllWhitespace
+                                  : '',
+                              contactCategory,
+                              DateFormat(
+                                'yyyy-MM-dd kk:mm',
+                              ).format(clock.now()),
+                              DateFormat(
+                                'yyyy-MM-dd kk:mm',
+                              ).format(clock.now()),
+
+                              0,
+                              0,
+                            );
+                            contactsController.addContact(
+                              contactDetails,
+                              null,
+                              true,
+                            );
                           }
+
+                          await txnsController.fetchMyExpenses().then(
+                            (_) {
+                              xpensesController.resetFields();
+
+                              if (!context.mounted) return;
+                              Navigator.pop(context, true);
+                            },
+                          );
                         },
                       );
                     },

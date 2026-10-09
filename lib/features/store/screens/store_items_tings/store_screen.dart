@@ -69,6 +69,25 @@ class CStoreScreen extends StatelessWidget {
                         child: CMenuBtn(),
                       ),
                     ),
+              // : Row(
+              //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              //     children: [
+              //       Align(
+              //         alignment: Alignment.topLeft,
+              //         child: Padding(
+              //           padding: const EdgeInsets.only(
+              //             top: 5.0,
+              //             //left: 10.0,
+              //           ),
+              //           child: CMenuBtn(),
+              //         ),
+              //       ),
+
+              //       Text(
+              //         'sales count: ${txnsController.specificItemCount.value}',
+              //       ),
+              //     ],
+              //   ),
               showBackArrow: false,
               backIconColor: isDarkTheme ? CColors.white : CColors.rBrown,
               title: Obx(

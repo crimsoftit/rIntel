@@ -86,6 +86,7 @@ class CTxnsController extends GetxController {
   final RxDouble costOfSales = 0.0.obs;
   final RxDouble cogs = 0.0.obs;
   final RxDouble grossRevenue = 0.0.obs;
+  final RxDouble specificItemCount = 0.0.obs;
 
   final RxDouble invoiceAmountOwed = 0.0.obs;
 
@@ -261,6 +262,38 @@ class CTxnsController extends GetxController {
   }
 
   /// -- fetch top sellers grouped by product id --
+  // Future<List<CBestSellersModel>> fetchTopSellersFromSales() async {
+  //   try {
+  //     // -- start loader while top sellers are fetched --
+  //     isLoading.value = true;
+
+  //     final topSales = await dbHelper
+  //         .fetchTopSellersFromSalesGroupedByProductId(
+  //           userController.user.value.email,
+  //         );
+
+  //     bestSellers.assignAll(topSales);
+
+  //     // stop loader
+  //     isLoading.value = false;
+
+  //     return bestSellers;
+  //   } catch (e) {
+  //     isLoading.value = false;
+  //     if (kDebugMode) {
+  //       CPopupSnackBar.errorSnackBar(
+  //         title: 'error fetching top sellers from sales table',
+  //         message: e.toString(),
+  //       );
+  //     }
+  //     CPopupSnackBar.errorSnackBar(
+  //       title: 'error fetching top sellers',
+  //       message:
+  //           'an unknown error occurred while fetching top sellers! please try again later...',
+  //     );
+  //     rethrow;
+  //   }
+  // }
   Future<List<CBestSellersModel>> fetchTopSellersFromSales() async {
     try {
       // -- start loader while top sellers are fetched --
@@ -353,6 +386,13 @@ class CTxnsController extends GetxController {
         var foundTxnItems = userTxnItems.where(
           (txnItem) {
             return txnItem.txnId == foundTxn.txnId;
+          },
+        );
+
+        specificItemCount.value = foundTxnItems.fold(
+          0.0,
+          (sum, item) {
+            return sum + item.quantity;
           },
         );
 
@@ -1938,6 +1978,14 @@ class CTxnsController extends GetxController {
       );
       // assign sold items to sales list
       userTxnItems.assignAll(txnItems);
+
+      var gombaSales = userTxnItems.where(
+        (item) => item.productName.toLowerCase().contains('gomba'),
+      );
+      specificItemCount.value = gombaSales.fold(
+        0.0,
+        (sum, gomba) => sum + gomba.quantity,
+      );
 
       refunds.assignAll(
         userTxnItems.where(
