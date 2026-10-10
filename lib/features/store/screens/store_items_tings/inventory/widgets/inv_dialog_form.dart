@@ -528,6 +528,49 @@ class AddUpdateInventoryForm extends StatelessWidget {
                   },
                 ),
 
+                TextFormField(
+                  autovalidateMode: AutovalidateMode.onUserInteraction,
+                  controller: invController.txtQtySold,
+                  keyboardType: const TextInputType.numberWithOptions(
+                    decimal: true,
+                    signed: false,
+                  ),
+                  inputFormatters: <TextInputFormatter>[
+                    FilteringTextInputFormatter.allow(RegExp(r'^\d+(\.\d*)?')),
+                    // FilteringTextInputFormatter.digitsOnly,
+                  ],
+                  decoration: InputDecoration(
+                    constraints: BoxConstraints(
+                      minHeight: 70.0,
+                    ),
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 0.0,
+                    ),
+                    filled: true,
+                    fillColor: isDarkTheme
+                        ? CColors.transparent
+                        : CColors.lightGrey,
+                    labelStyle: Theme.of(context).textTheme.labelSmall,
+                    labelText: 'Qty Sold:',
+                    prefixIcon: Icon(
+                      // Iconsax.card_pos,
+                      Iconsax.quote_down,
+                      color: CColors.darkGrey,
+                      size: CSizes.iconXs,
+                    ),
+                  ),
+                  onChanged: (value) {},
+                  style: const TextStyle(
+                    fontWeight: FontWeight.normal,
+                  ),
+                  // validator: (value) {
+                  //   return CValidator.validateNumber(
+                  //     'Alert threshold',
+                  //     value,
+                  //   );
+                  // },
+                ),
+
                 Column(
                   children: [
                     Visibility(

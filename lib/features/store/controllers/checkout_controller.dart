@@ -220,104 +220,109 @@ class CCheckoutController extends GetxController {
               /// -- save data to cloud firestore --
               storeRepo.saveTxnToCloudFirestore(newTxnData).then(
                 (_) async {
-                  for (var item in txnItems) {
-                    await dbHelper.addSoldItemAndRetrieveSoldItemId(item).then(
-                      (itemId) {
-                        storeRepo.saveSalesFirestore(item, itemId);
+                  for (var txnItem in txnItems) {
+                    await dbHelper.addSoldItemAndRetrieveSoldItemId(txnItem).then(
+                      (txnItemId) async {
+                        storeRepo.saveSalesFirestore(txnItem, txnItemId);
+
+                        /// -- update inventory data --
+                        var invItem = invController.inventoryItems.firstWhere(
+                          (item) => item.productId == txnItem.productId,
+                        );
+
+                        invItem.qtySold += txnItem.quantity;
+
+                        invItem.quantity -= txnItem.quantity;
+
+                        await dbHelper.updateInvQties(invItem).then(
+                          (result) {
+                            if (result == 1) {
+                              // -- update inventory data on cloud firestore --
+                              storeRepo.updateInvCloudQties(
+                                invItem,
+                                'checkout',
+                              );
+                            } else {
+                              if (kDebugMode) {
+                                CPopupSnackBar.warningSnackBar(
+                                  message:
+                                      'an unknown error occurred while updating inventory item locally!',
+                                  title:
+                                      'error updating inventory item locally!',
+                                );
+                              }
+                            }
+                          },
+                        );
+
+                        // -- trigger low-stock notification --
+                        if (invItem.quantity <= invItem.lowStockNotifierLimit) {
+                          var alertBody = '';
+                          switch (invItem.quantity) {
+                            case 0.0:
+                              alertBody =
+                                  '${invItem.name.toUpperCase()} is out of stock!!';
+                              break;
+
+                            case >= 0.001:
+                              if (invItem.quantity == 1) {
+                                alertBody =
+                                    'only ${CFormatter.formatItemQtyDisplays(invItem.quantity, invItem.calibration)} ${CFormatter.formatItemMetrics(invItem.calibration, invItem.quantity)} of ${invItem.name.toUpperCase()} is left!!';
+                              } else {
+                                alertBody =
+                                    'only ${CFormatter.formatItemQtyDisplays(invItem.quantity, invItem.calibration)} ${CFormatter.formatItemMetrics(invItem.calibration, invItem.quantity)} of ${invItem.name.toUpperCase()} are left!!';
+                              }
+
+                              break;
+                            default:
+                              alertBody = '';
+                          }
+
+                          await notificationsController.fetchUserNotifications().then(
+                            (_) async {
+                              var thisAlertId = await notificationsController
+                                  .generateNotificationId();
+
+                              var payloadData = {
+                                'date': DateFormat(
+                                  'yyyy-MM-dd @ kk:mm',
+                                ).format(clock.now()),
+                                'notification_body': alertBody,
+                                'notification_id': thisAlertId.toString(),
+                                'notification_title': 'Restocking is due!',
+                                'product_id': invItem.productId.toString(),
+                              };
+
+                              await CLocalNotificationsController.displaySimpleAlert(
+                                title: 'Restocking is due!',
+                                body: alertBody,
+                                payload: jsonEncode(payloadData),
+                              );
+
+                              var notificationItem = CNotificationsModel(
+                                1,
+                                'Restocking is due!',
+                                alertBody,
+                                0,
+                                invItem.productId,
+                                userController.user.value.email,
+                                DateFormat(
+                                  'yyyy-MM-dd @ kk:mm',
+                                ).format(clock.now()),
+                              );
+
+                              // -- insert notification item into sqflite db --
+                              await DbHelper.instance.addNotificationItem(
+                                notificationItem,
+                              );
+                            },
+                          );
+                        }
                       },
                     );
                   }
                 },
               );
-
-              for (var cartItem in itemsInCart) {
-                /// -- update inventory data --
-                var invItem = invController.inventoryItems.firstWhere(
-                  (item) => item.productId == cartItem.productId,
-                );
-
-                invItem.qtySold += cartItem.quantity;
-
-                invItem.quantity -= cartItem.quantity;
-
-                await dbHelper.updateInvQties(invItem).then(
-                  (result) {
-                    if (result == 1) {
-                      // -- update inventory data on cloud firestore --
-                      storeRepo.updateInvCloudQties(invItem, 'checkout');
-                    } else {
-                      if (kDebugMode) {
-                        CPopupSnackBar.warningSnackBar(
-                          message:
-                              'an unknown error occurred while updating inventory item locally!',
-                          title: 'error updating inventory item locally!',
-                        );
-                      }
-                    }
-                  },
-                );
-
-                if (invItem.quantity <= invItem.lowStockNotifierLimit) {
-                  var alertBody = '';
-                  switch (invItem.quantity) {
-                    case 0.0:
-                      alertBody =
-                          '${invItem.name.toUpperCase()} is out of stock!!';
-                      break;
-
-                    case >= 0.001:
-                      if (invItem.quantity == 1) {
-                        alertBody =
-                            'only ${CFormatter.formatItemQtyDisplays(invItem.quantity, invItem.calibration)} ${CFormatter.formatItemMetrics(invItem.calibration, invItem.quantity)} of ${invItem.name.toUpperCase()} is left!!';
-                      } else {
-                        alertBody =
-                            'only ${CFormatter.formatItemQtyDisplays(invItem.quantity, invItem.calibration)} ${CFormatter.formatItemMetrics(invItem.calibration, invItem.quantity)} of ${invItem.name.toUpperCase()} are left!!';
-                      }
-
-                      break;
-                    default:
-                      alertBody = '';
-                  }
-
-                  await notificationsController.fetchUserNotifications().then(
-                    (_) async {
-                      var thisAlertId = await notificationsController
-                          .generateNotificationId();
-
-                      var payloadData = {
-                        'date': DateFormat(
-                          'yyyy-MM-dd @ kk:mm',
-                        ).format(clock.now()),
-                        'notification_body': alertBody,
-                        'notification_id': thisAlertId.toString(),
-                        'notification_title': 'Restocking is due!',
-                        'product_id': invItem.productId.toString(),
-                      };
-
-                      await CLocalNotificationsController.displaySimpleAlert(
-                        title: 'Restocking is due!',
-                        body: alertBody,
-                        payload: jsonEncode(payloadData),
-                      );
-
-                      var notificationItem = CNotificationsModel(
-                        1,
-                        'Restocking is due!',
-                        alertBody,
-                        0,
-                        invItem.productId,
-                        userController.user.value.email,
-                        DateFormat('yyyy-MM-dd @ kk:mm').format(clock.now()),
-                      );
-
-                      // -- insert notification item into sqflite db --
-                      await DbHelper.instance.addNotificationItem(
-                        notificationItem,
-                      );
-                    },
-                  );
-                }
-              }
 
               Get.offAll(
                 () {
@@ -341,6 +346,7 @@ class CCheckoutController extends GetxController {
               CPopupSnackBar.errorSnackBar(
                 title: 'BADO NEW TXN MODEL HAIWEZI... BUT TUNAKAM MAZE',
               );
+              return;
             }
           },
         );

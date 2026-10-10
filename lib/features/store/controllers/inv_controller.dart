@@ -14,6 +14,7 @@ import 'package:rintel/features/store/screens/store_items_tings/inventory/widget
 import 'package:rintel/utils/constants/colors.dart';
 import 'package:rintel/utils/constants/sizes.dart';
 import 'package:rintel/utils/db/sqflite/db_helper.dart';
+import 'package:rintel/utils/helpers/alerts_tracker/daily_notifications_tracker.dart';
 import 'package:rintel/utils/helpers/formatter.dart';
 import 'package:rintel/utils/helpers/helper_functions.dart';
 import 'package:rintel/utils/helpers/network_manager.dart';
@@ -108,12 +109,18 @@ class CInventoryController extends GetxController {
   final txtSupplierContacts = TextEditingController();
   final txtSyncAction = TextEditingController();
 
+  final txtQtySold = TextEditingController();
+
   final addInvItemFormKey = GlobalKey<FormState>();
 
   final isLoading = false.obs;
   final syncIsLoading = false.obs;
 
   final storeRepo = Get.put(CStoreRepo());
+
+  // -- expiry manenozz --
+  final RxInt alertsCount = 0.obs;
+  final RxString expiryAlertTimestamp = ''.obs;
 
   @override
   void onInit() async {
@@ -127,9 +134,16 @@ class CInventoryController extends GetxController {
       await fetchUserInventoryItems();
     }
 
-    sheduleExpiryNotifications();
+    localStorage.writeIfNull(
+      'alerts_counter',
+      alertsCount.value,
+    );
+    localStorage.writeIfNull(
+      'timestamp',
+      expiryAlertTimestamp.value,
+    );
 
-    //await scheduleExpiryAlerts();
+    sheduleExpiryNotifications();
 
     super.onInit();
   }
@@ -782,6 +796,8 @@ class CInventoryController extends GetxController {
           'yyyy-MM-dd @ kk:mm',
         ).format(clock.now());
         inventoryItem.expiryDate = txtExpiryDatePicker.text.trim();
+
+        inventoryItem.qtySold = double.parse(txtQtySold.text.trim());
 
         if (itemExists.value) {
           await updateInventoryItem(inventoryItem).then(
@@ -1490,31 +1506,6 @@ class CInventoryController extends GetxController {
     }
   }
 
-  Future<void> scheduleExpiryAlerts() async {
-    try {
-      final notsController = Get.put(CLocalNotificationsController());
-      if (itemsNearingExpiry.isNotEmpty) {
-        for (var expiryItem in itemsNearingExpiry) {
-          notsController.scheduleExpiryNotification(
-            alertId: await notsController.generateNotificationId(),
-            expiryDate: DateTime.parse(
-              expiryItem.expiryDate.replaceAll(' @', ''),
-            ),
-            itemName: expiryItem.name,
-          );
-        }
-      }
-    } catch (e) {
-      if (kDebugMode) {
-        CPopupSnackBar.errorSnackBar(
-          title: 'scheduling notifications!',
-          message: 'error scheduling notifications: $e',
-        );
-      }
-      rethrow;
-    }
-  }
-
   String setItemMetrics() {
     itemMetrics.value = itemExists.value || itemMetrics.value != ''
         ? itemMetrics.value
@@ -1597,7 +1588,8 @@ class CInventoryController extends GetxController {
         },
       ).toList();
 
-      if (itemsNearingExpiry.isNotEmpty) {
+      int? aCount = localStorage.read<int>('alerts_counter');
+      if (itemsNearingExpiry.isNotEmpty && aCount! <= 3) {
         for (var item in itemsNearingExpiry) {
           var alertBody =
               '${item.name.toUpperCase()} expires ${CFormatter.formatTimeRangeFromNow(
@@ -1627,6 +1619,27 @@ class CInventoryController extends GetxController {
             payload: jsonEncode(payloadData),
           );
 
+          expiryAlertTimestamp.value = DateFormat(
+            'yyyy-MM-dd',
+          ).format(clock.now());
+
+          if (expiryAlertTimestamp.value ==
+                  DateFormat('yyyy-MM-dd').format(clock.now()) &&
+              alertsCount.value < 3) {
+            alertsCount.value += 1;
+          } else {
+            alertsCount.value = 1;
+          }
+
+          localStorage.write(
+            'alerts_counter',
+            alertsCount.value,
+          );
+          localStorage.write(
+            'timestamp',
+            expiryAlertTimestamp.value,
+          );
+
           var notificationItem = CNotificationsModel(
             alertId,
             alertTitle,
@@ -1642,8 +1655,9 @@ class CInventoryController extends GetxController {
             notificationItem,
           );
         }
-        // -- schedule subsequent notifications --
-        notificationsController.scheduleAllItems(itemsNearingExpiry);
+
+        // -- track the trigger --
+        CDailyNotificationsTracker.onAlertTriggered();
       }
     } catch (e) {
       if (kDebugMode) {
@@ -1672,6 +1686,7 @@ class CInventoryController extends GetxController {
     txtCode.clear();
     txtContactCountryPicker.clear();
     txtQty.clear();
+    txtQtySold.clear();
     txtBP.clear();
     unitBP.value = 0.0;
     txtUnitSP.clear();
@@ -1693,6 +1708,7 @@ class CInventoryController extends GetxController {
     txtId.dispose();
     txtNameController.dispose();
     txtQty.dispose();
+    txtQtySold.dispose();
     txtStockNotifierLimit.dispose();
     txtSupplierContacts.dispose();
     txtSupplierName.dispose();

@@ -435,12 +435,12 @@ class CXpenseForm extends StatelessWidget {
                         typeAheadFieldController:
                             xpensesController.txtRecipientName,
                         txtAlign: TextAlign.start,
-                        fieldValidator: (value) {
-                          return CValidator.validateEmptyText(
-                            "Recipient's name",
-                            value,
-                          );
-                        },
+                        // fieldValidator: (value) {
+                        //   return CValidator.validateEmptyText(
+                        //     "Recipient's name",
+                        //     value,
+                        //   );
+                        // },
                         verticalDirection: VerticalDirection.up,
                       ),
                     ),
@@ -479,12 +479,12 @@ class CXpenseForm extends StatelessWidget {
                         style: const TextStyle(
                           fontWeight: FontWeight.normal,
                         ),
-                        validator: (value) {
-                          return CValidator.validateEmptyText(
-                            'Recipeint\'s country',
-                            value,
-                          );
-                        },
+                        // validator: (value) {
+                        //   return CValidator.validateEmptyText(
+                        //     'Recipeint\'s country',
+                        //     value,
+                        //   );
+                        // },
                       ),
                     ),
                   ],
@@ -601,12 +601,12 @@ class CXpenseForm extends StatelessWidget {
                   style: const TextStyle(
                     fontWeight: FontWeight.normal,
                   ),
-                  validator: (value) {
-                    return CValidator.validateEmptyText(
-                      'Reference No.',
-                      value,
-                    );
-                  },
+                  // validator: (value) {
+                  //   return CValidator.validateEmptyText(
+                  //     'Reference No.',
+                  //     value,
+                  //   );
+                  // },
                 ),
                 const SizedBox(
                   height: CSizes.spaceBtnInputFields,

@@ -24,6 +24,9 @@ class AddUpdateItemDialog {
     var textStyle = Theme.of(context).textTheme.bodySmall;
 
     if (!isNew || invController.itemExists.value) {
+      invController.txtQtySold.text = invController.txtQtySold.text.isEmpty
+          ? invModel.qtySold.toStringAsFixed(0)
+          : invController.txtQtySold.text.trim();
       invController.txtId.text = invModel.productId.toString();
       invController.txtNameController.text =
           invController.txtNameController.text.isEmpty
@@ -42,7 +45,7 @@ class AddUpdateItemDialog {
       invController.txtBP.text =
           invController.txtBP.text.isEmpty &&
               invController.qtyFieldTapCount.value == 0
-          ? (invModel.unitBp * invModel.quantity).toString()
+          ? (invModel.unitBp * invModel.quantity).toStringAsFixed(2)
           : invController.txtBP.text.trim();
       // invController.txtBP.text = invController.txtBP.text.isEmpty
       //     ? (invModel.unitBp * invModel.quantity).toString()

@@ -192,67 +192,76 @@ class CExpenseDetails extends StatelessWidget {
                             ),
                           ],
                         ),
+
+                        CRoundedContainer(
+                          bgColor: CColors.transparent,
+                          padding: const EdgeInsets.only(
+                            left: 10,
+                            right: 10,
+                            top: 50,
+                          ),
+                          width: CHelperFunctions.screenWidth(),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'CONTACTS:',
+                                style: Theme.of(
+                                  context,
+                                ).textTheme.labelSmall!.apply(),
+                              ),
+                              SelectableText(
+                                expense.recipientContact,
+                                style: Theme.of(context).textTheme.labelMedium!
+                                    .apply(
+                                      fontSizeFactor: 1.3,
+                                      fontWeightDelta: -1,
+                                    ),
+                              ),
+                              const SizedBox(
+                                height: CSizes.spaceBtnItems,
+                              ),
+                              Text(
+                                'TXN ID:',
+                                style: Theme.of(
+                                  context,
+                                ).textTheme.labelSmall!.apply(),
+                              ),
+                              SelectableText(
+                                expense.expenseId.toString(),
+                                style: Theme.of(context).textTheme.labelMedium!
+                                    .apply(
+                                      fontSizeFactor: 1.3,
+                                      fontWeightDelta: -1,
+                                    ),
+                              ),
+                              const SizedBox(
+                                height: CSizes.spaceBtnItems,
+                              ),
+                              Text(
+                                'REFERENCE CODE:',
+                                style: Theme.of(
+                                  context,
+                                ).textTheme.labelSmall!.apply(),
+                              ),
+                              SelectableText(
+                                expense.txnCode,
+                                style: Theme.of(context).textTheme.labelMedium!
+                                    .apply(
+                                      fontSizeFactor: 1.3,
+                                      fontWeightDelta: -1,
+                                    ),
+                              ),
+                              CDivider(
+                                endIndent: 0,
+                                startIndent: 0,
+                                thickness: .5,
+                              ),
+                            ],
+                          ),
+                        ),
                       ],
                     ),
-                  ),
-                ),
-
-                CRoundedContainer(
-                  bgColor: CColors.transparent,
-                  padding: const EdgeInsets.only(
-                    left: 10,
-                    right: 10,
-                    top: 50,
-                  ),
-                  width: CHelperFunctions.screenWidth(),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'CONTACTS:',
-                        style: Theme.of(context).textTheme.labelSmall!.apply(),
-                      ),
-                      SelectableText(
-                        expense.recipientContact,
-                        style: Theme.of(context).textTheme.labelMedium!.apply(
-                          fontSizeFactor: 1.3,
-                          fontWeightDelta: -1,
-                        ),
-                      ),
-                      const SizedBox(
-                        height: CSizes.spaceBtnItems,
-                      ),
-                      Text(
-                        'TXN ID:',
-                        style: Theme.of(context).textTheme.labelSmall!.apply(),
-                      ),
-                      SelectableText(
-                        expense.expenseId.toString(),
-                        style: Theme.of(context).textTheme.labelMedium!.apply(
-                          fontSizeFactor: 1.3,
-                          fontWeightDelta: -1,
-                        ),
-                      ),
-                      const SizedBox(
-                        height: CSizes.spaceBtnItems,
-                      ),
-                      Text(
-                        'REFERENCE CODE:',
-                        style: Theme.of(context).textTheme.labelSmall!.apply(),
-                      ),
-                      SelectableText(
-                        expense.txnCode,
-                        style: Theme.of(context).textTheme.labelMedium!.apply(
-                          fontSizeFactor: 1.3,
-                          fontWeightDelta: -1,
-                        ),
-                      ),
-                      CDivider(
-                        endIndent: 0,
-                        startIndent: 0,
-                        thickness: .5,
-                      ),
-                    ],
                   ),
                 ),
               ],

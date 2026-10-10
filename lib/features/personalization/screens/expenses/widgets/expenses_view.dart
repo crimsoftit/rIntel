@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:rintel/common/widgets/custom_shapes/containers/rounded_container.dart';
+import 'package:rintel/common/widgets/dividers/c_divider.dart';
 import 'package:rintel/features/personalization/controllers/expenses_controller.dart';
 import 'package:rintel/features/personalization/controllers/user_controller.dart';
 import 'package:rintel/features/personalization/models/expense.dart';
@@ -86,13 +87,19 @@ class _CExpensesViewState extends State<CExpensesView> {
           }
 
           return CRoundedContainer(
-            bgColor: CColors.transparent,
+            bgColor: isDarkTheme
+                ? CColors.rBrown.withValues(
+                    alpha: .3,
+                  )
+                : CColors.rBrown.withValues(
+                    alpha: .1,
+                  ),
             height: CHelperFunctions.screenHeight() * .6,
             margin: const EdgeInsets.only(
               left: 15.0,
               right: 15.0,
             ),
-            child: ListView.builder(
+            child: ListView.separated(
               itemBuilder: (context, groupedIndex) {
                 String timestamp = groupedXpenses.keys.elementAt(groupedIndex);
                 List<CExpense> xpenses = groupedXpenses[timestamp]!;
@@ -111,19 +118,13 @@ class _CExpensesViewState extends State<CExpensesView> {
                     ),
 
                     // Inner ListView for contacts in this group
-                    ListView.separated(
+                    ListView.builder(
                       itemBuilder: ((context, index) {
                         return CKPIDisplayCard(
                           animeDigit: xpenses[index].amount..toStringAsFixed(2),
 
-                          bgColor: isDarkTheme
-                              ? CColors.rBrown.withValues(
-                                  alpha: .3,
-                                )
-                              : CColors.rBrown.withValues(
-                                  alpha: .1,
-                                ),
-                          borderRadius: 10.0,
+                          bgColor: CColors.transparent,
+                          borderRadius: 0.0,
                           leadingWidget: CircleAvatar(
                             backgroundColor:
                                 CHelperFunctions.randomAestheticColor(),
@@ -143,10 +144,10 @@ class _CExpensesViewState extends State<CExpensesView> {
                           //   color: CColors.rBrown,
                           //   size: CSizes.iconMd,
                           // ),
-                          margin: const EdgeInsets.only(
-                            bottom: 3.0,
-                            top: 3.0,
-                          ),
+                          // margin: const EdgeInsets.only(
+                          //   bottom: 3.0,
+                          //   top: 3.0,
+                          // ),
                           onCardTap: () {
                             Get.toNamed(
                               '/expenses/expense_details',
@@ -195,17 +196,19 @@ class _CExpensesViewState extends State<CExpensesView> {
                       itemCount: xpenses.length,
                       physics:
                           NeverScrollableScrollPhysics(), // Disables inner scrolling
-                      separatorBuilder: (context, index) {
-                        return const SizedBox(
-                          height: 2.0,
-                        );
-                      },
+
                       shrinkWrap: true, // Prevents overflow
                     ),
                   ],
                 );
               },
               itemCount: groupedXpenses.keys.length,
+              separatorBuilder: (context, index) {
+                return const SizedBox(
+                  //color: CColors.transparent,
+                  height: 1.0,
+                );
+              },
             ),
           );
 
