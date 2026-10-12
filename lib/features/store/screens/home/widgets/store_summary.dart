@@ -81,13 +81,6 @@ class CStoreSummary extends StatelessWidget {
                 ),
 
                 CStoreSummaryCard(
-                  iconData: Iconsax.money_time,
-                  subTitleTxt: 'credit($userCurrency)',
-
-                  titleTxt:
-                      '${txnsController.invoicesValue.value..toStringAsFixed(2)}',
-                ),
-                CStoreSummaryCard(
                   iconData: Iconsax.home,
                   // subTitleTxt: 'money collected($userCurrency)',
                   subTitleTxt: 'On the house',
@@ -95,14 +88,35 @@ class CStoreSummary extends StatelessWidget {
                     1,
                   ),
                 ),
+
+                CStoreSummaryCard(
+                  iconColor: invController.expiredItemsValue.value == 0
+                      ? Colors.green
+                      : CColors.error,
+                  iconData: invController.expiredItemsValue.value == 0
+                      ? Iconsax.tick_circle
+                      : Iconsax.danger,
+                  iconSize: invController.expiredItemsValue.value == 0
+                      ? CSizes.iconSm
+                      : CSizes.iconLg,
+                  subTitleTxt: 'expired items',
+                  subTitleTxtColor: invController.expiredItemsValue.value == 0
+                      ? Colors.green
+                      : CColors.error,
+                  titleTxt:
+                      '$userCurrency.${CFormatter.kSuffixFormatter(invController.expiredItemsValue.value..toStringAsFixed(1))}',
+                  titleTxtColor: invController.expiredItemsValue.value == 0
+                      ? Colors.green
+                      : CColors.error,
+                ),
               ],
             ),
 
             /// -- low-stock items, expired items, new customers --
-            CSummarySliderContent(
-              invController: invController,
-              userCurrency: userCurrency,
-            ),
+            // CSummarySliderContent(
+            //   invController: invController,
+            //   userCurrency: userCurrency,
+            // ),
           ],
           options: CarouselOptions(
             aspectRatio: 16 / 9,
@@ -137,51 +151,6 @@ class CSummarySliderContent extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        CStoreSummaryCard(
-          // cardBgColor: invController.lowStockItemsCount.value > 0
-          //     ? CColors.warning.withValues(
-          //         alpha: .1,
-          //       )
-          //     : CColors.white,
-          iconColor: invController.lowStockItemsCount.value > 0
-              ? CColors.warning
-              : Colors.green,
-          iconData: invController.lowStockItemsCount.value > 0
-              ? Iconsax.warning_2
-              : Iconsax.tick_circle,
-          subTitleTxt:
-              'low-stock items(${invController.lowStockItemsCount.value})',
-          subTitleTxtColor: invController.lowStockItemsCount.value > 0
-              ? CColors.warning
-              : Colors.green,
-          titleTxt: invController.lowStockItemsValue.value.toStringAsFixed(1),
-          titleTxtColor: invController.lowStockItemsCount.value > 0
-              ? CColors.warning
-              : Colors.green,
-          // titleTxt:
-          //     '$userCurrency.${invController.totalInventoryValue.value..toStringAsFixed(1)}',
-        ),
-
-        CStoreSummaryCard(
-          iconColor: invController.expiredItemsValue.value == 0
-              ? Colors.green
-              : CColors.error,
-          iconData: invController.expiredItemsValue.value == 0
-              ? Iconsax.tick_circle
-              : Iconsax.danger,
-          iconSize: invController.expiredItemsValue.value == 0
-              ? CSizes.iconSm
-              : CSizes.iconLg,
-          subTitleTxt: 'expired items',
-          subTitleTxtColor: invController.expiredItemsValue.value == 0
-              ? Colors.green
-              : CColors.error,
-          titleTxt:
-              '$userCurrency.${CFormatter.kSuffixFormatter(invController.expiredItemsValue.value..toStringAsFixed(1))}',
-          titleTxtColor: invController.expiredItemsValue.value == 0
-              ? Colors.green
-              : CColors.error,
-        ),
         CStoreSummaryCard(
           //iconColor: Colors.redAccent,
           iconData: Iconsax.user_add,

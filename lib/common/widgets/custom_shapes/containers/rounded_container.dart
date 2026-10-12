@@ -11,6 +11,7 @@ class CRoundedContainer extends StatelessWidget {
     this.borderColor = CColors.borderPrimary,
     this.boxShadow,
     this.child,
+    this.customBorderRadius,
     this.height,
     this.margin,
     this.padding,
@@ -19,6 +20,7 @@ class CRoundedContainer extends StatelessWidget {
   });
 
   final AlignmentGeometry? alignment;
+  final BorderRadius? customBorderRadius;
   final double? width;
   final double? height;
   final double borderRadius;
@@ -49,9 +51,11 @@ class CRoundedContainer extends StatelessWidget {
         //     ],
         boxShadow: boxShadow,
         color: bgColor,
-        borderRadius: BorderRadius.circular(
-          borderRadius,
-        ),
+        borderRadius:
+            customBorderRadius ??
+            BorderRadius.circular(
+              borderRadius,
+            ),
         border: showBorder
             ? Border.all(
                 color: borderColor,

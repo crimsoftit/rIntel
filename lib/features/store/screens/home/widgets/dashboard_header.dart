@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:rintel/common/widgets/appbar/app_bar.dart';
 import 'package:rintel/common/widgets/shimmers/shimmer_effects.dart';
 import 'package:rintel/features/personalization/controllers/user_controller.dart';
@@ -40,9 +41,12 @@ class DashboardHeaderWidget extends StatelessWidget {
                   child: Text(
                     //CTexts.homeAppbarTitle,
                     appBarTitle,
-                    style: Theme.of(
-                      context,
-                    ).textTheme.labelMedium!.apply(color: CColors.darkGrey),
+                    style:
+                        Theme.of(
+                          context,
+                        ).textTheme.labelMedium!.apply(
+                          color: CColors.darkGrey,
+                        ),
                   ),
                 )
               : SizedBox(),
@@ -51,20 +55,26 @@ class DashboardHeaderWidget extends StatelessWidget {
             if (isHomeScreen) {
               if (userController.profileLoading.value) {
                 // -- display a shimmer loader effect while loading user profile
-                return const CShimmerEffect(width: 80.0, height: 15.0);
+                return const CShimmerEffect(
+                  width: 80.0,
+                  height: 15.0,
+                );
               } else {
                 return Padding(
-                  padding: const EdgeInsets.only(bottom: 3.0),
-                  child: Text(
+                  padding: const EdgeInsets.only(
+                    bottom: 3.0,
+                  ),
+                  child: AutoSizeText(
                     userController.user.value.businessName == ''
                         ? userController.user.value.fullName
                         : userController.user.value.businessName,
-
+                    maxFontSize: 42.0,
+                    minFontSize: 20.0,
                     style: Theme.of(context).textTheme.labelLarge!.apply(
                       color: CNetworkManager.instance.hasConnection.value
                           ? CColors.rBrown
                           : CColors.darkGrey,
-                      fontFamily: 'Saira',
+
                       fontSizeFactor: 2.5,
                       fontWeightDelta: -7,
                       overflow: TextOverflow.ellipsis,

@@ -25,15 +25,15 @@ class CInvExpensesView extends StatelessWidget {
       ),
       child: CKPIDisplayCard(
         animeDigit: invController.totalInventoryValue.value..toStringAsFixed(2),
-
-        bgColor: isDarkTheme
-            ? CColors.rBrown.withValues(
-                alpha: .3,
-              )
-            : CColors.rBrown.withValues(
-                alpha: .1,
-              ),
-        borderRadius: 10.0,
+bgColor:  CColors.transparent,
+        // bgColor: isDarkTheme
+        //     ? CColors.rBrown.withValues(
+        //         alpha: .3,
+        //       )
+        //     : CColors.rBrown.withValues(
+        //         alpha: .1,
+        //       ),
+        //borderRadius: 10.0,
         leadingWidget: Icon(
           Icons.inventory,
           color: CColors.rBrown,

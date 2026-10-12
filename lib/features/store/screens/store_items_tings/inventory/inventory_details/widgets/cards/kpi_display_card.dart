@@ -12,6 +12,7 @@ class CKPIDisplayCard extends StatelessWidget {
     this.anotherTitleWidget,
     this.bgColor,
     this.borderRadius,
+    this.customBorderRadius,
     this.fractionDigits,
     this.leadingWidget,
     this.margin,
@@ -23,7 +24,7 @@ class CKPIDisplayCard extends StatelessWidget {
     this.titleWidget,
     this.width,
   });
-
+  final BorderRadius? customBorderRadius;
   final Color? bgColor;
   final double animeDigit;
   final double? borderRadius, width;
@@ -44,6 +45,7 @@ class CKPIDisplayCard extends StatelessWidget {
       child: CRoundedContainer(
         bgColor: bgColor ?? CColors.transparent,
         borderRadius: borderRadius ?? 20.0,
+        customBorderRadius: customBorderRadius,
         margin: margin,
         width: width ?? CHelperFunctions.screenWidth() * .88,
         child: ListTile(

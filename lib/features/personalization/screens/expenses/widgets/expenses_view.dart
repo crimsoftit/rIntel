@@ -86,14 +86,9 @@ class _CExpensesViewState extends State<CExpensesView> {
           }
 
           return CRoundedContainer(
-            bgColor: isDarkTheme
-                ? CColors.rBrown.withValues(
-                    alpha: .3,
-                  )
-                : CColors.rBrown.withValues(
-                    alpha: .1,
-                  ),
-            height: CHelperFunctions.screenHeight() * .6,
+            bgColor: CColors.transparent,
+            borderRadius: 10.0,
+            height: CHelperFunctions.screenHeight() * .605,
             margin: const EdgeInsets.only(
               left: 15.0,
               right: 15.0,
@@ -116,87 +111,107 @@ class _CExpensesViewState extends State<CExpensesView> {
                       ),
                     ),
 
-                    // Inner ListView for contacts in this group
-                    ListView.builder(
-                      itemBuilder: ((context, index) {
-                        return CKPIDisplayCard(
-                          animeDigit: xpenses[index].amount..toStringAsFixed(2),
+                    // Inner ListView for xpenses in this group
+                    CRoundedContainer(
+                      bgColor: isDarkTheme
+                          ? CColors.rBrown.withValues(
+                              alpha: .3,
+                            )
+                          : CColors.rBrown.withValues(
+                              alpha: .1,
+                            ),
+                      child: ListView.builder(
+                        itemBuilder: ((context, index) {
+                          return CKPIDisplayCard(
+                            animeDigit: xpenses[index].amount
+                              ..toStringAsFixed(2),
 
-                          bgColor: CColors.transparent,
-                          borderRadius: 0.0,
-                          leadingWidget: CircleAvatar(
-                            backgroundColor:
-                                CHelperFunctions.randomAestheticColor(),
-                            radius: 16.0,
-                            child: Text(
-                              xpenses[index].recipientName[0].toUpperCase(),
-                              style: Theme.of(context).textTheme.bodyLarge!
-                                  .apply(
-                                    //color: CColors.white,
-                                    color: CColors.white,
+                            bgColor: CColors.transparent,
+                            borderRadius: 0,
+                            // customBorderRadius: BorderRadius.only(
+                            //   topLeft: Radius.circular(
+                            //     10.0,
+                            //   ),
+                            //   topRight: Radius.circular(
+                            //     10.0,
+                            //   ),
+                            // ),
+                            leadingWidget: CircleAvatar(
+                              backgroundColor:
+                                  CHelperFunctions.randomAestheticColor(),
+                              radius: 16.0,
+                              child: Text(
+                                xpenses[index].recipientName[0].toUpperCase(),
+                                style: Theme.of(context).textTheme.bodyLarge!
+                                    .apply(
+                                      //color: CColors.white,
+                                      color: CColors.white,
+                                    ),
+                              ),
+                            ),
+
+                            // Icon(
+                            //   Iconsax.money_send,
+                            //   color: CColors.rBrown,
+                            //   size: CSizes.iconMd,
+                            // ),
+                            // margin: const EdgeInsets.only(
+                            //   bottom: 3.0,
+                            //   top: 3.0,
+                            // ),
+                            onCardTap: () {
+                              Get.toNamed(
+                                '/expenses/expense_details',
+                                arguments: xpenses[index],
+                              );
+                            },
+                            prefixLabel: userCurrency,
+                            subTitleTxt: xpenses[index].recipientName,
+
+                            trailingWidget: Padding(
+                              padding: const EdgeInsets.only(
+                                top: 15.0,
+                              ),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.end,
+                                children: [
+                                  Text(
+                                    xpenses[index].recipientContact,
+                                    style:
+                                        Theme.of(
+                                          context,
+                                        ).textTheme.labelMedium!.apply(
+                                          fontSizeFactor: 1.2,
+                                        ),
                                   ),
-                            ),
-                          ),
-
-                          // Icon(
-                          //   Iconsax.money_send,
-                          //   color: CColors.rBrown,
-                          //   size: CSizes.iconMd,
-                          // ),
-                          // margin: const EdgeInsets.only(
-                          //   bottom: 3.0,
-                          //   top: 3.0,
-                          // ),
-                          onCardTap: () {
-                            Get.toNamed(
-                              '/expenses/expense_details',
-                              arguments: xpenses[index],
-                            );
-                          },
-                          prefixLabel: userCurrency,
-                          subTitleTxt: xpenses[index].recipientName,
-
-                          trailingWidget: Padding(
-                            padding: const EdgeInsets.only(
-                              top: 15.0,
-                            ),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.end,
-                              children: [
-                                Text(
-                                  xpenses[index].recipientContact,
-                                  style:
-                                      Theme.of(
-                                        context,
-                                      ).textTheme.labelMedium!.apply(
-                                        fontSizeFactor: 1.2,
-                                      ),
-                                ),
-                                const SizedBox(
-                                  height: CSizes.spaceBtnInputFields / 4,
-                                ),
-                                Text(
-                                  CFormatter.getOnlyTime(
-                                    DateTime.parse(xpenses[index].dateAdded),
+                                  const SizedBox(
+                                    height: CSizes.spaceBtnInputFields / 4,
                                   ),
-                                  style: Theme.of(context).textTheme.labelSmall!
-                                      .apply(
-                                        color: CColors.darkGrey,
-                                        fontStyle: FontStyle.italic,
-                                      ),
-                                ),
-                              ],
+                                  Text(
+                                    CFormatter.getOnlyTime(
+                                      DateTime.parse(xpenses[index].dateAdded),
+                                    ),
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .labelSmall!
+                                        .apply(
+                                          color: CColors.darkGrey,
+                                          fontStyle: FontStyle.italic,
+                                        ),
+                                  ),
+                                ],
+                              ),
                             ),
-                          ),
 
-                          width: CHelperFunctions.screenWidth() * .92,
-                        );
-                      }),
-                      itemCount: xpenses.length,
-                      physics:
-                          NeverScrollableScrollPhysics(), // Disables inner scrolling
+                            width: CHelperFunctions.screenWidth() * .92,
+                          );
+                        }),
+                        itemCount: xpenses.length,
+                        physics:
+                            NeverScrollableScrollPhysics(), // Disables inner scrolling
 
-                      shrinkWrap: true, // Prevents overflow
+                        shrinkWrap: true, // Prevents overflow
+                      ),
                     ),
                   ],
                 );

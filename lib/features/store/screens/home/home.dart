@@ -167,12 +167,55 @@ class HomeScreen extends StatelessWidget {
                               height: CSizes.defaultSpace / 6,
                             ),
 
-                            CStoreSummaryCard(
-                              iconData: Iconsax.money_send,
-                              subTitleTxt: 'Expenses($userCurrency)',
-                              titleTxt: CFormatter.kSuffixFormatter(
-                                txnsController.tExpenses.value,
-                              ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                CStoreSummaryCard(
+                                  iconData: Iconsax.money_send,
+                                  subTitleTxt: 'Expenses($userCurrency)',
+                                  titleTxt: CFormatter.kSuffixFormatter(
+                                    txnsController.tExpenses.value,
+                                  ),
+                                ),
+                                CStoreSummaryCard(
+                                  iconData: Iconsax.money_time,
+                                  subTitleTxt: 'credit($userCurrency)',
+
+                                  titleTxt:
+                                      '${txnsController.invoicesValue.value..toStringAsFixed(2)}',
+                                ),
+                                CStoreSummaryCard(
+                                  // cardBgColor: invController.lowStockItemsCount.value > 0
+                                  //     ? CColors.warning.withValues(
+                                  //         alpha: .1,
+                                  //       )
+                                  //     : CColors.white,
+                                  iconColor:
+                                      invController.lowStockItemsCount.value > 0
+                                      ? CColors.warning
+                                      : Colors.green,
+                                  iconData:
+                                      invController.lowStockItemsCount.value > 0
+                                      ? Iconsax.warning_2
+                                      : Iconsax.tick_circle,
+                                  subTitleTxt:
+                                      'low-stock items(${invController.lowStockItemsCount.value})',
+                                  subTitleTxtColor:
+                                      invController.lowStockItemsCount.value > 0
+                                      ? CColors.warning
+                                      : Colors.green,
+                                  titleTxt: invController
+                                      .lowStockItemsValue
+                                      .value
+                                      .toStringAsFixed(1),
+                                  titleTxtColor:
+                                      invController.lowStockItemsCount.value > 0
+                                      ? CColors.warning
+                                      : Colors.green,
+                                  // titleTxt:
+                                  //     '$userCurrency.${invController.totalInventoryValue.value..toStringAsFixed(1)}',
+                                ),
+                              ],
                             ),
 
                             /// -- top sellers --
