@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:rintel/common/widgets/custom_shapes/containers/rounded_container.dart';
-import 'package:rintel/common/widgets/dividers/c_divider.dart';
 import 'package:rintel/features/personalization/controllers/expenses_controller.dart';
 import 'package:rintel/features/personalization/controllers/user_controller.dart';
 import 'package:rintel/features/personalization/models/expense.dart';

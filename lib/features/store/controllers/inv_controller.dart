@@ -14,7 +14,6 @@ import 'package:rintel/features/store/screens/store_items_tings/inventory/widget
 import 'package:rintel/utils/constants/colors.dart';
 import 'package:rintel/utils/constants/sizes.dart';
 import 'package:rintel/utils/db/sqflite/db_helper.dart';
-import 'package:rintel/utils/helpers/alerts_tracker/daily_notifications_tracker.dart';
 import 'package:rintel/utils/helpers/formatter.dart';
 import 'package:rintel/utils/helpers/helper_functions.dart';
 import 'package:rintel/utils/helpers/network_manager.dart';
@@ -109,7 +108,7 @@ class CInventoryController extends GetxController {
   final txtSupplierContacts = TextEditingController();
   final txtSyncAction = TextEditingController();
 
-  final txtQtySold = TextEditingController();
+  //final txtQtySold = TextEditingController();
 
   final addInvItemFormKey = GlobalKey<FormState>();
 
@@ -117,10 +116,6 @@ class CInventoryController extends GetxController {
   final syncIsLoading = false.obs;
 
   final storeRepo = Get.put(CStoreRepo());
-
-  // -- expiry manenozz --
-  final RxInt alertsCount = 0.obs;
-  final RxString expiryAlertTimestamp = ''.obs;
 
   @override
   void onInit() async {
@@ -136,11 +131,11 @@ class CInventoryController extends GetxController {
 
     localStorage.writeIfNull(
       'alerts_counter',
-      alertsCount.value,
+      0,
     );
     localStorage.writeIfNull(
       'timestamp',
-      expiryAlertTimestamp.value,
+      '',
     );
 
     sheduleExpiryNotifications();
@@ -797,7 +792,7 @@ class CInventoryController extends GetxController {
         ).format(clock.now());
         inventoryItem.expiryDate = txtExpiryDatePicker.text.trim();
 
-        inventoryItem.qtySold = double.parse(txtQtySold.text.trim());
+        //inventoryItem.qtySold = double.parse(txtQtySold.text.trim());
 
         if (itemExists.value) {
           await updateInventoryItem(inventoryItem).then(
@@ -1588,76 +1583,77 @@ class CInventoryController extends GetxController {
         },
       ).toList();
 
-      int? aCount = localStorage.read<int>('alerts_counter');
-      if (itemsNearingExpiry.isNotEmpty && aCount! <= 3) {
+      if (itemsNearingExpiry.isNotEmpty) {
         for (var item in itemsNearingExpiry) {
-          var alertBody =
-              '${item.name.toUpperCase()} expires ${CFormatter.formatTimeRangeFromNow(
-                item.expiryDate.replaceAll(
-                  '@ ',
-                  '',
-                ),
-              )}!';
-          var alertId = await notificationsController.generateNotificationId();
-          var alertTitle = 'Expiry alert!';
+          notificationsController.fetchUserNotifications().then(
+            (notifications) async {
+              var thisItemsTodayAlerts = notificationsController
+                  .allNotifications
+                  .where(
+                    (thisAlert) {
+                      return thisAlert.productId == item.productId &&
+                          thisAlert.notificationTitle.toLowerCase().contains(
+                            'expiry alert',
+                          ) &&
+                          thisAlert.date
+                              .replaceAll(
+                                '@ ',
+                                '',
+                              )
+                              .contains(
+                                DateFormat('yyyy-MM-dd').format(clock.now()),
+                              );
+                    },
+                  );
 
-          var payloadData = {
-            'date': DateFormat(
-              'yyyy-MM-dd @ kk:mm',
-            ).format(clock.now()),
-            'notification_body': alertBody,
-            'notification_id': alertId.toString(),
-            'notification_title': alertTitle,
+              if (thisItemsTodayAlerts.length <= 2) {
+                var alertBody =
+                    '${item.name.toUpperCase()} expires ${CFormatter.formatTimeRangeFromNow(
+                      item.expiryDate.replaceAll(
+                        '@ ',
+                        '',
+                      ),
+                    )}!';
+                var alertId = await notificationsController
+                    .generateNotificationId();
+                var alertTitle = 'Expiry alert!';
 
-            'product_id': item.productId,
-          };
+                var payloadData = {
+                  'date': DateFormat(
+                    'yyyy-MM-dd @ kk:mm',
+                  ).format(clock.now()),
+                  'notification_body': alertBody,
+                  'notification_id': alertId.toString(),
+                  'notification_title': alertTitle,
 
-          // -- display basic notification first --
-          CLocalNotificationsController.displaySimpleAlert(
-            body: alertBody,
-            title: alertTitle,
-            payload: jsonEncode(payloadData),
-          );
+                  'product_id': item.productId,
+                };
 
-          expiryAlertTimestamp.value = DateFormat(
-            'yyyy-MM-dd',
-          ).format(clock.now());
+                // -- display basic notification first --
+                CLocalNotificationsController.displaySimpleAlert(
+                  body: alertBody,
+                  title: alertTitle,
+                  payload: jsonEncode(payloadData),
+                );
 
-          if (expiryAlertTimestamp.value ==
-                  DateFormat('yyyy-MM-dd').format(clock.now()) &&
-              alertsCount.value < 3) {
-            alertsCount.value += 1;
-          } else {
-            alertsCount.value = 1;
-          }
+                var notificationItem = CNotificationsModel(
+                  alertId,
+                  alertTitle,
+                  alertBody,
+                  0,
+                  item.productId,
+                  userController.user.value.email,
+                  DateFormat('yyyy-MM-dd @ kk:mm').format(clock.now()),
+                );
 
-          localStorage.write(
-            'alerts_counter',
-            alertsCount.value,
-          );
-          localStorage.write(
-            'timestamp',
-            expiryAlertTimestamp.value,
-          );
-
-          var notificationItem = CNotificationsModel(
-            alertId,
-            alertTitle,
-            alertBody,
-            0,
-            item.productId,
-            userController.user.value.email,
-            DateFormat('yyyy-MM-dd @ kk:mm').format(clock.now()),
-          );
-
-          // -- insert notification item into sqflite db --
-          await DbHelper.instance.addNotificationItem(
-            notificationItem,
+                // -- insert notification item into sqflite db --
+                await DbHelper.instance.addNotificationItem(
+                  notificationItem,
+                );
+              }
+            },
           );
         }
-
-        // -- track the trigger --
-        CDailyNotificationsTracker.onAlertTriggered();
       }
     } catch (e) {
       if (kDebugMode) {
@@ -1686,7 +1682,7 @@ class CInventoryController extends GetxController {
     txtCode.clear();
     txtContactCountryPicker.clear();
     txtQty.clear();
-    txtQtySold.clear();
+    //txtQtySold.clear();
     txtBP.clear();
     unitBP.value = 0.0;
     txtUnitSP.clear();
@@ -1708,7 +1704,7 @@ class CInventoryController extends GetxController {
     txtId.dispose();
     txtNameController.dispose();
     txtQty.dispose();
-    txtQtySold.dispose();
+    //txtQtySold.dispose();
     txtStockNotifierLimit.dispose();
     txtSupplierContacts.dispose();
     txtSupplierName.dispose();

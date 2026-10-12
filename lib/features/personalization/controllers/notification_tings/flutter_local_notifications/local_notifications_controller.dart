@@ -262,7 +262,6 @@ class CLocalNotificationsController extends GetxController {
     if (triggerDate.isBefore(DateTime.now())) {
       if (kDebugMode) {
         CPopupSnackBar.warningSnackBar(
-          
           title: 'expiry date reached..',
           message: 'expiry reminder date is in the past.',
         );
@@ -358,7 +357,6 @@ class CLocalNotificationsController extends GetxController {
     } catch (e) {
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
-          
           title: 'error handling notification tap!',
           message: 'error handling notification tap: $e',
         );
@@ -413,13 +411,11 @@ class CLocalNotificationsController extends GetxController {
 
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
-          
           message: 'Error fetching user notifications: $e',
           title: 'Oh Snap! Error fetching user notifications',
         );
       } else {
         CPopupSnackBar.errorSnackBar(
-          
           message:
               'An unknown error occurred while fetching user notifications! Please try again later...',
           title: 'Oh Snap! Error fetching user notifications',
@@ -470,13 +466,11 @@ class CLocalNotificationsController extends GetxController {
       isLoading.value = false;
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
-          
           title: 'error deleting notification!',
           message: e.toString(),
         );
       } else {
         CPopupSnackBar.errorSnackBar(
-          
           title: 'error deleting notification!',
           message:
               'an unknown error occurred while deleting this notification... please try again later!',
@@ -566,7 +560,6 @@ class CLocalNotificationsController extends GetxController {
       isLoading.value = false;
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
-          
           message: 'error updating notifications read status: $e',
           title: 'error updating unread notifications!',
         );
