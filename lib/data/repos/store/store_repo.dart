@@ -290,12 +290,12 @@ class CStoreRepo extends GetxController {
     } catch (e) {
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
-          title: "inventory item delete error!",
+          title: "inventory item cloud delete error!",
           message: e.toString(),
         );
       } else {
         CPopupSnackBar.errorSnackBar(
-          title: "inventory item delete error!",
+          title: "inventory item cloud delete error!",
           message:
               'An unknown error occurred while deleting cloud inventory data! Please try again later...',
         );

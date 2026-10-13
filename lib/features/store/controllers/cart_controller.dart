@@ -42,10 +42,6 @@ class CCartController extends GetxController {
 
   final discountFieldController = TextEditingController();
 
-  // CCartController() {
-  //   fetchCartItems();
-  // }
-
   @override
   void onInit() async {
     cartItemsLoading.value = false;

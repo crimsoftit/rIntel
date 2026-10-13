@@ -132,16 +132,17 @@ class CPopupSnackBar extends GetxController {
                   style: Theme.of(Get.overlayContext!).textTheme.titleMedium!
                       .apply(
                         color: CColors.white,
-                        fontFamily: 'Signika',
                       ),
+                ),
+                const SizedBox(
+                  height: CSizes.spaceBtnInputFields * .3,
                 ),
                 Text(
                   message,
                   style: Theme.of(Get.overlayContext!).textTheme.labelMedium!
                       .apply(
                         color: CColors.white,
-                        fontFamily: 'Saira',
-                        fontStyle: FontStyle.italic,
+                        //fontStyle: FontStyle.italic,
                       ),
                 ),
               ],
@@ -276,6 +277,7 @@ class CPopupSnackBar extends GetxController {
   }
 
   static void errorSnackBar({
+    Duration? duration,
     required String title,
     String message = '',
   }) {
@@ -314,9 +316,11 @@ class CPopupSnackBar extends GetxController {
           ],
         ),
         backgroundColor: Colors.red.shade600,
-        duration: const Duration(
-          seconds: 4,
-        ),
+        duration:
+            duration ??
+            const Duration(
+              seconds: 4,
+            ),
         behavior: SnackBarBehavior.floating,
         margin: const EdgeInsets.all(
           20.0,

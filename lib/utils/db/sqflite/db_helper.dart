@@ -6,7 +6,6 @@ import 'package:rintel/features/store/models/best_sellers_model.dart';
 import 'package:rintel/features/store/models/inv_model.dart';
 import 'package:rintel/features/store/models/txns/sold_item_model.dart';
 import 'package:rintel/features/store/models/txns/txn_model.dart';
-import 'package:rintel/features/store/models/txns_model.dart';
 import 'package:rintel/utils/helpers/helper_functions.dart';
 import 'package:rintel/utils/popups/snackbars.dart';
 import 'package:clock/clock.dart';
@@ -34,7 +33,6 @@ class DbHelper extends GetxController {
 
   final invTable = 'inventory';
   final notificationsTable = 'notifications';
-  final salesDelsForSyncTable = 'salesDelsForSyncTable';
   final txnsTable = 'txns';
 
   static final DbHelper _dbHelper = DbHelper._internal();
@@ -45,17 +43,20 @@ class DbHelper extends GetxController {
   }
 
   // 1. Enable Foreign Keys
-  Future _onConfigure(Database db) async {
-    await db.execute('PRAGMA foreign_keys = ON');
-  }
+  // Future _onConfigure(Database db) async {
+  //   await db.execute('PRAGMA foreign_keys = ON');
+  // }
 
   Future<Database> openDb() async {
     if (_db != null) {
       return _db!;
     }
     _db = await openDatabase(
-      join(await getDatabasesPath(), 'stock.db'),
-      onConfigure: _onConfigure,
+      join(
+        await getDatabasesPath(),
+        'stock.db',
+      ),
+      //onConfigure: _onConfigure,
       onCreate: (database, version) {
         database.execute('''
           CREATE TABLE IF NOT EXISTS $invTable (
@@ -116,43 +117,42 @@ class DbHelper extends GetxController {
             unitBP REAL NOT NULL,
             unitSellingPrice REAL NOT NULL,
             userEmail TEXT NOT NULL,
-            FOREIGN KEY(productId) REFERENCES inventory(productId) ON DELETE CASCADE,
-            FOREIGN KEY(txnId) REFERENCES sales(txnId) ON DELETE CASCADE
+            FOREIGN KEY(txnId) REFERENCES sales(txnId)
             )          
           ''');
 
-        database.execute('''
-          CREATE TABLE IF NOT EXISTS $txnsTable(
-            soldItemId INTEGER PRIMARY KEY AUTOINCREMENT,
-            txnId INTEGER NOT NULL,
-            userId TEXT NOT NULL,
-            userEmail TEXT NOT NULL,
-            userName TEXT NOT NULL,
-            productId INTEGER NOT NULL,
-            productCode LONGTEXT NOT NULL,
-            productName TEXT NOT NULL,
-            itemMetrics TEXT NOT NULL,
-            quantity REAL NOT NULL,
-            qtyRefunded REAL NOT NULL,
-            refundReason TEXT NOT NULL,
-            totalAmount  REAL NOT NULL,
-            amountIssued REAL NOT NULL,
-            customerBalance REAL NOT NULL,
-            unitBP REAL NOT NULL,
-            unitSellingPrice REAL NOT NULL,
-            discount REAL NOT NULL,
-            paymentMethod TEXT NOT NULL,
-            customerName TEXT,
-            customerContacts TEXT,
-            txnAddress LONGTEXT,
-            txnAddressCoordinates LONGTEXT,
-            lastModified TEXT NOT NULL,
-            isSynced INTEGER NOT NULL,
-            syncAction TEXT NOT NULL,
-            txnStatus TEXT NOT NULL,
-            FOREIGN KEY(productId) REFERENCES inventory(productId)
-            )
-          ''');
+        // database.execute('''
+        //   CREATE TABLE IF NOT EXISTS $txnsTable(
+        //     soldItemId INTEGER PRIMARY KEY AUTOINCREMENT,
+        //     txnId INTEGER NOT NULL,
+        //     userId TEXT NOT NULL,
+        //     userEmail TEXT NOT NULL,
+        //     userName TEXT NOT NULL,
+        //     productId INTEGER NOT NULL,
+        //     productCode LONGTEXT NOT NULL,
+        //     productName TEXT NOT NULL,
+        //     itemMetrics TEXT NOT NULL,
+        //     quantity REAL NOT NULL,
+        //     qtyRefunded REAL NOT NULL,
+        //     refundReason TEXT NOT NULL,
+        //     totalAmount  REAL NOT NULL,
+        //     amountIssued REAL NOT NULL,
+        //     customerBalance REAL NOT NULL,
+        //     unitBP REAL NOT NULL,
+        //     unitSellingPrice REAL NOT NULL,
+        //     discount REAL NOT NULL,
+        //     paymentMethod TEXT NOT NULL,
+        //     customerName TEXT,
+        //     customerContacts TEXT,
+        //     txnAddress LONGTEXT,
+        //     txnAddressCoordinates LONGTEXT,
+        //     lastModified TEXT NOT NULL,
+        //     isSynced INTEGER NOT NULL,
+        //     syncAction TEXT NOT NULL,
+        //     txnStatus TEXT NOT NULL,
+        //     FOREIGN KEY(productId) REFERENCES inventory(productId)
+        //     )
+        //   ''');
 
         // -- create contacts table --
         database.execute('''
@@ -237,9 +237,6 @@ class DbHelper extends GetxController {
     );
 
     await _db!.execute('INSERT INTO $invTable VALUES ($invItem)');
-    await _db!.execute(
-      'INSERT INTO $txnsTable VALUES (0, "as23df45", "sindani254@gmail.com", "Manu", "143d", "apples", 10, 13, 15, 10.0, "Cash", "2/1/2022")',
-    );
 
     var alertItem = CNotificationsModel(
       0,
@@ -489,12 +486,18 @@ class DbHelper extends GetxController {
     } catch (e) {
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
+          duration: Duration(
+            seconds: 10,
+          ),
           message:
               'An unknown error occurred while deleting inventory item: $e',
           title: 'error deleting inventory item',
         );
       } else {
         CPopupSnackBar.errorSnackBar(
+          duration: Duration(
+            seconds: 10,
+          ),
           message: 'An unknown error occurred while deleting inventory item',
           title: 'error deleting inventory item',
         );
@@ -893,104 +896,104 @@ class DbHelper extends GetxController {
   }
 
   /// -- fetch sold items --
-  Future<List<CTxnsModel>> fetchUserSoldItems(String email) async {
-    try {
-      final transactions = await _db!.rawQuery(
-        'SELECT * from $txnsTable where userEmail = ? ORDER BY soldItemId DESC',
-        [email],
-      );
+  // Future<List<CTxnsModel>> fetchUserSoldItems(String email) async {
+  //   try {
+  //     final transactions = await _db!.rawQuery(
+  //       'SELECT * from $txnsTable where userEmail = ? ORDER BY soldItemId DESC',
+  //       [email],
+  //     );
 
-      if (transactions.isEmpty) {
-        return [];
-      }
+  //     if (transactions.isEmpty) {
+  //       return [];
+  //     }
 
-      // Convert the List<Map<String, dynamic> into a List<CTxnsModel>.
-      return transactions
-          .map((json) => CTxnsModel.fromMapObject(json))
-          .toList();
-    } on DatabaseException catch (e) {
-      if (kDebugMode) {
-        CPopupSnackBar.errorSnackBar(
-          title: 'database error fetching user\'s sold items',
-          message: e.toString(),
-        );
-      } else {
-        CPopupSnackBar.errorSnackBar(
-          title: 'database error fetching user\'s sold items',
-          message:
-              'An unknown database error occurred while fetching user\'s sold items!',
-        );
-      }
-      return [];
-    } catch (e) {
-      if (kDebugMode) {
-        CPopupSnackBar.errorSnackBar(
-          title: 'error fetching user\'s sold items',
-          message: e.toString(),
-        );
-      } else {
-        CPopupSnackBar.errorSnackBar(
-          title: 'error fetching user\'s sold items',
-          message:
-              'An unknown error occurred while fetching user\'s sold items!',
-        );
-      }
-      rethrow;
-    } finally {
-      // Close the database if necessary
-      //await _db?.close();
-    }
-  }
+  //     // Convert the List<Map<String, dynamic> into a List<CTxnsModel>.
+  //     return transactions
+  //         .map((json) => CTxnsModel.fromMapObject(json))
+  //         .toList();
+  //   } on DatabaseException catch (e) {
+  //     if (kDebugMode) {
+  //       CPopupSnackBar.errorSnackBar(
+  //         title: 'database error fetching user\'s sold items',
+  //         message: e.toString(),
+  //       );
+  //     } else {
+  //       CPopupSnackBar.errorSnackBar(
+  //         title: 'database error fetching user\'s sold items',
+  //         message:
+  //             'An unknown database error occurred while fetching user\'s sold items!',
+  //       );
+  //     }
+  //     return [];
+  //   } catch (e) {
+  //     if (kDebugMode) {
+  //       CPopupSnackBar.errorSnackBar(
+  //         title: 'error fetching user\'s sold items',
+  //         message: e.toString(),
+  //       );
+  //     } else {
+  //       CPopupSnackBar.errorSnackBar(
+  //         title: 'error fetching user\'s sold items',
+  //         message:
+  //             'An unknown error occurred while fetching user\'s sold items!',
+  //       );
+  //     }
+  //     rethrow;
+  //   } finally {
+  //     // Close the database if necessary
+  //     //await _db?.close();
+  //   }
+  // }
 
   /// -- fetch transactions --
-  Future<List<CTxnsModel>> fetchSoldItemsGroupedByTxnId(String email) async {
-    try {
-      final transactions = await _db!.rawQuery(
-        'SELECT * from $txnsTable where userEmail = ? GROUP BY txnId ORDER BY lastModified DESC',
-        [email],
-      );
+  // Future<List<CTxnsModel>> fetchSoldItemsGroupedByTxnId(String email) async {
+  //   try {
+  //     final transactions = await _db!.rawQuery(
+  //       'SELECT * from $txnsTable where userEmail = ? GROUP BY txnId ORDER BY lastModified DESC',
+  //       [email],
+  //     );
 
-      if (transactions.isEmpty) {
-        return [];
-      }
+  //     if (transactions.isEmpty) {
+  //       return [];
+  //     }
 
-      // Convert the List<Map<String, dynamic> into a List<CTxnsModel>.
-      return transactions
-          .map((json) => CTxnsModel.fromMapObject(json))
-          .toList();
-    } on DatabaseException catch (e) {
-      if (kDebugMode) {
-        CPopupSnackBar.errorSnackBar(
-          title: 'database error fetching user\'s sold items by txn id',
-          message: e.toString(),
-        );
-      } else {
-        CPopupSnackBar.errorSnackBar(
-          title: 'database error fetching user\'s sold items by txn id',
-          message:
-              'An unknown database error occurred while fetching user\'s sold items by txn id!',
-        );
-      }
-      return [];
-    } catch (e) {
-      if (kDebugMode) {
-        CPopupSnackBar.errorSnackBar(
-          title: 'error fetching user\'s sold items by txn id',
-          message: e.toString(),
-        );
-      } else {
-        CPopupSnackBar.errorSnackBar(
-          title: 'error fetching user\'s sold items by txn id',
-          message:
-              'An unknown error occurred while fetching user\'s sold items by txn id!',
-        );
-      }
-      rethrow;
-    } finally {
-      // Close the database if necessary
-      //await _db?.close();
-    }
-  }
+  //     // Convert the List<Map<String, dynamic> into a List<CTxnsModel>.
+  //     return transactions
+  //         .map((json) => CTxnsModel.fromMapObject(json))
+  //         .toList();
+  //   } on DatabaseException catch (e) {
+  //     if (kDebugMode) {
+  //       CPopupSnackBar.errorSnackBar(
+  //         title: 'database error fetching user\'s sold items by txn id',
+  //         message: e.toString(),
+  //       );
+  //     } else {
+  //       CPopupSnackBar.errorSnackBar(
+  //         title: 'database error fetching user\'s sold items by txn id',
+  //         message:
+  //             'An unknown database error occurred while fetching user\'s sold items by txn id!',
+  //       );
+  //     }
+  //     return [];
+  //   } catch (e) {
+  //     if (kDebugMode) {
+  //       CPopupSnackBar.errorSnackBar(
+  //         title: 'error fetching user\'s sold items by txn id',
+  //         message: e.toString(),
+  //       );
+  //     } else {
+  //       CPopupSnackBar.errorSnackBar(
+  //         title: 'error fetching user\'s sold items by txn id',
+  //         message:
+  //             'An unknown error occurred while fetching user\'s sold items by txn id!',
+  //       );
+  //     }
+  //     rethrow;
+  //   } finally {
+  //     // Close the database if necessary
+  //     //await _db?.close();
+  //   }
+  // }
 
   /// -- defines a function to update a receipt/sold item --
   Future<int> updateParentTxnDetails(CTxn txn) async {
@@ -1016,39 +1019,39 @@ class DbHelper extends GetxController {
     }
   }
 
-  Future<int> updateTxnItemsSyncStatus(
-    int syncStatus,
-    String sAction,
-    int soldItemId,
-  ) async {
-    try {
-      int updateResult = await _db!.rawUpdate(
-        '''
-          UPDATE $txnsTable 
-          SET isSynced = ?, syncAction = ? 
-          WHERE soldItemId = ?
-        ''',
-        [syncStatus, sAction, soldItemId],
-      );
+  // Future<int> updateTxnItemsSyncStatus(
+  //   int syncStatus,
+  //   String sAction,
+  //   int soldItemId,
+  // ) async {
+  //   try {
+  //     int updateResult = await _db!.rawUpdate(
+  //       '''
+  //         UPDATE $txnsTable
+  //         SET isSynced = ?, syncAction = ?
+  //         WHERE soldItemId = ?
+  //       ''',
+  //       [syncStatus, sAction, soldItemId],
+  //     );
 
-      return updateResult;
-    } catch (e) {
-      if (kDebugMode) {
-        CPopupSnackBar.errorSnackBar(
-          title: 'txn sync error!',
-          message: 'error updating txns SYNC LOCALLY: $e',
-        );
-      } else {
-        CPopupSnackBar.errorSnackBar(
-          title: 'txn sync error!',
-          message:
-              'an unknown error occurred while updating txns SYNC LOCALLY: $e',
-        );
-      }
+  //     return updateResult;
+  //   } catch (e) {
+  //     if (kDebugMode) {
+  //       CPopupSnackBar.errorSnackBar(
+  //         title: 'txn sync error!',
+  //         message: 'error updating txns SYNC LOCALLY: $e',
+  //       );
+  //     } else {
+  //       CPopupSnackBar.errorSnackBar(
+  //         title: 'txn sync error!',
+  //         message:
+  //             'an unknown error occurred while updating txns SYNC LOCALLY: $e',
+  //       );
+  //     }
 
-      rethrow;
-    }
-  }
+  //     rethrow;
+  //   }
+  // }
 
   /// --- ### CRUD OPERATIONS ON NOTIFICATIONS TABLE ### ---
 

@@ -600,44 +600,6 @@ class CInventoryController extends GetxController {
       // -- start loader
       isLoading.value = true;
 
-      // -- check if item is in cart and remove it first --
-      int forDeleteCartItemIndex = cartController.cartItems.indexWhere(
-        (uCartItem) => uCartItem.productId == inventoryItem.productId,
-      );
-
-      if (kDebugMode) {
-        CPopupSnackBar.customToast(
-          message: '$forDeleteCartItemIndex',
-          forInternetConnectivityStatus: false,
-        );
-      }
-
-      if (forDeleteCartItemIndex >= 0) {
-        cartController.cartItems.clear();
-        cartController.updateCart();
-      }
-
-      // -- delete entry
-      await dbHelper.deleteInventoryItem(inventoryItem).then(
-        (result) {
-          if (result >= 1) {
-            storeRepo.deleteInventoryCloudData(
-              inventoryItem.productId.toString(),
-            );
-          }
-        },
-      );
-
-      // -- refresh inventory list
-      fetchUserInventoryItems();
-
-      searchController.txtSearchField.text = '';
-
-      // -- success message
-      // CPopupSnackBar.successSnackBar(
-      //   title: 'delete success',
-      //   message: '${inventoryItem.name} deleted successfully...',
-      // );
       // -- stop loader
       isLoading.value = false;
     } catch (e) {
@@ -646,13 +608,19 @@ class CInventoryController extends GetxController {
 
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
-          title: 'error deleting data',
+          duration: const Duration(
+            seconds: 10,
+          ),
           message: e.toString(),
+          title: 'error deleting data',
         );
       } else {
         CPopupSnackBar.errorSnackBar(
-          title: 'error deleting data',
+          duration: const Duration(
+            seconds: 10,
+          ),
           message: 'unable to delete this item... please try again later!',
+          title: 'error deleting data',
         );
       }
 
@@ -861,23 +829,54 @@ class CInventoryController extends GetxController {
     CInventoryModel inventoryItem,
   ) async {
     Get.defaultDialog(
-      contentPadding: const EdgeInsets.all(CSizes.md),
+      contentPadding: const EdgeInsets.all(
+        CSizes.md,
+      ),
       title: 'Permanently delete ${inventoryItem.name}?',
       middleText:
           'Are you certain you want to permanently delete this item? THIS ACTION CAN\'T BE UNDONE!',
       confirm: ElevatedButton(
         onPressed: () async {
-          await deleteInventoryItem(inventoryItem);
+          cartController.cartItems.clear();
+
+          // -- delete entry
+          await dbHelper.deleteInventoryItem(inventoryItem).then(
+            (result) {
+              if (result >= 1) {
+                storeRepo.deleteInventoryCloudData(
+                  inventoryItem.productId.toString(),
+                );
+              }
+            },
+          );
+
+          // -- refresh inventory list
+          await fetchUserInventoryItems();
 
           Navigator.of(Get.overlayContext!).pop();
+
+          searchController.txtSearchField.clear();
+
+          // -- success message --
+          CPopupSnackBar.successSnackBar(
+            message:
+                '${inventoryItem.name.toUpperCase()} deleted successfully...',
+            title: 'delete success',
+          );
         },
         style: ElevatedButton.styleFrom(
           backgroundColor: Colors.red,
-          side: const BorderSide(color: Colors.red),
+          side: const BorderSide(
+            color: Colors.red,
+          ),
         ),
         child: const Padding(
-          padding: EdgeInsets.symmetric(horizontal: CSizes.lg),
-          child: Text('delete'),
+          padding: EdgeInsets.symmetric(
+            horizontal: CSizes.lg,
+          ),
+          child: Text(
+            'delete',
+          ),
         ),
       ),
       cancel: OutlinedButton(
@@ -885,7 +884,9 @@ class CInventoryController extends GetxController {
           fetchUserInventoryItems();
           Navigator.of(Get.overlayContext!).pop();
         },
-        child: const Text('cancel'),
+        child: const Text(
+          'cancel',
+        ),
       ),
     );
   }

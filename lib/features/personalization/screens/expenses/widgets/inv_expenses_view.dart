@@ -15,7 +15,7 @@ class CInvExpensesView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final invController = Get.put(CInventoryController());
-    final isDarkTheme = CHelperFunctions.isDarkMode(context);
+    //final isDarkTheme = CHelperFunctions.isDarkMode(context);
     final userController = Get.put(CUserController());
     final userCurrency = userController.user.value.currencyCode;
 
@@ -25,7 +25,7 @@ class CInvExpensesView extends StatelessWidget {
       ),
       child: CKPIDisplayCard(
         animeDigit: invController.totalInventoryValue.value..toStringAsFixed(2),
-bgColor:  CColors.transparent,
+        bgColor: CColors.transparent,
         // bgColor: isDarkTheme
         //     ? CColors.rBrown.withValues(
         //         alpha: .3,
