@@ -1479,10 +1479,17 @@ class CInventoryController extends GetxController {
   Future<void> initializeInventorySummary() async {
     try {
       if (inventoryItems.isNotEmpty) {
-        totalInventoryValue.value = inventoryItems.fold(
+        var salesValue = inventoryItems.fold(
+          0.0,
+          (sum, item) {
+            return sum + (item.unitBp * item.qtySold);
+          },
+        );
+        var stockValue = inventoryItems.fold(
           0.0,
           (sum, item) => sum + (item.unitBp * item.quantity),
         );
+        totalInventoryValue.value = salesValue + stockValue;
 
         // -- count and value of low stock items in inventory --
         lowStockItemsCount.value = lowStockItems.length;

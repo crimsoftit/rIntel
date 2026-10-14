@@ -243,7 +243,7 @@ class CUserController extends GetxController {
     try {
       final img = await ImagePicker().pickImage(
         source: ImageSource.gallery,
-        imageQuality: 70,
+        imageQuality: 200,
         maxWidth: 512.0,
         maxHeight: 512.0,
       );

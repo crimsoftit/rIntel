@@ -16,7 +16,9 @@ import 'package:get/get.dart';
 import 'package:iconsax/iconsax.dart';
 
 class CProfileScreen extends StatelessWidget {
-  const CProfileScreen({super.key});
+  const CProfileScreen({
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -30,11 +32,19 @@ class CProfileScreen extends StatelessWidget {
       child: Scaffold(
         appBar: AppBar(
           actions: [
-            Icon(Iconsax.notification, size: 25.0, color: CColors.rBrown),
+            Icon(
+              Iconsax.notification,
+              size: 25.0,
+              color: CColors.rBrown,
+            ),
           ],
-          actionsPadding: const EdgeInsets.all(CSizes.md),
+          actionsPadding: const EdgeInsets.all(
+            CSizes.md,
+          ),
           automaticallyImplyLeading: true,
-          iconTheme: IconThemeData(color: CColors.rBrown),
+          iconTheme: IconThemeData(
+            color: CColors.rBrown,
+          ),
           // title: Padding(
           //   padding: const EdgeInsets.only(
           //     left: 0.5,
@@ -57,39 +67,49 @@ class CProfileScreen extends StatelessWidget {
           //   ),
           // ),
         ),
-        backgroundColor: CColors.rBrown.withValues(alpha: 0.2),
+        backgroundColor: CColors.rBrown.withValues(
+          alpha: 0.2,
+        ),
         body: SingleChildScrollView(
           child: Padding(
-            padding: const EdgeInsets.only(left: 20.0, right: 15.0, top: 10.0),
+            padding: const EdgeInsets.only(
+              left: 20.0,
+              right: 15.0,
+              top: 10.0,
+            ),
             child: Column(
               children: [
                 CRoundedContainer(
                   bgColor: CColors.rBrown,
                   showBorder: true,
                   borderRadius: 100,
-                  borderColor: CColors.rBrown.withValues(alpha: 0.3),
+                  borderColor: CColors.rBrown.withValues(
+                    alpha: 0.3,
+                  ),
                   child: Stack(
                     children: [
-                      Obx(() {
-                        final networkImg = userController.user.value.profPic;
-                        final dpImg = networkImg.isNotEmpty
-                            ? networkImg
-                            : CImages.user;
+                      Obx(
+                        () {
+                          final networkImg = userController.user.value.profPic;
+                          final dpImg = networkImg.isNotEmpty
+                              ? networkImg
+                              : CImages.user;
 
-                        return userController.imgUploading.value
-                            ? const CShimmerEffect(
-                                width: 80.0,
-                                height: 80.0,
-                                radius: 80.0,
-                              )
-                            : CCircularImg(
-                                img: dpImg,
-                                width: 80.0,
-                                height: 80.0,
-                                padding: 10.0,
-                                isNetworkImg: networkImg.isNotEmpty,
-                              );
-                      }),
+                          return userController.imgUploading.value
+                              ? const CShimmerEffect(
+                                  width: 80.0,
+                                  height: 80.0,
+                                  radius: 80.0,
+                                )
+                              : CCircularImg(
+                                  img: dpImg,
+                                  width: 80.0,
+                                  height: 80.0,
+                                  padding: 10.0,
+                                  isNetworkImg: networkImg.isNotEmpty,
+                                );
+                        },
+                      ),
                       Positioned(
                         right: 2,
                         bottom: 3,

@@ -57,40 +57,46 @@ class CAlertsSliverView extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               // -- date --
-                              Align(
-                                alignment: Alignment.topRight,
-                                child: Row(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Icon(
-                                      Icons.access_alarms,
-                                      size: CSizes.iconSm * .7,
-                                      color: CColors.rBrown,
-                                    ),
-                                    const SizedBox(
-                                      width: 4.0,
-                                    ),
-                                    Text(
-                                      CFormatter.formatTimeRangeFromNow(
-                                        notsController
-                                            .allNotifications[index]
-                                            .date
-                                            .replaceAll(
-                                              '@ ',
-                                              '',
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                  right: 5.0,
+                                ),
+                                child: Align(
+                                  alignment: Alignment.topRight,
+                                  child: Row(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Icon(
+                                        Icons.access_alarms,
+                                        size: CSizes.iconSm * .7,
+                                        color: CColors.rBrown,
+                                      ),
+                                      const SizedBox(
+                                        width: 4.0,
+                                      ),
+                                      Text(
+                                        CFormatter.formatTimeRangeFromNow(
+                                          notsController
+                                              .allNotifications[index]
+                                              .date
+                                              .replaceAll(
+                                                '@ ',
+                                                '',
+                                              ),
+                                        ),
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .labelSmall!
+                                            .apply(
+                                              color: isDarkTheme
+                                                  ? CColors.darkGrey
+                                                  : CColors.rBrown,
                                             ),
                                       ),
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .labelSmall!
-                                          .apply(
-                                            color: isDarkTheme
-                                                ? CColors.darkGrey
-                                                : CColors.rBrown,
-                                          ),
-                                    ),
-                                  ],
+                                    ],
+                                  ),
                                 ),
                               ),
                               Card(

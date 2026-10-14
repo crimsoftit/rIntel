@@ -161,12 +161,16 @@ class CExpensesScreen extends StatelessWidget {
                 Column(
                   children: [
                     CInvExpensesView(),
-                    CExpensesView(),
+                    CExpensesView(
+                      space: 'all',
+                    ),
                   ],
                 ),
 
                 // -- bills--
-                CExpensesView(),
+                CExpensesView(
+                  space: 'bills',
+                ),
 
                 // -- inventory items --
                 CInvGridviewScreen(
@@ -174,11 +178,17 @@ class CExpensesScreen extends StatelessWidget {
                   screen: 'store',
                 ),
 
-                CExpensesView(),
-                CExpensesView(),
+                CExpensesView(
+                  space: 'rent',
+                ),
+                CExpensesView(
+                  space: 'salaries',
+                ),
 
                 // -- other expenses --
-                CExpensesView(),
+                CExpensesView(
+                  space: 'others',
+                ),
               ],
             ),
           ),

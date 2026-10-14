@@ -14,7 +14,8 @@ import 'package:rintel/utils/helpers/formatter.dart';
 import 'package:rintel/utils/helpers/helper_functions.dart';
 
 class CExpensesView extends StatefulWidget {
-  const CExpensesView({super.key});
+  const CExpensesView({super.key, required this.space});
+  final String space;
 
   @override
   State<CExpensesView> createState() => _CExpensesViewState();
@@ -64,166 +65,237 @@ class _CExpensesViewState extends State<CExpensesView> {
       future: itemsFuture, // Your async function
       builder: (context, snapshot) {
         if (snapshot.hasData) {
-          // Initialize items if needed, or use snapshot.data directly
-          expenses.assignAll(snapshot.data!);
-
-          /// -- grouping logic --
-          Map<String, List<CExpense>> groupedXpenses = {};
-          expenses.sort(
-            (a, b) {
-              return b.lastModified.trim().toLowerCase().compareTo(
-                a.lastModified.trim().toLowerCase(),
-              );
-            },
-          );
-
-          for (var xpense in expenses) {
-            String date = CFormatter.getOnlyDate(xpense.lastModified);
-            if (!groupedXpenses.containsKey(date)) {
-              groupedXpenses[date] = [];
-            }
-            groupedXpenses[date]!.add(xpense);
-          }
-
-          return CRoundedContainer(
-            bgColor: CColors.transparent,
-            borderRadius: 10.0,
-            height: CHelperFunctions.screenHeight() * .605,
-            margin: const EdgeInsets.only(
-              left: 15.0,
-              right: 15.0,
-            ),
-            child: ListView.separated(
-              itemBuilder: (context, groupedIndex) {
-                String timestamp = groupedXpenses.keys.elementAt(groupedIndex);
-                List<CExpense> xpenses = groupedXpenses[timestamp]!;
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.only(
-                        right: 15.0,
-                        top: 7.0,
-                      ),
-                      child: Text(
-                        timestamp,
-                        style: Theme.of(context).textTheme.labelSmall,
-                      ),
+          return Obx(
+            () {
+              switch (widget.space) {
+                case 'all':
+                  expenses.assignAll(txnsController.myExpenses);
+                  break;
+                case 'bills':
+                  expenses.assignAll(
+                    txnsController.myExpenses.where(
+                      (xpense) {
+                        return xpense.expenseCategory.toLowerCase().contains(
+                          'bil',
+                        );
+                      },
                     ),
+                  );
+                  break;
+                case 'rent':
+                  expenses.assignAll(
+                    txnsController.myExpenses.where(
+                      (xpense) {
+                        return xpense.expenseCategory.toLowerCase().contains(
+                          'rent',
+                        );
+                      },
+                    ),
+                  );
+                  break;
+                case 'salaries':
+                  expenses.assignAll(
+                    txnsController.myExpenses.where(
+                      (xpense) {
+                        return xpense.expenseCategory.toLowerCase().contains(
+                          'salar',
+                        );
+                      },
+                    ),
+                  );
+                  break;
+                case 'others':
+                  expenses.assignAll(
+                    txnsController.myExpenses.where(
+                      (xpense) {
+                        return xpense.expenseCategory.toLowerCase().contains(
+                              'other',
+                            ) ||
+                            !xpense.expenseCategory.toLowerCase().contains(
+                              'rent',
+                            ) ||
+                            !xpense.expenseCategory.toLowerCase().contains(
+                              'salar',
+                            ) ||
+                            !xpense.expenseCategory.toLowerCase().contains(
+                              'bill',
+                            );
+                      },
+                    ),
+                  );
+                  break;
+                default:
+                  expenses.assignAll(txnsController.myExpenses);
+                  break;
+              }
+              // Initialize items if needed, or use snapshot.data directly
 
-                    // Inner ListView for xpenses in this group
-                    CRoundedContainer(
-                      bgColor: isDarkTheme
-                          ? CColors.rBrown.withValues(
-                              alpha: .3,
-                            )
-                          : CColors.rBrown.withValues(
-                              alpha: .1,
-                            ),
-                      child: ListView.builder(
-                        itemBuilder: ((context, index) {
-                          return CKPIDisplayCard(
-                            animeDigit: xpenses[index].amount
-                              ..toStringAsFixed(2),
+              /// -- grouping logic --
+              Map<String, List<CExpense>> groupedXpenses = {};
+              expenses.sort(
+                (a, b) {
+                  return b.lastModified.trim().toLowerCase().compareTo(
+                    a.lastModified.trim().toLowerCase(),
+                  );
+                },
+              );
 
-                            bgColor: CColors.transparent,
-                            borderRadius: 0,
-                            // customBorderRadius: BorderRadius.only(
-                            //   topLeft: Radius.circular(
-                            //     10.0,
-                            //   ),
-                            //   topRight: Radius.circular(
-                            //     10.0,
-                            //   ),
-                            // ),
-                            leadingWidget: CircleAvatar(
-                              backgroundColor:
-                                  CHelperFunctions.randomAestheticColor(),
-                              radius: 16.0,
-                              child: Text(
-                                xpenses[index].recipientName[0].toUpperCase(),
-                                style: Theme.of(context).textTheme.bodyLarge!
-                                    .apply(
-                                      //color: CColors.white,
-                                      color: CColors.white,
-                                    ),
-                              ),
-                            ),
+              for (var xpense in expenses) {
+                String date = CFormatter.getOnlyDate(xpense.lastModified);
+                if (!groupedXpenses.containsKey(date)) {
+                  groupedXpenses[date] = [];
+                }
+                groupedXpenses[date]!.add(xpense);
+              }
 
-                            // Icon(
-                            //   Iconsax.money_send,
-                            //   color: CColors.rBrown,
-                            //   size: CSizes.iconMd,
-                            // ),
-                            // margin: const EdgeInsets.only(
-                            //   bottom: 3.0,
-                            //   top: 3.0,
-                            // ),
-                            onCardTap: () {
-                              Get.toNamed(
-                                '/expenses/expense_details',
-                                arguments: xpenses[index],
-                              );
-                            },
-                            prefixLabel: userCurrency,
-                            subTitleTxt: xpenses[index].recipientName,
+              return CRoundedContainer(
+                bgColor: CColors.transparent,
+                borderRadius: 10.0,
+                height: CHelperFunctions.screenHeight() * .605,
+                margin: const EdgeInsets.only(
+                  left: 15.0,
+                  right: 15.0,
+                ),
+                child: ListView.separated(
+                  itemBuilder: (context, groupedIndex) {
+                    String timestamp = groupedXpenses.keys.elementAt(
+                      groupedIndex,
+                    );
+                    List<CExpense> xpenses = groupedXpenses[timestamp]!;
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(
+                            right: 15.0,
+                            top: 7.0,
+                          ),
+                          child: Text(
+                            timestamp,
+                            style: Theme.of(context).textTheme.labelSmall,
+                          ),
+                        ),
 
-                            trailingWidget: Padding(
-                              padding: const EdgeInsets.only(
-                                top: 15.0,
-                              ),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.end,
-                                children: [
-                                  Text(
-                                    xpenses[index].recipientContact,
-                                    style:
-                                        Theme.of(
-                                          context,
-                                        ).textTheme.labelMedium!.apply(
-                                          fontSizeFactor: 1.2,
-                                        ),
-                                  ),
-                                  const SizedBox(
-                                    height: CSizes.spaceBtnInputFields / 4,
-                                  ),
-                                  Text(
-                                    CFormatter.getOnlyTime(
-                                      DateTime.parse(xpenses[index].dateAdded),
-                                    ),
+                        // Inner ListView for xpenses in this group
+                        CRoundedContainer(
+                          bgColor: isDarkTheme
+                              ? CColors.rBrown.withValues(
+                                  alpha: .3,
+                                )
+                              : CColors.rBrown.withValues(
+                                  alpha: .1,
+                                ),
+                          child: ListView.builder(
+                            itemBuilder: ((context, index) {
+                              return CKPIDisplayCard(
+                                animeDigit: xpenses[index].amount
+                                  ..toStringAsFixed(2),
+
+                                bgColor: CColors.transparent,
+                                borderRadius: 0,
+                                // customBorderRadius: BorderRadius.only(
+                                //   topLeft: Radius.circular(
+                                //     10.0,
+                                //   ),
+                                //   topRight: Radius.circular(
+                                //     10.0,
+                                //   ),
+                                // ),
+                                leadingWidget: CircleAvatar(
+                                  backgroundColor:
+                                      CHelperFunctions.randomAestheticColor(),
+                                  radius: 16.0,
+                                  child: Text(
+                                    xpenses[index].recipientName[0]
+                                        .toUpperCase(),
                                     style: Theme.of(context)
                                         .textTheme
-                                        .labelSmall!
+                                        .bodyLarge!
                                         .apply(
-                                          color: CColors.darkGrey,
-                                          fontStyle: FontStyle.italic,
+                                          //color: CColors.white,
+                                          color: CColors.white,
                                         ),
                                   ),
-                                ],
-                              ),
-                            ),
+                                ),
 
-                            width: CHelperFunctions.screenWidth() * .92,
-                          );
-                        }),
-                        itemCount: xpenses.length,
-                        physics:
-                            NeverScrollableScrollPhysics(), // Disables inner scrolling
+                                // Icon(
+                                //   Iconsax.money_send,
+                                //   color: CColors.rBrown,
+                                //   size: CSizes.iconMd,
+                                // ),
+                                // margin: const EdgeInsets.only(
+                                //   bottom: 3.0,
+                                //   top: 3.0,
+                                // ),
+                                onCardTap: () {
+                                  Get.toNamed(
+                                    '/expenses/expense_details',
+                                    arguments: xpenses[index],
+                                  );
+                                },
+                                prefixLabel: userCurrency,
+                                subTitleTxt: xpenses[index].recipientName,
 
-                        shrinkWrap: true, // Prevents overflow
-                      ),
-                    ),
-                  ],
-                );
-              },
-              itemCount: groupedXpenses.keys.length,
-              separatorBuilder: (context, index) {
-                return const SizedBox(
-                  //color: CColors.transparent,
-                  height: 1.0,
-                );
-              },
-            ),
+                                trailingWidget: Padding(
+                                  padding: const EdgeInsets.only(
+                                    top: 15.0,
+                                  ),
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.end,
+                                    children: [
+                                      Text(
+                                        xpenses[index].recipientContact,
+                                        style:
+                                            Theme.of(
+                                              context,
+                                            ).textTheme.labelMedium!.apply(
+                                              fontSizeFactor: 1.2,
+                                            ),
+                                      ),
+                                      const SizedBox(
+                                        height: CSizes.spaceBtnInputFields / 4,
+                                      ),
+                                      Text(
+                                        CFormatter.getOnlyTime(
+                                          DateTime.parse(
+                                            xpenses[index].dateAdded,
+                                          ),
+                                        ),
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .labelSmall!
+                                            .apply(
+                                              color: CColors.darkGrey,
+                                              fontStyle: FontStyle.italic,
+                                            ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+
+                                width: CHelperFunctions.screenWidth() * .92,
+                              );
+                            }),
+                            itemCount: xpenses.length,
+                            physics:
+                                NeverScrollableScrollPhysics(), // Disables inner scrolling
+
+                            shrinkWrap: true, // Prevents overflow
+                          ),
+                        ),
+                      ],
+                    );
+                  },
+                  itemCount: groupedXpenses.keys.length,
+                  separatorBuilder: (context, index) {
+                    return const SizedBox(
+                      //color: CColors.transparent,
+                      height: 1.0,
+                    );
+                  },
+                ),
+              );
+            },
           );
 
           // AnimatedList(

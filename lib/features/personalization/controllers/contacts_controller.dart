@@ -438,8 +438,8 @@ class CContactsController extends GetxController {
                                       : CColors.rBrown,
                                   includeAvatarOnSuggestion: true,
                                   includePrefixIcon: true,
-                                  hintTxt: 'Search...',
-                                  labelTxt: '',
+                                  hintTxt: 'Search contacts...',
+                                  labelTxt: 'Search contacts...',
                                   onItemSelected: (suggestion) {
                                     action == 'update';
                                     contact = suggestion;
@@ -1683,6 +1683,7 @@ class CContactsController extends GetxController {
 
   void toggleTypeAheadSearchFieldVisbility() {
     showContactsSearchField.value = !showContactsSearchField.value;
+    txtSearchCustomerDetails.clear();
   }
 
   /// -- reset contact form fields --
