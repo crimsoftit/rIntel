@@ -11,6 +11,7 @@ class CAnimedSearchfield extends StatelessWidget {
     required this.fieldExpanded,
     required this.onSearchValueChanged,
     required this.searchFieldController,
+    this.expandedWidth,
     this.hintTxt,
 
     this.onFieldSubmitted,
@@ -19,6 +20,7 @@ class CAnimedSearchfield extends StatelessWidget {
   });
 
   final bool fieldExpanded;
+  final double? expandedWidth;
   final String? hintTxt;
   final TextEditingController searchFieldController;
   final void Function(String)? onFieldSubmitted;
@@ -43,7 +45,9 @@ class CAnimedSearchfield extends StatelessWidget {
         milliseconds: 500,
       ),
       height: 40.0,
-      width: fieldExpanded ? CHelperFunctions.screenWidth() : 40,
+      width: fieldExpanded
+          ? expandedWidth ?? CHelperFunctions.screenWidth()
+          : 40,
       child: fieldExpanded
           ? CRoundedContainer(
               bgColor: CColors.transparent,

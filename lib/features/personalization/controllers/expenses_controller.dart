@@ -23,6 +23,7 @@ class CExpensesController extends GetxController {
   final DbHelper dbHelper = DbHelper.instance;
   final localStorage = GetStorage();
   final RxBool isLoading = false.obs;
+  final RxBool showSearchField = false.obs;
   final RxString selectedCategory = ''.obs;
 
   final RxList<String> categories = [
@@ -46,6 +47,7 @@ class CExpensesController extends GetxController {
   final txtRecipientName = TextEditingController();
   final txtRecipientContacts = TextEditingController();
   final txtRemarks = TextEditingController();
+  final txtSearchField = TextEditingController();
   final txtTxnCode = TextEditingController();
 
   final userController = Get.put(CUserController());
@@ -146,6 +148,14 @@ class CExpensesController extends GetxController {
       "Recipent's name",
       value,
     );
+  }
+
+  /// -- toggle contacts search field visibility --
+  void toggleSearchFieldDisplay() {
+    showSearchField.value = !showSearchField.value;
+    if (!showSearchField.value) {
+      txtSearchField.clear();
+    }
   }
 
   /// -- reset fields --

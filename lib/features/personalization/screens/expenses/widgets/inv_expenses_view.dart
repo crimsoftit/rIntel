@@ -15,37 +15,36 @@ class CInvExpensesView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final invController = Get.put(CInventoryController());
-    //final isDarkTheme = CHelperFunctions.isDarkMode(context);
+    final isDarkTheme = CHelperFunctions.isDarkMode(context);
     final userController = Get.put(CUserController());
     final userCurrency = userController.user.value.currencyCode;
 
-    return Padding(
-      padding: const EdgeInsets.only(
-        top: 10.0,
-      ),
+    return Center(
       child: CKPIDisplayCard(
         animeDigit: invController.totalInventoryValue.value..toStringAsFixed(2),
-        bgColor: CColors.transparent,
-        // bgColor: isDarkTheme
-        //     ? CColors.rBrown.withValues(
-        //         alpha: .3,
-        //       )
-        //     : CColors.rBrown.withValues(
-        //         alpha: .1,
-        //       ),
-        //borderRadius: 10.0,
+        //bgColor: CColors.transparent,
+        bgColor: isDarkTheme
+            ? CColors.rBrown.withValues(
+                alpha: .3,
+              )
+            : CColors.rBrown.withValues(
+                alpha: .1,
+              ),
+        borderRadius: CSizes.borderRadiusMd,
         leadingWidget: Icon(
           Icons.inventory,
           color: CColors.rBrown,
-          size: CSizes.iconSm,
+          size: CSizes.iconMd,
         ),
         margin: const EdgeInsets.only(
-          bottom: 3.0,
-          top: 3.0,
+          bottom: 5.0,
+          left: 10.0,
+          right: 10.0,
+          top: 12.0,
         ),
         prefixLabel: userCurrency,
         subTitleTxt: 'Inventory purchases',
-        width: CHelperFunctions.screenWidth() * .92,
+        width: CHelperFunctions.screenWidth() * .95,
       ),
     );
   }

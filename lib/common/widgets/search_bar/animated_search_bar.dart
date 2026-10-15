@@ -74,8 +74,12 @@ class CAnimatedSearchBar extends StatelessWidget {
                       txtColor: CColors.rBrown,
                       controller: controller,
                     )
-                  : DefaultSearchWidget(forStoreSearch: forStoreSearch)
-            : DefaultSearchWidget(forStoreSearch: forStoreSearch),
+                  : DefaultSearchWidget(
+                      forStoreSearch: forStoreSearch,
+                    )
+            : DefaultSearchWidget(
+                forStoreSearch: forStoreSearch,
+              ),
       );
     });
   }

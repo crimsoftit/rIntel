@@ -340,7 +340,7 @@ class CLocalNotificationsController extends GetxController {
           payloadData['notification_body'],
 
           1,
-          int.parse(payloadData['product_id']) ?? 0,
+          int.parse(payloadData['product_id']),
           userController.user.value.email,
           payloadData['date'],
         );

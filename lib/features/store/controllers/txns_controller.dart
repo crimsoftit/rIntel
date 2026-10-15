@@ -142,13 +142,13 @@ class CTxnsController extends GetxController {
   final RxDouble totalAmtSold = 0.0.obs;
 
   final storeRepo = Get.put(CStoreRepo());
+  final RxList<CExpense> xpenseMatches = <CExpense>[].obs;
+  final RxList<CSoldItemModel> userTxnItems = <CSoldItemModel>[].obs;
   final RxList<CTxn> foundInvoices = <CTxn>[].obs;
   final RxList<CTxn> foundReceipts = <CTxn>[].obs;
   final RxList<CTxn> matchingOnDaHauzItems = <CTxn>[].obs;
   final RxList<CTxn> userTxns = <CTxn>[].obs;
   final RxList<CTxn> userInvoices = <CTxn>[].obs;
-
-  final RxList<CSoldItemModel> userTxnItems = <CSoldItemModel>[].obs;
 
   /// -- summaries --
   final RxDouble gProfit = 0.0.obs;
@@ -2096,6 +2096,65 @@ class CTxnsController extends GetxController {
       },
     );
     await fetchMyExpenses();
+  }
+
+  /// -- perform search on xpenses --
+  void searchThroughXpenses(String query) {
+    try {
+      // -- start loader
+      isLoading.value = true;
+
+      var allMatches = myExpenses.where((xpense) {
+        return xpense.userId.toLowerCase().contains(
+              query.toLowerCase(),
+            ) ||
+            xpense.userEmail.toLowerCase().contains(query.toLowerCase()) ||
+            xpense.userName.toLowerCase().contains(query.toLowerCase()) ||
+            xpense.amount.toString().toLowerCase().contains(
+              query.toLowerCase(),
+            ) ||
+            xpense.expenseCategory.toLowerCase().contains(
+              query.toLowerCase(),
+            ) ||
+            xpense.expenseDescription.toLowerCase().contains(
+              query.toLowerCase(),
+            ) ||
+            xpense.recipientName.toLowerCase().contains(query.toLowerCase()) ||
+            xpense.recipientContact.toLowerCase().contains(
+              query.toLowerCase(),
+            ) ||
+            xpense.recipientCountry.toLowerCase().contains(
+              query.toLowerCase(),
+            ) ||
+            xpense.dateAdded.toLowerCase().contains(query.toLowerCase()) ||
+            xpense.lastModified.toLowerCase().contains(
+              query.toLowerCase(),
+            ) ||
+            xpense.txnCode.toLowerCase().contains(query.toLowerCase()) ||
+            xpense.expenseId.toString().toLowerCase().contains(
+              query.toLowerCase(),
+            );
+      }).toList();
+
+      xpenseMatches.assignAll(allMatches);
+
+      isLoading.value = false;
+    } catch (e) {
+      isLoading.value = false;
+      if (kDebugMode) {
+        CPopupSnackBar.errorSnackBar(
+          message: 'error fetching expense suggestions: $e',
+          title: 'error fetching contact suggestions!',
+        );
+      } else {
+        CPopupSnackBar.errorSnackBar(
+          message:
+              'An unknown error occurred while fetching expenses search results! Please try again later...',
+          title: 'Error searching through expense!',
+        );
+      }
+      rethrow;
+    }
   }
 
   @override
