@@ -67,7 +67,6 @@ class CExpensesScreen extends StatelessWidget {
                   fieldExpanded: xpensesController.showSearchField.value,
                   hintTxt: "search thru' expenses...",
                   onFieldSubmitted: (value) {
-                    xpensesController.toggleSearchFieldDisplay();
                     txnsController.searchThroughXpenses(value);
                   },
 
@@ -203,7 +202,8 @@ class CExpensesScreen extends StatelessWidget {
                   // -- all --
                   Wrap(
                     children: [
-                      CInvExpensesView(),
+                      if (!xpensesController.showSearchField.value)
+                        CInvExpensesView(),
                       CExpensesView(
                         space: 'all',
                       ),

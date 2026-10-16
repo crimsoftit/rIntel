@@ -227,13 +227,50 @@ class CExpenseDetails extends StatelessWidget {
                                   context,
                                 ).textTheme.labelSmall!.apply(),
                               ),
-                              SelectableText(
-                                expense.expenseId.toString(),
-                                style: Theme.of(context).textTheme.labelMedium!
-                                    .apply(
-                                      fontSizeFactor: 1.3,
-                                      fontWeightDelta: -1,
+                              Row(
+                                children: [
+                                  SelectableText(
+                                    expense.expenseId.toString(),
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .labelMedium!
+                                        .apply(
+                                          fontSizeFactor: 1.3,
+                                          fontWeightDelta: -1,
+                                        ),
+                                  ),
+                                  const SizedBox(
+                                    width: 3.0,
+                                  ),
+                                  SizedBox(
+                                    height: 15.0,
+                                    child: TextButton.icon(
+                                      icon: Icon(
+                                        Icons.file_copy,
+                                        color: isDarkTheme
+                                            ? CColors.darkGrey
+                                            : CColors.rBrown,
+                                        size: CSizes.iconXs,
+                                      ),
+                                      label: Text(
+                                        'copy',
+                                        style:
+                                            Theme.of(
+                                              context,
+                                            ).textTheme.labelSmall!.apply(
+                                              color: isDarkTheme
+                                                  ? CColors.darkGrey
+                                                  : CColors.white,
+                                            ),
+                                      ),
+                                      onPressed: () {
+                                        CHelperFunctions.copyToClipboard(
+                                          expense.expenseId.toString(),
+                                        );
+                                      },
                                     ),
+                                  ),
+                                ],
                               ),
                               const SizedBox(
                                 height: CSizes.spaceBtnItems,
@@ -244,14 +281,57 @@ class CExpenseDetails extends StatelessWidget {
                                   context,
                                 ).textTheme.labelSmall!.apply(),
                               ),
-                              SelectableText(
-                                expense.txnCode,
-                                style: Theme.of(context).textTheme.labelMedium!
-                                    .apply(
-                                      fontSizeFactor: 1.3,
-                                      fontWeightDelta: -1,
+                              expense.txnCode == ''
+                                  ? SelectableText(
+                                      expense.txnCode,
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .labelMedium!
+                                          .apply(
+                                            fontSizeFactor: 1.3,
+                                            fontWeightDelta: -1,
+                                          ),
+                                    )
+                                  : Row(
+                                      children: [
+                                        SelectableText(
+                                          expense.txnCode,
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .labelMedium!
+                                              .apply(
+                                                fontSizeFactor: 1.3,
+                                                fontWeightDelta: -1,
+                                              ),
+                                        ),
+                                        const SizedBox(
+                                          width: 3.0,
+                                        ),
+                                        SizedBox(
+                                          height: 15.0,
+                                          child: TextButton.icon(
+                                            icon: Icon(
+                                              Icons.file_copy,
+                                              color: isDarkTheme
+                                                  ? CColors.darkGrey
+                                                  : CColors.rBrown,
+                                              size: CSizes.iconXs,
+                                            ),
+                                            label: Text(
+                                              'Copy',
+                                              style: Theme.of(
+                                                context,
+                                              ).textTheme.labelSmall!.apply(),
+                                            ),
+                                            onPressed: () {
+                                              CHelperFunctions.copyToClipboard(
+                                                expense.txnCode,
+                                              );
+                                            },
+                                          ),
+                                        ),
+                                      ],
                                     ),
-                              ),
                               CDivider(
                                 endIndent: 0,
                                 startIndent: 0,

@@ -15,8 +15,11 @@ class CPopupSnackBar extends GetxController {
   IconData? iconData;
 
   static Future<void> customToast({
+    Color? bgColor,
+    double? radius,
     required bool forInternetConnectivityStatus,
     required message,
+    Widget? prefixIcon,
   }) async {
     final isDarkTheme = CHelperFunctions.isDarkMode(Get.context!);
     // -- check internet connectivity
@@ -28,7 +31,7 @@ class CPopupSnackBar extends GetxController {
         duration: const Duration(
           seconds: 4,
         ),
-        backgroundColor: Colors.transparent,
+        backgroundColor: bgColor ?? Colors.transparent,
         content: CRoundedContainer(
           bgColor: isDarkTheme
               ? CColors.darkGrey.withValues(
@@ -37,7 +40,7 @@ class CPopupSnackBar extends GetxController {
               : CColors.grey.withValues(
                   alpha: 0.9,
                 ),
-          borderRadius: 20.0,
+          borderRadius: radius ?? 20.0,
           padding: const EdgeInsets.all(
             10.0,
           ),
@@ -75,14 +78,24 @@ class CPopupSnackBar extends GetxController {
                       ),
                     ],
                   )
-                : Text(
-                    message,
-                    // style: Theme.of(Get.context!).textTheme.labelLarge!.apply(
-                    //       color: CColors.black,
-                    //     ),
-                    style: Theme.of(
-                      Get.context!,
-                    ).textTheme.labelLarge!.apply(color: CColors.rBrown),
+                : Row(
+                    children: [
+                      Expanded(
+                        child: prefixIcon!,
+                      ),
+                      Expanded(
+                        flex: 7,
+                        child: Text(
+                          message,
+                          // style: Theme.of(Get.context!).textTheme.labelLarge!.apply(
+                          //       color: CColors.black,
+                          //     ),
+                          style: Theme.of(
+                            Get.context!,
+                          ).textTheme.labelLarge!.apply(color: CColors.rBrown),
+                        ),
+                      ),
+                    ],
                   ),
           ),
         ),

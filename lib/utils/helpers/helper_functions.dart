@@ -1,13 +1,17 @@
 import 'dart:math';
 import 'dart:math' as math;
 import 'dart:ui' as ui;
+import 'package:flutter/services.dart';
+import 'package:iconsax/iconsax.dart';
 import 'package:rintel/utils/computations/date_time_computations.dart';
 import 'package:rintel/utils/constants/colors.dart';
+import 'package:rintel/utils/constants/sizes.dart';
 import 'package:rintel/utils/helpers/network_manager.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:rintel/utils/popups/snackbars.dart';
 
 class CHelperFunctions {
   /// -- get first day of the current week --
@@ -261,5 +265,28 @@ class CHelperFunctions {
         break;
     }
     return displayColor;
+  }
+
+  /// -- copy text to clipboard --
+  static void copyToClipboard(String text) async {
+    await Clipboard.setData(
+      ClipboardData(
+        text: text,
+      ),
+    );
+    // Show feedback to user
+    // ScaffoldMessenger.of(context).showSnackBar(
+    //   const SnackBar(content: Text('Copied to clipboard')),
+    // );
+    CPopupSnackBar.customToast(
+      forInternetConnectivityStatus: false,
+      message: 'copied to clipboard',
+      radius: 5.0,
+      prefixIcon: Icon(
+        Iconsax.tick_square,
+        color: CColors.rBrown,
+        size: CSizes.iconSm,
+      ),
+    );
   }
 }

@@ -4,6 +4,7 @@ import 'package:rintel/api/sheets/store_sheets_api.dart';
 import 'package:rintel/common/widgets/custom_shapes/containers/rounded_container.dart';
 import 'package:rintel/common/widgets/txt_fields/custom_txtfield.dart';
 import 'package:rintel/data/repos/store/store_repo.dart';
+import 'package:rintel/features/personalization/controllers/expenses_controller.dart';
 import 'package:rintel/features/personalization/controllers/notification_tings/flutter_local_notifications/local_notifications_controller.dart';
 import 'package:rintel/features/personalization/controllers/user_controller.dart';
 import 'package:rintel/features/personalization/models/expense.dart';
@@ -2053,6 +2054,7 @@ class CTxnsController extends GetxController {
 
   /// -- fetch user expenses --
   Future<List<CExpense>> fetchMyExpenses() async {
+    final xpensesController = Get.put(CExpensesController());
     try {
       isLoading.value = true;
 
@@ -2062,6 +2064,10 @@ class CTxnsController extends GetxController {
 
       myExpenses.assignAll(expenses);
 
+      if (xpensesController.showSearchField.value &&
+          xpensesController.txtSearchField.text.trim() == '') {
+        xpenseMatches.assignAll(myExpenses);
+      }
       isLoading.value = false;
       return myExpenses;
     } catch (e) {
@@ -2103,6 +2109,10 @@ class CTxnsController extends GetxController {
     try {
       // -- start loader
       isLoading.value = true;
+      myExpenses.refresh();
+      if (query.isEmpty || query.trim() == '') {
+        xpenseMatches.assignAll(myExpenses);
+      }
 
       var allMatches = myExpenses.where((xpense) {
         return xpense.userId.toLowerCase().contains(

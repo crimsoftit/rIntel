@@ -7,6 +7,7 @@ import 'package:rintel/features/personalization/controllers/user_controller.dart
 import 'package:rintel/features/personalization/models/expense.dart';
 import 'package:rintel/features/personalization/screens/no_data/no_data_screen.dart';
 import 'package:rintel/features/store/controllers/txns_controller.dart';
+import 'package:rintel/features/store/screens/search/widgets/no_results_screen.dart';
 import 'package:rintel/features/store/screens/store_items_tings/inventory/inventory_details/widgets/cards/kpi_display_card.dart';
 import 'package:rintel/utils/constants/colors.dart';
 import 'package:rintel/utils/constants/img_strings.dart';
@@ -56,8 +57,6 @@ class _CExpensesViewState extends State<CExpensesView> {
 
   @override
   Widget build(BuildContext context) {
-    // 1. Define Global Key for SliverAnimatedList
-    //final GlobalKey<AnimatedListState> listKey = GlobalKey<AnimatedListState>();
     final isDarkTheme = CHelperFunctions.isDarkMode(context);
     final List<CExpense> expenses = [];
     final userCurrency = userController.user.value.currencyCode;
@@ -71,64 +70,133 @@ class _CExpensesViewState extends State<CExpensesView> {
 
             switch (widget.space) {
               case 'all':
-                expenses.assignAll(txnsController.myExpenses);
+                expensesController.showSearchField.value &&
+                            expensesController.txtSearchField.text == '' ||
+                        !expensesController.showSearchField.value
+                    ? expenses.assignAll(txnsController.myExpenses)
+                    : expenses.assignAll(txnsController.xpenseMatches);
                 noDataMsg = 'All your expenses will appear here...';
                 break;
               case 'bills':
-                expenses.assignAll(
-                  txnsController.myExpenses.where(
-                    (xpense) {
-                      return xpense.expenseCategory.toLowerCase().contains(
-                        'bil',
+                expensesController.showSearchField.value
+                    ? expenses.assignAll(
+                        txnsController.xpenseMatches.where(
+                          (xpense) {
+                            return xpense.expenseCategory
+                                .toLowerCase()
+                                .contains(
+                                  'bil',
+                                );
+                          },
+                        ),
+                      )
+                    : expenses.assignAll(
+                        txnsController.myExpenses.where(
+                          (xpense) {
+                            return xpense.expenseCategory
+                                .toLowerCase()
+                                .contains(
+                                  'bil',
+                                );
+                          },
+                        ),
                       );
-                    },
-                  ),
-                );
                 noDataMsg = 'your bill expenses will appear here...';
                 break;
               case 'rent':
-                expenses.assignAll(
-                  txnsController.myExpenses.where(
-                    (xpense) {
-                      return xpense.expenseCategory.toLowerCase().contains(
-                        'rent',
+                expensesController.showSearchField.value
+                    ? expenses.assignAll(
+                        txnsController.xpenseMatches.where(
+                          (xpense) {
+                            return xpense.expenseCategory
+                                .toLowerCase()
+                                .contains(
+                                  'rent',
+                                );
+                          },
+                        ),
+                      )
+                    : expenses.assignAll(
+                        txnsController.myExpenses.where(
+                          (xpense) {
+                            return xpense.expenseCategory
+                                .toLowerCase()
+                                .contains(
+                                  'rent',
+                                );
+                          },
+                        ),
                       );
-                    },
-                  ),
-                );
                 noDataMsg = 'your rent expenses will appear here...';
                 break;
               case 'salaries':
-                expenses.assignAll(
-                  txnsController.myExpenses.where(
-                    (xpense) {
-                      return xpense.expenseCategory.toLowerCase().contains(
-                        'salar',
+                expensesController.showSearchField.value
+                    ? expenses.assignAll(
+                        txnsController.xpenseMatches.where(
+                          (xpense) {
+                            return xpense.expenseCategory
+                                .toLowerCase()
+                                .contains(
+                                  'salar',
+                                );
+                          },
+                        ),
+                      )
+                    : expenses.assignAll(
+                        txnsController.myExpenses.where(
+                          (xpense) {
+                            return xpense.expenseCategory
+                                .toLowerCase()
+                                .contains(
+                                  'salar',
+                                );
+                          },
+                        ),
                       );
-                    },
-                  ),
-                );
                 noDataMsg = 'your salary expenses will appear here...';
                 break;
               case 'others':
-                expenses.assignAll(
-                  txnsController.myExpenses.where(
-                    (xpense) {
-                      return xpense.expenseCategory.toLowerCase().contains(
-                            'other',
-                          ) ||
-                          !xpense.expenseCategory.toLowerCase().contains(
-                            'rent',
-                          ) ||
-                          !xpense.expenseCategory.toLowerCase().contains(
-                            'salar',
-                          ) ||
-                          !xpense.expenseCategory.toLowerCase().contains(
-                            'bill',
-                          );
-                    },
-                  ),
-                );
+                expensesController.showSearchField.value
+                    ? expenses.assignAll(
+                        txnsController.xpenseMatches.where(
+                          (xpense) {
+                            return xpense.expenseCategory
+                                    .toLowerCase()
+                                    .contains(
+                                      'other',
+                                    ) ||
+                                !xpense.expenseCategory.toLowerCase().contains(
+                                  'rent',
+                                ) ||
+                                !xpense.expenseCategory.toLowerCase().contains(
+                                  'salar',
+                                ) ||
+                                !xpense.expenseCategory.toLowerCase().contains(
+                                  'bill',
+                                );
+                          },
+                        ),
+                      )
+                    : expenses.assignAll(
+                        txnsController.myExpenses.where(
+                          (xpense) {
+                            return xpense.expenseCategory
+                                    .toLowerCase()
+                                    .contains(
+                                      'other',
+                                    ) ||
+                                !xpense.expenseCategory.toLowerCase().contains(
+                                  'rent',
+                                ) ||
+                                !xpense.expenseCategory.toLowerCase().contains(
+                                  'salar',
+                                ) ||
+                                !xpense.expenseCategory.toLowerCase().contains(
+                                  'bill',
+                                );
+                          },
+                        ),
+                      );
                 noDataMsg = 'your other expenses will appear here...';
                 break;
               default:
@@ -155,12 +223,21 @@ class _CExpensesViewState extends State<CExpensesView> {
               groupedXpenses[date]!.add(xpense);
             }
 
-            if (expenses.isEmpty && !txnsController.isLoading.value) {
+            if (expenses.isEmpty &&
+                !txnsController.isLoading.value &&
+                !expensesController.showSearchField.value) {
               return Center(
                 child: NoDataScreen(
                   lottieImage: CImages.noDataLottie,
                   txt: noDataMsg,
                 ),
+              );
+            }
+            if (expenses.isEmpty &&
+                !txnsController.isLoading.value &&
+                expensesController.showSearchField.value) {
+              return Center(
+                child: const NoSearchResultsScreen(),
               );
             }
             if (txnsController.isLoading.value) {
@@ -302,9 +379,7 @@ class _CExpensesViewState extends State<CExpensesView> {
                               NeverScrollableScrollPhysics(), // Disables inner scrolling
                           separatorBuilder: (context, index) {
                             return CDivider(
-                              color: isDarkTheme
-                                  ? Colors.black
-                                  : CColors.white,
+                              color: isDarkTheme ? Colors.black : CColors.white,
                               endIndent: 0.0,
                               startIndent: 0.0,
                               thickness: 1.0,
