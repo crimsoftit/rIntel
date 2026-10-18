@@ -1,8 +1,10 @@
 import 'dart:math';
 
+import 'package:flutter/foundation.dart';
 import 'package:rintel/features/store/controllers/txns_controller.dart';
 import 'package:rintel/features/store/models/monthly_sales_model.dart';
 import 'package:rintel/utils/constants/colors.dart';
+import 'package:rintel/utils/constants/enums.dart';
 import 'package:rintel/utils/helpers/formatter.dart';
 import 'package:rintel/utils/helpers/helper_functions.dart';
 import 'package:rintel/utils/helpers/network_manager.dart';
@@ -11,6 +13,7 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:in_date_utils/in_date_utils.dart';
+import 'package:rintel/utils/popups/snackbars.dart';
 
 class CDashboardController extends GetxController {
   static CDashboardController get instance => Get.find();
@@ -64,6 +67,12 @@ class CDashboardController extends GetxController {
 
   final RxMap<int, double> monthlyTotals = <int, double>{}.obs;
 
+  // -- payment methods graph data --
+  final RxMap<CPaymentMethods, int> paymentMethodTxnsData =
+      <CPaymentMethods, int>{}.obs;
+  final RxMap<CPaymentMethods, double> paymentMethodTotals =
+      <CPaymentMethods, double>{}.obs;
+
   final RxString defautSalesFilterPeriod = ''.obs;
   final RxString selectedSalesFilterPeriod = ''.obs;
 
@@ -85,6 +94,7 @@ class CDashboardController extends GetxController {
               (result) async {
                 if (result.isNotEmpty) {
                   calculateCurrentWeekSales();
+
                   filterHourlySales();
                 }
                 txnsController.initializeSalesSummaryValues();
@@ -115,6 +125,8 @@ class CDashboardController extends GetxController {
         );
       },
     );
+
+    computePaymentMethodsData();
 
     super.onInit();
   }
@@ -521,5 +533,83 @@ class CDashboardController extends GetxController {
 
       return returnValueWithMonths;
     });
+  }
+
+  /// -- summarize txns' payment methods --
+  Future<void> computePaymentMethodsData() async {
+    try {
+      // -- reset data --
+      paymentMethodTxnsData.clear();
+
+      // -- map to store the totals for each payment method --
+      paymentMethodTotals.value = {
+        for (var method in CPaymentMethods.values) method: 0.0,
+      };
+
+      await txnsController.fetchUserTxns().then(
+        (result) {
+          if (result.isNotEmpty) {
+            for (var txn in txnsController.userTxns) {
+              // -- count txns --
+              final method = txn.paymentMethod.toLowerCase();
+              dynamic paymentMethod;
+              switch (method) {
+                case 'on the house':
+                  paymentMethod = CPaymentMethods.onTheHouse;
+                  break;
+
+                case 'credit':
+                  paymentMethod = CPaymentMethods.credit;
+                  break;
+
+                case 'cash':
+                  paymentMethod = CPaymentMethods.cash;
+                  break;
+
+                case 'send money':
+                  paymentMethod = CPaymentMethods.mPesaSendMoney;
+                  break;
+
+                case 'pochi':
+                  paymentMethod = CPaymentMethods.mpesaPochi;
+                  break;
+
+                case 'mpesa online':
+                  paymentMethod = CPaymentMethods.mpesaPrompt;
+                  break;
+
+                case 'paypal':
+                  paymentMethod = CPaymentMethods.paypal;
+                  break;
+
+                default:
+                  paymentMethod = CPaymentMethods.onTheHouse;
+                  break;
+              }
+
+              // -- count txns of each payment method --
+              paymentMethodTxnsData[paymentMethod] =
+                  (paymentMethodTxnsData[paymentMethod] ?? 0) + 1;
+
+              // -- compute txn totals for each payment method --
+              paymentMethodTotals[paymentMethod] =
+                  (paymentMethodTotals[paymentMethod] ?? 0) + txn.totalAmount;
+            }
+          }
+        },
+      );
+    } catch (e) {
+      if (kDebugMode) {
+        CPopupSnackBar.errorSnackBar(
+          message: e.toString(),
+          title: 'error creating pie chart...',
+        );
+      } else {
+        CPopupSnackBar.errorSnackBar(
+          message: 'an unknown error occured while generating pie chart...',
+          title: 'error creating pie chart...',
+        );
+      }
+    }
   }
 }

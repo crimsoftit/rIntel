@@ -106,7 +106,6 @@ class CInventoryController extends GetxController {
   final txtStockNotifierLimit = TextEditingController();
   final txtSupplierName = TextEditingController();
   final txtSupplierContacts = TextEditingController();
-  final txtSyncAction = TextEditingController();
 
   //final txtQtySold = TextEditingController();
 
@@ -474,24 +473,21 @@ class CInventoryController extends GetxController {
 
         txtStockNotifierLimit.text = (fetchedItem.first.lowStockNotifierLimit)
             .toString();
-
-        txtSyncAction.text = 'update';
       } else {
         itemExists.value = false;
         supplierDetailsExist.value = false;
-        txtExpiryDatePicker.text = '';
-        txtId.text = '';
-        txtNameController.text = '';
+        txtExpiryDatePicker.clear();
+        txtId.clear();
+        txtNameController.clear();
         itemMetrics.value = '';
-        txtQty.text = '';
-        txtBP.text = '';
+        txtQty.clear();
+        txtBP.clear();
         unitBP.value = 0.0;
-        txtUnitSP.text = '';
-        txtStockNotifierLimit.text = '';
-        txtSupplierName.text = '';
-        txtSupplierContacts.text = '';
-        txtExpiryDatePicker.text = '';
-        txtSyncAction.text = 'append';
+        txtUnitSP.clear();
+        txtStockNotifierLimit.clear();
+        txtSupplierName.clear();
+        txtSupplierContacts.clear();
+        txtExpiryDatePicker.clear();
       }
       isLoading.value = false;
       return fetchedItem;
@@ -508,18 +504,18 @@ class CInventoryController extends GetxController {
   }
 
   void runInvScanner() {
-    txtBP.text = "";
-    txtCode.text = "";
-    txtExpiryDatePicker.text = "";
-    txtId.text = "";
+    txtBP.clear();
+    txtCode.clear();
+    txtExpiryDatePicker.clear();
+    txtId.clear();
     itemMetrics.value = '';
-    txtQty.text = "";
-    txtStockNotifierLimit.text = "";
-    txtSupplierContacts.text = '';
-    txtSupplierName.text = "";
-    txtNameController.text = "";
-    txtExpiryDatePicker.text = "";
-    txtUnitSP.text = "";
+    txtQty.clear();
+    txtStockNotifierLimit.clear();
+    txtSupplierContacts.clear();
+    txtSupplierName.clear();
+    txtNameController.clear();
+    txtExpiryDatePicker.clear();
+    txtUnitSP.clear();
     unitBP.value = 0.0;
 
     scanBarcodeNormal();
@@ -527,7 +523,6 @@ class CInventoryController extends GetxController {
 
   void searchInventory(String value) {
     inventoryItems.refresh();
-    //foundInventoryItems.clear();
 
     var invSearchItems = inventoryItems
         .where(
@@ -1698,7 +1693,6 @@ class CInventoryController extends GetxController {
     txtSupplierName.clear();
     txtSupplierContacts.clear();
     txtExpiryDatePicker.clear();
-    txtSyncAction.clear();
   }
 
   @override
@@ -1716,7 +1710,6 @@ class CInventoryController extends GetxController {
     txtStockNotifierLimit.dispose();
     txtSupplierContacts.dispose();
     txtSupplierName.dispose();
-    txtSyncAction.dispose();
     txtUnitSP.dispose();
 
     super.dispose();

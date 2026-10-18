@@ -152,15 +152,8 @@ class AuthRepo extends GetxController {
                 );
               },
             );
-            //Get.offAll(() => const NavMenu());
-          } else {
             // stop loader
             CFullScreenLoader.stopLoading();
-            if (kDebugMode) {
-              CPopupSnackBar.errorSnackBar(
-                title: 'error fetching user details!!',
-              );
-            }
           }
         }
       } else {

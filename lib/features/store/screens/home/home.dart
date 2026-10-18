@@ -17,6 +17,7 @@ import 'package:rintel/features/store/screens/home/fresh_dashboard.dart';
 import 'package:rintel/features/store/screens/home/widgets/charts/bar_charts/monthly_sales_bar_graph.dart';
 import 'package:rintel/features/store/screens/home/widgets/charts/bar_charts/weekly_sales_bar_graph.dart';
 import 'package:rintel/features/store/screens/home/widgets/charts/line_charts/cutom_line_chart.dart';
+import 'package:rintel/features/store/screens/home/widgets/charts/pie_charts/payment_methods.dart';
 import 'package:rintel/features/store/screens/home/widgets/dashboard_header.dart';
 import 'package:rintel/features/store/screens/home/widgets/store_summary.dart';
 import 'package:rintel/features/store/screens/home/widgets/store_summary_card.dart';
@@ -319,6 +320,29 @@ class HomeScreen extends StatelessWidget {
                         //   height: CSizes.defaultSpace * .5,
                         // ),
                         // WeeklySalesBarGraphWidget(),
+                        const SizedBox(
+                          height: CSizes.defaultSpace * .5,
+                        ),
+
+                        CSectionHeading(
+                          showActionBtn: true,
+                          title: 'Payment methods...',
+                          txtColor: CNetworkManager.instance.hasConnection.value
+                              ? CColors.rBrown
+                              : CColors.darkGrey,
+
+                          btnTitle: '',
+                          btnTxtColor: CColors.rBrown,
+                          editFontSize: true,
+                          fWeight: FontWeight.w400,
+                          onPressed: () {},
+                        ),
+
+                        CPaymentMethodsPieChart(
+                          chartHeight: 450.0,
+                          chartWidth: CHelperFunctions.screenWidth() * .9,
+                        ),
+
                         const SizedBox(
                           height: CSizes.defaultSpace * .5,
                         ),

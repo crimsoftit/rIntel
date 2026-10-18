@@ -227,30 +227,31 @@ class CExpenseDetails extends StatelessWidget {
                                   context,
                                 ).textTheme.labelSmall!.apply(),
                               ),
-                              Row(
-                                children: [
-                                  SelectableText(
-                                    expense.expenseId.toString(),
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .labelMedium!
-                                        .apply(
-                                          fontSizeFactor: 1.3,
-                                          fontWeightDelta: -1,
-                                        ),
-                                  ),
-                                  const SizedBox(
-                                    width: 3.0,
-                                  ),
-                                  SizedBox(
-                                    height: 15.0,
-                                    child: TextButton.icon(
+                              CRoundedContainer(
+                                bgColor: CColors.transparent,
+                                height: 20.0,
+                                child: Row(
+                                  children: [
+                                    SelectableText(
+                                      expense.expenseId.toString(),
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .labelMedium!
+                                          .apply(
+                                            fontSizeFactor: 1.3,
+                                            fontWeightDelta: -1,
+                                          ),
+                                    ),
+                                    const SizedBox(
+                                      width: 3.0,
+                                    ),
+                                    TextButton.icon(
                                       icon: Icon(
                                         Icons.file_copy,
                                         color: isDarkTheme
                                             ? CColors.darkGrey
                                             : CColors.rBrown,
-                                        size: CSizes.iconXs,
+                                        size: CSizes.iconSm,
                                       ),
                                       label: Text(
                                         'copy',
@@ -260,7 +261,7 @@ class CExpenseDetails extends StatelessWidget {
                                             ).textTheme.labelSmall!.apply(
                                               color: isDarkTheme
                                                   ? CColors.darkGrey
-                                                  : CColors.white,
+                                                  : CColors.rBrown,
                                             ),
                                       ),
                                       onPressed: () {
@@ -269,8 +270,8 @@ class CExpenseDetails extends StatelessWidget {
                                         );
                                       },
                                     ),
-                                  ),
-                                ],
+                                  ],
+                                ),
                               ),
                               const SizedBox(
                                 height: CSizes.spaceBtnItems,
@@ -283,39 +284,41 @@ class CExpenseDetails extends StatelessWidget {
                               ),
                               expense.txnCode == ''
                                   ? SelectableText(
-                                      expense.txnCode,
+                                      'N/A',
                                       style: Theme.of(context)
                                           .textTheme
                                           .labelMedium!
                                           .apply(
                                             fontSizeFactor: 1.3,
                                             fontWeightDelta: -1,
+                                            fontStyle: FontStyle.italic,
                                           ),
                                     )
-                                  : Row(
-                                      children: [
-                                        SelectableText(
-                                          expense.txnCode,
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .labelMedium!
-                                              .apply(
-                                                fontSizeFactor: 1.3,
-                                                fontWeightDelta: -1,
-                                              ),
-                                        ),
-                                        const SizedBox(
-                                          width: 3.0,
-                                        ),
-                                        SizedBox(
-                                          height: 15.0,
-                                          child: TextButton.icon(
+                                  : CRoundedContainer(
+                                      bgColor: CColors.transparent,
+                                      height: 18.0,
+                                      child: Row(
+                                        children: [
+                                          SelectableText(
+                                            expense.txnCode,
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .labelMedium!
+                                                .apply(
+                                                  fontSizeFactor: 1.3,
+                                                  fontWeightDelta: -1,
+                                                ),
+                                          ),
+                                          const SizedBox(
+                                            width: 3.0,
+                                          ),
+                                          TextButton.icon(
                                             icon: Icon(
                                               Icons.file_copy,
                                               color: isDarkTheme
                                                   ? CColors.darkGrey
                                                   : CColors.rBrown,
-                                              size: CSizes.iconXs,
+                                              size: CSizes.iconSm,
                                             ),
                                             label: Text(
                                               'Copy',
@@ -329,8 +332,8 @@ class CExpenseDetails extends StatelessWidget {
                                               );
                                             },
                                           ),
-                                        ),
-                                      ],
+                                        ],
+                                      ),
                                     ),
                               CDivider(
                                 endIndent: 0,

@@ -1,5 +1,6 @@
 import 'package:rintel/common/widgets/loaders/animated_loader.dart';
 import 'package:rintel/common/widgets/products/product_cards/p_card_vertical.dart';
+import 'package:rintel/features/personalization/controllers/expenses_controller.dart';
 import 'package:rintel/features/personalization/controllers/user_controller.dart';
 import 'package:rintel/features/store/controllers/inv_controller.dart';
 import 'package:rintel/features/store/controllers/search_bar_controller.dart';
@@ -33,7 +34,7 @@ class CInvGridviewScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     AddUpdateItemDialog dialog = AddUpdateItemDialog();
-
+    final expensesController = Get.put(CExpensesController());
     final isDarkTheme = CHelperFunctions.isDarkMode(context);
     final invController = Get.put(CInventoryController());
     final searchController = Get.put(CSearchBarController());
@@ -52,6 +53,16 @@ class CInvGridviewScreen extends StatelessWidget {
           demInventoryItems = [];
         } else {
           switch (screen) {
+            case 'xpenses':
+              demInventoryItems.assignAll(
+                expensesController.showSearchField.value &&
+                        searchController.txtSearchField.text != '' &&
+                        !invController.isLoading.value
+                    ? invController.foundInventoryItems
+                    : invController.inventoryItems,
+              );
+              break;
+
             case 'store':
               demInventoryItems.assignAll(
                 searchController.showSearchField.value &&
@@ -254,6 +265,7 @@ class CInvGridviewScreen extends StatelessWidget {
                   },
                   onTapAction: () {
                     CPopupSnackBar.customToast(
+                      radius: 20.0,
                       message: 'double tap on item to see details!!',
                       forInternetConnectivityStatus: false,
                     );

@@ -81,7 +81,7 @@ class CPopupSnackBar extends GetxController {
                 : Row(
                     children: [
                       Expanded(
-                        child: prefixIcon!,
+                        child: prefixIcon ?? const SizedBox.shrink(),
                       ),
                       Expanded(
                         flex: 7,

@@ -13,6 +13,7 @@ import 'package:rintel/features/personalization/screens/expenses/widgets/expense
 import 'package:rintel/features/personalization/screens/expenses/widgets/inv_expenses_view.dart';
 import 'package:rintel/features/personalization/screens/expenses/widgets/xpense_form.dart';
 import 'package:rintel/features/personalization/screens/navigation/menu_btn.dart';
+import 'package:rintel/features/store/controllers/inv_controller.dart';
 import 'package:rintel/features/store/controllers/txns_controller.dart';
 import 'package:rintel/features/store/screens/store_items_tings/widgets/inv_gridview_screen.dart';
 import 'package:rintel/utils/constants/colors.dart';
@@ -31,7 +32,7 @@ class CExpensesScreen extends StatelessWidget {
       MediaQuery.of(context).size.width,
       MediaQuery.of(context).size.height * 0.9,
     );
-
+    final invController = Get.put(CInventoryController());
     final isDarkTheme = CHelperFunctions.isDarkMode(context);
     final txnsController = Get.put(CTxnsController());
     final userController = Get.put(CUserController());
@@ -68,6 +69,7 @@ class CExpensesScreen extends StatelessWidget {
                   hintTxt: "search thru' expenses...",
                   onFieldSubmitted: (value) {
                     txnsController.searchThroughXpenses(value);
+                    invController.searchInventory(value);
                   },
 
                   onIconTap: () {
@@ -75,6 +77,7 @@ class CExpensesScreen extends StatelessWidget {
                   },
                   onSearchValueChanged: (query) {
                     txnsController.searchThroughXpenses(query);
+                    invController.searchInventory(query);
                   },
                   searchFieldController: xpensesController.txtSearchField,
                 ),
@@ -210,7 +213,7 @@ class CExpensesScreen extends StatelessWidget {
                     ],
                   ),
 
-                  // -- bills--
+                  // -- bills --
                   CExpensesView(
                     space: 'bills',
                   ),
@@ -218,7 +221,7 @@ class CExpensesScreen extends StatelessWidget {
                   // -- inventory items --
                   CInvGridviewScreen(
                     //mainAxisExtent: 185.20,
-                    screen: 'store',
+                    screen: 'xpenses',
                   ),
 
                   CExpensesView(

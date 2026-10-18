@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:rintel/utils/computations/date_time_computations.dart';
 import 'package:rintel/utils/constants/colors.dart';
+import 'package:rintel/utils/constants/enums.dart';
 import 'package:rintel/utils/constants/sizes.dart';
 import 'package:rintel/utils/helpers/network_manager.dart';
 import 'package:flutter/foundation.dart';
@@ -288,5 +289,31 @@ class CHelperFunctions {
         size: CSizes.iconSm,
       ),
     );
+  }
+
+  /// -- set color for payment method's pie chart data --
+  static Color setPaymentMethodDataColor(CPaymentMethods method) {
+    switch (method) {
+      case CPaymentMethods.onTheHouse:
+        return CColors.rOrange;
+
+      case CPaymentMethods.cash:
+        return CColors.rBrown;
+
+      case CPaymentMethods.credit:
+        return Colors.redAccent;
+
+      case CPaymentMethods.mPesaSendMoney:
+        return const ui.Color.fromARGB(255, 170, 219, 172);
+
+      case CPaymentMethods.mpesaPochi:
+        return Colors.green;
+
+      case CPaymentMethods.mpesaPrompt:
+        return CColors.rPrimaryColor;
+
+      case CPaymentMethods.paypal:
+        return CColors.rBlue;
+    }
   }
 }
