@@ -1,7 +1,6 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:rintel/common/widgets/custom_shapes/containers/circular_container.dart';
 import 'package:rintel/common/widgets/custom_shapes/containers/rounded_container.dart';
 import 'package:rintel/features/personalization/controllers/user_controller.dart';
 import 'package:rintel/features/store/controllers/dashboard_controller.dart';
@@ -36,12 +35,12 @@ class CPaymentMethodsPieChart extends StatelessWidget {
         return CRoundedContainer(
           borderRadius: borderRadius ?? 5.0,
           height: chartHeight ?? 400.0,
-          width: chartWidth ?? CHelperFunctions.screenWidth() * .9,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
+          width: chartWidth ?? CHelperFunctions.screenWidth() * .95,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.start,
             children: [
               Expanded(
+                flex: 4,
                 child: PieChart(
                   PieChartData(
                     centerSpaceColor: CColors.txtSecondary,
@@ -76,102 +75,148 @@ class CPaymentMethodsPieChart extends StatelessWidget {
                   ),
                 ),
               ),
-
-              // -- metadata for the various payment methods
               Expanded(
-                child: DataTable(
-                  columns: [
-                    DataColumn(
-                      label: Text(
-                        'payment method:',
-                      ),
-                    ),
-                    DataColumn(
-                      label: Text(
-                        'txns count:',
-                      ),
-                    ),
-                    DataColumn(
-                      label: Text(
-                        'totals-> $userCurrency',
-                      ),
-                    ),
-                  ],
-                  rows: dashboardController.paymentMethodTxnsData.entries.map(
-                    (entry) {
-                      final method = entry.key;
-                      final txnsCount = entry.value;
-                      final paymentMethodTotals =
-                          dashboardController.paymentMethodTotals[method] ?? 0;
-                      return DataRow(
-                        cells: [
-                          DataCell(
-                            Row(
-                              children: [
-                                CCircularContainer(
-                                  bgColor:
-                                      CHelperFunctions.setPaymentMethodDataColor(
-                                        method,
-                                      ),
-                                  height: 20.0,
-                                  width: 20.0,
-                                ),
-                                Expanded(
-                                  child: Text(
-                                    ' $method',
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .labelMedium!
-                                        .apply(
-                                          color: CColors.rBrown,
-                                        ),
-                                  ),
-                                ),
-                              ],
+                flex: 2,
+                child: ListView(
+                  semanticChildCount: 7,
+                  shrinkWrap: true,
+                  children: dashboardController.paymentMethodTxnsData.entries
+                      .map(
+                        (entry) {
+                          final method = entry.key;
+                          final txnsCount = entry.value;
+                          final txnTotals =
+                              dashboardController.paymentMethodTotals[method] ??
+                              0;
+
+                          return CRoundedContainer(
+                            bgColor: CHelperFunctions.setPaymentMethodDataColor(
+                              method,
                             ),
-                          ),
-                          DataCell(
-                            Text(
-                              txnsCount.toString(),
-                            ),
-                          ),
-                          DataCell(
-                            RichText(
-                              textAlign: TextAlign.center,
-                              text: TextSpan(
-                                style: Theme.of(context).textTheme.labelSmall!
-                                    .apply(
-                                      fontFeatures: [
-                                        FontFeature.superscripts(),
-                                      ],
-                                      fontSizeFactor: .9,
-                                      fontStyle: FontStyle.italic,
-                                    ),
-                                text: userCurrency,
-                                children: <TextSpan>[
-                                  TextSpan(
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .labelMedium!
-                                        .apply(
-                                          fontWeightDelta: 2,
-                                        ),
-                                    text: paymentMethodTotals.toStringAsFixed(
-                                      2,
-                                    ),
-                                  ),
-                                ],
+                            child: ListTile(
+                              subtitle: Text(
+                                '$userCurrency $txnTotals',
+                              ),
+                              title: Text(
+                                'txns: $txnsCount',
                               ),
                             ),
-                          ),
-                        ],
-                      );
-                    },
-                  ).toList(),
+                          );
+                        },
+                      )
+                      .toList(),
                 ),
               ),
             ],
           ),
+
+          // Column(
+          //   crossAxisAlignment: CrossAxisAlignment.start,
+          //   mainAxisSize: MainAxisSize.min,
+          //   children: [
+          //     Expanded(
+          //       child:
+          //     ),
+
+          //     // -- metadata for the various payment methods
+          //     // Expanded(
+          //     //   child: SizedBox(
+          //     //     width: double.infinity,
+          //     //     child: DataTable(
+          //     //       columns: [
+          //     //         DataColumn(
+          //     //           label: Text(
+          //     //             'payment method:',
+          //     //           ),
+          //     //         ),
+          //     //         DataColumn(
+          //     //           label: Text(
+          //     //             'txns count:',
+          //     //           ),
+          //     //         ),
+          //     //         DataColumn(
+          //     //           label: Text(
+          //     //             'totals-> $userCurrency',
+          //     //           ),
+          //     //         ),
+          //     //       ],
+          //     //       rows: dashboardController.paymentMethodTxnsData.entries.map(
+          //     //         (entry) {
+          //     //           final method = entry.key;
+          //     //           final txnsCount = entry.value;
+          //     //           final paymentMethodTotals =
+          //     //               dashboardController.paymentMethodTotals[method] ??
+          //     //               0;
+          //     //           return DataRow(
+          //     //             cells: [
+          //     //               DataCell(
+          //     //                 Row(
+          //     //                   children: [
+          //     //                     CCircularContainer(
+          //     //                       bgColor:
+          //     //                           CHelperFunctions.setPaymentMethodDataColor(
+          //     //                             method,
+          //     //                           ),
+          //     //                       height: 20.0,
+          //     //                       width: 20.0,
+          //     //                     ),
+          //     //                     Expanded(
+          //     //                       child: Text(
+          //     //                         ' $method',
+          //     //                         style: Theme.of(context)
+          //     //                             .textTheme
+          //     //                             .labelMedium!
+          //     //                             .apply(
+          //     //                               color: CColors.rBrown,
+          //     //                             ),
+          //     //                       ),
+          //     //                     ),
+          //     //                   ],
+          //     //                 ),
+          //     //               ),
+          //     //               DataCell(
+          //     //                 Text(
+          //     //                   txnsCount.toString(),
+          //     //                 ),
+          //     //               ),
+          //     //               DataCell(
+          //     //                 RichText(
+          //     //                   textAlign: TextAlign.center,
+          //     //                   text: TextSpan(
+          //     //                     style: Theme.of(context).textTheme.labelSmall!
+          //     //                         .apply(
+          //     //                           fontFeatures: [
+          //     //                             FontFeature.superscripts(),
+          //     //                           ],
+          //     //                           fontSizeFactor: .9,
+          //     //                           fontStyle: FontStyle.italic,
+          //     //                         ),
+          //     //                     text: userCurrency,
+          //     //                     children: <TextSpan>[
+          //     //                       TextSpan(
+          //     //                         style: Theme.of(context)
+          //     //                             .textTheme
+          //     //                             .labelMedium!
+          //     //                             .apply(
+          //     //                               fontWeightDelta: 2,
+          //     //                             ),
+          //     //                         text: paymentMethodTotals.toStringAsFixed(
+          //     //                           2,
+          //     //                         ),
+          //     //                       ),
+          //     //                     ],
+          //     //                   ),
+          //     //                 ),
+          //     //               ),
+          //     //             ],
+          //     //           );
+          //     //         },
+          //     //       ).toList(),
+          //     //     ),
+          //     //   ),
+          //     // ),
+          //   ],
+          // ),
         );
       },
     );

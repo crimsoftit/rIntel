@@ -1409,6 +1409,12 @@ class CTxnsController extends GetxController {
         builder: (context) {
           invoiceAmountOwed.value = txn.totalAmount - txn.amountPaid;
 
+          if (checkoutController.selectedPaymentMethod.value.platformName
+                  .toLowerCase() ==
+              'on the house') {
+            txtAmountIssued.text = invoiceAmountOwed.value.toStringAsFixed(1);
+          }
+
           return Padding(
             padding: MediaQuery.of(context).viewInsets,
             child: CRoundedContainer(

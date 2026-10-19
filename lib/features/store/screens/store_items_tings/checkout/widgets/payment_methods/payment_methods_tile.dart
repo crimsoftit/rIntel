@@ -9,10 +9,17 @@ import 'package:get/get.dart';
 import 'package:iconsax/iconsax.dart';
 
 class CPaymentMethodsTile extends StatelessWidget {
-  const CPaymentMethodsTile({super.key, required this.paymentMethod});
+  const CPaymentMethodsTile({
+    super.key,
+    this.fieldToPaintOn,
+    this.valueToPaint,
+    required this.paymentMethod,
+  });
 
   /// -- variables --
   final CPaymentMethodModel paymentMethod;
+  final String? valueToPaint;
+  final TextEditingController? fieldToPaintOn;
 
   @override
   Widget build(BuildContext context) {
@@ -24,6 +31,8 @@ class CPaymentMethodsTile extends StatelessWidget {
       contentPadding: const EdgeInsets.all(0),
       onTap: () {
         checkoutController.selectedPaymentMethod.value = paymentMethod;
+
+        if (fieldToPaintOn != null) fieldToPaintOn!.text = valueToPaint!;
 
         Navigator.pop(context);
       },

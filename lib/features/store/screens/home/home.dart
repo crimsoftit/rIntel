@@ -339,8 +339,10 @@ class HomeScreen extends StatelessWidget {
                         ),
 
                         CPaymentMethodsPieChart(
-                          chartHeight: 450.0,
-                          chartWidth: CHelperFunctions.screenWidth() * .9,
+                          chartHeight: 300.0,
+                          chartRadius: 70.0,
+                          centerRadius: 20.0,
+                          chartWidth: CHelperFunctions.screenWidth(),
                         ),
 
                         const SizedBox(

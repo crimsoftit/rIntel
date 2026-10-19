@@ -369,7 +369,10 @@ class CCheckoutController extends GetxController {
   }
 
   /// -- method to select payment method --
-  Future<dynamic> selectPaymentMethod(BuildContext context, String event) {
+  Future<dynamic> selectPaymentMethod(
+    BuildContext context,
+    String event,
+  ) {
     return showModalBottomSheet(
       context: context,
       builder: (_) {
@@ -390,23 +393,22 @@ class CCheckoutController extends GetxController {
                 const SizedBox(
                   height: CSizes.spaceBtnSections / 4,
                 ),
-                Visibility(
-                  maintainState: false,
-                  visible: event == 'checkout',
-
-                  child: Column(
-                    children: [
-                      CPaymentMethodsTile(
-                        paymentMethod: CPaymentMethodModel(
-                          platformLogo: CImages.onTheHauz,
-                          platformName: 'On the house',
-                        ),
-                      ),
-                      const SizedBox(
-                        height: CSizes.spaceBtnSections / 4,
-                      ),
-                    ],
+                CPaymentMethodsTile(
+                  fieldToPaintOn: event == 'invoice payment'
+                      ? txnsController.txtAmountIssued
+                      : null,
+                  paymentMethod: CPaymentMethodModel(
+                    platformLogo: CImages.onTheHauz,
+                    platformName: 'On the house',
                   ),
+                  valueToPaint: event == 'invoice payment'
+                      ? txnsController.invoiceAmountOwed.value.toStringAsFixed(
+                          1,
+                        )
+                      : null,
+                ),
+                const SizedBox(
+                  height: CSizes.spaceBtnSections / 4,
                 ),
 
                 Visibility(
