@@ -3,7 +3,7 @@ enum CAppRole {
   user,
 }
 
-enum CPaymentMethods {
+enum CPaymentMethod {
   onTheHouse,
   credit,
   cash,

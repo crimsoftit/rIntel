@@ -176,6 +176,10 @@ class CTxnsController extends GetxController {
 
     await fetchMyExpenses();
 
+    // final dashboardController = Get.put(CDashboardController());
+    // dashboardController.computePaymentMethodsData();
+
+
     super.onInit();
   }
 
@@ -1927,7 +1931,7 @@ class CTxnsController extends GetxController {
 
       /// -- compute hourly sales --
       dashboardController.filterHourlySales();
-
+      
       await fetchTopSellersFromSales();
 
       if (searchController.showSearchField.value &&

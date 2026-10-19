@@ -68,10 +68,10 @@ class CDashboardController extends GetxController {
   final RxMap<int, double> monthlyTotals = <int, double>{}.obs;
 
   // -- payment methods graph data --
-  final RxMap<CPaymentMethods, int> paymentMethodTxnsData =
-      <CPaymentMethods, int>{}.obs;
-  final RxMap<CPaymentMethods, double> paymentMethodTotals =
-      <CPaymentMethods, double>{}.obs;
+  final RxMap<CPaymentMethod, int> paymentMethodTxnsData =
+      <CPaymentMethod, int>{}.obs;
+  final RxMap<CPaymentMethod, double> paymentMethodTotals =
+      <CPaymentMethod, double>{}.obs;
 
   final RxString defautSalesFilterPeriod = ''.obs;
   final RxString selectedSalesFilterPeriod = ''.obs;
@@ -120,13 +120,14 @@ class CDashboardController extends GetxController {
           (_) async {
             if (txnsController.userTxns.isNotEmpty) {
               await txnsController.fetchTopSellersFromSales();
+              await computePaymentMethodsData();
             }
           },
         );
       },
     );
 
-    computePaymentMethodsData();
+    
 
     super.onInit();
   }
@@ -543,7 +544,7 @@ class CDashboardController extends GetxController {
 
       // -- map to store the totals for each payment method --
       paymentMethodTotals.value = {
-        for (var method in CPaymentMethods.values) method: 0.0,
+        for (var method in CPaymentMethod.values) method: 0.0,
       };
 
       await txnsController.fetchUserTxns().then(
@@ -555,35 +556,35 @@ class CDashboardController extends GetxController {
               dynamic paymentMethod;
               switch (method) {
                 case 'on the house':
-                  paymentMethod = CPaymentMethods.onTheHouse;
+                  paymentMethod = CPaymentMethod.onTheHouse;
                   break;
 
                 case 'credit':
-                  paymentMethod = CPaymentMethods.credit;
+                  paymentMethod = CPaymentMethod.credit;
                   break;
 
                 case 'cash':
-                  paymentMethod = CPaymentMethods.cash;
+                  paymentMethod = CPaymentMethod.cash;
                   break;
 
                 case 'send money':
-                  paymentMethod = CPaymentMethods.mPesaSendMoney;
+                  paymentMethod = CPaymentMethod.mPesaSendMoney;
                   break;
 
                 case 'pochi':
-                  paymentMethod = CPaymentMethods.mpesaPochi;
+                  paymentMethod = CPaymentMethod.mpesaPochi;
                   break;
 
                 case 'mpesa online':
-                  paymentMethod = CPaymentMethods.mpesaPrompt;
+                  paymentMethod = CPaymentMethod.mpesaPrompt;
                   break;
 
                 case 'paypal':
-                  paymentMethod = CPaymentMethods.paypal;
+                  paymentMethod = CPaymentMethod.paypal;
                   break;
 
                 default:
-                  paymentMethod = CPaymentMethods.onTheHouse;
+                  paymentMethod = CPaymentMethod.onTheHouse;
                   break;
               }
 
@@ -610,6 +611,36 @@ class CDashboardController extends GetxController {
           title: 'error creating pie chart...',
         );
       }
+    }
+  }
+
+  /// -- payment methods display names --
+  String paymentMethodDisplayName(CPaymentMethod method) {
+    switch (method) {
+      case CPaymentMethod.cash:
+        return 'Cash';
+
+      case CPaymentMethod.credit:
+        return 'Invoice';
+
+      case CPaymentMethod.mPesaSendMoney:
+        return 'Send money';
+
+      case CPaymentMethod.mpesaPochi:
+        return 'Pochi';
+
+      case CPaymentMethod.mpesaPrompt:
+        return 'mPesa xpress';
+
+      case CPaymentMethod.onTheHouse:
+        return 'On the house';
+
+      case CPaymentMethod.paypal:
+        return 'Paypal';
+
+      // ignore: unreachable_switch_default
+      default:
+        return 'N/A';
     }
   }
 }

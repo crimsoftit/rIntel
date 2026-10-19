@@ -292,27 +292,27 @@ class CHelperFunctions {
   }
 
   /// -- set color for payment method's pie chart data --
-  static Color setPaymentMethodDataColor(CPaymentMethods method) {
+  static Color setPaymentMethodDataColor(CPaymentMethod method) {
     switch (method) {
-      case CPaymentMethods.onTheHouse:
+      case CPaymentMethod.onTheHouse:
         return CColors.rOrange;
 
-      case CPaymentMethods.cash:
+      case CPaymentMethod.cash:
         return CColors.rBrown;
 
-      case CPaymentMethods.credit:
+      case CPaymentMethod.credit:
         return Colors.redAccent;
 
-      case CPaymentMethods.mPesaSendMoney:
-        return const ui.Color.fromARGB(255, 170, 219, 172);
-
-      case CPaymentMethods.mpesaPochi:
+      case CPaymentMethod.mPesaSendMoney:
         return Colors.green;
 
-      case CPaymentMethods.mpesaPrompt:
-        return CColors.rPrimaryColor;
+      case CPaymentMethod.mpesaPochi:
+        return randomAestheticColor();
 
-      case CPaymentMethods.paypal:
+      case CPaymentMethod.mpesaPrompt:
+        return Colors.deepPurpleAccent;
+
+      case CPaymentMethod.paypal:
         return CColors.rBlue;
     }
   }

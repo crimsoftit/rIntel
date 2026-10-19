@@ -80,31 +80,53 @@ class CPaymentMethodsPieChart extends StatelessWidget {
                 child: ListView(
                   semanticChildCount: 7,
                   shrinkWrap: true,
-                  children: dashboardController.paymentMethodTxnsData.entries
-                      .map(
-                        (entry) {
-                          final method = entry.key;
-                          final txnsCount = entry.value;
-                          final txnTotals =
-                              dashboardController.paymentMethodTotals[method] ??
-                              0;
+                  children: dashboardController.paymentMethodTxnsData.entries.map(
+                    (entry) {
+                      final method = entry.key;
+                      final txnsCount = entry.value;
+                      final txnTotals =
+                          dashboardController.paymentMethodTotals[method] ?? 0;
 
-                          return CRoundedContainer(
-                            bgColor: CHelperFunctions.setPaymentMethodDataColor(
+                      return CRoundedContainer(
+                        bgColor:
+                            CHelperFunctions.setPaymentMethodDataColor(
                               method,
+                            ).withValues(
+                              alpha: .4,
                             ),
-                            child: ListTile(
-                              subtitle: Text(
-                                '$userCurrency $txnTotals',
-                              ),
-                              title: Text(
-                                'txns: $txnsCount',
+                        borderRadius: 5.0,
+                        height: 50.0,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Expanded(
+                              child: Text(
+                                txnsCount == 1
+                                    ? '$txnsCount txn($userCurrency.$txnTotals)'
+                                    : '$txnsCount txns($userCurrency.$txnTotals)',
+                                style: Theme.of(context).textTheme.labelSmall!
+                                    .apply(
+                                      color: CColors.white,
+                                    ),
                               ),
                             ),
-                          );
-                        },
-                      )
-                      .toList(),
+                            Expanded(
+                              child: Text(
+                                dashboardController
+                                    .paymentMethodDisplayName(method)
+                                    .toUpperCase(),
+                                style: Theme.of(context).textTheme.labelMedium!
+                                    .apply(
+                                      color: CColors.white,
+                                    ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                  ).toList(),
                 ),
               ),
             ],
