@@ -3,6 +3,7 @@ import 'package:rintel/features/personalization/controllers/expenses_controller.
 import 'package:rintel/features/personalization/controllers/notification_tings/flutter_local_notifications/local_notifications_controller.dart';
 import 'package:rintel/features/personalization/controllers/user_controller.dart';
 import 'package:rintel/features/store/controllers/checkout_controller.dart';
+import 'package:rintel/features/store/controllers/dashboard_controller.dart';
 import 'package:rintel/features/store/controllers/inv_controller.dart';
 import 'package:rintel/features/store/controllers/txns_controller.dart';
 import 'package:rintel/utils/helpers/network_manager.dart';
@@ -35,6 +36,13 @@ class CGeneralBindings extends Bindings {
     );
     Get.lazyPut(
       () => CLocalNotificationsController(),
+      fenix: true,
+    );
+
+    Get.lazyPut(
+      () {
+        return CDashboardController();
+      },
       fenix: true,
     );
 

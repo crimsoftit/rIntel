@@ -17,7 +17,7 @@ import 'package:rintel/features/store/screens/home/fresh_dashboard.dart';
 import 'package:rintel/features/store/screens/home/widgets/charts/bar_charts/monthly_sales_bar_graph.dart';
 import 'package:rintel/features/store/screens/home/widgets/charts/bar_charts/weekly_sales_bar_graph.dart';
 import 'package:rintel/features/store/screens/home/widgets/charts/line_charts/cutom_line_chart.dart';
-import 'package:rintel/features/store/screens/home/widgets/charts/pie_charts/payment_methods.dart';
+import 'package:rintel/features/store/screens/home/widgets/charts/pie_charts/payment_methods_graph.dart';
 import 'package:rintel/features/store/screens/home/widgets/dashboard_header.dart';
 import 'package:rintel/features/store/screens/home/widgets/store_summary.dart';
 import 'package:rintel/features/store/screens/home/widgets/store_summary_card.dart';
@@ -339,7 +339,7 @@ class HomeScreen extends StatelessWidget {
                         ),
 
                         CPaymentMethodsPieChart(
-                          chartHeight: 300.0,
+                          chartHeight: 460.0,
                           chartRadius: 70.0,
                           centerRadius: 20.0,
                           chartWidth: CHelperFunctions.screenWidth(),

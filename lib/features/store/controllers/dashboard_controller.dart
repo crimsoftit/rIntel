@@ -94,7 +94,7 @@ class CDashboardController extends GetxController {
               (result) async {
                 if (result.isNotEmpty) {
                   calculateCurrentWeekSales();
-
+                  computePaymentMethodsData();
                   filterHourlySales();
                 }
                 txnsController.initializeSalesSummaryValues();
@@ -126,8 +126,6 @@ class CDashboardController extends GetxController {
         );
       },
     );
-
-    
 
     super.onInit();
   }
@@ -539,6 +537,7 @@ class CDashboardController extends GetxController {
   /// -- summarize txns' payment methods --
   Future<void> computePaymentMethodsData() async {
     try {
+      isLoading.value = true;
       // -- reset data --
       paymentMethodTxnsData.clear();
 
@@ -547,59 +546,55 @@ class CDashboardController extends GetxController {
         for (var method in CPaymentMethod.values) method: 0.0,
       };
 
-      await txnsController.fetchUserTxns().then(
-        (result) {
-          if (result.isNotEmpty) {
-            for (var txn in txnsController.userTxns) {
-              // -- count txns --
-              final method = txn.paymentMethod.toLowerCase();
-              dynamic paymentMethod;
-              switch (method) {
-                case 'on the house':
-                  paymentMethod = CPaymentMethod.onTheHouse;
-                  break;
+      for (var txn in txnsController.userTxns) {
+        // -- count txns --
+        final method = txn.paymentMethod.toLowerCase();
+        dynamic paymentMethod;
+        switch (method) {
+          case 'on the house':
+            paymentMethod = CPaymentMethod.onTheHouse;
+            break;
 
-                case 'credit':
-                  paymentMethod = CPaymentMethod.credit;
-                  break;
+          case 'credit':
+            paymentMethod = CPaymentMethod.credit;
+            break;
 
-                case 'cash':
-                  paymentMethod = CPaymentMethod.cash;
-                  break;
+          case 'cash':
+            paymentMethod = CPaymentMethod.cash;
+            break;
 
-                case 'send money':
-                  paymentMethod = CPaymentMethod.mPesaSendMoney;
-                  break;
+          case 'send money':
+            paymentMethod = CPaymentMethod.mPesaSendMoney;
+            break;
 
-                case 'pochi':
-                  paymentMethod = CPaymentMethod.mpesaPochi;
-                  break;
+          case 'pochi':
+            paymentMethod = CPaymentMethod.mpesaPochi;
+            break;
 
-                case 'mpesa online':
-                  paymentMethod = CPaymentMethod.mpesaPrompt;
-                  break;
+          case 'mpesa online':
+            paymentMethod = CPaymentMethod.mpesaPrompt;
+            break;
 
-                case 'paypal':
-                  paymentMethod = CPaymentMethod.paypal;
-                  break;
+          case 'paypal':
+            paymentMethod = CPaymentMethod.paypal;
+            break;
 
-                default:
-                  paymentMethod = CPaymentMethod.onTheHouse;
-                  break;
-              }
+          default:
+            paymentMethod = CPaymentMethod.onTheHouse;
+            break;
+        }
 
-              // -- count txns of each payment method --
-              paymentMethodTxnsData[paymentMethod] =
-                  (paymentMethodTxnsData[paymentMethod] ?? 0) + 1;
+        // -- count txns of each payment method --
+        paymentMethodTxnsData[paymentMethod] =
+            (paymentMethodTxnsData[paymentMethod] ?? 0) + 1;
 
-              // -- compute txn totals for each payment method --
-              paymentMethodTotals[paymentMethod] =
-                  (paymentMethodTotals[paymentMethod] ?? 0) + txn.totalAmount;
-            }
-          }
-        },
-      );
+        // -- compute txn totals for each payment method --
+        paymentMethodTotals[paymentMethod] =
+            (paymentMethodTotals[paymentMethod] ?? 0) + txn.totalAmount;
+      }
+      isLoading.value = false;
     } catch (e) {
+      isLoading.value = false;
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
           message: e.toString(),
@@ -611,6 +606,8 @@ class CDashboardController extends GetxController {
           title: 'error creating pie chart...',
         );
       }
+    } finally {
+      isLoading.value = false;
     }
   }
 

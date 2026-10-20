@@ -19,15 +19,28 @@ class CGridLayoutShimmer extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // -- image section --
-              CShimmerEffect(width: 160.0, height: 160.0),
+              CShimmerEffect(
+                width: 160.0,
+                height: 160.0,
+              ),
 
-              SizedBox(height: CSizes.spaceBtnItems),
+              SizedBox(
+                height: CSizes.spaceBtnItems,
+              ),
 
               // -- text section --
-              CShimmerEffect(width: 160.0, height: 15.0),
+              CShimmerEffect(
+                width: 160.0,
+                height: 15.0,
+              ),
 
-              SizedBox(height: CSizes.spaceBtnItems / 2),
-              CShimmerEffect(width: 110.0, height: 15.0),
+              SizedBox(
+                height: CSizes.spaceBtnItems / 2,
+              ),
+              CShimmerEffect(
+                width: 110.0,
+                height: 15.0,
+              ),
             ],
           ),
         );
