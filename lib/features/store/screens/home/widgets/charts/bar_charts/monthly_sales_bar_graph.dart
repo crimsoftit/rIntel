@@ -12,7 +12,16 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class CCustomMonthlySalesBarGraph extends StatelessWidget {
-  const CCustomMonthlySalesBarGraph({super.key});
+  const CCustomMonthlySalesBarGraph({
+    this.bgColor,
+    this.borderColor,
+    this.showBorder,
+
+    super.key,
+  });
+
+  final bool? showBorder;
+  final Color? bgColor, borderColor;
 
   @override
   Widget build(BuildContext context) {
@@ -47,91 +56,88 @@ class CCustomMonthlySalesBarGraph extends StatelessWidget {
               );
             }
             return CRoundedContainer(
-              bgColor: CColors.white,
+              bgColor: bgColor ?? CHelperFunctions.randomAestheticColor(),
               borderRadius: CSizes.cardRadiusSm / 2,
-              boxShadow: [
-                BoxShadow(
-                  blurRadius: 3.0,
-                  color: CColors.grey.withValues(
-                    alpha: .1,
-                  ),
-                  offset: const Offset(0.0, 3.0),
-                  spreadRadius: 5.0,
-                ),
-              ],
+              // boxShadow: [
+              //   BoxShadow(
+              //     blurRadius: 3.0,
+              //     color: CColors.grey.withValues(
+              //       alpha: .1,
+              //     ),
+              //     offset: const Offset(
+              //       0.0,
+              //       3.0,
+              //     ),
+              //     spreadRadius: 5.0,
+              //   ),
+              // ],
 
               padding: const EdgeInsets.only(
+                left: 5.0,
                 top: 5.0,
+                bottom: 2.0,
               ),
+              showBorder: showBorder ?? true,
               width: CHelperFunctions.screenWidth(),
-              child: Column(
-                children: [
-                  SizedBox(
-                    height: 30.0,
-                  ),
-                  SizedBox(
-                    height: 150.0,
-                    child: BarChart(
-                      BarChartData(
-                        barGroups: dashboardController
-                            .generateMonthlySalesWithoutMonths(
-                              int.parse(
-                                dashboardController
-                                    .setDefaultSalesFilterPeriod(),
-                              ),
-                            )
-                            .asMap()
-                            .entries
-                            .map(
-                              (entry) {
-                                return BarChartGroupData(
-                                  x: entry.key,
-                                  barRods: [
-                                    BarChartRodData(
-                                      borderRadius: BorderRadius.circular(
-                                        CSizes.sm / 4,
-                                      ),
-                                      color: isConnectedToInternet
-                                          ? CColors.rBrown
-                                          : CColors.darkerGrey,
-                                      toY: entry.value.totalSales,
-                                      width: 15.0,
-                                    ),
-                                  ],
-                                );
-                              },
-                            )
-                            .toList(),
-                        barTouchData: BarTouchData(
-                          touchCallback:
-                              (
-                                barTouchEvent,
-                                barTouchResponse,
-                              ) {},
-                          touchTooltipData: BarTouchTooltipData(
-                            getTooltipColor: (group) {
-                              return CColors.secondary;
-                            },
+              child: SizedBox(
+                height: 150.0,
+                child: BarChart(
+                  BarChartData(
+                    barGroups: dashboardController
+                        .generateMonthlySalesWithoutMonths(
+                          int.parse(
+                            dashboardController.setDefaultSalesFilterPeriod(),
                           ),
-                        ),
-                        borderData: FlBorderData(
-                          border: const Border(
-                            right: BorderSide.none,
-                            top: BorderSide.none,
-                          ),
-
-                          show: true,
-                        ),
-                        gridData: dashboardController.buildFlBarChartGridData(),
-                        groupsSpace: CSizes.spaceBtnItems,
-                        titlesData: dashboardController
-                            .buildFlBarChartTitlesData(
-                              true,
-                            ),
+                        )
+                        .asMap()
+                        .entries
+                        .map(
+                          (entry) {
+                            return BarChartGroupData(
+                              x: entry.key,
+                              barRods: [
+                                BarChartRodData(
+                                  borderRadius: BorderRadius.circular(
+                                    CSizes.sm / 4,
+                                  ),
+                                  color: isConnectedToInternet
+                                      ? CColors.rBrown
+                                      : CColors.darkerGrey,
+                                  toY: entry.value.totalSales,
+                                  width: 15.0,
+                                ),
+                              ],
+                            );
+                          },
+                        )
+                        .toList(),
+                    barTouchData: BarTouchData(
+                      touchCallback:
+                          (
+                            barTouchEvent,
+                            barTouchResponse,
+                          ) {},
+                      touchTooltipData: BarTouchTooltipData(
+                        getTooltipColor: (group) {
+                          return CColors.secondary;
+                        },
                       ),
                     ),
+                    borderData: FlBorderData(
+                      border: const Border(
+                        right: BorderSide.none,
+                        top: BorderSide.none,
+                      ),
+
+                      show: true,
+                    ),
+                    gridData: dashboardController.buildFlBarChartGridData(),
+                    groupsSpace: CSizes.spaceBtnItems,
+                    titlesData: dashboardController.buildFlBarChartTitlesData(
+                      true,
+                    ),
                   ),
-                ],
+                ),
               ),
             );
           },

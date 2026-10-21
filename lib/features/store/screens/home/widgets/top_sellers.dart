@@ -71,11 +71,15 @@ class CTopSellers extends StatelessWidget {
                         .bestSellers[index]
                         .productName[0]
                         .toUpperCase(),
-                    bgColor: CColors.white,
+                    bgColor: isDarkTheme
+                        ? CColors.rBrown.withValues(alpha: .1)
+                        : CColors.white,
                     radius: 20.0,
                     txtColor: CColors.rBrown,
                   ),
-                  const SizedBox(width: CSizes.spaceBtnItems / 5.0),
+                  const SizedBox(
+                    width: CSizes.spaceBtnItems / 5.0,
+                  ),
                   CRoundedContainer(
                     bgColor: CColors.transparent,
                     showBorder: false,
@@ -88,8 +92,9 @@ class CTopSellers extends StatelessWidget {
                           txnsController.bestSellers[index].productName
                               .toUpperCase(),
                           style: Theme.of(context).textTheme.labelMedium!.apply(
-                            fontWeightDelta: 1,
-                            color: isDarkTheme ? CColors.white : CColors.rBrown,
+                            fontWeightDelta: 2,
+                            // color: isDarkTheme ? CColors.white : CColors.rBrown,
+                            color: CColors.rBrown,
                           ),
                           overflow: TextOverflow.ellipsis,
                           maxLines: 1,

@@ -13,6 +13,7 @@ class CRoundedContainer extends StatelessWidget {
     this.child,
     this.customBorderRadius,
     this.height,
+    this.gradient,
     this.margin,
     this.padding,
     this.showBorder = false,
@@ -28,6 +29,7 @@ class CRoundedContainer extends StatelessWidget {
   final bool showBorder;
   final Color borderColor;
   final Color bgColor;
+  final LinearGradient? gradient;
   final List<BoxShadow>? boxShadow;
   final EdgeInsetsGeometry? padding;
   final EdgeInsetsGeometry? margin;
@@ -51,17 +53,18 @@ class CRoundedContainer extends StatelessWidget {
         //     ],
         boxShadow: boxShadow,
         color: bgColor,
-        borderRadius:
-            customBorderRadius ??
-            BorderRadius.circular(
-              borderRadius,
-            ),
         border: showBorder
             ? Border.all(
                 color: borderColor,
                 width: .3,
               )
             : null,
+        borderRadius:
+            customBorderRadius ??
+            BorderRadius.circular(
+              borderRadius,
+            ),
+        gradient: gradient,
       ),
       height: height,
       margin: margin,

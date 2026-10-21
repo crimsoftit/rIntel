@@ -9,7 +9,15 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class WeeklySalesBarGraphWidget extends StatelessWidget {
-  const WeeklySalesBarGraphWidget({super.key});
+  const WeeklySalesBarGraphWidget({
+    this.bgColor,
+    this.borderColor,
+    this.showBorder,
+    super.key,
+  });
+
+  final bool? showBorder;
+  final Color? bgColor, borderColor;
 
   @override
   Widget build(BuildContext context) {
@@ -27,82 +35,74 @@ class WeeklySalesBarGraphWidget extends StatelessWidget {
                     dashboardController.lastWeekSalesAmount.value) *
                 100;
             return CRoundedContainer(
-              bgColor: CColors.white,
+              bgColor: bgColor ?? CColors.white,
+              borderColor:
+                  borderColor ?? CHelperFunctions.randomAestheticColor(),
               borderRadius: CSizes.cardRadiusSm / 2,
               padding: const EdgeInsets.only(
                 top: 5.0,
+                bottom: 2.0,
               ),
+              showBorder: showBorder ?? false,
               width: CHelperFunctions.screenWidth(),
-              child: Column(
-                children: [
-                  SizedBox(
-                    height: 30.0,
-                  ),
-                  SizedBox(
-                    //width: CHelperFunctions.screenWidth() * .5,
-                    height: 150.0,
-                    child: BarChart(
-                      BarChartData(
-                        titlesData: dashboardController
-                            .buildFlBarChartTitlesData(
-                              false,
-                            ),
-                        borderData: FlBorderData(
-                          show: true,
-                          border: const Border(
-                            top: BorderSide.none,
-                            right: BorderSide.none,
-                          ),
-                        ),
-                        gridData: FlGridData(
-                          show: true,
-                          drawHorizontalLine: true,
-                          drawVerticalLine: true,
-                          horizontalInterval:
-                              dashboardController
-                                  .weeklySalesHighestAmount
-                                  .value /
-                              4,
-                          verticalInterval:
-                              dashboardController
-                                  .weeklySalesHighestAmount
-                                  .value /
-                              4,
-                        ),
-                        barGroups: dashboardController.thisWeekSalesList
-                            .asMap()
-                            .entries
-                            .map(
-                              (entry) => BarChartGroupData(
-                                x: entry.key,
-                                barRods: [
-                                  BarChartRodData(
-                                    width: 17.0,
-                                    toY: entry.value,
-                                    color: isConnectedToInternet
-                                        ? CColors.rBrown
-                                        : CColors.darkerGrey,
-                                    borderRadius: BorderRadius.circular(
-                                      CSizes.sm / 4,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            )
-                            .toList(),
-                        groupsSpace: CSizes.spaceBtnItems / 2,
-                        barTouchData: BarTouchData(
-                          touchTooltipData: BarTouchTooltipData(
-                            getTooltipColor: (group) {
-                              return CColors.secondary;
-                            },
-                          ),
-                          touchCallback: (barTouchEvent, barTouchResponse) {},
-                        ),
+              child: SizedBox(
+                //width: CHelperFunctions.screenWidth() * .5,
+                height: 150.0,
+                child: BarChart(
+                  BarChartData(
+                    titlesData: dashboardController.buildFlBarChartTitlesData(
+                      false,
+                    ),
+                    borderData: FlBorderData(
+                      show: true,
+                      border: const Border(
+                        top: BorderSide.none,
+                        right: BorderSide.none,
                       ),
                     ),
+                    gridData: FlGridData(
+                      show: true,
+                      drawHorizontalLine: true,
+                      drawVerticalLine: true,
+                      horizontalInterval:
+                          dashboardController.weeklySalesHighestAmount.value /
+                          4,
+                      verticalInterval:
+                          dashboardController.weeklySalesHighestAmount.value /
+                          4,
+                    ),
+                    barGroups: dashboardController.thisWeekSalesList
+                        .asMap()
+                        .entries
+                        .map(
+                          (entry) => BarChartGroupData(
+                            x: entry.key,
+                            barRods: [
+                              BarChartRodData(
+                                width: 17.0,
+                                toY: entry.value,
+                                color: isConnectedToInternet
+                                    ? CColors.rBrown
+                                    : CColors.darkerGrey,
+                                borderRadius: BorderRadius.circular(
+                                  CSizes.sm / 4,
+                                ),
+                              ),
+                            ],
+                          ),
+                        )
+                        .toList(),
+                    groupsSpace: CSizes.spaceBtnItems / 2,
+                    barTouchData: BarTouchData(
+                      touchTooltipData: BarTouchTooltipData(
+                        getTooltipColor: (group) {
+                          return CColors.secondary;
+                        },
+                      ),
+                      touchCallback: (barTouchEvent, barTouchResponse) {},
+                    ),
                   ),
-                ],
+                ),
               ),
             );
           },

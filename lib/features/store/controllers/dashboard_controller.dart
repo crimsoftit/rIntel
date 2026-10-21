@@ -94,7 +94,6 @@ class CDashboardController extends GetxController {
               (result) async {
                 if (result.isNotEmpty) {
                   calculateCurrentWeekSales();
-                  computePaymentMethodsData();
                   filterHourlySales();
                 }
                 txnsController.initializeSalesSummaryValues();
@@ -120,13 +119,12 @@ class CDashboardController extends GetxController {
           (_) async {
             if (txnsController.userTxns.isNotEmpty) {
               await txnsController.fetchTopSellersFromSales();
-              await computePaymentMethodsData();
             }
           },
         );
       },
     );
-
+    computePaymentMethodsData();
     super.onInit();
   }
 
@@ -535,7 +533,7 @@ class CDashboardController extends GetxController {
   }
 
   /// -- summarize txns' payment methods --
-  Future<void> computePaymentMethodsData() async {
+  void computePaymentMethodsData() {
     try {
       isLoading.value = true;
       // -- reset data --
@@ -618,7 +616,7 @@ class CDashboardController extends GetxController {
         return 'Cash';
 
       case CPaymentMethod.credit:
-        return 'Invoice';
+        return 'Invoices';
 
       case CPaymentMethod.mPesaSendMoney:
         return 'Send money';

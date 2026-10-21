@@ -2,6 +2,7 @@ import 'package:rintel/common/widgets/custom_shapes/containers/rounded_container
 import 'package:rintel/features/store/controllers/dashboard_controller.dart';
 import 'package:rintel/utils/constants/colors.dart';
 import 'package:rintel/utils/helpers/formatter.dart';
+import 'package:rintel/utils/helpers/helper_functions.dart';
 import 'package:rintel/utils/helpers/network_manager.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
@@ -10,19 +11,27 @@ import 'package:get/get.dart';
 class CCutomLineChart extends StatelessWidget {
   const CCutomLineChart({
     super.key,
+    this.bgColor,
+    this.borderColor,
+    this.showBorder,
     required this.chartHeight,
     required this.chartWidth,
     required this.lineChartData,
   });
 
-  final double? chartHeight, chartWidth;
+  final bool? showBorder;
+  final Color? bgColor, borderColor;
+  final double chartHeight, chartWidth;
   final List<FlSpot> lineChartData;
 
   @override
   Widget build(BuildContext context) {
     return CRoundedContainer(
+      bgColor: bgColor ?? CColors.transparent,
+      borderColor: borderColor ?? CHelperFunctions.randomAestheticColor(),
       borderRadius: 5.0,
       height: chartHeight,
+      showBorder: showBorder ?? false,
       width: chartWidth,
 
       child: SizedBox.expand(

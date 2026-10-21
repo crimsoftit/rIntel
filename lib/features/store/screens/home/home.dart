@@ -249,7 +249,7 @@ class HomeScreen extends StatelessWidget {
                         ),
 
                         /// -- peak sales hours line chart --
-                        peakSalesHoursLineChart(),
+                        peakSalesHoursLineChart(context),
                         const SizedBox(
                           height: CSizes.defaultSpace * .5,
                         ),
@@ -313,36 +313,67 @@ class HomeScreen extends StatelessWidget {
                         ),
                         dashboardController.setDefaultSalesFilterPeriod() ==
                                 'this week'
-                            ? WeeklySalesBarGraphWidget()
-                            : CCustomMonthlySalesBarGraph(),
+                            ? WeeklySalesBarGraphWidget(
+                                bgColor: isDarkTheme
+                                    ? CColors.transparent
+                                    : CColors.white,
+                                showBorder: isDarkTheme,
+                              )
+                            : CCustomMonthlySalesBarGraph(
+                                bgColor: isDarkTheme
+                                    ? CColors.transparent
+                                    : CColors.white,
+                                showBorder: isDarkTheme,
+                              ),
 
-                        // const SizedBox(
-                        //   height: CSizes.defaultSpace * .5,
-                        // ),
-                        // WeeklySalesBarGraphWidget(),
                         const SizedBox(
                           height: CSizes.defaultSpace * .5,
                         ),
 
-                        CSectionHeading(
-                          showActionBtn: true,
-                          title: 'Payment methods...',
-                          txtColor: CNetworkManager.instance.hasConnection.value
-                              ? CColors.rBrown
-                              : CColors.darkGrey,
+                        Obx(
+                          () {
+                            if (dashboardController
+                                .paymentMethodTxnsData
+                                .isEmpty) {
+                              return SizedBox.shrink();
+                            }
+                            return CSectionHeading(
+                              showActionBtn: true,
+                              title: 'Payment methods...',
+                              txtColor:
+                                  CNetworkManager.instance.hasConnection.value
+                                  ? CColors.rBrown
+                                  : CColors.darkGrey,
 
-                          btnTitle: '',
-                          btnTxtColor: CColors.rBrown,
-                          editFontSize: true,
-                          fWeight: FontWeight.w400,
-                          onPressed: () {},
+                              btnTitle: '',
+                              btnTxtColor: CColors.rBrown,
+                              editFontSize: true,
+                              fWeight: FontWeight.w400,
+                              onPressed: () {},
+                            );
+                          },
                         ),
 
-                        CPaymentMethodsPieChart(
-                          chartHeight: 460.0,
-                          chartRadius: 70.0,
-                          centerRadius: 20.0,
-                          chartWidth: CHelperFunctions.screenWidth(),
+                        Obx(
+                          () {
+                            if (dashboardController
+                                .paymentMethodTxnsData
+                                .isEmpty) {
+                              return SizedBox.shrink();
+                            }
+                            return CPaymentMethodsPieChart(
+                              bgColor: CColors.transparent,
+                              chartHeight:
+                                  300 +
+                                  (dashboardController
+                                          .paymentMethodTxnsData
+                                          .length *
+                                      50.0),
+                              chartRadius: 80.0,
+                              centerRadius: 30.0,
+                              chartWidth: CHelperFunctions.screenWidth(),
+                            );
+                          },
                         ),
 
                         const SizedBox(
@@ -361,9 +392,9 @@ class HomeScreen extends StatelessWidget {
   }
 
   /// -- peak sales hours line chart --
-  Widget peakSalesHoursLineChart() {
+  Widget peakSalesHoursLineChart(BuildContext context) {
     final dashboardController = Get.put(CDashboardController());
-
+    final isDarkTheme = CHelperFunctions.isDarkMode(context);
     return Column(
       children: [
         CSectionHeading(
@@ -382,50 +413,54 @@ class HomeScreen extends StatelessWidget {
         const SizedBox(
           height: CSizes.defaultSpace / 2,
         ),
-        Obx(() {
-          return CCutomLineChart(
-            chartHeight: 180.0,
-            chartWidth: CHelperFunctions.screenWidth(),
-            lineChartData: [
-              FlSpot(
-                0,
-                dashboardController.salesPastMidnightTo3.value,
-              ),
-              FlSpot(
-                3,
-                dashboardController.salesBtn3to6.value,
-              ),
-              FlSpot(
-                6,
-                dashboardController.salesBtn6to9.value,
-              ),
-              FlSpot(
-                9,
-                dashboardController.salesBtn9to12.value,
-              ),
-              FlSpot(
-                12,
-                dashboardController.salesBtn12to15.value,
-              ),
-              FlSpot(
-                15,
-                dashboardController.salesBtn15to18.value,
-              ),
-              FlSpot(
-                18,
-                dashboardController.salesBtn18to21.value,
-              ),
-              FlSpot(
-                21,
-                dashboardController.salesBtn21toMidnight.value,
-              ),
-              FlSpot(
-                24,
-                dashboardController.salesBtnMidnightTo3.value,
-              ),
-            ],
-          );
-        }),
+        Obx(
+          () {
+            return CCutomLineChart(
+              bgColor: isDarkTheme ? CColors.transparent : CColors.white,
+              chartHeight: 180.0,
+              chartWidth: CHelperFunctions.screenWidth(),
+              lineChartData: [
+                FlSpot(
+                  0,
+                  dashboardController.salesPastMidnightTo3.value,
+                ),
+                FlSpot(
+                  3,
+                  dashboardController.salesBtn3to6.value,
+                ),
+                FlSpot(
+                  6,
+                  dashboardController.salesBtn6to9.value,
+                ),
+                FlSpot(
+                  9,
+                  dashboardController.salesBtn9to12.value,
+                ),
+                FlSpot(
+                  12,
+                  dashboardController.salesBtn12to15.value,
+                ),
+                FlSpot(
+                  15,
+                  dashboardController.salesBtn15to18.value,
+                ),
+                FlSpot(
+                  18,
+                  dashboardController.salesBtn18to21.value,
+                ),
+                FlSpot(
+                  21,
+                  dashboardController.salesBtn21toMidnight.value,
+                ),
+                FlSpot(
+                  24,
+                  dashboardController.salesBtnMidnightTo3.value,
+                ),
+              ],
+              showBorder: isDarkTheme,
+            );
+          },
+        ),
       ],
     );
   }

@@ -20,6 +20,7 @@ class CStoreSummary extends StatelessWidget {
   Widget build(BuildContext context) {
     final dashboardController = Get.put(CDashboardController());
     final invController = Get.put(CInventoryController());
+    //final isDarkTheme = CHelperFunctions.isDarkMode(context);
     final txnsController = Get.put(CTxnsController());
     final userController = Get.put(CUserController());
     final userCurrency = userController.user.value.currencyCode;
@@ -36,6 +37,20 @@ class CStoreSummary extends StatelessWidget {
               //mainAxisSize: MainAxisSize.min,
               children: [
                 CStoreSummaryCard(
+                  // gradient: isDarkTheme
+                  //     ? LinearGradient(
+                  //         begin: Alignment.topCenter,
+                  //         end: Alignment.bottomCenter,
+                  //         colors: [
+                  //           CNetworkManager.instance.hasConnection.value
+                  //               ? CColors.rBrown
+                  //               : CColors.darkGrey,
+                  //           CNetworkManager.instance.hasConnection.value
+                  //               ? CColors.rBrown.withAlpha(1)
+                  //               : CColors.darkGrey.withAlpha(1),
+                  //         ],
+                  //       )
+                  //     : null,
                   iconData: Iconsax.money_recive,
                   // subTitleTxt: 'money collected($userCurrency)',
                   subTitleTxt: 'money collected',

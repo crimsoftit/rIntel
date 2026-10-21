@@ -1,6 +1,7 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:rintel/common/widgets/custom_shapes/containers/circular_container.dart';
 import 'package:rintel/common/widgets/custom_shapes/containers/rounded_container.dart';
 import 'package:rintel/common/widgets/shimmers/shimmer_effects.dart';
 import 'package:rintel/features/personalization/controllers/user_controller.dart';
@@ -13,6 +14,7 @@ import 'package:rintel/utils/helpers/helper_functions.dart';
 
 class CPaymentMethodsPieChart extends StatelessWidget {
   const CPaymentMethodsPieChart({
+    this.bgColor,
     this.borderRadius,
     this.centerRadius,
     this.chartRadius,
@@ -21,6 +23,7 @@ class CPaymentMethodsPieChart extends StatelessWidget {
     super.key,
   });
 
+  final Color? bgColor;
   final double? borderRadius,
       centerRadius,
       chartRadius,
@@ -31,28 +34,13 @@ class CPaymentMethodsPieChart extends StatelessWidget {
   Widget build(BuildContext context) {
     /// -- variables --
     final dashboardController = Get.put(CDashboardController());
+    final isDarkTheme = CHelperFunctions.isDarkMode(context);
     final txnsController = Get.put(CTxnsController());
     final userController = Get.put(CUserController());
     final userCurrency = userController.user.value.currencyCode;
 
     return Obx(
       () {
-        // Future.delayed(
-        //   Duration(
-        //     milliseconds: 50,
-        //   ),
-        //   () {
-        //     WidgetsBinding.instance.addPostFrameCallback(
-        //       (_) {
-        //         //txnsController.userTxns.refresh();
-        //         if (txnsController.userTxns.isNotEmpty) {
-        //           dashboardController.computePaymentMethodsData();
-        //         }
-        //       },
-        //     );
-        //   },
-        // );
-
         if (txnsController.userTxns.isEmpty &&
             !txnsController.isLoading.value) {
           return Center(
@@ -72,17 +60,16 @@ class CPaymentMethodsPieChart extends StatelessWidget {
           );
         }
         return CRoundedContainer(
-          bgColor: CColors.transparent,
+          bgColor: bgColor ?? CColors.white,
           borderColor: CHelperFunctions.randomAestheticColor(),
           borderRadius: borderRadius ?? 5.0,
           height: chartHeight ?? 400.0,
-          showBorder: true,
-          width: chartWidth ?? CHelperFunctions.screenWidth() * .95,
+          showBorder: isDarkTheme,
+          width: chartWidth ?? CHelperFunctions.screenWidth(),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Expanded(
-                flex: 1,
                 child: PieChart(
                   PieChartData(
                     //centerSpaceColor: CColors.txtSecondary,
@@ -118,80 +105,153 @@ class CPaymentMethodsPieChart extends StatelessWidget {
                 ),
               ),
               Expanded(
-                child: ListView(
-                  semanticChildCount: 7,
-                  shrinkWrap: true,
-                  children: dashboardController.paymentMethodTxnsData.entries
-                      .map(
-                        (entry) {
-                          final method = entry.key;
-                          final txnsCount = entry.value;
-                          final txnTotals =
-                              dashboardController.paymentMethodTotals[method] ??
-                              0;
-
-                          return CRoundedContainer(
-                            bgColor: CHelperFunctions.setPaymentMethodDataColor(
-                              method,
-                            ),
-                            borderRadius: 25.0,
-                            height: 45.0,
-                            margin: const EdgeInsets.only(
-                              left: 10.0,
-                              right: 10.0,
-                              top: 1.0,
-                            ),
-                            padding: const EdgeInsets.only(
-                              left: 10.0,
-                              right: 10.0,
-                            ),
-                            child: ListTile(
-                              contentPadding: const EdgeInsets.all(
-                                2.0,
-                              ),
-                              minLeadingWidth: 2.0,
-                              title: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
+                child: SizedBox(
+                  width: double.infinity,
+                  child: DataTable(
+                    //headingRowColor: CColors.primaryBlue,
+                    columns: [
+                      DataColumn(
+                        label: Text(
+                          'Method',
+                          style: Theme.of(context).textTheme.labelMedium!.apply(
+                            color: CColors.rBrown,
+                          ),
+                        ),
+                      ),
+                      DataColumn(
+                        label: Text(
+                          'Txns',
+                          style: Theme.of(context).textTheme.labelMedium!.apply(
+                            color: CColors.rBrown,
+                          ),
+                        ),
+                      ),
+                      DataColumn(
+                        label: Text(
+                          'Totals',
+                          style: Theme.of(context).textTheme.labelMedium!.apply(
+                            color: CColors.rBrown,
+                          ),
+                        ),
+                      ),
+                    ],
+                    dividerThickness: .2,
+                    rows: dashboardController.paymentMethodTxnsData.entries.map(
+                      (
+                        entry,
+                      ) {
+                        final method = entry.key;
+                        final txnsCount = entry.value;
+                        final txnTotals =
+                            dashboardController.paymentMethodTotals[method] ??
+                            0;
+                        return DataRow(
+                          cells: [
+                            DataCell(
+                              Row(
                                 children: [
-                                  Text(
-                                    dashboardController
-                                        .paymentMethodDisplayName(method)
-                                        .toUpperCase(),
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .labelMedium!
-                                        .apply(
-                                          color: CColors.white,
+                                  CCircularContainer(
+                                    bgColor:
+                                        CHelperFunctions.setPaymentMethodDataColor(
+                                          method,
                                         ),
+                                    height: 20.0,
+                                    margin: const EdgeInsets.only(
+                                      right: 5.0,
+                                    ),
+                                    width: 20.0,
                                   ),
-                                  Text(
-                                    txnsCount == 1
-                                        ? '$txnsCount txn'
-                                        : '$txnsCount txns',
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .labelMedium!
-                                        .apply(
-                                          color: CColors.white,
-                                        ),
-                                  ),
-                                  Text(
-                                    '$userCurrency.$txnTotals',
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .labelMedium!
-                                        .apply(
-                                          color: CColors.white,
-                                        ),
+                                  Expanded(
+                                    flex: 5,
+                                    child: Text(
+                                      dashboardController
+                                          .paymentMethodDisplayName(method)
+                                          .toUpperCase(),
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .labelMedium!
+                                          .apply(
+                                            color: CColors.rBrown,
+                                          ),
+                                    ),
                                   ),
                                 ],
                               ),
                             ),
-                          );
-                        },
-                      )
-                      .toList(),
+                            DataCell(
+                              Text(
+                                txnsCount.toString(),
+                                style: Theme.of(context).textTheme.labelMedium!
+                                    .apply(
+                                      color: CColors.rBrown,
+                                    ),
+                              ),
+                            ),
+                            DataCell(
+                              Text(
+                                '$userCurrency.$txnTotals',
+                                style: Theme.of(context).textTheme.labelMedium!
+                                    .apply(
+                                      color: CColors.rBrown,
+                                    ),
+                              ),
+                            ),
+                          ],
+                        );
+                      },
+                    ).toList(),
+                  ),
+
+                  // ListView(
+                  //   semanticChildCount: dashboardController.paymentMethodTxnsData.length,
+                  //   shrinkWrap: true,
+                  //   children: dashboardController.paymentMethodTxnsData.entries
+                  //       .map(
+                  //         (entry) {
+
+                  //           return CRoundedContainer(
+
+                  //             borderRadius: 25.0,
+                  //             height: 45.0,
+                  //             margin: const EdgeInsets.only(
+                  //               left: 10.0,
+                  //               right: 10.0,
+                  //               top: 1.0,
+                  //             ),
+                  //             padding: const EdgeInsets.only(
+                  //               left: 10.0,
+                  //               right: 10.0,
+                  //             ),
+                  //             child: ListTile(
+                  //               contentPadding: const EdgeInsets.all(
+                  //                 2.0,
+                  //               ),
+                  //               minLeadingWidth: 2.0,
+                  //               title: Row(
+                  //                 mainAxisAlignment:
+                  //                     MainAxisAlignment.spaceBetween,
+                  //                 children: [
+
+                  //                   Text(
+                  //                     txnsCount == 1
+                  //                         ? '$txnsCount txn'
+                  //                         : '$txnsCount txns',
+                  //                     style: Theme.of(context)
+                  //                         .textTheme
+                  //                         .labelMedium!
+                  //                         .apply(
+                  //                           color: CColors.white,
+                  //                         ),
+                  //                   ),
+
+                  //                 ],
+                  //               ),
+                  //             ),
+                  //           );
+                  //         },
+                  //       )
+                  //       .toList(),
+                  // ),
                 ),
               ),
             ],
