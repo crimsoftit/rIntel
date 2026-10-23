@@ -40,8 +40,9 @@ class WeeklySalesBarGraphWidget extends StatelessWidget {
                   borderColor ?? CHelperFunctions.randomAestheticColor(),
               borderRadius: CSizes.cardRadiusSm / 2,
               padding: const EdgeInsets.only(
-                top: 5.0,
                 bottom: 2.0,
+                right: 8.0,
+                top: 10.0,
               ),
               showBorder: showBorder ?? false,
               width: CHelperFunctions.screenWidth(),

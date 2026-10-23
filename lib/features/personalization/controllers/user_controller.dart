@@ -2,10 +2,12 @@ import 'package:rintel/data/repos/auth/auth_repo.dart';
 import 'package:rintel/data/repos/user/user_repo.dart';
 import 'package:rintel/features/authentication/controllers/signup/signup_controller.dart';
 import 'package:rintel/features/authentication/screens/login/login.dart';
+import 'package:rintel/features/personalization/models/profile_model.dart';
 import 'package:rintel/features/personalization/models/user_model.dart';
 import 'package:rintel/features/personalization/screens/profile/widgets/re_authenticate_user_login_form.dart';
 import 'package:rintel/utils/constants/img_strings.dart';
 import 'package:rintel/utils/constants/sizes.dart';
+import 'package:rintel/utils/db/sqflite/db_helper.dart';
 import 'package:rintel/utils/helpers/network_manager.dart';
 import 'package:rintel/utils/popups/full_screen_loader.dart';
 import 'package:rintel/utils/popups/snackbars.dart';
@@ -18,9 +20,12 @@ import 'package:image_picker/image_picker.dart';
 class CUserController extends GetxController {
   static CUserController get instance => Get.find();
 
+  /// -- variables --
   final profileLoading = false.obs;
   final imgUploading = false.obs;
   Rx<CUserModel> user = CUserModel.empty().obs;
+  final Rx<Uint8List> userDp = Uint8List(0).obs;
+  final Rx<CProfileModel> userProfileDetails = CProfileModel.empty().obs;
 
   final hidePassword = true.obs;
 
@@ -99,6 +104,8 @@ class CUserController extends GetxController {
             message: 'userCredentials NULL',
           );
         }
+
+        await fetchUserDp();
       }
     } catch (e) {
       CPopupSnackBar.warningSnackBar(
@@ -239,26 +246,26 @@ class CUserController extends GetxController {
   }
 
   /// -- upload user's profile picture --
-  Future<void> uploadUserProfPic() async {
+  Future<void> saveUserProfPic() async {
     try {
       final img = await ImagePicker().pickImage(
         source: ImageSource.gallery,
-        imageQuality: 200,
-        maxWidth: 512.0,
-        maxHeight: 512.0,
+        imageQuality: 100,
+        maxWidth: 1000.0,
+        maxHeight: 1000.0,
       );
 
       if (img != null) {
         imgUploading.value = true;
         // -- upload image
-        final imgUrl = await userRepo.uploadImage('users/images/profile', img);
+        final imgAsBytes = img.readAsBytes();
 
-        // -- update user profile picture data
-        Map<String, dynamic> json = {'ProfPic': imgUrl};
-        await userRepo.updateSpecificUser(json);
+        var thisUser = CProfileModel(
+          userDp: await imgAsBytes,
+          userId: user.value.id,
+        );
 
-        user.value.profPic = imgUrl;
-        user.refresh();
+        await DbHelper.instance.saveDp(thisUser);
 
         CPopupSnackBar.successSnackBar(
           title: 'update successful!',
@@ -268,13 +275,13 @@ class CUserController extends GetxController {
     } catch (e) {
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
-          title: 'Error uploading profile picture1',
+          title: 'Error uploading profile picture',
           message:
               'an unknown error occurred while uploading profile picture: $e',
         );
       } else {
         CPopupSnackBar.errorSnackBar(
-          title: 'Error uploading profile picture1',
+          title: 'Error uploading profile picture',
           message:
               'An unknown error occurred while uploading profile picture! Please try again later',
         );
@@ -282,6 +289,73 @@ class CUserController extends GetxController {
       rethrow;
     }
   }
+
+  Future<CProfileModel> fetchUserDp() async {
+    try {
+      final dp = await DbHelper.instance.retrieveUserDp(user.value.id);
+      userProfileDetails.value = dp;
+      userDp.value = dp.userDp;
+      return userProfileDetails.value;
+    } catch (e) {
+      if (kDebugMode) {
+        CPopupSnackBar.errorSnackBar(
+          title: 'Error fetching profile picture',
+          message:
+              'an unknown error occurred while fetching profile picture: $e',
+        );
+      } else {
+        CPopupSnackBar.errorSnackBar(
+          title: 'Error fetching profile picture',
+          message:
+              'An unknown error occurred while fetching profile picture! Please try again later',
+        );
+      }
+      rethrow;
+    }
+  }
+  // Future<void> uploadUserProfPic() async {
+  //   try {
+  //     final img = await ImagePicker().pickImage(
+  //       source: ImageSource.gallery,
+  //       imageQuality: 200,
+  //       maxWidth: 512.0,
+  //       maxHeight: 512.0,
+  //     );
+
+  //     if (img != null) {
+  //       imgUploading.value = true;
+  //       // -- upload image
+  //       final imgUrl = await userRepo.uploadImage('users/images/profile', img);
+
+  //       // -- update user profile picture data
+  //       Map<String, dynamic> json = {'ProfPic': imgUrl};
+  //       await userRepo.updateSpecificUser(json);
+
+  //       user.value.profPic = imgUrl;
+  //       user.refresh();
+
+  //       CPopupSnackBar.successSnackBar(
+  //         title: 'update successful!',
+  //         message: 'your profile picture was updated successfully!',
+  //       );
+  //     }
+  //   } catch (e) {
+  //     if (kDebugMode) {
+  //       CPopupSnackBar.errorSnackBar(
+  //         title: 'Error uploading profile picture1',
+  //         message:
+  //             'an unknown error occurred while uploading profile picture: $e',
+  //       );
+  //     } else {
+  //       CPopupSnackBar.errorSnackBar(
+  //         title: 'Error uploading profile picture1',
+  //         message:
+  //             'An unknown error occurred while uploading profile picture! Please try again later',
+  //       );
+  //     }
+  //     rethrow;
+  //   }
+  // }
 
   @override
   void dispose() {

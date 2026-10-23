@@ -56,7 +56,9 @@ class CCustomMonthlySalesBarGraph extends StatelessWidget {
               );
             }
             return CRoundedContainer(
-              bgColor: bgColor ?? CHelperFunctions.randomAestheticColor(),
+              bgColor: bgColor ?? CColors.white,
+              borderColor:
+                  borderColor ?? CHelperFunctions.randomAestheticColor(),
               borderRadius: CSizes.cardRadiusSm / 2,
               // boxShadow: [
               //   BoxShadow(
@@ -73,9 +75,9 @@ class CCustomMonthlySalesBarGraph extends StatelessWidget {
               // ],
 
               padding: const EdgeInsets.only(
-                left: 5.0,
-                top: 5.0,
                 bottom: 2.0,
+                right: 8.0,
+                top: 10.0,
               ),
               showBorder: showBorder ?? true,
               width: CHelperFunctions.screenWidth(),

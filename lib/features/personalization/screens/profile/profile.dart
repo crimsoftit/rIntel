@@ -3,6 +3,7 @@ import 'package:rintel/common/widgets/img_widgets/c_circular_img.dart';
 import 'package:rintel/common/widgets/shimmers/shimmer_effects.dart';
 import 'package:rintel/common/widgets/txt_widgets/c_section_headings.dart';
 import 'package:rintel/features/personalization/controllers/user_controller.dart';
+import 'package:rintel/features/personalization/models/profile_model.dart';
 import 'package:rintel/features/personalization/screens/profile/widgets/c_profile_menu.dart';
 import 'package:rintel/features/personalization/screens/profile/widgets/update_business_name.dart';
 import 'package:rintel/features/personalization/screens/profile/widgets/update_name.dart';
@@ -45,27 +46,6 @@ class CProfileScreen extends StatelessWidget {
           iconTheme: IconThemeData(
             color: CColors.rBrown,
           ),
-          // title: Padding(
-          //   padding: const EdgeInsets.only(
-          //     left: 0.5,
-          //     right: 0.5,
-          //   ),
-          //   child: Row(
-          //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          //     children: [
-          //       Icon(
-          //         Iconsax.menu,
-          //         size: 25.0,
-          //         color: CColors.rBrown,
-          //       ),
-          //       Icon(
-          //         Iconsax.notification,
-          //         size: 25.0,
-          //         color: CColors.rBrown,
-          //       ),
-          //     ],
-          //   ),
-          // ),
         ),
         backgroundColor: CColors.rBrown.withValues(
           alpha: 0.2,
@@ -101,6 +81,14 @@ class CProfileScreen extends StatelessWidget {
                                   height: 80.0,
                                   radius: 80.0,
                                 )
+                              : userController.userProfileDetails.value !=
+                                    CProfileModel.empty()
+                              ? Image.memory(
+                                  userController.userDp.value,
+                                  fit: BoxFit.cover,
+                                  height: 100,
+                                  width: 100,
+                                )
                               : CCircularImg(
                                   img: dpImg,
                                   width: 80.0,
@@ -117,15 +105,17 @@ class CProfileScreen extends StatelessWidget {
                           width: 20,
                           height: 20,
                           child: IconButton(
-                            onPressed: () {
-                              userController.uploadUserProfPic();
+                            onPressed: () async {
+                              userController.saveUserProfPic();
                             },
                             icon: Icon(
                               Iconsax.edit,
                               size: 18.0,
                               color: isDarkTheme
                                   ? CColors.white
-                                  : CColors.rBrown.withValues(alpha: 0.6),
+                                  : CColors.rBrown.withValues(
+                                      alpha: 0.6,
+                                    ),
                             ),
                           ),
                         ),
@@ -133,10 +123,12 @@ class CProfileScreen extends StatelessWidget {
                     ],
                   ),
                 ),
-                const SizedBox(height: CSizes.spaceBtnItems / 4),
+                const SizedBox(
+                  height: CSizes.spaceBtnItems / 4,
+                ),
                 TextButton(
-                  onPressed: () {
-                    userController.uploadUserProfPic();
+                  onPressed: () async {
+                    userController.saveUserProfPic();
                   },
                   child: Text(
                     'change avatar',

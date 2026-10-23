@@ -31,26 +31,24 @@ class CCutomLineChart extends StatelessWidget {
       borderColor: borderColor ?? CHelperFunctions.randomAestheticColor(),
       borderRadius: 5.0,
       height: chartHeight,
+      padding: const EdgeInsets.only(
+        bottom: 5.0,
+        left: 10.0,
+        right: 10.0,
+        top: 10.0,
+      ),
       showBorder: showBorder ?? false,
       width: chartWidth,
 
       child: SizedBox.expand(
-        child: Padding(
-          padding: const EdgeInsets.only(
-            bottom: 5.0,
-            left: 10.0,
-            right: 10.0,
-            top: 10.0,
-          ),
-          child: LineChart(
-            LineChartData(
-              borderData: _buildBorderData(),
-              gridData: _buildGridData(),
-              lineBarsData: [_buildLineChartBarData()],
-              minX: 0.0,
-              minY: 0.0,
-              titlesData: _buildTitlesData(),
-            ),
+        child: LineChart(
+          LineChartData(
+            borderData: _buildBorderData(),
+            gridData: _buildGridData(),
+            lineBarsData: [_buildLineChartBarData()],
+            minX: 0.0,
+            minY: 0.0,
+            titlesData: _buildTitlesData(),
           ),
         ),
       ),

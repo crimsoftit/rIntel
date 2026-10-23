@@ -30,6 +30,8 @@ class CStoreSummaryCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    /// -- variables --
+    final isDarkTheme = CHelperFunctions.isDarkMode(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -48,18 +50,29 @@ class CStoreSummaryCard extends StatelessWidget {
               borderRadius: BorderRadius.circular(
                 CSizes.cardRadiusSm / 1.5,
               ),
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [
-                  CColors.rBrown.withValues(
-                    alpha: .4,
-                  ),
-                  CColors.rBrown.withAlpha(
-                    1,
-                  ),
-                ],
-              ),
+              gradient: isDarkTheme
+                  ? LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [
+                        CColors.rBrown.withValues(
+                          alpha: .4,
+                        ),
+                        CColors.rBrown.withAlpha(
+                          1,
+                        ),
+                      ],
+                    )
+                  : LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [
+                        CColors.white,
+                        CColors.white.withValues(
+                          alpha: .8,
+                        ),
+                      ],
+                    ),
             ),
             child: ListTile(
               contentPadding: EdgeInsets.only(
@@ -82,92 +95,25 @@ class CStoreSummaryCard extends StatelessWidget {
                   textAlign: TextAlign.center,
                 ),
               ),
-              title: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+              title: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        titleTxt,
-                        style: Theme.of(context).textTheme.labelLarge!.apply(
-                          color: titleTxtColor,
-                          fontSizeFactor: .9,
-                        ),
-                      ),
-                      Icon(
-                        iconData,
-                        color: iconColor,
-                        size: iconSize ?? CSizes.iconSm,
-                      ),
-                    ],
+                  Text(
+                    titleTxt,
+                    style: Theme.of(context).textTheme.labelLarge!.apply(
+                      color: titleTxtColor,
+                      fontSizeFactor: .9,
+                    ),
+                  ),
+                  Icon(
+                    iconData,
+                    color: iconColor,
+                    size: iconSize ?? CSizes.iconSm,
                   ),
                 ],
               ),
             ),
           ),
-
-          // CRoundedContainer(
-          //   bgColor: CColors.transparent,
-          //   borderRadius: CSizes.cardRadiusSm / 1.5,
-          //   gradient:
-          //       gradient ??
-          //       LinearGradient(
-          //         begin: Alignment.topCenter,
-          //         end: Alignment.bottomCenter,
-          //         colors: [
-          //           CNetworkManager.instance.hasConnection.value
-          //               ? CColors.rBrown
-          //               : CColors.darkGrey,
-          //           CNetworkManager.instance.hasConnection.value
-          //               ? CColors.rBrown.withAlpha(1)
-          //               : CColors.darkGrey.withAlpha(1),
-          //         ],
-          //       ),
-          //   padding: EdgeInsets.zero,
-          //   width: containerWidth ?? CHelperFunctions.screenWidth() * 0.28,
-          //   child: ListTile(
-          //     contentPadding: EdgeInsets.only(
-          //       top: 2,
-          //       bottom: CSizes.sm / 4,
-          //       left: CSizes.sm / 4,
-          //       right: CSizes.sm / 4,
-          //     ),
-          //     onTap: onTap,
-          //     subtitle: Align(
-          //       alignment: Alignment.topLeft,
-          //       child: Text(
-          //         subTitleTxt ?? '',
-          //         style: Theme.of(
-          //           context,
-          //         ).textTheme.labelSmall!.apply(color: subTitleTxtColor),
-          //         textAlign: TextAlign.center,
-          //       ),
-          //     ),
-          //     title: Column(
-          //       crossAxisAlignment: CrossAxisAlignment.start,
-          //       children: [
-          //         Row(
-          //           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          //           children: [
-          //             Text(
-          //               titleTxt,
-          //               style: Theme.of(context).textTheme.labelLarge!.apply(
-          //                 color: titleTxtColor,
-          //                 fontSizeFactor: .9,
-          //               ),
-          //             ),
-          //             Icon(
-          //               iconData,
-          //               color: iconColor,
-          //               size: iconSize ?? CSizes.iconSm,
-          //             ),
-          //           ],
-          //         ),
-          //       ],
-          //     ),
-          //   ),
-          // ),
         ),
       ],
     );

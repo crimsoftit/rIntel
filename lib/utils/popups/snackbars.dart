@@ -22,15 +22,9 @@ class CPopupSnackBar extends GetxController {
     Widget? prefixIcon,
   }) async {
     final isDarkTheme = CHelperFunctions.isDarkMode(Get.context!);
-    // -- check internet connectivity
-    //final isConnected = await CNetworkManager.instance.isConnected();
 
     ScaffoldMessenger.of(Get.context!).showSnackBar(
       SnackBar(
-        elevation: 0,
-        duration: const Duration(
-          seconds: 4,
-        ),
         backgroundColor: bgColor ?? Colors.transparent,
         content: CRoundedContainer(
           bgColor: isDarkTheme
@@ -99,6 +93,10 @@ class CPopupSnackBar extends GetxController {
                   ),
           ),
         ),
+        duration: const Duration(
+          seconds: 4,
+        ),
+        elevation: 0,
       ),
     );
   }

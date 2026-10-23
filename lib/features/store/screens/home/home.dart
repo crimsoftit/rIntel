@@ -362,7 +362,9 @@ class HomeScreen extends StatelessWidget {
                               return SizedBox.shrink();
                             }
                             return CPaymentMethodsPieChart(
-                              bgColor: CColors.transparent,
+                              bgColor: isDarkTheme
+                                  ? CColors.transparent
+                                  : CColors.white,
                               chartHeight:
                                   300 +
                                   (dashboardController

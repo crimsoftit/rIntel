@@ -2,6 +2,7 @@ import 'package:rintel/features/personalization/controllers/user_controller.dart
 import 'package:rintel/features/personalization/models/contacts_model.dart';
 import 'package:rintel/features/personalization/models/expense.dart';
 import 'package:rintel/features/personalization/models/notification_model.dart';
+import 'package:rintel/features/personalization/models/profile_model.dart';
 import 'package:rintel/features/store/models/best_sellers_model.dart';
 import 'package:rintel/features/store/models/inv_model.dart';
 import 'package:rintel/features/store/models/txns/sold_item_model.dart';
@@ -29,6 +30,7 @@ class DbHelper extends GetxController {
   final userController = Get.put(CUserController());
 
   final contactsTable = 'contactsTable';
+  final dpTable = 'dp';
   final expensesTable = 'expenses';
 
   final invTable = 'inventory';
@@ -121,39 +123,6 @@ class DbHelper extends GetxController {
             )          
           ''');
 
-        // database.execute('''
-        //   CREATE TABLE IF NOT EXISTS $txnsTable(
-        //     soldItemId INTEGER PRIMARY KEY AUTOINCREMENT,
-        //     txnId INTEGER NOT NULL,
-        //     userId TEXT NOT NULL,
-        //     userEmail TEXT NOT NULL,
-        //     userName TEXT NOT NULL,
-        //     productId INTEGER NOT NULL,
-        //     productCode LONGTEXT NOT NULL,
-        //     productName TEXT NOT NULL,
-        //     itemMetrics TEXT NOT NULL,
-        //     quantity REAL NOT NULL,
-        //     qtyRefunded REAL NOT NULL,
-        //     refundReason TEXT NOT NULL,
-        //     totalAmount  REAL NOT NULL,
-        //     amountIssued REAL NOT NULL,
-        //     customerBalance REAL NOT NULL,
-        //     unitBP REAL NOT NULL,
-        //     unitSellingPrice REAL NOT NULL,
-        //     discount REAL NOT NULL,
-        //     paymentMethod TEXT NOT NULL,
-        //     customerName TEXT,
-        //     customerContacts TEXT,
-        //     txnAddress LONGTEXT,
-        //     txnAddressCoordinates LONGTEXT,
-        //     lastModified TEXT NOT NULL,
-        //     isSynced INTEGER NOT NULL,
-        //     syncAction TEXT NOT NULL,
-        //     txnStatus TEXT NOT NULL,
-        //     FOREIGN KEY(productId) REFERENCES inventory(productId)
-        //     )
-        //   ''');
-
         // -- create contacts table --
         database.execute('''
           CREATE TABLE IF NOT EXISTS $contactsTable (
@@ -201,6 +170,14 @@ class DbHelper extends GetxController {
             dateAdded CHAR(30) NOT NULL,
             lastModified CHAR(30) NOT NULL,
             txnCode TEXT NOT NULL
+          )
+        ''');
+
+        database.execute('''
+          CREATE TABLE IF NOT EXISTS $dpTable (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            userId TEXT  NOT NULL,
+            userDp BLOB NOT NULL
           )
         ''');
       },
@@ -1476,6 +1453,64 @@ class DbHelper extends GetxController {
           title: 'Error importing xpenses to device storage!',
           message:
               'Error importing xpenses to device storage!! please try again later',
+        );
+      }
+
+      rethrow;
+    }
+  }
+
+  /// -- save dp to database --
+  Future<int> saveDp(CProfileModel dp) async {
+    try {
+      final db = _db;
+
+      int result = await db!.insert(
+        dpTable,
+        dp.toMap(),
+        conflictAlgorithm: ConflictAlgorithm.replace,
+      );
+
+      return result;
+    } catch (e) {
+      if (kDebugMode) {
+        CPopupSnackBar.errorSnackBar(
+          title: 'error adding dp!',
+          message: e.toString(),
+        );
+      } else {
+        CPopupSnackBar.errorSnackBar(
+          title: 'Error adding dp!',
+          message: 'Error adding dp!! please try again later',
+        );
+      }
+
+      rethrow;
+    }
+  }
+
+  /// -- retrieve dp from sqflite database --
+  Future<CProfileModel> retrieveUserDp(String userId) async {
+    try {
+      final db = _db;
+      final result = await db!.rawQuery(
+        'SELECT * FROM $dpTable WHERE userId = ? ',
+        [userId],
+      );
+
+      if (result.isEmpty) return CProfileModel.empty();
+
+      return CProfileModel.fromMap(result.first);
+    } catch (e) {
+      if (kDebugMode) {
+        CPopupSnackBar.errorSnackBar(
+          title: 'error fetching dp!',
+          message: e.toString(),
+        );
+      } else {
+        CPopupSnackBar.errorSnackBar(
+          title: 'Error fetching dp!',
+          message: 'Error fetching dp!! please try again later',
         );
       }
 

@@ -37,23 +37,9 @@ class CStoreSummary extends StatelessWidget {
               //mainAxisSize: MainAxisSize.min,
               children: [
                 CStoreSummaryCard(
-                  // gradient: isDarkTheme
-                  //     ? LinearGradient(
-                  //         begin: Alignment.topCenter,
-                  //         end: Alignment.bottomCenter,
-                  //         colors: [
-                  //           CNetworkManager.instance.hasConnection.value
-                  //               ? CColors.rBrown
-                  //               : CColors.darkGrey,
-                  //           CNetworkManager.instance.hasConnection.value
-                  //               ? CColors.rBrown.withAlpha(1)
-                  //               : CColors.darkGrey.withAlpha(1),
-                  //         ],
-                  //       )
-                  //     : null,
                   iconData: Iconsax.money_recive,
-                  // subTitleTxt: 'money collected($userCurrency)',
-                  subTitleTxt: 'money collected',
+                  subTitleTxt: 'money collected($userCurrency)',
+                  //subTitleTxt: 'money collected',
                   titleTxt: txnsController.moneyCollected.value.toStringAsFixed(
                     1,
                   ),
