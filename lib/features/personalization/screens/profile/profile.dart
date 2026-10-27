@@ -1,14 +1,12 @@
 import 'package:rintel/common/widgets/custom_shapes/containers/rounded_container.dart';
-import 'package:rintel/common/widgets/img_widgets/c_circular_img.dart';
 import 'package:rintel/common/widgets/shimmers/shimmer_effects.dart';
 import 'package:rintel/common/widgets/txt_widgets/c_section_headings.dart';
 import 'package:rintel/features/personalization/controllers/user_controller.dart';
-import 'package:rintel/features/personalization/models/profile_model.dart';
 import 'package:rintel/features/personalization/screens/profile/widgets/c_profile_menu.dart';
+import 'package:rintel/features/personalization/screens/profile/widgets/dp.dart';
 import 'package:rintel/features/personalization/screens/profile/widgets/update_business_name.dart';
 import 'package:rintel/features/personalization/screens/profile/widgets/update_name.dart';
 import 'package:rintel/utils/constants/colors.dart';
-import 'package:rintel/utils/constants/img_strings.dart';
 import 'package:rintel/utils/constants/sizes.dart';
 import 'package:rintel/utils/helpers/cloud_helper_functions.dart';
 import 'package:rintel/utils/helpers/helper_functions.dart';
@@ -70,10 +68,10 @@ class CProfileScreen extends StatelessWidget {
                     children: [
                       Obx(
                         () {
-                          final networkImg = userController.user.value.profPic;
-                          final dpImg = networkImg.isNotEmpty
-                              ? networkImg
-                              : CImages.user;
+                          //final networkImg = userController.user.value.profPic;
+                          // final dpImg = networkImg.isNotEmpty
+                          //     ? networkImg
+                          //     : CImages.user;
 
                           return userController.imgUploading.value
                               ? const CShimmerEffect(
@@ -81,21 +79,7 @@ class CProfileScreen extends StatelessWidget {
                                   height: 80.0,
                                   radius: 80.0,
                                 )
-                              : userController.userProfileDetails.value !=
-                                    CProfileModel.empty()
-                              ? Image.memory(
-                                  userController.userDp.value,
-                                  fit: BoxFit.cover,
-                                  height: 100,
-                                  width: 100,
-                                )
-                              : CCircularImg(
-                                  img: dpImg,
-                                  width: 80.0,
-                                  height: 80.0,
-                                  padding: 10.0,
-                                  isNetworkImg: networkImg.isNotEmpty,
-                                );
+                              : UserDp();
                         },
                       ),
                       Positioned(
@@ -106,7 +90,7 @@ class CProfileScreen extends StatelessWidget {
                           height: 20,
                           child: IconButton(
                             onPressed: () async {
-                              userController.saveUserProfPic();
+                              await userController.pickAndCompressDpImage();
                             },
                             icon: Icon(
                               Iconsax.edit,
@@ -128,7 +112,7 @@ class CProfileScreen extends StatelessWidget {
                 ),
                 TextButton(
                   onPressed: () async {
-                    userController.saveUserProfPic();
+                    await userController.pickAndCompressDpImage();
                   },
                   child: Text(
                     'change avatar',

@@ -176,8 +176,8 @@ class DbHelper extends GetxController {
         database.execute('''
           CREATE TABLE IF NOT EXISTS $dpTable (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-            userId TEXT  NOT NULL,
-            userDp BLOB NOT NULL
+            userId TEXT NOT NULL,
+            userDp TEXT NOT NULL
           )
         ''');
       },

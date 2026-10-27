@@ -266,7 +266,7 @@ class CInvGridviewScreen extends StatelessWidget {
                   onTapAction: () {
                     CPopupSnackBar.customToast(
                       radius: 20.0,
-                      message: 'double tap on item to see details!!',
+                      message: 'double tap on item card to see details!!',
                       forInternetConnectivityStatus: false,
                     );
                   },

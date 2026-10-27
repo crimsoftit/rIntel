@@ -1,3 +1,8 @@
+import 'dart:convert';
+import 'dart:io';
+
+import 'package:flutter_image_compress/flutter_image_compress.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:rintel/data/repos/auth/auth_repo.dart';
 import 'package:rintel/data/repos/user/user_repo.dart';
 import 'package:rintel/features/authentication/controllers/signup/signup_controller.dart';
@@ -24,7 +29,7 @@ class CUserController extends GetxController {
   final profileLoading = false.obs;
   final imgUploading = false.obs;
   Rx<CUserModel> user = CUserModel.empty().obs;
-  final Rx<Uint8List> userDp = Uint8List(0).obs;
+  final RxString userDp = ''.obs;
   final Rx<CProfileModel> userProfileDetails = CProfileModel.empty().obs;
 
   final hidePassword = true.obs;
@@ -246,33 +251,54 @@ class CUserController extends GetxController {
   }
 
   /// -- upload user's profile picture --
-  Future<void> saveUserProfPic() async {
+  Future<XFile?> pickAndCompressDpImage() async {
     try {
-      final img = await ImagePicker().pickImage(
+      imgUploading.value = true;
+      final ImagePicker picker = ImagePicker();
+      final XFile? pickedFile = await picker.pickImage(
         source: ImageSource.gallery,
-        imageQuality: 100,
-        maxWidth: 1000.0,
-        maxHeight: 1000.0,
+        maxWidth: 1920, // Basic resize
+        maxHeight: 1080,
       );
 
-      if (img != null) {
-        imgUploading.value = true;
-        // -- upload image
-        final imgAsBytes = img.readAsBytes();
+      if (pickedFile == null) return null;
 
-        var thisUser = CProfileModel(
-          userDp: await imgAsBytes,
-          userId: user.value.id,
-        );
+      // 2. Compress the image
+      final Directory tempDir = await getTemporaryDirectory();
+      final String targetPath = '${tempDir.path}/compressed_image.jpg';
 
-        await DbHelper.instance.saveDp(thisUser);
+      // -- compress the image --
+      final XFile? compressedFile =
+          await FlutterImageCompress.compressAndGetFile(
+            minHeight: 800,
+            minWidth: 1200,
+            pickedFile.path,
+            quality: 60, // Adjust quality (0-100)
+            targetPath,
+          );
+      
+      // -- upload image
+      final file = File(compressedFile!.path);
+      final imgAsBytes = await file.readAsBytes();
+      final base64String = base64Encode(imgAsBytes);
 
-        CPopupSnackBar.successSnackBar(
-          title: 'update successful!',
-          message: 'your profile picture was updated successfully!',
-        );
-      }
+      var thisUser = CProfileModel(
+        userDp: base64String,
+        userId: user.value.id,
+      );
+
+      await DbHelper.instance.saveDp(thisUser);
+
+      CPopupSnackBar.successSnackBar(
+        title: 'update successful!',
+        message: 'your profile picture was updated successfully!',
+      );
+
+      imgUploading.value = false;
+
+      return compressedFile;
     } catch (e) {
+      imgUploading.value = false;
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
           title: 'Error uploading profile picture',
@@ -287,6 +313,8 @@ class CUserController extends GetxController {
         );
       }
       rethrow;
+    } finally {
+      imgUploading.value = false;
     }
   }
 

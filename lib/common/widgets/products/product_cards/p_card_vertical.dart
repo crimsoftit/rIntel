@@ -80,12 +80,30 @@ class CProductCardVertical extends StatelessWidget {
       onDoubleTap: onDoubleTapAction,
       onTap: onTapAction,
       child: CRoundedContainer(
-        bgColor: isDarkTheme
-            ? CColors.rBrown.withValues(
-                alpha: 0.3,
-              )
-            : CColors.lightGrey,
+        // bgColor: isDarkTheme
+        //     ? CColors.rBrown.withValues(
+        //         alpha: 0.3,
+        //       )
+        //     : CColors.lightGrey,
         borderRadius: CSizes.cardRadiusMd - 4,
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [
+            isDarkTheme
+                ? CColors.rBrown.withValues(
+                    alpha: .3,
+                  )
+                : CColors.white,
+            isDarkTheme
+                ? CColors.rBrown.withAlpha(
+                    1,
+                  )
+                : CColors.white.withAlpha(
+                    5,
+                  ),
+          ],
+        ),
         height: double.infinity,
 
         padding: EdgeInsets.all(

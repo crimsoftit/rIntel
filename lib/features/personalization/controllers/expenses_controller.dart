@@ -7,6 +7,7 @@ import 'package:rintel/data/repos/store/store_repo.dart';
 import 'package:rintel/features/personalization/controllers/contacts_controller.dart';
 import 'package:rintel/features/personalization/controllers/user_controller.dart';
 import 'package:rintel/features/personalization/models/contacts_model.dart';
+import 'package:rintel/features/store/controllers/txns_controller.dart';
 import 'package:rintel/utils/db/sqflite/db_helper.dart';
 import 'package:rintel/utils/popups/snackbars.dart';
 import 'package:rintel/utils/validators/validation.dart';
@@ -91,8 +92,14 @@ class CExpensesController extends GetxController {
         userController.user.value.email,
       );
 
+      final txnsController = Get.put(CTxnsController());
+
       // -- batch insert expenses to local db --
-      await dbHelper.batchInsertXpenses(myXpenses);
+      await dbHelper.batchInsertXpenses(myXpenses).then(
+        (_) async {
+          await txnsController.fetchMyExpenses();
+        },
+      );
 
       // -- stop loader --
       isLoading.value = false;

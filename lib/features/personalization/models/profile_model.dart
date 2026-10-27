@@ -1,11 +1,9 @@
 // ignore_for_file: unnecessary_getters_setters
 
-import 'dart:typed_data';
-
 class CProfileModel {
   int? _id;
   String _userId = '';
-  Uint8List _userDp = Uint8List(0);
+  String _userDp = '';
 
   CProfileModel({
     required this._userDp,
@@ -14,13 +12,13 @@ class CProfileModel {
 
   int? get id => _id;
   String get userId => _userId;
-  Uint8List get userDp => _userDp;
+  String get userDp => _userDp;
 
   set id(int? newId) {
     _id = newId;
   }
 
-  set userDp(Uint8List newUserDp) {
+  set userDp(String newUserDp) {
     _userDp = newUserDp;
   }
 
@@ -30,7 +28,7 @@ class CProfileModel {
 
   static CProfileModel empty() {
     return CProfileModel(
-      userDp: Uint8List(0),
+      userDp: '',
       userId: '',
     );
   }

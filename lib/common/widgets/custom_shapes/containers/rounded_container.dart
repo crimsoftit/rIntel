@@ -6,7 +6,7 @@ class CRoundedContainer extends StatelessWidget {
   const CRoundedContainer({
     super.key,
     this.alignment,
-    this.bgColor = CColors.white,
+    this.bgColor,
     this.borderRadius = CSizes.cardRadiusLg,
     this.borderColor = CColors.borderPrimary,
     this.boxShadow,
@@ -28,7 +28,7 @@ class CRoundedContainer extends StatelessWidget {
   final Widget? child;
   final bool showBorder;
   final Color borderColor;
-  final Color bgColor;
+  final Color? bgColor;
   final LinearGradient? gradient;
   final List<BoxShadow>? boxShadow;
   final EdgeInsetsGeometry? padding;

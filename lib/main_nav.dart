@@ -24,9 +24,6 @@ class _CMainNavState extends State<CMainNav> {
 
     return ZoomDrawer(
       angle: -20.5,
-      // menuBackgroundColor: isDarkTheme && currentScreen == CMenuItems.expenses
-      //     ? CColors.transparent
-      //     : Colors.deepOrangeAccent,
       menuBackgroundColor: Colors.deepOrangeAccent,
       borderRadius: 15.0,
       mainScreen: getScreen(),

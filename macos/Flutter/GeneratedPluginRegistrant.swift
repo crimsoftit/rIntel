@@ -17,6 +17,7 @@ import firebase_crashlytics
 import firebase_storage
 import flutter_contacts
 import flutter_email_sender_method_channel
+import flutter_image_compress_macos
 import flutter_local_notifications
 import flutter_timezone
 import geocoding_darwin
@@ -43,6 +44,7 @@ func RegisterGeneratedPlugins(registry: FlutterPluginRegistry) {
   FLTFirebaseStoragePlugin.register(with: registry.registrar(forPlugin: "FLTFirebaseStoragePlugin"))
   FlutterContactsPlugin.register(with: registry.registrar(forPlugin: "FlutterContactsPlugin"))
   FlutterEmailSenderPlugin.register(with: registry.registrar(forPlugin: "FlutterEmailSenderPlugin"))
+  FlutterImageCompressMacosPlugin.register(with: registry.registrar(forPlugin: "FlutterImageCompressMacosPlugin"))
   FlutterLocalNotificationsPlugin.register(with: registry.registrar(forPlugin: "FlutterLocalNotificationsPlugin"))
   FlutterTimezonePlugin.register(with: registry.registrar(forPlugin: "FlutterTimezonePlugin"))
   GeocodingDarwinPlugin.register(with: registry.registrar(forPlugin: "GeocodingDarwinPlugin"))

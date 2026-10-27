@@ -135,6 +135,7 @@ dependencies:
   googleapis: any
   http: any
   image_picker: any
+  flutter_image_compress: ^2.5.1
   internet_speed_meter: ^1.0.2
   
   #csv: any
@@ -214,6 +215,14 @@ dependencies:
   # -- validators --
   email_validator: any
   flutter_timezone: ^5.1.0
+
+  
+  hive: ^2.2.3
+  hive_flutter: ^1.1.0
+  hive_generator: ^2.0.1
+
+  isar: ^3.1.0+1
+  isar_generator: ^3.1.0+1
 
 dependency_overrides:
   intl: ^0.20.0
