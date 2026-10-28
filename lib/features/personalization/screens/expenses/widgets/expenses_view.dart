@@ -256,7 +256,6 @@ class _CExpensesViewState extends State<CExpensesView> {
                 List<CExpense> xpenses = groupedXpenses[timestamp]!;
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.end,
-                  mainAxisSize: MainAxisSize.min,
                   children: [
                     Padding(
                       padding: const EdgeInsets.only(

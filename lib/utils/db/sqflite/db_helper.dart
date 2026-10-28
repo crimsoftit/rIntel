@@ -1475,13 +1475,41 @@ class DbHelper extends GetxController {
     } catch (e) {
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
-          title: 'error adding dp!',
+          title: 'error adding avatar!',
           message: e.toString(),
         );
       } else {
         CPopupSnackBar.errorSnackBar(
-          title: 'Error adding dp!',
-          message: 'Error adding dp!! please try again later',
+          title: 'Error adding avatar!',
+          message: 'Error adding avatar!! please try again later',
+        );
+      }
+
+      rethrow;
+    }
+  }
+
+  /// -- update dp --
+  Future<int> updateUserAvatar(CProfileModel user) async {
+    try {
+      var db = _db;
+      var userId = await db!.update(
+        dpTable,
+        user.toMap(),
+        where: 'userId = ?',
+        whereArgs: [user.userId],
+      );
+      return userId;
+    } catch (e) {
+      if (kDebugMode) {
+        CPopupSnackBar.errorSnackBar(
+          title: 'error updating your avatar!',
+          message: e.toString(),
+        );
+      } else {
+        CPopupSnackBar.errorSnackBar(
+          title: 'Error updating your avatar!',
+          message: 'Error updating your avatar!! please try again later',
         );
       }
 

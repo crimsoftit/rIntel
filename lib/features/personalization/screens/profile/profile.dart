@@ -1,5 +1,3 @@
-import 'package:rintel/common/widgets/custom_shapes/containers/rounded_container.dart';
-import 'package:rintel/common/widgets/shimmers/shimmer_effects.dart';
 import 'package:rintel/common/widgets/txt_widgets/c_section_headings.dart';
 import 'package:rintel/features/personalization/controllers/user_controller.dart';
 import 'package:rintel/features/personalization/screens/profile/widgets/c_profile_menu.dart';
@@ -21,9 +19,7 @@ class CProfileScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    //final isConnectedToInternet = CNetworkManager.instance.hasConnection.value;
     final isDarkTheme = CHelperFunctions.isDarkMode(context);
-    //final navController = Get.put(CNavMenuController());
     final userController = Get.put(CUserController());
 
     return Container(
@@ -57,69 +53,37 @@ class CProfileScreen extends StatelessWidget {
             ),
             child: Column(
               children: [
-                CRoundedContainer(
-                  bgColor: CColors.rBrown,
-                  showBorder: true,
-                  borderRadius: 100,
-                  borderColor: CColors.rBrown.withValues(
-                    alpha: 0.3,
-                  ),
-                  child: Stack(
-                    children: [
-                      Obx(
-                        () {
-                          //final networkImg = userController.user.value.profPic;
-                          // final dpImg = networkImg.isNotEmpty
-                          //     ? networkImg
-                          //     : CImages.user;
-
-                          return userController.imgUploading.value
-                              ? const CShimmerEffect(
-                                  width: 80.0,
-                                  height: 80.0,
-                                  radius: 80.0,
-                                )
-                              : UserDp();
-                        },
-                      ),
-                      Positioned(
-                        right: 2,
-                        bottom: 3,
-                        child: SizedBox(
-                          width: 20,
-                          height: 20,
-                          child: IconButton(
-                            onPressed: () async {
-                              await userController.pickAndCompressDpImage();
-                            },
-                            icon: Icon(
-                              Iconsax.edit,
-                              size: 18.0,
-                              color: isDarkTheme
-                                  ? CColors.white
-                                  : CColors.rBrown.withValues(
-                                      alpha: 0.6,
-                                    ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
+                UserDp(),
+                // CRoundedContainer(
+                //   bgColor: CColors.rBrown,
+                //   showBorder: true,
+                //   borderRadius: 100,
+                //   borderColor: CColors.rBrown.withValues(
+                //     alpha: 0.3,
+                //   ),
+                //   child: Stack(
+                //     children: [
+                //       UserDp(),
+                //       Positioned(
+                //         right: 2,
+                //         bottom: 3,
+                //         child: SizedBox(
+                //           width: 20,
+                //           height: 20,
+                //           child: IconButton(
+                //             onPressed: () async {
+                //               await userController.processUserAvatar();
+                //               await userController.fetchUserDp();
+                //             },
+                            
+                //           ),
+                //         ),
+                //       ),
+                //     ],
+                //   ),
+                // ),
                 const SizedBox(
                   height: CSizes.spaceBtnItems / 4,
-                ),
-                TextButton(
-                  onPressed: () async {
-                    await userController.pickAndCompressDpImage();
-                  },
-                  child: Text(
-                    'change avatar',
-                    style: Theme.of(
-                      context,
-                    ).textTheme.labelMedium!.apply(color: CColors.darkGrey),
-                  ),
                 ),
 
                 // const SizedBox(

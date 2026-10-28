@@ -26,8 +26,10 @@ class CUserController extends GetxController {
   static CUserController get instance => Get.find();
 
   /// -- variables --
-  final profileLoading = false.obs;
   final imgUploading = false.obs;
+  final RxBool isLoading = false.obs;
+  final profileLoading = false.obs;
+
   Rx<CUserModel> user = CUserModel.empty().obs;
   final RxString userDp = ''.obs;
   final Rx<CProfileModel> userProfileDetails = CProfileModel.empty().obs;
@@ -56,7 +58,8 @@ class CUserController extends GetxController {
       profileLoading.value = true;
       final user = await userRepo.fetchUserDetails();
       this.user(user);
-      profileLoading.value = false;
+
+      fetchUserDp();
       return true;
     } catch (e) {
       if (kDebugMode) {
@@ -251,9 +254,10 @@ class CUserController extends GetxController {
   }
 
   /// -- upload user's profile picture --
-  Future<XFile?> pickAndCompressDpImage() async {
+  Future<XFile?> processUserAvatar() async {
     try {
       imgUploading.value = true;
+
       final ImagePicker picker = ImagePicker();
       final XFile? pickedFile = await picker.pickImage(
         source: ImageSource.gallery,
@@ -276,7 +280,7 @@ class CUserController extends GetxController {
             quality: 60, // Adjust quality (0-100)
             targetPath,
           );
-      
+
       // -- upload image
       final file = File(compressedFile!.path);
       final imgAsBytes = await file.readAsBytes();
@@ -287,12 +291,22 @@ class CUserController extends GetxController {
         userId: user.value.id,
       );
 
-      await DbHelper.instance.saveDp(thisUser);
+      await fetchUserDp().then(
+        (result) async {
+          if (result.userDp == '') {
+            await DbHelper.instance.saveDp(thisUser);
+          } else {
+            await DbHelper.instance.updateUserAvatar(thisUser);
+          }
+        },
+      );
 
       CPopupSnackBar.successSnackBar(
         title: 'update successful!',
         message: 'your profile picture was updated successfully!',
       );
+
+      await fetchUserDp();
 
       imgUploading.value = false;
 
@@ -320,11 +334,14 @@ class CUserController extends GetxController {
 
   Future<CProfileModel> fetchUserDp() async {
     try {
+      isLoading.value = true;
       final dp = await DbHelper.instance.retrieveUserDp(user.value.id);
       userProfileDetails.value = dp;
       userDp.value = dp.userDp;
+      isLoading.value = false;
       return userProfileDetails.value;
     } catch (e) {
+      isLoading.value = false;
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
           title: 'Error fetching profile picture',
@@ -339,6 +356,8 @@ class CUserController extends GetxController {
         );
       }
       rethrow;
+    } finally {
+      isLoading.value = false;
     }
   }
   // Future<void> uploadUserProfPic() async {
