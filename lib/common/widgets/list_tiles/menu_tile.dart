@@ -1,6 +1,7 @@
 import 'package:rintel/common/widgets/custom_shapes/containers/rounded_container.dart';
 import 'package:rintel/utils/constants/colors.dart';
 import 'package:flutter/material.dart';
+import 'package:rintel/utils/helpers/helper_functions.dart';
 
 class CMenuTile extends StatelessWidget {
   const CMenuTile({
@@ -46,7 +47,7 @@ class CMenuTile extends StatelessWidget {
       onTap: onTap,
       child: CRoundedContainer(
         bgColor: bgColor,
-        width: containerWidth,
+        width: containerWidth ?? CHelperFunctions.screenWidth(),
         child: Material(
           color: CColors.transparent,
           child: ListTile(

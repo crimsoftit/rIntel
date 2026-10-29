@@ -7,6 +7,7 @@ import 'package:rintel/features/personalization/controllers/app_settings_control
 import 'package:rintel/features/personalization/controllers/user_controller.dart';
 import 'package:rintel/features/personalization/screens/profile/profile.dart';
 import 'package:rintel/features/personalization/screens/settings/widgets/payment_platforms.dart';
+import 'package:rintel/features/store/controllers/checkout_controller.dart';
 import 'package:rintel/utils/constants/colors.dart';
 import 'package:rintel/utils/constants/sizes.dart';
 import 'package:rintel/utils/helpers/helper_functions.dart';
@@ -21,6 +22,7 @@ class CUserSettingsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final appSettingsController = Get.put(CAppSettingsController());
+    final checkoutController = Get.put(CCheckoutController());
     final isDarkTheme = CHelperFunctions.isDarkMode(context);
     final userController = Get.put(CUserController());
 
@@ -30,7 +32,7 @@ class CUserSettingsScreen extends StatelessWidget {
         appBar: CVersion2AppBar(
           autoImplyLeading: false,
           //leftPadding: 10.0,
-          rightPadding: 10.0,
+          rightPadding: 35.0,
         ),
         backgroundColor: CColors.rBrown.withValues(
           alpha: 0.2,
@@ -101,14 +103,16 @@ class CUserSettingsScreen extends StatelessWidget {
 
                 CMenuTile(
                   icon: Iconsax.money_recive,
-                  title: 'Payment methods',
+                  title: 'Mpesa Xpress setup',
                   subTitle:
-                      'Set payment platforms and(or) accounts for transactions',
+                      "Set up your mPesa business/account and till numbers for mPesa Xpress transactions...",
                   trailing: IconButton(
                     onPressed: () {
                       Get.to(() => CPaymentPlatforms());
                     },
-                    icon: const Icon(Iconsax.arrow_right),
+                    icon: const Icon(
+                      Iconsax.arrow_right,
+                    ),
                   ),
                   onTap: () {
                     Get.to(() => CPaymentPlatforms());
@@ -161,9 +165,19 @@ class CUserSettingsScreen extends StatelessWidget {
                 // ),
                 CMenuTile(
                   icon: Iconsax.shopping_cart,
+                  onTap: () {
+                    checkoutController.handleNavToCheckout();
+                  },
                   subTitle: 'Add, remove products, and proceed to checkout',
-                  title: 'checkout items',
-                  onTap: () {},
+                  title: 'Checkout items',
+                  trailing: IconButton(
+                    onPressed: () {
+                      Get.to(() => CPaymentPlatforms());
+                    },
+                    icon: const Icon(
+                      Iconsax.arrow_right,
+                    ),
+                  ),
                 ),
 
                 const Divider(),

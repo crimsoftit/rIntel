@@ -1,9 +1,13 @@
+import 'package:rintel/common/widgets/custom_shapes/containers/rounded_container.dart';
+import 'package:rintel/common/widgets/dividers/c_divider.dart';
 import 'package:rintel/common/widgets/txt_widgets/c_section_headings.dart';
 import 'package:rintel/features/personalization/controllers/user_controller.dart';
 import 'package:rintel/features/personalization/screens/profile/widgets/c_profile_menu.dart';
 import 'package:rintel/features/personalization/screens/profile/widgets/dp.dart';
 import 'package:rintel/features/personalization/screens/profile/widgets/update_business_name.dart';
 import 'package:rintel/features/personalization/screens/profile/widgets/update_name.dart';
+import 'package:rintel/features/store/controllers/nav_menu_controller.dart';
+import 'package:rintel/nav_menu.dart';
 import 'package:rintel/utils/constants/colors.dart';
 import 'package:rintel/utils/constants/sizes.dart';
 import 'package:rintel/utils/helpers/cloud_helper_functions.dart';
@@ -20,17 +24,30 @@ class CProfileScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDarkTheme = CHelperFunctions.isDarkMode(context);
+    final navController = Get.put(CNavMenuController());
     final userController = Get.put(CUserController());
+
+    String fullName = userController.user.value.fullName;
+    List<String> names = fullName.split(" ");
+
+    // Get the first word (index 0)
+    String displayName = names[0];
 
     return Container(
       color: isDarkTheme ? CColors.transparent : CColors.white,
       child: Scaffold(
         appBar: AppBar(
           actions: [
-            Icon(
-              Iconsax.notification,
-              size: 25.0,
-              color: CColors.rBrown,
+            InkWell(
+              onTap: () {
+                navController.selectedIndex.value = 4;
+                Get.to(const NavMenu());
+              },
+              child: Icon(
+                Iconsax.notification,
+                size: 25.0,
+                color: CColors.rBrown,
+              ),
             ),
           ],
           actionsPadding: const EdgeInsets.all(
@@ -53,60 +70,89 @@ class CProfileScreen extends StatelessWidget {
             ),
             child: Column(
               children: [
-                UserDp(),
-                // CRoundedContainer(
-                //   bgColor: CColors.rBrown,
-                //   showBorder: true,
-                //   borderRadius: 100,
-                //   borderColor: CColors.rBrown.withValues(
-                //     alpha: 0.3,
-                //   ),
-                //   child: Stack(
-                //     children: [
-                //       UserDp(),
-                //       Positioned(
-                //         right: 2,
-                //         bottom: 3,
-                //         child: SizedBox(
-                //           width: 20,
-                //           height: 20,
-                //           child: IconButton(
-                //             onPressed: () async {
-                //               await userController.processUserAvatar();
-                //               await userController.fetchUserDp();
-                //             },
-                            
-                //           ),
-                //         ),
-                //       ),
-                //     ],
-                //   ),
-                // ),
+                CRoundedContainer(
+                  bgColor: CColors.rBrown,
+                  showBorder: true,
+                  borderRadius: 100,
+                  borderColor: CColors.rBrown.withValues(
+                    alpha: 0.3,
+                  ),
+                  child: Stack(
+                    children: [
+                      UserDp(
+                        height: 80,
+                        width: 80,
+                      ),
+                      Positioned(
+                        right: 2,
+                        bottom: 3,
+                        child: SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: IconButton(
+                            icon: Icon(
+                              Icons.edit,
+                              size: CSizes.iconMd,
+                            ),
+                            onPressed: () async {
+                              await userController.processUserAvatar();
+                              await userController.fetchUserDp();
+                            },
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
                 const SizedBox(
                   height: CSizes.spaceBtnItems / 4,
                 ),
 
-                // const SizedBox(
-                //   height: CSizes.spaceBtnItems / 2,
-                // ),
-                const Divider(),
-                const SizedBox(height: CSizes.spaceBtnItems),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    SelectableText(
+                      displayName,
+                      style: Theme.of(context).textTheme.labelLarge!.apply(),
+                    ),
+                    const SizedBox(
+                      width: CSizes.spaceBtnInputFields,
+                    ),
+                    Icon(
+                      Icons.done,
+                    ),
+                  ],
+                ),
+
+                const SizedBox(
+                  height: CSizes.spaceBtnItems / 2,
+                ),
+                const CDivider(),
+                const SizedBox(
+                  height: CSizes.spaceBtnItems,
+                ),
 
                 // -- profile details
                 const CSectionHeading(
                   showActionBtn: false,
-                  title: 'profile info...',
+                  title: 'Profile info...',
                   btnTitle: '',
                   editFontSize: false,
                 ),
-                const SizedBox(height: CSizes.spaceBtnItems / 4),
+                const SizedBox(
+                  height: CSizes.spaceBtnItems / 4,
+                ),
 
                 CProfileMenu(
                   onTap: () {
-                    Get.to(() => const CUpdateName(autoImplyLeading: true));
+                    Get.to(
+                      () => const CUpdateName(
+                        autoImplyLeading: true,
+                      ),
+                    );
                   },
                   secondRowWidgetFlex: 5,
-                  title: 'your name',
+                  title: 'Your name',
                   titleFlex: 3,
                   trailingIcon: Iconsax.edit,
                   value: userController.user.value.fullName,
@@ -121,7 +167,7 @@ class CProfileScreen extends StatelessWidget {
                     );
                   },
                   secondRowWidgetFlex: 5,
-                  title: 'business name',
+                  title: 'Business name:',
 
                   titleFlex: 3,
                   trailingIcon: Iconsax.edit,
@@ -140,21 +186,27 @@ class CProfileScreen extends StatelessWidget {
                 //   secondRowWidgetFlex: 5,
                 //   onTap: () {},
                 // ),
-                const SizedBox(height: CSizes.spaceBtnItems / 2),
-                const Divider(),
-                const SizedBox(height: CSizes.spaceBtnItems),
+                const SizedBox(
+                  height: CSizes.spaceBtnItems / 2,
+                ),
+                const CDivider(),
+                const SizedBox(
+                  height: CSizes.spaceBtnItems,
+                ),
 
                 // -- personal info headings
                 const CSectionHeading(
                   showActionBtn: false,
-                  title: 'personal info...',
+                  title: 'Personal info...',
                   btnTitle: '',
-                  editFontSize: false,
+                  editFontSize: true,
                 ),
-                const SizedBox(height: CSizes.spaceBtnItems),
+                const SizedBox(
+                  height: CSizes.spaceBtnItems,
+                ),
 
                 CProfileMenu(
-                  title: 'user id',
+                  title: 'User id',
                   value: userController.user.value.id,
                   trailingIcon: Iconsax.copy,
                   titleFlex: 2,
@@ -166,27 +218,27 @@ class CProfileScreen extends StatelessWidget {
                   },
                 ),
                 CProfileMenu(
-                  title: 'e-mail',
+                  title: 'e-Mail:',
                   value: userController.user.value.email,
                   titleFlex: 2,
                   secondRowWidgetFlex: 6,
                   onTap: () {},
                 ),
                 CProfileMenu(
-                  title: 'phone no.',
+                  title: 'Phone no.:',
                   value: userController.user.value.phoneNo,
                   titleFlex: 2,
                   secondRowWidgetFlex: 6,
                   onTap: () {},
                 ),
                 CProfileMenu(
-                  title: 'created',
+                  title: 'Created:',
                   value: userController.user.value.createdAt.toString(),
                   titleFlex: 2,
                   secondRowWidgetFlex: 6,
                   onTap: () {},
                 ),
-                const Divider(),
+                const CDivider(),
                 const SizedBox(height: CSizes.spaceBtnItems),
 
                 Center(

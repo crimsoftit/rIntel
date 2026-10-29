@@ -2,20 +2,20 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:iconsax/iconsax.dart';
 import 'package:rintel/common/widgets/img_widgets/c_circular_img.dart';
 import 'package:rintel/common/widgets/shimmers/shimmer_effects.dart';
 import 'package:rintel/features/personalization/controllers/user_controller.dart';
 import 'package:rintel/features/personalization/models/profile_model.dart';
-import 'package:rintel/utils/constants/colors.dart';
 import 'package:rintel/utils/constants/img_strings.dart';
-import 'package:rintel/utils/constants/sizes.dart';
-import 'package:rintel/utils/helpers/helper_functions.dart';
 
 class UserDp extends StatefulWidget {
   const UserDp({
+    this.height,
+    this.width,
     super.key,
   });
+
+  final double? height, width;
 
   @override
   State<UserDp> createState() => _UserDpState();
@@ -35,7 +35,6 @@ class _UserDpState extends State<UserDp> {
 
   @override
   Widget build(BuildContext context) {
-    final isDarkTheme = CHelperFunctions.isDarkMode(context);
     return Obx(
       () {
         if (userController.imgUploading.value ||
@@ -54,48 +53,27 @@ class _UserDpState extends State<UserDp> {
             if (!snapshot.hasData || userController.userDp.value == '') {
               return CCircularImg(
                 img: CImages.user,
-                width: 80.0,
-                height: 80.0,
-                padding: 10.0,
+                width: widget.width ?? 80.0,
+                height: widget.height ?? 80.0,
+                padding: 1.0,
                 isNetworkImg: false,
               );
             }
 
-            return Column(
-              children: [
-                ClipOval(
-                  child: Image.memory(
-                    avatar,
-                    width: 80,
-                    height: 80,
-                    fit: BoxFit.cover, // Crucial to avoid distortion
-                  ),
+            return ClipOval(
+              child: Padding(
+                padding: const EdgeInsets.all(
+                  1.0,
                 ),
-                SizedBox(
-                  height: CSizes.spaceBtnItems,
+                child: Image.memory(
+                  avatar,
+
+                  fit: BoxFit.cover, // Crucial to avoid distortion
+                  height: widget.height ?? 80,
+
+                  width: widget.width ?? 80,
                 ),
-                TextButton.icon(
-                  icon: Icon(
-                    Iconsax.edit,
-                    size: 18.0,
-                    color: isDarkTheme
-                        ? CColors.white
-                        : CColors.rBrown.withValues(
-                            alpha: 0.6,
-                          ),
-                  ),
-                  label: Text(
-                    'Change avatar',
-                    style: Theme.of(
-                      context,
-                    ).textTheme.labelMedium!.apply(color: CColors.darkGrey),
-                  ),
-                  onPressed: () async {
-                    await userController.processUserAvatar();
-                    setState(() {});
-                  },
-                ),
-              ],
+              ),
             );
           },
         );

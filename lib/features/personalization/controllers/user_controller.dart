@@ -59,7 +59,7 @@ class CUserController extends GetxController {
       final user = await userRepo.fetchUserDetails();
       this.user(user);
 
-      fetchUserDp();
+      await fetchUserDp();
       return true;
     } catch (e) {
       if (kDebugMode) {

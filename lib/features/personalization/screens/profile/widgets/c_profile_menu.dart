@@ -41,9 +41,12 @@ class CProfileMenu extends StatelessWidget {
               flex: titleFlex,
               child: Text(
                 title,
-                style: Theme.of(
-                  context,
-                ).textTheme.bodySmall!.apply(color: CColors.darkGrey),
+                style:
+                    Theme.of(
+                      context,
+                    ).textTheme.bodySmall!.apply(
+                      color: CColors.darkGrey,
+                    ),
                 overflow: TextOverflow.ellipsis,
               ),
             ),
