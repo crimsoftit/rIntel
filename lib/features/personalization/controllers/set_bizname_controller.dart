@@ -57,7 +57,9 @@ class CSetBiznameController extends GetxController {
       }
 
       // -- update user's business name in the firebase firestore
-      Map<String, dynamic> bizName = {'BusinessName': bizNameField.text.trim()};
+      Map<String, dynamic> bizName = {
+        'BusinessName': bizNameField.text.trim(),
+      };
 
       await userRepo.updateSpecificUser(bizName);
 

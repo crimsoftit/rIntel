@@ -27,21 +27,29 @@ class VerifyEmailScreen extends StatelessWidget {
               //Get.offAll(() => const LoginScreen());
               AuthRepo.instance.logout();
             },
-            icon: const Icon(CupertinoIcons.clear),
+            icon: const Icon(
+              CupertinoIcons.clear,
+            ),
           ),
         ],
       ),
       body: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.all(CSizes.defaultSpace),
+          padding: const EdgeInsets.all(
+            CSizes.defaultSpace,
+          ),
           child: Column(
             children: [
               // -- header image --
               Image(
-                image: const AssetImage(CImages.deliveredEmailIllustration),
+                image: const AssetImage(
+                  CImages.deliveredEmailIllustration,
+                ),
                 width: CHelperFunctions.screenWidth() * 0.6,
               ),
-              const SizedBox(height: CSizes.spaceBtnSections),
+              const SizedBox(
+                height: CSizes.spaceBtnSections,
+              ),
 
               // -- title & subtitle --
               Text(
@@ -49,7 +57,9 @@ class VerifyEmailScreen extends StatelessWidget {
                 style: Theme.of(context).textTheme.headlineSmall,
                 textAlign: TextAlign.center,
               ),
-              const SizedBox(height: CSizes.spaceBtnItems),
+              const SizedBox(
+                height: CSizes.spaceBtnItems,
+              ),
               Text(
                 email ?? '',
                 style: Theme.of(
@@ -57,23 +67,35 @@ class VerifyEmailScreen extends StatelessWidget {
                 ).textTheme.labelMedium!.apply(color: CColors.darkerGrey),
                 textAlign: TextAlign.center,
               ),
-              const SizedBox(height: CSizes.spaceBtnItems),
+              const SizedBox(
+                height: CSizes.spaceBtnItems,
+              ),
               Text(
                 CTexts.confirmEmailSubTitle,
-                style: Theme.of(
-                  context,
-                ).textTheme.labelMedium!.apply(color: CColors.darkGrey),
+                style:
+                    Theme.of(
+                      context,
+                    ).textTheme.labelMedium!.apply(
+                      color: CColors.darkGrey,
+                    ),
                 textAlign: TextAlign.center,
               ),
-              const SizedBox(height: CSizes.spaceBtnSections),
+              const SizedBox(
+                height: CSizes.spaceBtnSections,
+              ),
               Text(
                 CTexts.emailNotReceived,
-                style: Theme.of(
-                  context,
-                ).textTheme.labelMedium!.apply(color: CColors.darkGrey),
+                style:
+                    Theme.of(
+                      context,
+                    ).textTheme.labelMedium!.apply(
+                      color: CColors.darkGrey,
+                    ),
                 textAlign: TextAlign.center,
               ),
-              const SizedBox(height: CSizes.spaceBtnSections),
+              const SizedBox(
+                height: CSizes.spaceBtnSections,
+              ),
 
               // -- buttons --
               SizedBox(

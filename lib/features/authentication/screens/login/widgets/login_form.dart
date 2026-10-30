@@ -22,13 +22,18 @@ class LoginForm extends StatelessWidget {
     return Form(
       key: loginController.loginFormKey,
       child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: CSizes.spaceBtnSections),
+        padding: const EdgeInsets.symmetric(
+          vertical: CSizes.spaceBtnSections,
+        ),
         child: Column(
           children: [
             // -- email field --
             TextFormField(
+              autovalidateMode: AutovalidateMode.onUserInteraction,
               controller: loginController.email,
-              style: const TextStyle(height: 0.7),
+              style: const TextStyle(
+                height: 0.7,
+              ),
               decoration: InputDecoration(
                 enabledBorder: OutlineInputBorder(
                   borderSide: BorderSide(
@@ -37,7 +42,9 @@ class LoginForm extends StatelessWidget {
                   ),
                 ),
                 labelText: CTexts.email,
-                prefixIcon: Icon(Iconsax.direct_right,),
+                prefixIcon: Icon(
+                  Iconsax.direct_right,
+                ),
               ),
               validator: (value) {
                 return CValidator.validateEmail(
@@ -47,7 +54,9 @@ class LoginForm extends StatelessWidget {
               },
             ),
 
-            const SizedBox(height: CSizes.spaceBtnInputFields),
+            const SizedBox(
+              height: CSizes.spaceBtnInputFields,
+            ),
 
             // -- password field --
             Obx(
@@ -97,6 +106,7 @@ class LoginForm extends StatelessWidget {
               children: [
                 // -- remember me
                 Row(
+                  mainAxisSize: MainAxisSize.min,
                   children: [
                     Obx(
                       () => Checkbox(
@@ -106,6 +116,9 @@ class LoginForm extends StatelessWidget {
                               !loginController.rememberMe.value;
                         },
                       ),
+                    ),
+                    const SizedBox(
+                      height: 2.0,
                     ),
                     Text(
                       CTexts.rememberMe,
@@ -126,7 +139,9 @@ class LoginForm extends StatelessWidget {
                 ),
               ],
             ),
-            const SizedBox(height: CSizes.spaceBtnInputFields / 2),
+            const SizedBox(
+              height: CSizes.spaceBtnInputFields / 2,
+            ),
 
             // -- sign in button --
             Obx(() {
@@ -145,15 +160,20 @@ class LoginForm extends StatelessWidget {
                   ),
                   child: Text(
                     CTexts.signIn.toUpperCase(),
-                    style: Theme.of(
-                      context,
-                    ).textTheme.labelMedium?.apply(color: CColors.white),
+                    style:
+                        Theme.of(
+                          context,
+                        ).textTheme.labelMedium?.apply(
+                          color: CColors.white,
+                        ),
                   ),
                 ),
               );
             }),
 
-            const SizedBox(height: CSizes.spaceBtnItems / 2),
+            const SizedBox(
+              height: CSizes.spaceBtnItems / 2,
+            ),
 
             // -- create account button --
             SizedBox(

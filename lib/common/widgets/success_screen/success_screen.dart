@@ -2,7 +2,6 @@ import 'package:rintel/common/styles/spacing_styles.dart';
 import 'package:rintel/utils/constants/colors.dart';
 import 'package:rintel/utils/constants/sizes.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:lottie/lottie.dart';
 
@@ -36,7 +35,9 @@ class CSuccessScreen extends StatelessWidget {
                 width: MediaQuery.of(context).size.width * 0.8,
               ),
 
-              const SizedBox(height: CSizes.spaceBtnSections),
+              const SizedBox(
+                height: CSizes.spaceBtnSections,
+              ),
 
               // -- title & subtitle --
               Text(
@@ -44,16 +45,25 @@ class CSuccessScreen extends StatelessWidget {
                 style: Theme.of(context).textTheme.headlineSmall,
                 textAlign: TextAlign.center,
               ),
-              const SizedBox(height: CSizes.spaceBtnItems),
-              const SizedBox(height: CSizes.spaceBtnItems),
+              const SizedBox(
+                height: CSizes.spaceBtnItems,
+              ),
+              const SizedBox(
+                height: CSizes.spaceBtnItems,
+              ),
               Text(
                 subTitle,
-                style: Theme.of(
-                  context,
-                ).textTheme.labelMedium!.apply(color: CColors.darkGrey),
+                style:
+                    Theme.of(
+                      context,
+                    ).textTheme.labelMedium!.apply(
+                      color: CColors.darkGrey,
+                    ),
                 textAlign: TextAlign.center,
               ),
-              const SizedBox(height: CSizes.spaceBtnSections),
+              const SizedBox(
+                height: CSizes.spaceBtnSections,
+              ),
 
               // -- buttons --
               SizedBox(
@@ -77,13 +87,15 @@ class CSuccessScreen extends StatelessWidget {
                       width: double.infinity,
                       child: ElevatedButton(
                         onPressed: onContinueBtnPressed,
-                        child: Obx(() {
-                          return Text(
-                            'CONTINUE',
-                            style: Theme.of(context).textTheme.labelMedium
-                                ?.apply(color: CColors.white),
-                          );
-                        }),
+                        child: Text(
+                          'CONTINUE',
+                          style:
+                              Theme.of(
+                                context,
+                              ).textTheme.labelMedium?.apply(
+                                color: CColors.white,
+                              ),
+                        ),
                       ),
                     ),
                   ],

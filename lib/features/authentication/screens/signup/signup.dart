@@ -33,36 +33,26 @@ class SignupScreen extends StatelessWidget {
           horizontalPadding: 0.0,
           showBackArrow: true,
         ),
-        backgroundColor: CColors.rBrown.withValues(alpha: 0.2),
+        backgroundColor: CColors.rBrown.withValues(
+          alpha: 0.2,
+        ),
         body: SingleChildScrollView(
           child: Padding(
-            padding: const EdgeInsets.all(CSizes.defaultSpace),
+            padding: const EdgeInsets.all(
+              CSizes.defaultSpace,
+            ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // -- logo, title, and subtitle --
                 AppScreenHeader(
                   includeAfterSpace: true,
-                  subTitle: 'excited to have you!',
-                  title: 'sign up...',
-                  txtColor: isDarkTheme
-                      ? CColors.darkGrey
-                      : CNetworkManager.instance.hasConnection.value
+                  subTitle: 'welcome aboard! excited to have you!',
+                  title: 'Sign up...',
+                  txtColor: CNetworkManager.instance.hasConnection.value
                       ? CColors.rBrown
                       : CColors.darkGrey,
                 ),
-                // const SizedBox(
-                //   height: CSizes.spaceBtnSections / 4,
-                // ),
-
-                // -- divider --
-                // const CFormDivider(
-                //   dividerText: 'already have an account?',
-                // ),
-
-                // const SizedBox(
-                //   height: CSizes.spaceBtnSections / 4,
-                // ),
 
                 // -- signup form --
                 const CSignupForm(),
@@ -71,7 +61,9 @@ class SignupScreen extends StatelessWidget {
                 CFormDivider(
                   dividerText: 'already have an account?'.capitalize!,
                 ),
-                const SizedBox(height: CSizes.spaceBtnSections / 2),
+                const SizedBox(
+                  height: CSizes.spaceBtnSections / 2,
+                ),
                 SizedBox(
                   width: double.infinity,
                   child: OutlinedButton(
@@ -84,18 +76,6 @@ class SignupScreen extends StatelessWidget {
                     ),
                   ),
                 ),
-                // TextButton(
-                //   onPressed: () {
-                //     Get.offAll(const LoginScreen());
-                //   },
-                //   child: Text(
-                //     'click here to sign in',
-                //     style: Theme.of(context).textTheme.bodySmall!.apply(
-                //           color: isDarkTheme ? CColors.grey : CColors.rBrown,
-                //         ),
-                //     textAlign: TextAlign.left,
-                //   ),
-                // ),
 
                 // -- footer --
                 //const CSocialButtons(),

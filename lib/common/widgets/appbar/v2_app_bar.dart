@@ -16,6 +16,7 @@ class CVersion2AppBar extends StatelessWidget implements PreferredSizeWidget {
     this.displayMenuIcon = true,
     this.leftPadding,
     this.onMenuBtnPressed,
+
     this.menuIconReplacementWidget = const SizedBox.shrink(),
 
     this.rightPadding,

@@ -82,7 +82,10 @@ class AuthRepo extends GetxController {
           Get.offAll(() => const CAppSettingsScreen());
         } else if (userDets.businessName == '') {
           Get.offAll(
-            () => const CUpdateBusinessNameScreen(autoImplyLeading: false),
+            () => const CUpdateBusinessNameScreen(
+              autoImplyLeading: false,
+              trailingWidget: SizedBox.shrink(),
+            ),
           );
         } else {
           // start the loader

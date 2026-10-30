@@ -32,6 +32,7 @@ class CUpdateName extends StatelessWidget {
         appBar: CVersion2AppBar(
           autoImplyLeading: autoImplyLeading,
           displayMenuIcon: displayMenuIcon,
+          rightPadding: 20.0,
         ),
         backgroundColor: CColors.rBrown.withValues(
           alpha: 0.2,
@@ -55,8 +56,18 @@ class CUpdateName extends StatelessWidget {
                     ),
                   ),
                 ),
+
                 const SizedBox(
                   height: CSizes.spaceBtnItems,
+                ),
+                Text(
+                  'Update your name...',
+                  style: Theme.of(context).textTheme.labelLarge!.apply(
+                    fontSizeFactor: 1.4,
+                  ),
+                ),
+                const SizedBox(
+                  height: CSizes.defaultSpace,
                 ),
                 Text(
                   'Use your real name for easy verification. This name will appear on several pages...',
@@ -73,13 +84,14 @@ class CUpdateName extends StatelessWidget {
                     children: [
                       TextFormField(
                         controller: editNameController.fullName,
-                        validator: (value) =>
-                            CValidator.validateEmptyText('full name', value),
-                        expands: false,
+
                         decoration: const InputDecoration(
-                          labelText: 'full name:',
+                          labelText: 'Full name:',
                           prefixIcon: Icon(Iconsax.user),
                         ),
+                        expands: false,
+                        validator: (value) =>
+                            CValidator.validateEmptyText('Full name', value),
                       ),
                     ],
                   ),

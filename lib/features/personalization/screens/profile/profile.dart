@@ -84,8 +84,9 @@ class CProfileScreen extends StatelessWidget {
                         width: 80,
                       ),
                       Positioned(
-                        right: 2,
-                        bottom: 3,
+                        bottom: 2,
+                        right: 5,
+
                         child: SizedBox(
                           width: 20,
                           height: 20,
@@ -93,6 +94,7 @@ class CProfileScreen extends StatelessWidget {
                             icon: Icon(
                               Icons.edit,
                               size: CSizes.iconMd,
+                              color: CColors.darkGrey,
                             ),
                             onPressed: () async {
                               await userController.processUserAvatar();
@@ -105,7 +107,7 @@ class CProfileScreen extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(
-                  height: CSizes.spaceBtnItems / 4,
+                  height: CSizes.spaceBtnItems,
                 ),
 
                 Row(
@@ -113,13 +115,17 @@ class CProfileScreen extends StatelessWidget {
                   children: [
                     SelectableText(
                       displayName,
-                      style: Theme.of(context).textTheme.labelLarge!.apply(),
+                      style: Theme.of(context).textTheme.displaySmall!.apply(
+                        color: CColors.rBrown,
+                      ),
                     ),
                     const SizedBox(
-                      width: CSizes.spaceBtnInputFields,
+                      width: 3.0,
                     ),
                     Icon(
-                      Icons.done,
+                      Iconsax.tick_circle,
+                      color: Colors.green,
+                      size: CSizes.iconLg,
                     ),
                   ],
                 ),
@@ -161,8 +167,18 @@ class CProfileScreen extends StatelessWidget {
                 CProfileMenu(
                   onTap: () {
                     Get.to(
-                      () => const CUpdateBusinessNameScreen(
+                      () => CUpdateBusinessNameScreen(
                         autoImplyLeading: true,
+                        trailingWidget: InkWell(
+                          onTap: () {
+                            Get.to(() => const CProfileScreen());
+                          },
+                          child: Icon(
+                            Iconsax.user,
+                            color: CColors.rBrown,
+                            size: CSizes.iconMd,
+                          ),
+                        ),
                       ),
                     );
                   },

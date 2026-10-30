@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:rintel/common/widgets/anime/animated_digit_widget.dart';
+import 'package:rintel/common/widgets/buttons/icon_buttons/contact_btns.dart';
 import 'package:rintel/common/widgets/custom_shapes/containers/rounded_container.dart';
 import 'package:rintel/common/widgets/dividers/c_divider.dart';
+import 'package:rintel/features/personalization/controllers/contacts_controller.dart';
 import 'package:rintel/features/personalization/controllers/expenses_controller.dart';
 import 'package:rintel/features/personalization/controllers/user_controller.dart';
 import 'package:rintel/features/personalization/models/expense.dart';
@@ -17,17 +19,34 @@ class CExpenseDetails extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Get.put(CExpensesController());
-    final isDarkTheme = CHelperFunctions.isDarkMode(context);
+    final contactsController = Get.put(CContactsController());
+    final xpensesController = Get.put(CExpensesController());
 
-    Get.put(
-      CTxnsController(),
-    );
+    final isDarkTheme = CHelperFunctions.isDarkMode(context);
 
     final userController = Get.put(CUserController());
     final userCurrency = userController.user.value.currencyCode;
 
+    Get.put(
+      CTxnsController(),
+    );
+    //Get.put(CExpensesController());
+
     CExpense expense = Get.arguments;
+
+    var contactItem = contactsController.myContacts.firstWhereOrNull(
+      (contact) {
+        return contact.contactName.toLowerCase().contains(
+              expense.recipientName.toLowerCase(),
+            ) &&
+            (contact.contactPhone.toLowerCase().contains(
+                  expense.recipientContact.toLowerCase(),
+                ) ||
+                contact.contactEmail.toLowerCase().contains(
+                  expense.recipientContact.toLowerCase(),
+                ));
+      },
+    );
     return Container(
       color: isDarkTheme ? CColors.transparent : CColors.white,
       child: Scaffold(
@@ -340,6 +359,32 @@ class CExpenseDetails extends StatelessWidget {
                                 startIndent: 0,
                                 thickness: .5,
                               ),
+
+                              const SizedBox(
+                                height: CSizes.spaceBtnItems,
+                              ),
+
+                              if (expense.expenseDescription != '')
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      'Remarks:',
+                                      style: Theme.of(
+                                        context,
+                                      ).textTheme.labelSmall!.apply(),
+                                    ),
+                                    Text(
+                                      expense.expenseDescription,
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .labelMedium!
+                                          .apply(
+                                            fontWeightDelta: -1,
+                                          ),
+                                    ),
+                                  ],
+                                ),
                             ],
                           ),
                         ),
@@ -347,6 +392,11 @@ class CExpenseDetails extends StatelessWidget {
                     ),
                   ),
                 ),
+
+                if (contactItem!.contactName != '')
+                  CContactBtns(
+                    contactItem: contactItem,
+                  ),
               ],
             ),
           ),

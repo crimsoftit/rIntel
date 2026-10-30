@@ -4,7 +4,7 @@ import 'package:email_validator/email_validator.dart';
 class CValidator {
   /* ========== empty text validation ========== */
   static String? validateEmptyText(String? fieldName, String? value) {
-    if (value == null || value.isEmpty) {
+    if (value == null || value.isEmpty || value == '') {
       return '$fieldName field is required!';
     }
 

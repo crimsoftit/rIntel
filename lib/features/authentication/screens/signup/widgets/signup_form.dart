@@ -28,7 +28,9 @@ class CSignupForm extends StatelessWidget {
           TextFormField(
             controller: signupController.fullName,
             expands: false,
-            style: const TextStyle(height: 0.7),
+            style: const TextStyle(
+              height: 0.7,
+            ),
             decoration: InputDecoration(
               enabledBorder: OutlineInputBorder(
                 borderSide: BorderSide(
@@ -37,35 +39,26 @@ class CSignupForm extends StatelessWidget {
                 ),
               ),
               labelText: 'your name',
-              prefixIcon: Icon(Iconsax.user),
+              prefixIcon: Icon(
+                Iconsax.user,
+              ),
             ),
-            validator: (value) => CValidator.validateName('your name', value),
+            validator: (value) => CValidator.validateName(
+              'your name',
+              value,
+            ),
           ),
 
-          const SizedBox(height: CSizes.spaceBtnInputFields),
-
-          // -- business name field --
-          // TextFormField(
-          //   controller: signupController.txtBusinessName,
-          //   style: const TextStyle(
-          //     height: 0.7,
-          //   ),
-          //   decoration: const InputDecoration(
-          //     prefixIcon: Icon(Iconsax.buildings),
-          //     labelText: 'business name',
-          //   ),
-          //   validator: (value) =>
-          //       CValidator.validateName('business name', value),
-          // ),
-
-          // const SizedBox(
-          //   height: CSizes.spaceBtnInputFields,
-          // ),
+          const SizedBox(
+            height: CSizes.spaceBtnInputFields,
+          ),
 
           // -- email field --
           TextFormField(
             controller: signupController.txtEmail,
-            style: const TextStyle(height: 0.7),
+            style: const TextStyle(
+              height: 0.7,
+            ),
             decoration: InputDecoration(
               enabledBorder: OutlineInputBorder(
                 borderSide: BorderSide(
@@ -74,7 +67,9 @@ class CSignupForm extends StatelessWidget {
                 ),
               ),
               labelText: CTexts.email,
-              prefixIcon: Icon(Iconsax.direct),
+              prefixIcon: Icon(
+                Iconsax.direct,
+              ),
             ),
             validator: (value) {
               return CValidator.validateEmail(
@@ -84,7 +79,9 @@ class CSignupForm extends StatelessWidget {
             },
           ),
 
-          const SizedBox(height: CSizes.spaceBtnInputFields),
+          const SizedBox(
+            height: CSizes.spaceBtnInputFields,
+          ),
 
           // -- phone number field --
           IntlPhoneField(
@@ -97,14 +94,18 @@ class CSignupForm extends StatelessWidget {
               height: 0.8,
             ),
             decoration: InputDecoration(
-              counterStyle: TextStyle(fontSize: 8.0),
+              counterStyle: TextStyle(
+                fontSize: 8.0,
+              ),
               enabledBorder: OutlineInputBorder(
                 borderSide: BorderSide(
                   width: .6,
                   color: isDarkTheme ? CColors.darkGrey : CColors.rBrown,
                 ),
               ),
-              label: Text('phone number'),
+              label: Text(
+                'phone number',
+              ),
               // focusedBorder: OutlineInputBorder(
               //   borderSide: BorderSide(width: 1.0, color: CColors.darkGrey),
               // ),
@@ -128,18 +129,20 @@ class CSignupForm extends StatelessWidget {
 
               signupController.onPhoneInputChanged(country);
             },
-            validator: (value) =>
-                CValidator.validatePhoneNumber(value.toString()),
+            validator: (value) {
+              return CValidator.validatePhoneNumber(value.toString());
+            },
           ),
 
-          const SizedBox(height: CSizes.spaceBtnInputFields),
+          const SizedBox(
+            height: CSizes.spaceBtnInputFields,
+          ),
 
           // -- password field --
           Obx(
             () => TextFormField(
+              autovalidateMode: AutovalidateMode.onUserInteraction,
               controller: signupController.password,
-              obscureText: signupController.hidePswdTxt.value,
-              style: const TextStyle(height: 0.7),
               decoration: InputDecoration(
                 enabledBorder: OutlineInputBorder(
                   borderSide: BorderSide(
@@ -148,7 +151,9 @@ class CSignupForm extends StatelessWidget {
                   ),
                 ),
                 labelText: CTexts.password,
-                prefixIcon: const Icon(Iconsax.password_check),
+                prefixIcon: const Icon(
+                  Iconsax.password_check,
+                ),
                 suffixIcon: IconButton(
                   onPressed: () {
                     signupController.hidePswdTxt.value =
@@ -164,15 +169,23 @@ class CSignupForm extends StatelessWidget {
                   ),
                 ),
               ),
+              obscureText: signupController.hidePswdTxt.value,
+              style: const TextStyle(
+                height: 0.7,
+              ),
+
               validator: (value) => CValidator.validatePassword(value),
             ),
           ),
 
-          const SizedBox(height: CSizes.spaceBtnInputFields),
+          const SizedBox(
+            height: CSizes.spaceBtnInputFields,
+          ),
 
           // -- confirm password field --
           Obx(
             () => TextFormField(
+              autovalidateMode: AutovalidateMode.onUserInteraction,
               controller: signupController.confirmPassword,
               obscureText: signupController.hideConfirmPswdTxt.value,
               style: const TextStyle(height: 0.7),
@@ -184,7 +197,9 @@ class CSignupForm extends StatelessWidget {
                   ),
                 ),
                 labelText: 're-type password',
-                prefixIcon: const Icon(Iconsax.password_check),
+                prefixIcon: const Icon(
+                  Iconsax.password_check,
+                ),
                 suffixIcon: IconButton(
                   onPressed: () {
                     signupController.hideConfirmPswdTxt.value =
@@ -207,12 +222,16 @@ class CSignupForm extends StatelessWidget {
             ),
           ),
 
-          const SizedBox(height: CSizes.spaceBtnSections),
+          const SizedBox(
+            height: CSizes.spaceBtnSections,
+          ),
 
           // -- terms & conditions checkbox --
           const TandCCheckbox(),
 
-          const SizedBox(height: CSizes.spaceBtnSections),
+          const SizedBox(
+            height: CSizes.spaceBtnSections,
+          ),
 
           SizedBox(
             width: double.infinity,

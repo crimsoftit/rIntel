@@ -135,28 +135,38 @@ class CPopupSnackBar extends GetxController {
               Iconsax.check,
               color: CColors.white,
             ),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: Theme.of(Get.overlayContext!).textTheme.titleMedium!
-                      .apply(
-                        color: CColors.white,
-                      ),
-                ),
-                const SizedBox(
-                  height: CSizes.spaceBtnInputFields * .3,
-                ),
-                Text(
-                  message,
-                  style: Theme.of(Get.overlayContext!).textTheme.labelMedium!
-                      .apply(
-                        color: CColors.white,
-                        //fontStyle: FontStyle.italic,
-                      ),
-                ),
-              ],
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    child: Text(
+                      title,
+                      style: Theme.of(Get.overlayContext!)
+                          .textTheme
+                          .titleMedium!
+                          .apply(
+                            color: CColors.white,
+                          ),
+                    ),
+                  ),
+                  const SizedBox(
+                    height: CSizes.spaceBtnInputFields * .3,
+                  ),
+                  Expanded(
+                    child: Text(
+                      message,
+                      style: Theme.of(Get.overlayContext!)
+                          .textTheme
+                          .labelMedium!
+                          .apply(
+                            color: CColors.white,
+                            //fontStyle: FontStyle.italic,
+                          ),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ],
         ),

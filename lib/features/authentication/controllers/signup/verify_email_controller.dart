@@ -62,20 +62,22 @@ class CVerifyEmailController extends GetxController {
   }
 
   // -- manually check if email was verified --
-  Future<void> checkEmailVerificationStatus() async {
+  void checkEmailVerificationStatus() {
     final currentUser = FirebaseAuth.instance.currentUser;
     if (currentUser != null && currentUser.emailVerified) {
-      Get.off(() {
-        CSuccessScreen(
-          displayReceiptGenerationSection: false,
-          image: CImages.successfulRegAnimation,
-          title: CTexts.accountCreatedTitle,
-          subTitle: CTexts.accountCreatedSubTitle,
-          onContinueBtnPressed: () {
-            AuthRepo.instance.screenRedirect();
-          },
-        );
-      });
+      Get.off(
+        () {
+          CSuccessScreen(
+            displayReceiptGenerationSection: false,
+            image: CImages.successfulRegAnimation,
+            title: CTexts.accountCreatedTitle,
+            subTitle: CTexts.accountCreatedSubTitle,
+            onContinueBtnPressed: () {
+              AuthRepo.instance.screenRedirect();
+            },
+          );
+        },
+      );
     }
   }
 }
