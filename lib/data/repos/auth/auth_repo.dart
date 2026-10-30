@@ -82,9 +82,17 @@ class AuthRepo extends GetxController {
           Get.offAll(() => const CAppSettingsScreen());
         } else if (userDets.businessName == '') {
           Get.offAll(
-            () => const CUpdateBusinessNameScreen(
+            () => CUpdateBusinessNameScreen(
               autoImplyLeading: false,
-              trailingWidget: SizedBox.shrink(),
+              trailingWidget: IconButton(
+                onPressed: () {
+                  AuthRepo.instance.logout();
+                },
+                icon: Icon(
+                  Icons.close,
+                  color: CColors.rBrown,
+                ),
+              ),
             ),
           );
         } else {
@@ -138,12 +146,6 @@ class AuthRepo extends GetxController {
 
             Get.put(CCheckoutController());
 
-            final navController = Get.put(CNavMenuController());
-            navController.selectedIndex.value =
-                invController.inventoryItems.isEmpty ||
-                    txnsController.userTxns.isEmpty
-                ? 0
-                : 1;
             Future.delayed(
               Duration.zero,
               () {

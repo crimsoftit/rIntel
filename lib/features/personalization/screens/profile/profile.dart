@@ -70,44 +70,120 @@ class CProfileScreen extends StatelessWidget {
             ),
             child: Column(
               children: [
-                CRoundedContainer(
-                  bgColor: CColors.rBrown,
-                  showBorder: true,
-                  borderRadius: 100,
-                  borderColor: CColors.rBrown.withValues(
-                    alpha: 0.3,
-                  ),
-                  child: Stack(
-                    children: [
-                      UserDp(
-                        height: 80,
-                        width: 80,
-                      ),
-                      Positioned(
-                        bottom: 2,
-                        right: 5,
+                // CRoundedContainer(
+                //   bgColor: CColors.rBrown,
+                //   showBorder: true,
+                //   borderRadius: 100,
+                //   borderColor: CColors.rBrown.withValues(
+                //     alpha: 0.3,
+                //   ),
+                //   child: Stack(
+                //     children: [
+                //       UserDp(
+                //         height: 80,
+                //         width: 80,
+                //       ),
+                //       Positioned(
+                //         bottom: 2,
 
-                        child: SizedBox(
-                          width: 20,
-                          height: 20,
-                          child: IconButton(
-                            icon: Icon(
-                              Icons.edit,
-                              size: CSizes.iconMd,
-                              color: CColors.darkGrey,
-                            ),
-                            onPressed: () async {
-                              await userController.processUserAvatar();
-                              await userController.fetchUserDp();
-                            },
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
+                //         right: 5,
+                //         child: InkWell(
+                //           onTap: () async {
+                //             await userController.processUserAvatar();
+                //             await userController.fetchUserDp();
+                //           },
+                //           child: CRoundedContainer(
+                //             alignment: Alignment.center,
+                //             bgColor: CColors.transparent,
+                //             borderColor:
+                //                 CHelperFunctions.randomAestheticColor(),
+                //             height: 20,
+                //             showBorder: true,
+                //             width: CHelperFunctions.screenWidth(),
+                //             child: Row(
+                //               children: [
+                //                 IconButton(
+                //                   icon: Icon(
+                //                     Icons.edit,
+                //                     size: CSizes.iconMd,
+                //                     color: CColors.darkGrey,
+                //                   ),
+                //                   onPressed: () async {
+                //                     await userController.processUserAvatar();
+                //                     await userController.fetchUserDp();
+                //                   },
+                //                 ),
+                //                 const SizedBox(
+                //                   width: 2.0,
+                //                 ),
+                //                 Text(
+                //                   'Change avatar',
+                //                   style: Theme.of(context)
+                //                       .textTheme
+                //                       .labelMedium!
+                //                       .apply(
+                //                         color: CColors.rBrown,
+                //                       ),
+                //                 ),
+                //               ],
+                //             ),
+                //           ),
+                //         ),
+                //       ),
+                //     ],
+                //   ),
+                // ),
+                const SizedBox(
+                  height: CSizes.spaceBtnItems,
+                ),
+                UserDp(
+                  height: 80,
+                  width: 80,
                 ),
                 const SizedBox(
                   height: CSizes.spaceBtnItems,
+                ),
+
+                InkWell(
+                  onTap: () async {
+                    await userController.processUserAvatar();
+                    await userController.fetchUserDp();
+                  },
+                  child: CRoundedContainer(
+                    alignment: Alignment.center,
+                    bgColor: CColors.transparent,
+                    borderColor: CHelperFunctions.randomAestheticColor(),
+                    height: 40,
+                    showBorder: true,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        IconButton(
+                          icon: Icon(
+                            Iconsax.edit,
+                            size: CSizes.iconXs,
+                            color: CColors.darkGrey,
+                          ),
+                          onPressed: () async {
+                            await userController.processUserAvatar();
+                            await userController.fetchUserDp();
+                          },
+                        ),
+
+                        Text(
+                          'Change avatar',
+                          style: Theme.of(context).textTheme.labelMedium!.apply(
+                            color: CColors.darkGrey,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+
+                const SizedBox(
+                  height: CSizes.spaceBtnSections,
                 ),
 
                 Row(

@@ -35,6 +35,7 @@ class CUpdateBusinessNameScreen extends StatelessWidget {
         appBar: CVersion2AppBar(
           autoImplyLeading: autoImplyLeading,
           displayMenuIcon: displayMenuIcon,
+          rightPadding: 25.0,
           trailingWidget: trailingWidget,
         ),
         backgroundColor: CColors.rBrown.withValues(

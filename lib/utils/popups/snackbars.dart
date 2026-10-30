@@ -131,39 +131,35 @@ class CPopupSnackBar extends GetxController {
         content: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Icon(
-              Iconsax.check,
-              color: CColors.white,
+            Expanded(
+              child: Icon(
+                Iconsax.check,
+                color: CColors.white,
+              ),
             ),
             Expanded(
+              flex: 6,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Expanded(
-                    child: Text(
-                      title,
-                      style: Theme.of(Get.overlayContext!)
-                          .textTheme
-                          .titleMedium!
-                          .apply(
-                            color: CColors.white,
-                          ),
-                    ),
+                  Text(
+                    title,
+                    style: Theme.of(Get.overlayContext!).textTheme.titleMedium!
+                        .apply(
+                          color: CColors.white,
+                        ),
                   ),
                   const SizedBox(
                     height: CSizes.spaceBtnInputFields * .3,
                   ),
-                  Expanded(
-                    child: Text(
-                      message,
-                      style: Theme.of(Get.overlayContext!)
-                          .textTheme
-                          .labelMedium!
-                          .apply(
-                            color: CColors.white,
-                            //fontStyle: FontStyle.italic,
-                          ),
-                    ),
+                  Text(
+                    message,
+                    maxLines: 4,
+                    style: Theme.of(Get.overlayContext!).textTheme.labelMedium!
+                        .apply(
+                          color: CColors.white,
+                          //fontStyle: FontStyle.italic,
+                        ),
                   ),
                 ],
               ),

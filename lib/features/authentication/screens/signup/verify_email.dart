@@ -106,13 +106,18 @@ class VerifyEmailScreen extends StatelessWidget {
                   },
                   child: Text(
                     'CONTINUE',
-                    style: Theme.of(
-                      context,
-                    ).textTheme.labelMedium?.apply(color: CColors.white),
+                    style:
+                        Theme.of(
+                          context,
+                        ).textTheme.labelMedium?.apply(
+                          color: CColors.white,
+                        ),
                   ),
                 ),
               ),
-              const SizedBox(height: CSizes.spaceBtnItems),
+              const SizedBox(
+                height: CSizes.spaceBtnItems,
+              ),
               SizedBox(
                 width: double.infinity,
                 child: TextButton(

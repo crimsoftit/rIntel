@@ -6,7 +6,6 @@ import 'package:rintel/common/widgets/buttons/icon_buttons/contact_btns.dart';
 import 'package:rintel/common/widgets/custom_shapes/containers/rounded_container.dart';
 import 'package:rintel/common/widgets/dividers/c_divider.dart';
 import 'package:rintel/features/personalization/controllers/contacts_controller.dart';
-import 'package:rintel/features/personalization/controllers/expenses_controller.dart';
 import 'package:rintel/features/personalization/controllers/user_controller.dart';
 import 'package:rintel/features/personalization/models/expense.dart';
 import 'package:rintel/features/store/controllers/txns_controller.dart';
@@ -20,7 +19,6 @@ class CExpenseDetails extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final contactsController = Get.put(CContactsController());
-    final xpensesController = Get.put(CExpensesController());
 
     final isDarkTheme = CHelperFunctions.isDarkMode(context);
 

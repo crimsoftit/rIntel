@@ -6,7 +6,9 @@ import 'package:rintel/features/personalization/models/menu_item_model.dart';
 import 'package:rintel/features/personalization/screens/expenses/expenses_screen.dart';
 import 'package:rintel/features/personalization/screens/navigation/menu_items.dart';
 import 'package:rintel/features/personalization/screens/navigation/side_menu.dart';
+import 'package:rintel/features/store/controllers/inv_controller.dart';
 import 'package:rintel/features/store/controllers/nav_menu_controller.dart';
+import 'package:rintel/features/store/controllers/txns_controller.dart';
 import 'package:rintel/nav_menu.dart';
 
 class CMainNav extends StatefulWidget {
@@ -17,11 +19,17 @@ class CMainNav extends StatefulWidget {
 }
 
 class _CMainNavState extends State<CMainNav> {
-  CMenuItemModel currentScreen = CMenuItems.store;
+  final invController = Get.put(CInventoryController());
+  final txnsController = Get.put(CTxnsController());
+
+  CMenuItemModel currentScreen = CMenuItems.dashboard;
+
   @override
   Widget build(BuildContext context) {
-    //final isDarkTheme = CHelperFunctions.isDarkMode(context);
-
+    currentScreen =
+        invController.inventoryItems.isEmpty || txnsController.userTxns.isEmpty
+        ? CMenuItems.dashboard
+        : CMenuItems.store;
     return ZoomDrawer(
       angle: -20.5,
       menuBackgroundColor: Colors.deepOrangeAccent,
