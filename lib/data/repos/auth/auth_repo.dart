@@ -11,7 +11,6 @@ import 'package:rintel/features/personalization/screens/settings/app_settings_sc
 import 'package:rintel/features/store/controllers/cart_controller.dart';
 import 'package:rintel/features/store/controllers/checkout_controller.dart';
 import 'package:rintel/features/store/controllers/inv_controller.dart';
-import 'package:rintel/features/store/controllers/nav_menu_controller.dart';
 import 'package:rintel/features/store/controllers/txns_controller.dart';
 import 'package:rintel/main_nav.dart';
 import 'package:rintel/utils/constants/colors.dart';

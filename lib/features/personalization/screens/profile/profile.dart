@@ -141,7 +141,7 @@ class CProfileScreen extends StatelessWidget {
                   width: 80,
                 ),
                 const SizedBox(
-                  height: CSizes.spaceBtnItems,
+                  height: CSizes.spaceBtnItems * .4,
                 ),
 
                 InkWell(
@@ -152,9 +152,6 @@ class CProfileScreen extends StatelessWidget {
                   child: CRoundedContainer(
                     alignment: Alignment.center,
                     bgColor: CColors.transparent,
-                    borderColor: CHelperFunctions.randomAestheticColor(),
-                    height: 40,
-                    showBorder: true,
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       mainAxisSize: MainAxisSize.min,
