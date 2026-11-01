@@ -140,69 +140,55 @@ class CProfileScreen extends StatelessWidget {
                   height: 80,
                   width: 80,
                 ),
-                const SizedBox(
-                  height: CSizes.spaceBtnItems * .4,
-                ),
 
-                InkWell(
-                  onTap: () async {
+                TextButton.icon(
+                  icon: Icon(
+                    Iconsax.edit,
+                    size: CSizes.iconXs,
+                    color: CColors.darkGrey,
+                  ),
+                  label: Text(
+                    'Change avatar',
+                    style: Theme.of(context).textTheme.labelMedium!.apply(
+                      color: CColors.darkGrey,
+                    ),
+                  ),
+                  onPressed: () async {
                     await userController.processUserAvatar();
                     await userController.fetchUserDp();
                   },
-                  child: CRoundedContainer(
-                    alignment: Alignment.center,
-                    bgColor: CColors.transparent,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        IconButton(
-                          icon: Icon(
-                            Iconsax.edit,
-                            size: CSizes.iconXs,
-                            color: CColors.darkGrey,
-                          ),
-                          onPressed: () async {
-                            await userController.processUserAvatar();
-                            await userController.fetchUserDp();
-                          },
-                        ),
-
-                        Text(
-                          'Change avatar',
-                          style: Theme.of(context).textTheme.labelMedium!.apply(
-                            color: CColors.darkGrey,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
                 ),
 
                 const SizedBox(
-                  height: CSizes.spaceBtnSections,
+                  height: CSizes.spaceBtnSections * .4,
                 ),
 
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    SelectableText(
-                      displayName,
-                      style: Theme.of(context).textTheme.displaySmall!.apply(
-                        color: CColors.rBrown,
-                      ),
-                    ),
-                    const SizedBox(
-                      width: 3.0,
-                    ),
-                    Icon(
-                      Iconsax.tick_circle,
-                      color: Colors.green,
-                      size: CSizes.iconLg,
-                    ),
-                  ],
+                SelectableText(
+                  displayName,
+                  style: Theme.of(context).textTheme.displaySmall!.apply(
+                    color: CColors.rBrown,
+                  ),
                 ),
 
+                // Row(
+                //   mainAxisAlignment: MainAxisAlignment.center,
+                //   children: [
+                //     SelectableText(
+                //       displayName,
+                //       style: Theme.of(context).textTheme.displaySmall!.apply(
+                //         color: CColors.rBrown,
+                //       ),
+                //     ),
+                //     const SizedBox(
+                //       width: 3.0,
+                //     ),
+                //     Icon(
+                //       Iconsax.tick_circle,
+                //       color: Colors.green,
+                //       size: CSizes.iconLg,
+                //     ),
+                //   ],
+                // ),
                 const SizedBox(
                   height: CSizes.spaceBtnItems / 2,
                 ),

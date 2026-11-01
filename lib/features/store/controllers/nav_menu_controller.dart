@@ -10,6 +10,7 @@ class CNavMenuController extends GetxController {
 
   // -- variables --
   final Rx<int> selectedIndex = 0.obs;
+  //final Rx<CMenuItemModel> selectedScreen
 
   final screens = [
     const HomeScreen(),

@@ -370,7 +370,7 @@ class HomeScreen extends StatelessWidget {
                                   (dashboardController
                                           .paymentMethodTxnsData
                                           .length *
-                                      50.0),
+                                      60.0),
                               chartRadius: 80.0,
                               centerRadius: 30.0,
                               chartWidth: CHelperFunctions.screenWidth(),

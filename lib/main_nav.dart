@@ -22,14 +22,19 @@ class _CMainNavState extends State<CMainNav> {
   final invController = Get.put(CInventoryController());
   final txnsController = Get.put(CTxnsController());
 
-  CMenuItemModel currentScreen = CMenuItems.dashboard;
+  late CMenuItemModel currentScreen;
 
   @override
-  Widget build(BuildContext context) {
+  void initState() {
     currentScreen =
         invController.inventoryItems.isEmpty || txnsController.userTxns.isEmpty
         ? CMenuItems.dashboard
         : CMenuItems.store;
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return ZoomDrawer(
       angle: -20.5,
       menuBackgroundColor: Colors.deepOrangeAccent,
