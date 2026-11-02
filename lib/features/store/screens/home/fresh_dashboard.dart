@@ -98,7 +98,9 @@ class CFreshDashboardScreen extends StatelessWidget {
                     fontWeightDelta: -2,
                   ),
                 ),
-                const SizedBox(height: CSizes.defaultSpace / 4),
+                const SizedBox(
+                  height: CSizes.defaultSpace / 4,
+                ),
                 Text(
                   'your perfect dashboard is just a few sales away!'
                       .toUpperCase(),

@@ -7,15 +7,18 @@ import 'package:rintel/common/widgets/shimmers/shimmer_effects.dart';
 import 'package:rintel/features/personalization/controllers/user_controller.dart';
 import 'package:rintel/features/personalization/models/profile_model.dart';
 import 'package:rintel/utils/constants/img_strings.dart';
+import 'package:rintel/utils/db/sqflite/db_helper.dart';
 
 class UserDp extends StatefulWidget {
   const UserDp({
     this.height,
+    this.onAvatarTap,
     this.width,
     super.key,
   });
 
   final double? height, width;
+  final void Function()? onAvatarTap;
 
   @override
   State<UserDp> createState() => _UserDpState();
@@ -28,7 +31,10 @@ class _UserDpState extends State<UserDp> {
 
   @override
   void initState() {
-    _itemsFuture = userController.fetchUserDp();
+    _itemsFuture = DbHelper.instance.retrieveUserDp(
+      userController.user.value.id,
+    );
+    //userController.fetchUserDp();
 
     super.initState();
   }
@@ -45,33 +51,48 @@ class _UserDpState extends State<UserDp> {
             radius: 80.0,
           );
         }
+
+        if (userController.userDp.value == '') {
+          return CCircularImg(
+            img: CImages.user,
+            width: widget.width ?? 80.0,
+            height: widget.height ?? 80.0,
+            padding: 1.0,
+            isNetworkImg: false,
+          );
+        }
+
         // decode Base64String back to Uint8List
         final avatar = base64Decode(userController.userDp.value);
+
         return FutureBuilder<CProfileModel>(
           future: _itemsFuture,
           builder: (context, snapshot) {
-            if (!snapshot.hasData || userController.userDp.value == '') {
-              return CCircularImg(
-                img: CImages.user,
-                width: widget.width ?? 80.0,
-                height: widget.height ?? 80.0,
-                padding: 1.0,
-                isNetworkImg: false,
-              );
-            }
+            // if (!snapshot.hasData ) {
+            //   return CCircularImg(
+            //     img: CImages.user,
+            //     width: widget.width ?? 80.0,
+            //     height: widget.height ?? 80.0,
+            //     padding: 1.0,
+            //     isNetworkImg: false,
+            //   );
+            // }
 
-            return ClipOval(
-              child: Padding(
-                padding: const EdgeInsets.all(
-                  1.0,
-                ),
-                child: Image.memory(
-                  avatar,
+            return InkWell(
+              onTap: widget.onAvatarTap,
+              child: ClipOval(
+                child: Padding(
+                  padding: const EdgeInsets.all(
+                    1.0,
+                  ),
+                  child: Image.memory(
+                    avatar,
 
-                  fit: BoxFit.cover, // Crucial to avoid distortion
-                  height: widget.height ?? 80,
+                    fit: BoxFit.cover, // Crucial to avoid distortion
+                    height: widget.height ?? 80,
 
-                  width: widget.width ?? 80,
+                    width: widget.width ?? 80,
+                  ),
                 ),
               ),
             );

@@ -26,20 +26,30 @@ class CFreshDashboardScreenView extends StatelessWidget {
             Material(
               type: MaterialType.transparency,
               child: ListTile(
-                contentPadding: const EdgeInsets.all(CSizes.defaultSpace / 3),
+                contentPadding: const EdgeInsets.all(
+                  CSizes.defaultSpace / 3,
+                ),
                 onTap: onTap,
                 subtitle: Padding(
-                  padding: const EdgeInsets.all(8.0),
+                  padding: const EdgeInsets.all(
+                    8.0,
+                  ),
                   child: Text(
                     //'add your first item to get started!'.toUpperCase(),
                     label.toUpperCase(),
-                    style: Theme.of(
-                      context,
-                    ).textTheme.labelMedium!.apply(color: CColors.rBrown),
+                    style:
+                        Theme.of(
+                          context,
+                        ).textTheme.labelMedium!.apply(
+                          color: CColors.rBrown,
+                        ),
                     textAlign: TextAlign.center,
                   ),
                 ),
-                title: Icon(iconData, color: CColors.rBrown),
+                title: Icon(
+                  iconData,
+                  color: CColors.rBrown,
+                ),
 
                 //trailing: Icon(Icons.more_vert),
               ),

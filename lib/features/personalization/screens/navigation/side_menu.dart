@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:rintel/features/personalization/models/menu_item_model.dart';
 import 'package:rintel/features/personalization/screens/navigation/menu_items.dart';
+import 'package:rintel/features/personalization/screens/profile/profile.dart';
+import 'package:rintel/features/personalization/screens/profile/widgets/dp.dart';
 import 'package:rintel/utils/constants/colors.dart';
 
 class CSideMenu extends StatelessWidget {
@@ -27,13 +30,21 @@ class CSideMenu extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              Text(
-                'header',
+              Center(
+                child: UserDp(
+                  height: 80,
+                  onAvatarTap: () {
+                    Get.to(() => const CProfileScreen());
+                  },
+                  width: 80,
+                ),
               ),
-              Spacer(),
+
+              const SizedBox(height: 20,),
+              //Spacer(),
               ...CMenuItems.menuItems.map(buildMenuItem),
               Spacer(
-                flex: 2,
+                //flex: 2,
               ),
             ],
           ),

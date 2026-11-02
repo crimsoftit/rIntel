@@ -1,4 +1,3 @@
-import 'package:rintel/common/widgets/custom_shapes/containers/rounded_container.dart';
 import 'package:rintel/common/widgets/dividers/c_divider.dart';
 import 'package:rintel/common/widgets/txt_widgets/c_section_headings.dart';
 import 'package:rintel/features/personalization/controllers/user_controller.dart';
@@ -70,69 +69,6 @@ class CProfileScreen extends StatelessWidget {
             ),
             child: Column(
               children: [
-                // CRoundedContainer(
-                //   bgColor: CColors.rBrown,
-                //   showBorder: true,
-                //   borderRadius: 100,
-                //   borderColor: CColors.rBrown.withValues(
-                //     alpha: 0.3,
-                //   ),
-                //   child: Stack(
-                //     children: [
-                //       UserDp(
-                //         height: 80,
-                //         width: 80,
-                //       ),
-                //       Positioned(
-                //         bottom: 2,
-
-                //         right: 5,
-                //         child: InkWell(
-                //           onTap: () async {
-                //             await userController.processUserAvatar();
-                //             await userController.fetchUserDp();
-                //           },
-                //           child: CRoundedContainer(
-                //             alignment: Alignment.center,
-                //             bgColor: CColors.transparent,
-                //             borderColor:
-                //                 CHelperFunctions.randomAestheticColor(),
-                //             height: 20,
-                //             showBorder: true,
-                //             width: CHelperFunctions.screenWidth(),
-                //             child: Row(
-                //               children: [
-                //                 IconButton(
-                //                   icon: Icon(
-                //                     Icons.edit,
-                //                     size: CSizes.iconMd,
-                //                     color: CColors.darkGrey,
-                //                   ),
-                //                   onPressed: () async {
-                //                     await userController.processUserAvatar();
-                //                     await userController.fetchUserDp();
-                //                   },
-                //                 ),
-                //                 const SizedBox(
-                //                   width: 2.0,
-                //                 ),
-                //                 Text(
-                //                   'Change avatar',
-                //                   style: Theme.of(context)
-                //                       .textTheme
-                //                       .labelMedium!
-                //                       .apply(
-                //                         color: CColors.rBrown,
-                //                       ),
-                //                 ),
-                //               ],
-                //             ),
-                //           ),
-                //         ),
-                //       ),
-                //     ],
-                //   ),
-                // ),
                 const SizedBox(
                   height: CSizes.spaceBtnItems,
                 ),
