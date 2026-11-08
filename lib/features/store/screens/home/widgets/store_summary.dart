@@ -123,8 +123,12 @@ class CStoreSummary extends StatelessWidget {
             aspectRatio: 16 / 9,
             //autoPlay: dateRangeController.selectedDateRange.value == null && txnsController.dateRangeFieldController.text == '',
             autoPlay: !dashboardController.showSummaryFilterField.value,
-            autoPlayAnimationDuration: const Duration(milliseconds: 300),
-            autoPlayInterval: Duration(seconds: 5),
+            autoPlayAnimationDuration: const Duration(
+              milliseconds: 300,
+            ),
+            autoPlayInterval: Duration(
+              seconds: 5,
+            ),
             enableInfiniteScroll: true,
             enlargeCenterPage: true,
             height: 90.001,

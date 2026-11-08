@@ -135,6 +135,8 @@ dependencies:
   googleapis: any
   http: any
   image_picker: any
+  image_cropper: ^13.0.0
+  
   flutter_image_compress: ^2.5.1
   internet_speed_meter: ^1.0.2
   

@@ -10,6 +10,7 @@ import 'package:rintel/common/widgets/search_bar/animed_searchfield.dart';
 import 'package:rintel/features/personalization/controllers/expenses_controller.dart';
 import 'package:rintel/features/personalization/controllers/user_controller.dart';
 import 'package:rintel/features/personalization/screens/expenses/widgets/expenses_view.dart';
+import 'package:rintel/features/personalization/screens/expenses/widgets/inv_expenses_view.dart';
 import 'package:rintel/features/personalization/screens/expenses/widgets/xpense_form.dart';
 import 'package:rintel/features/personalization/screens/navigation/menu_btn.dart';
 import 'package:rintel/features/store/controllers/inv_controller.dart';
@@ -172,7 +173,7 @@ class CExpensesScreen extends StatelessWidget {
                         ),
                         Tab(
                           child: Text(
-                            'Inventory',
+                            'Inventory ()',
                           ),
                         ),
 
@@ -205,15 +206,6 @@ class CExpensesScreen extends StatelessWidget {
                   CExpensesView(
                     space: 'all',
                   ),
-                  // Wrap(
-                  //   children: [
-                  //     if (!xpensesController.showSearchField.value)
-                  //       CInvExpensesView(),
-                  //     CExpensesView(
-                  //       space: 'all',
-                  //     ),
-                  //   ],
-                  // ),
 
                   // -- bills --
                   CExpensesView(
@@ -221,9 +213,15 @@ class CExpensesScreen extends StatelessWidget {
                   ),
 
                   // -- inventory items --
-                  CInvGridviewScreen(
-                    //mainAxisExtent: 185.20,
-                    screen: 'xpenses',
+                  Wrap(
+                    children: [
+                      if (!xpensesController.showSearchField.value)
+                        CInvExpensesView(),
+                      CInvGridviewScreen(
+                        //mainAxisExtent: 185.20,
+                        screen: 'xpenses',
+                      ),
+                    ],
                   ),
 
                   CExpensesView(

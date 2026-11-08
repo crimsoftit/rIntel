@@ -33,6 +33,11 @@ class CFormatter {
     return time;
   }
 
+  static String firstWordOfString(String input) {
+    List<String> words = input.split(' ');
+    return words.isNotEmpty ? words[0] : '';
+  }
+
   static String getOnlyDate(String dateString) {
     // 1. Parse the string to DateTime
     DateTime dateTime = DateTime.parse(dateString);

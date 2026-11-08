@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter_image_compress/flutter_image_compress.dart';
+import 'package:image_cropper/image_cropper.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:rintel/data/repos/auth/auth_repo.dart';
 import 'package:rintel/data/repos/user/user_repo.dart';
@@ -267,7 +268,10 @@ class CUserController extends GetxController {
 
       if (pickedFile == null) return null;
 
-      // 2. Compress the image
+      // -- crop the image --
+      final croppedImg = await croppedImage(pickedFile);
+
+      // -- compress the image
       final Directory tempDir = await getTemporaryDirectory();
       final String targetPath = '${tempDir.path}/compressed_image.jpg';
 
@@ -276,7 +280,7 @@ class CUserController extends GetxController {
           await FlutterImageCompress.compressAndGetFile(
             minHeight: 800,
             minWidth: 1200,
-            pickedFile.path,
+            croppedImg.path,
             quality: 60, // Adjust quality (0-100)
             targetPath,
           );
@@ -330,6 +334,35 @@ class CUserController extends GetxController {
     } finally {
       imgUploading.value = false;
     }
+  }
+
+  /// -- crop image --
+  Future<CroppedFile> croppedImage(XFile image) async {
+    final croppedImg = await ImageCropper().cropImage(
+      sourcePath: image.path,
+      uiSettings: [
+        AndroidUiSettings(
+          toolbarTitle: 'Cropper',
+          toolbarColor: Colors.deepOrange,
+          toolbarWidgetColor: Colors.white,
+          aspectRatioPresets: [
+            CropAspectRatioPreset.original,
+            CropAspectRatioPreset.ratio7x5,
+            CropAspectRatioPreset.ratio16x9,
+            CropAspectRatioPreset.ratio4x3,
+            CropAspectRatioPreset.square,
+          ],
+        ),
+        IOSUiSettings(
+          title: 'Cropper',
+          aspectRatioPresets: [
+            CropAspectRatioPreset.original,
+          ],
+        ),
+      ],
+    );
+
+    return croppedImg!;
   }
 
   Future<CProfileModel> fetchUserDp() async {

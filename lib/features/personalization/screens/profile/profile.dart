@@ -10,6 +10,7 @@ import 'package:rintel/nav_menu.dart';
 import 'package:rintel/utils/constants/colors.dart';
 import 'package:rintel/utils/constants/sizes.dart';
 import 'package:rintel/utils/helpers/cloud_helper_functions.dart';
+import 'package:rintel/utils/helpers/formatter.dart';
 import 'package:rintel/utils/helpers/helper_functions.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -27,10 +28,9 @@ class CProfileScreen extends StatelessWidget {
     final userController = Get.put(CUserController());
 
     String fullName = userController.user.value.fullName;
-    List<String> names = fullName.split(" ");
 
     // Get the first word (index 0)
-    String displayName = names[0];
+    String displayName = CFormatter.firstWordOfString(fullName);
 
     return Container(
       color: isDarkTheme ? CColors.transparent : CColors.white,
