@@ -5,6 +5,7 @@ import 'package:rintel/features/personalization/models/notification_model.dart';
 import 'package:rintel/features/personalization/models/profile_model.dart';
 import 'package:rintel/features/store/models/best_sellers_model.dart';
 import 'package:rintel/features/store/models/inv_model.dart';
+import 'package:rintel/features/store/models/top_customers_model.dart';
 import 'package:rintel/features/store/models/txns/sold_item_model.dart';
 import 'package:rintel/features/store/models/txns/txn_model.dart';
 import 'package:rintel/utils/helpers/helper_functions.dart';
@@ -599,14 +600,11 @@ class DbHelper extends GetxController {
         [email],
       );
 
-      if (topSellers.isEmpty) {
-        return [];
-      } else {
-        // convert the List<Map<String, dynamic> into a List<CBestSellersModel>.
-        return topSellers
-            .map((json) => CBestSellersModel.fromMapObject(json))
-            .toList();
-      }
+      if (topSellers.isEmpty) return [];
+      // convert the List<Map<String, dynamic> into a List<CBestSellersModel>.
+      return topSellers
+          .map((json) => CBestSellersModel.fromMapObject(json))
+          .toList();
     } on DatabaseException catch (e) {
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
@@ -615,12 +613,12 @@ class DbHelper extends GetxController {
         );
       } else {
         CPopupSnackBar.errorSnackBar(
-          title: 'database error fetching top sellers',
+          title: 'error fetching top sellers',
           message:
               'An unknown database error occurred while fetching top sellers!',
         );
       }
-      return [];
+      rethrow;
     } catch (e) {
       if (kDebugMode) {
         CPopupSnackBar.errorSnackBar(
@@ -872,106 +870,6 @@ class DbHelper extends GetxController {
     }
   }
 
-  /// -- fetch sold items --
-  // Future<List<CTxnsModel>> fetchUserSoldItems(String email) async {
-  //   try {
-  //     final transactions = await _db!.rawQuery(
-  //       'SELECT * from $txnsTable where userEmail = ? ORDER BY soldItemId DESC',
-  //       [email],
-  //     );
-
-  //     if (transactions.isEmpty) {
-  //       return [];
-  //     }
-
-  //     // Convert the List<Map<String, dynamic> into a List<CTxnsModel>.
-  //     return transactions
-  //         .map((json) => CTxnsModel.fromMapObject(json))
-  //         .toList();
-  //   } on DatabaseException catch (e) {
-  //     if (kDebugMode) {
-  //       CPopupSnackBar.errorSnackBar(
-  //         title: 'database error fetching user\'s sold items',
-  //         message: e.toString(),
-  //       );
-  //     } else {
-  //       CPopupSnackBar.errorSnackBar(
-  //         title: 'database error fetching user\'s sold items',
-  //         message:
-  //             'An unknown database error occurred while fetching user\'s sold items!',
-  //       );
-  //     }
-  //     return [];
-  //   } catch (e) {
-  //     if (kDebugMode) {
-  //       CPopupSnackBar.errorSnackBar(
-  //         title: 'error fetching user\'s sold items',
-  //         message: e.toString(),
-  //       );
-  //     } else {
-  //       CPopupSnackBar.errorSnackBar(
-  //         title: 'error fetching user\'s sold items',
-  //         message:
-  //             'An unknown error occurred while fetching user\'s sold items!',
-  //       );
-  //     }
-  //     rethrow;
-  //   } finally {
-  //     // Close the database if necessary
-  //     //await _db?.close();
-  //   }
-  // }
-
-  /// -- fetch transactions --
-  // Future<List<CTxnsModel>> fetchSoldItemsGroupedByTxnId(String email) async {
-  //   try {
-  //     final transactions = await _db!.rawQuery(
-  //       'SELECT * from $txnsTable where userEmail = ? GROUP BY txnId ORDER BY lastModified DESC',
-  //       [email],
-  //     );
-
-  //     if (transactions.isEmpty) {
-  //       return [];
-  //     }
-
-  //     // Convert the List<Map<String, dynamic> into a List<CTxnsModel>.
-  //     return transactions
-  //         .map((json) => CTxnsModel.fromMapObject(json))
-  //         .toList();
-  //   } on DatabaseException catch (e) {
-  //     if (kDebugMode) {
-  //       CPopupSnackBar.errorSnackBar(
-  //         title: 'database error fetching user\'s sold items by txn id',
-  //         message: e.toString(),
-  //       );
-  //     } else {
-  //       CPopupSnackBar.errorSnackBar(
-  //         title: 'database error fetching user\'s sold items by txn id',
-  //         message:
-  //             'An unknown database error occurred while fetching user\'s sold items by txn id!',
-  //       );
-  //     }
-  //     return [];
-  //   } catch (e) {
-  //     if (kDebugMode) {
-  //       CPopupSnackBar.errorSnackBar(
-  //         title: 'error fetching user\'s sold items by txn id',
-  //         message: e.toString(),
-  //       );
-  //     } else {
-  //       CPopupSnackBar.errorSnackBar(
-  //         title: 'error fetching user\'s sold items by txn id',
-  //         message:
-  //             'An unknown error occurred while fetching user\'s sold items by txn id!',
-  //       );
-  //     }
-  //     rethrow;
-  //   } finally {
-  //     // Close the database if necessary
-  //     //await _db?.close();
-  //   }
-  // }
-
   /// -- defines a function to update a receipt/sold item --
   Future<int> updateParentTxnDetails(CTxn txn) async {
     try {
@@ -996,39 +894,38 @@ class DbHelper extends GetxController {
     }
   }
 
-  // Future<int> updateTxnItemsSyncStatus(
-  //   int syncStatus,
-  //   String sAction,
-  //   int soldItemId,
-  // ) async {
-  //   try {
-  //     int updateResult = await _db!.rawUpdate(
-  //       '''
-  //         UPDATE $txnsTable
-  //         SET isSynced = ?, syncAction = ?
-  //         WHERE soldItemId = ?
-  //       ''',
-  //       [syncStatus, sAction, soldItemId],
-  //     );
+  Future<List<CTopCustomer>> fetchTxnsGroupedByCustomer(String email) async {
+    try {
+      final db = _db;
 
-  //     return updateResult;
-  //   } catch (e) {
-  //     if (kDebugMode) {
-  //       CPopupSnackBar.errorSnackBar(
-  //         title: 'txn sync error!',
-  //         message: 'error updating txns SYNC LOCALLY: $e',
-  //       );
-  //     } else {
-  //       CPopupSnackBar.errorSnackBar(
-  //         title: 'txn sync error!',
-  //         message:
-  //             'an unknown error occurred while updating txns SYNC LOCALLY: $e',
-  //       );
-  //     }
+      final topCustomers = await db!.rawQuery(
+        'SELECT customerContacts, customerName, SUM(totalAmount) AS totalAmount, COUNT(*) AS txnsCount FROM sales WHERE userEmail = ? GROUP BY customerContacts ORDER BY totalAmount DESC',
+        [email],
+      );
 
-  //     rethrow;
-  //   }
-  // }
+      if (topCustomers.isEmpty) return [];
+
+      return topCustomers.map(
+        (map) {
+          return CTopCustomer.fromMapObject(map);
+        },
+      ).toList();
+    } catch (e) {
+      if (kDebugMode) {
+        CPopupSnackBar.errorSnackBar(
+          title: 'database error fetching top customers',
+          message: e.toString(),
+        );
+      } else {
+        CPopupSnackBar.errorSnackBar(
+          title: 'error fetching top customers',
+          message:
+              'An unknown database error occurred while fetching top customers!',
+        );
+      }
+      rethrow;
+    }
+  }
 
   /// --- ### CRUD OPERATIONS ON NOTIFICATIONS TABLE ### ---
 

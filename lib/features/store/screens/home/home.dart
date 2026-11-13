@@ -21,6 +21,7 @@ import 'package:rintel/features/store/screens/home/widgets/charts/pie_charts/pay
 import 'package:rintel/features/store/screens/home/widgets/dashboard_header.dart';
 import 'package:rintel/features/store/screens/home/widgets/store_summary.dart';
 import 'package:rintel/features/store/screens/home/widgets/store_summary_card.dart';
+import 'package:rintel/features/store/screens/home/widgets/top_customers.dart';
 import 'package:rintel/features/store/screens/home/widgets/top_sellers.dart';
 import 'package:rintel/main_nav.dart';
 import 'package:rintel/utils/constants/colors.dart';
@@ -128,7 +129,11 @@ class HomeScreen extends StatelessWidget {
                             invController.inventoryItems.isNotEmpty ||
                         (txnsController.userTxns.isNotEmpty &&
                             txnsController.isLoading.value)) {
-                      return CHorizontalProductShimmer();
+                      return Center(
+                        child: CHorizontalProductShimmer(
+                          itemCount: 2,
+                        ),
+                      );
                     }
 
                     return Column(
@@ -238,6 +243,23 @@ class HomeScreen extends StatelessWidget {
                               },
                             ),
                             CTopSellers(),
+
+                            /// -- top customers --
+                            CSectionHeading(
+                              showActionBtn: true,
+                              title: 'Top customers...',
+                              txtColor:
+                                  CNetworkManager.instance.hasConnection.value
+                                  ? CColors.rBrown
+                                  : CColors.darkGrey,
+
+                              btnTitle: 'Advanced options',
+                              btnTxtColor: CColors.rBrown,
+                              editFontSize: true,
+                              fWeight: FontWeight.w400,
+                              onPressed: () {},
+                            ),
+                            CTopCustomers(),
                             const SizedBox(
                               height: CSizes.defaultSpace / 4,
                             ),

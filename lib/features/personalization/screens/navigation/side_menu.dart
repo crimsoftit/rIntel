@@ -36,6 +36,7 @@ class CSideMenu extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               Expanded(
+                flex: 0,
                 child: Center(
                   child: UserDp(
                     height: 80,
@@ -84,14 +85,15 @@ class CSideMenu extends StatelessWidget {
                   ),
                 ),
               ),
-              CDivider(
-                color: CColors.white,
+              Expanded(
+                flex: 0,
+                child: CDivider(
+                  color: CColors.white,
+                ),
               ),
 
               ...CMenuItems.menuItems.map(buildMenuItem),
-              Spacer(
-                //flex: 2,
-              ),
+              const SizedBox(height:20.0,),
             ],
           ),
         ),

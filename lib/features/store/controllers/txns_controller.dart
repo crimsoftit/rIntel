@@ -262,39 +262,6 @@ class CTxnsController extends GetxController {
     }
   }
 
-  /// -- fetch top sellers grouped by product id --
-  // Future<List<CBestSellersModel>> fetchTopSellersFromSales() async {
-  //   try {
-  //     // -- start loader while top sellers are fetched --
-  //     isLoading.value = true;
-
-  //     final topSales = await dbHelper
-  //         .fetchTopSellersFromSalesGroupedByProductId(
-  //           userController.user.value.email,
-  //         );
-
-  //     bestSellers.assignAll(topSales);
-
-  //     // stop loader
-  //     isLoading.value = false;
-
-  //     return bestSellers;
-  //   } catch (e) {
-  //     isLoading.value = false;
-  //     if (kDebugMode) {
-  //       CPopupSnackBar.errorSnackBar(
-  //         title: 'error fetching top sellers from sales table',
-  //         message: e.toString(),
-  //       );
-  //     }
-  //     CPopupSnackBar.errorSnackBar(
-  //       title: 'error fetching top sellers',
-  //       message:
-  //           'an unknown error occurred while fetching top sellers! please try again later...',
-  //     );
-  //     rethrow;
-  //   }
-  // }
   Future<List<CBestSellersModel>> fetchTopSellersFromSales() async {
     try {
       // -- start loader while top sellers are fetched --

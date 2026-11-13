@@ -36,7 +36,9 @@ class CTopSellers extends StatelessWidget {
           shrinkWrap: true,
           scrollDirection: Axis.horizontal,
           separatorBuilder: (_, _) {
-            return SizedBox(width: CSizes.spaceBtnItems / 2);
+            return SizedBox(
+              width: CSizes.spaceBtnItems / 2,
+            );
           },
           itemBuilder: (context, index) {
             var invItemIndex = invController.inventoryItems.indexWhere(

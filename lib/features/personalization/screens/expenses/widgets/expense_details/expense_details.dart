@@ -246,8 +246,9 @@ class CExpenseDetails extends StatelessWidget {
                               ),
                               CRoundedContainer(
                                 bgColor: CColors.transparent,
-                                height: 20.0,
+                                height: 15.0,
                                 child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     SelectableText(
                                       expense.expenseId.toString(),
@@ -313,7 +314,7 @@ class CExpenseDetails extends StatelessWidget {
                                     )
                                   : CRoundedContainer(
                                       bgColor: CColors.transparent,
-                                      height: 18.0,
+                                      height: 15.0,
                                       child: Row(
                                         children: [
                                           SelectableText(

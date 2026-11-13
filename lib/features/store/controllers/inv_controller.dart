@@ -63,6 +63,7 @@ class CInventoryController extends GetxController {
   // -- double values --
   final RxDouble expiredItemsValue = 0.0.obs;
   final RxDouble lowStockItemsValue = 0.0.obs;
+  final RxDouble totalInvExpenses = 0.0.obs;
   final RxDouble totalInventoryValue = 0.0.obs;
   final RxDouble unitBP = 0.0.obs;
 
@@ -1484,7 +1485,9 @@ class CInventoryController extends GetxController {
           0.0,
           (sum, item) => sum + (item.unitBp * item.quantity),
         );
-        totalInventoryValue.value = salesValue + stockValue;
+
+        totalInventoryValue.value = stockValue;
+        totalInvExpenses.value = salesValue + stockValue;
 
         // -- count and value of low stock items in inventory --
         lowStockItemsCount.value = lowStockItems.length;

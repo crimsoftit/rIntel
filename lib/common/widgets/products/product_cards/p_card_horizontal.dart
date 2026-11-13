@@ -8,7 +8,13 @@ class CProductCardHorizontal extends StatelessWidget {
     super.key,
     required this.itemCount,
     required this.itemBuilder,
+    this.bgColor,
+    this.height,
   });
+
+  final Color? bgColor;
+
+  final double? height;
 
   final int itemCount;
 
@@ -17,14 +23,17 @@ class CProductCardHorizontal extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return CRoundedContainer(
-      bgColor: CColors.transparent,
+      bgColor: bgColor ?? CColors.transparent,
+      height: height,
       child: ListView.separated(
         itemBuilder: itemBuilder,
         scrollDirection: Axis.horizontal,
         shrinkWrap: true,
 
         separatorBuilder: (_, _) {
-          return SizedBox(width: CSizes.spaceBtnItems / 2);
+          return SizedBox(
+            width: CSizes.spaceBtnItems / 2,
+          );
         },
         itemCount: itemCount,
       ),

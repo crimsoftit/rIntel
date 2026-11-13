@@ -19,16 +19,16 @@ class CBestSellersModel {
 
   //CBestSellersModel.withId(this._productName, this._quantity);
 
-  static List<String> getHeaders() {
-    return [
-      'productId',
-      'productName',
-      'itemMetrics',
-      'totalSales',
-      'unitSellingPrice',
-      'quantity',
-    ];
-  }
+  // static List<String> getHeaders() {
+  //   return [
+  //     'productId',
+  //     'productName',
+  //     'itemMetrics',
+  //     'totalSales',
+  //     'unitSellingPrice',
+  //     'quantity',
+  //   ];
+  // }
 
   int get productId => _productId;
   String get productName => _productName;

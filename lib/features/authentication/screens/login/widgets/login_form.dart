@@ -29,7 +29,7 @@ class LoginForm extends StatelessWidget {
           children: [
             // -- email field --
             TextFormField(
-              autovalidateMode: AutovalidateMode.onUserInteraction,
+              autovalidateMode: AutovalidateMode.onUserInteractionIfError,
               controller: loginController.email,
               style: const TextStyle(
                 height: 0.7,
