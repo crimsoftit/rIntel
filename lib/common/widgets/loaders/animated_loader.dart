@@ -20,8 +20,10 @@ class CAnimatedLoaderWidget extends StatelessWidget {
     super.key,
     required this.text,
     required this.animation,
+    this.actionBtnHeight,
     this.actionBtnText,
     this.actionBtnWidth = 250.0,
+    this.btnIcon,
     this.lottieAssetWidth,
     this.onActionBtnPressed,
     this.showActionBtn = false,
@@ -30,10 +32,11 @@ class CAnimatedLoaderWidget extends StatelessWidget {
 
   final bool showActionBtn;
   final Color? txtColor;
-  final double? actionBtnWidth, lottieAssetWidth;
+  final double? actionBtnHeight, actionBtnWidth, lottieAssetWidth;
   final String text, animation;
   final String? actionBtnText;
   final VoidCallback? onActionBtnPressed;
+  final Widget? btnIcon;
 
   @override
   Widget build(BuildContext context) {
@@ -47,7 +50,7 @@ class CAnimatedLoaderWidget extends StatelessWidget {
             animation,
             width: lottieAssetWidth ?? MediaQuery.of(context).size.width * 0.8,
           ),
-          const SizedBox(height: CSizes.defaultSpace),
+          const SizedBox(height: CSizes.defaultSpace,),
           Text(
             text,
             style: Theme.of(
@@ -55,30 +58,63 @@ class CAnimatedLoaderWidget extends StatelessWidget {
             ).textTheme.bodyMedium!.apply(color: txtColor),
             textAlign: TextAlign.center,
           ),
-          const SizedBox(height: CSizes.defaultSpace),
+          const SizedBox(
+            height: CSizes.defaultSpace,
+          ),
           showActionBtn
-              ? Obx(() {
-                  return SizedBox(
-                    width: actionBtnWidth,
-                    child: OutlinedButton(
-                      onPressed: onActionBtnPressed,
-                      style: OutlinedButton.styleFrom(
-                        //backgroundColor: CColors.rBrown,
-                        backgroundColor:
-                            CNetworkManager.instance.hasConnection.value
-                            ? CColors.rBrown
-                            : CColors.dark,
+              ? Obx(
+                  () {
+                    return SizedBox(
+                      height: actionBtnHeight,
+                      width: actionBtnWidth,
+                      child: TextButton.icon(
+                        icon:
+                            btnIcon ??
+                            Icon(
+                              Icons.add,
+                              color: CColors.white,
+                              size: CSizes.iconMd,
+                            ),
+                        onPressed: onActionBtnPressed,
+                        label: Text(
+                          actionBtnText!,
+                          style:
+                              Theme.of(
+                                context,
+                              ).textTheme.bodyMedium!.apply(
+                                color: CColors.light,
+                              ),
+                          textAlign: TextAlign.center,
+                        ),
+                        style: OutlinedButton.styleFrom(
+                          //backgroundColor: CColors.rBrown,
+                          backgroundColor:
+                              CNetworkManager.instance.hasConnection.value
+                              ? CColors.rBrown
+                              : CColors.dark,
+                        ),
                       ),
-                      child: Text(
-                        actionBtnText!,
-                        style: Theme.of(
-                          context,
-                        ).textTheme.bodyMedium!.apply(color: CColors.light),
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
-                  );
-                })
+
+                      // OutlinedButton(
+                      //   onPressed: onActionBtnPressed,
+                      //   style: OutlinedButton.styleFrom(
+                      //     //backgroundColor: CColors.rBrown,
+                      //     backgroundColor:
+                      //         CNetworkManager.instance.hasConnection.value
+                      //         ? CColors.rBrown
+                      //         : CColors.dark,
+                      //   ),
+                      //   child: Text(
+                      //     actionBtnText!,
+                      //     style: Theme.of(
+                      //       context,
+                      //     ).textTheme.bodyMedium!.apply(color: CColors.light),
+                      //     textAlign: TextAlign.center,
+                      //   ),
+                      // ),
+                    );
+                  },
+                )
               : const SizedBox.shrink(),
         ],
       ),

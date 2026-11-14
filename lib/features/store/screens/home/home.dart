@@ -243,29 +243,32 @@ class HomeScreen extends StatelessWidget {
                               },
                             ),
                             CTopSellers(),
-
-                            /// -- top customers --
-                            CSectionHeading(
-                              showActionBtn: true,
-                              title: 'Top customers...',
-                              txtColor:
-                                  CNetworkManager.instance.hasConnection.value
-                                  ? CColors.rBrown
-                                  : CColors.darkGrey,
-
-                              btnTitle: 'Advanced options',
-                              btnTxtColor: CColors.rBrown,
-                              editFontSize: true,
-                              fWeight: FontWeight.w400,
-                              onPressed: () {},
-                            ),
-                            CTopCustomers(),
                             const SizedBox(
-                              height: CSizes.defaultSpace / 4,
+                              height: CSizes.defaultSpace * .5,
                             ),
                           ],
                         ),
 
+                        // const SizedBox(
+                        //   height: CSizes.defaultSpace * .5,
+                        // ),
+                        CSectionHeading(
+                          showActionBtn: true,
+                          title: 'Top customers...',
+                          txtColor: CNetworkManager.instance.hasConnection.value
+                              ? CColors.rBrown
+                              : CColors.darkGrey,
+
+                          btnTitle: 'Advanced options',
+                          btnTxtColor: CColors.rBrown,
+                          editFontSize: true,
+                          fWeight: FontWeight.w400,
+                          onPressed: () {},
+                        ),
+
+                        CTopCustomers(
+                          screenHeight: 40.0,
+                        ),
                         const SizedBox(
                           height: CSizes.defaultSpace * .5,
                         ),
@@ -276,11 +279,7 @@ class HomeScreen extends StatelessWidget {
                           height: CSizes.defaultSpace * .5,
                         ),
 
-                        /// -- sales summary bar graph --
-                        // CCustomBarChart(
-                        //   selectedFilterPeriod: dashboardController
-                        //       .setDefaultSalesFilterPeriod(),
-                        // ),
+                        /// -- top customers --
                         CSectionHeading(
                           actionWidget: Align(
                             alignment: Alignment.topLeft,

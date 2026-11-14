@@ -13,11 +13,15 @@ class CFreshUserScreen extends StatelessWidget {
     return Center(
       child: Column(
         children: [
-          const SizedBox(height: CSizes.defaultSpace),
+          const SizedBox(
+            height: CSizes.defaultSpace,
+          ),
 
           //CCarouselSlider(),
           CAutoImgSlider(),
-          const SizedBox(height: CSizes.defaultSpace / 1.5),
+          const SizedBox(
+            height: CSizes.defaultSpace / 1.5,
+          ),
           Text(
             'welcome aboard!!'.toUpperCase(),
             style: Theme.of(context).textTheme.bodyLarge!.apply(
@@ -29,7 +33,9 @@ class CFreshUserScreen extends StatelessWidget {
               fontWeightDelta: -2,
             ),
           ),
-          const SizedBox(height: CSizes.defaultSpace / 2),
+          const SizedBox(
+            height: CSizes.defaultSpace / 2,
+          ),
           Text(
             'your perfect dashboard is just a few sales away!'.toUpperCase(),
             style: Theme.of(context).textTheme.labelMedium!.apply(

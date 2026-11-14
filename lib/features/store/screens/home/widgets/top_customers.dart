@@ -16,8 +16,11 @@ import 'package:rintel/utils/helpers/helper_functions.dart';
 
 class CTopCustomers extends StatefulWidget {
   const CTopCustomers({
+    this.screenHeight,
     super.key,
   });
+
+  final double? screenHeight;
 
   @override
   State<CTopCustomers> createState() => _CTopCustomersState();
@@ -67,7 +70,7 @@ class _CTopCustomersState extends State<CTopCustomers> {
         }
 
         return CProductCardHorizontal(
-          height: 60.0,
+          height: widget.screenHeight,
           itemBuilder: (context, index) {
             var contact = asyncSnapshot.data![index];
             return InkWell(
@@ -107,7 +110,7 @@ class _CTopCustomersState extends State<CTopCustomers> {
                       children: [
                         Text(
                           contact.customerName == ''
-                              ? 'Walkins'
+                              ? 'WALKINS'
                               : contact.customerName.toUpperCase(),
                           style: Theme.of(context).textTheme.labelMedium!.apply(
                             fontWeightDelta: 2,
